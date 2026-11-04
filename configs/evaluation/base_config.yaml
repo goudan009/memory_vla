@@ -1,0 +1,35 @@
+# Based on SERF scripts/test/test_2d_image_pre.sh and its RGB evaluator.
+# RGB + proprioception only; no maps, point clouds or tracking components.
+headless: true
+seed: 0
+print_config: false
+policy_name: pi_behavior_b1k_fast
+model:
+  _target_: omnigibson.learning.policies.WebsocketPolicy
+  host: 127.0.0.1
+  port: 8000
+env_wrapper:
+  _target_: omnigibson.learning.wrappers.RGBLowResWrapper
+robot:
+  type: R1Pro
+  controllers: null
+task:
+  name: turning_on_radio
+eval_on_train_instances: false
+# null selects all 20 test entries in test_instances.csv; [0] selects the first.
+eval_instance_ids: null
+test_hidden: false
+partial_scene_load: true
+# null follows SERF: twice the task's average demonstration length.
+max_steps: null
+write_video: false
+write_third_person_video: false
+record_step_q_score: false
+repro_initial_state: true
+repro_action_log: true
+replay_mode: none
+replay_action_log_path: null
+replay_until_step: null
+resume_record_suffix: resumed
+repro_action_chunk_size: 100
+log_path: outputs/evaluation/${task.name}/seed_${seed}

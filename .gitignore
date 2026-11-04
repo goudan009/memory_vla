@@ -1,0 +1,46 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+.venv/
+build/
+dist/
+datasets/**/*.npz
+datasets/**/*.tfrecord
+datasets/**/*.tfrecords
+checkpoints/**/*.pt
+checkpoints/**/*.pth
+checkpoints/**/*.safetensors
+outputs/
+references/upstream/
+
+# Local resource links and large assets are machine-specific.
+/checkpoints/behavior_50t_checkpoint
+/datasets/b1k2025/parquet
+/datasets/b1k2025/meta-candidate
+/datasets/simulation/behavior-1k-assets
+/datasets/simulation/omnigibson-robot-assets
+/datasets/simulation/2025-challenge-task-instances
+/datasets/simulation/b1k2025
+/env/b1k2025-sim
+/env/isaac-sim-4.5
+/src/simulation/omnigibson
+/src/simulation/joylo
+*.key
+
+/.hermes/
+/build/
+/dist/
+/datasets/b1k2025/videos
+/datasets/b1k2025/meta
+
+# Paper reference PDFs (103M, too large for git)
+/paper/references/*.pdf
+
+# Machine-specific env symlinks
+/env/b1k2025-policy
+/env/b1k2025-policy-wyh
+
+# Third-party reference source (read-only, 268 files)
+/src/references/

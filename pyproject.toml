@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vlamemory"
+version = "0.1.0"
+description = "Memory modules and OpenPI integration for vision-language-action models"
+requires-python = ">=3.10"
+dependencies = [
+    "einops>=0.7",
+    "flax>=0.9",
+    "jax>=0.4",
+]
+
+[project.optional-dependencies]
+data   = ["torch>=2.0"]
+openpi = []   # pip install -e /nvme3/projects/vla_memory/code/openpi
+
+[tool.setuptools.packages.find]
+where   = ["src"]
+include = ["vlamemory", "vlamemory.*"]
+namespaces = false
