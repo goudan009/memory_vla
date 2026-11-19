@@ -61,3 +61,8 @@ references/upstream/
 
 # Cached files
 *.bak
+
+# Machine-local workbench routing
+/configs/workbench_devices.json
+/configs/workbench_sources.json
+/evaluation/auto_eval_task34_40_state.json
