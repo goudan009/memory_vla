@@ -45,6 +45,8 @@ AI 的行为以任务、阶段和事件呈现：谁在实现、运行了哪些�
 
 日常控制台入口 `/ai`；解释版入口 `/ai/architecture`。
 
+已有 8765 工作台也提供 `/ai` 同源入口；8772 仅用于独立预览。
+
 浏览器检查 `tests/ai_human_console_browser.cjs`；解释版保留原 `tests/ai_workbench_browser.cjs` 并改为访问解释版地址。截图与报告分别保留在 `outputs/shared/diagnostics/ai_human_console_v3/` 和原 v2 目录。
 
 验证命令（复用项目已有浏览器依赖）：

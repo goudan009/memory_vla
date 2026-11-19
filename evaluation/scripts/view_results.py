@@ -193,6 +193,17 @@ def elapsed(run: dict) -> str:
     return f"{hours}h {minutes:02d}m" if hours else f"{minutes}m {seconds:02d}s"
 
 
+def load_workbench_devices(project_root: Path) -> dict:
+    path = Path(project_root) / "configs" / "workbench_devices.json"
+    try:
+        devices = json.loads(path.read_text(encoding="utf-8"))
+    except FileNotFoundError:
+        return {}
+    if not isinstance(devices, dict):
+        raise ValueError(f"设备配置必须是 JSON 对象: {path}")
+    return devices
+
+
 def print_report(root: Path) -> int:
     runs = load_runs(root)
     if not runs:
@@ -1020,7 +1031,10 @@ def main() -> int:
         if saved.get('host')==args.policy_monitor_host:
             Handler.inference_manager.jobs=saved.get('jobs',[])
     Handler.training_manager = TrainingManager(EVALUATION_ROOT.parent, args.policy_monitor_host)
-    devices=json.loads((EVALUATION_ROOT.parent/'configs/workbench_devices.json').read_text())
+    try:
+        devices = load_workbench_devices(EVALUATION_ROOT.parent)
+    except (OSError, ValueError) as error:
+        parser.error(f"设备配置无效: {error}")
     Handler.training_devices={'a100':Handler.training_manager}
     for key,device in devices.items():
         if key != 'a100':

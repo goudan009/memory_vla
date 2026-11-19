@@ -171,3 +171,17 @@ def test_http_preview_and_start_use_same_manager_and_json_errors(tmp_path):
             assert len(json.load(response)["jobs"]) == 1
     finally:
         server.shutdown(); server.server_close(); thread.join(timeout=3)
+
+
+def test_workbench_device_config_is_optional_and_validated(tmp_path):
+    viewer = load("workbench_device_config", ROOT / "evaluation/scripts/view_results.py")
+    assert viewer.load_workbench_devices(tmp_path) == {}
+
+    config = tmp_path / "configs" / "workbench_devices.json"
+    config.parent.mkdir()
+    config.write_text(json.dumps({"local-test": {"host": "127.0.0.1"}}))
+    assert viewer.load_workbench_devices(tmp_path) == {"local-test": {"host": "127.0.0.1"}}
+
+    config.write_text("[]")
+    with pytest.raises(ValueError, match="必须是 JSON 对象"):
+        viewer.load_workbench_devices(tmp_path)

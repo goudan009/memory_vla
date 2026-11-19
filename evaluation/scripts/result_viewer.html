@@ -158,6 +158,12 @@
     .preview-cameras figure { margin:0; min-width:0 }.preview-cameras img,.preview-cameras canvas { display:block; width:100%; aspect-ratio:1; object-fit:contain; background:#15241f; border-radius:6px }
     .preview-cameras figcaption { color:var(--muted); font-size:11px; margin-top:4px; text-align:center }
     .service-overview { margin-bottom:14px; border:1px solid var(--line); border-radius:10px; background:#fff }
+    .gpu-overview-panel { margin-bottom:12px; border:1px solid var(--line); border-radius:8px; background:#fff }
+    .gpu-overview-panel > summary { display:flex; align-items:center; gap:12px; padding:10px 14px; cursor:pointer; font-size:12px; font-weight:650 }
+    .gpu-overview-panel > summary span { flex:0 0 auto; white-space:nowrap }
+    .gpu-overview-panel > summary small { min-width:0; color:var(--muted); font-size:11px; font-weight:400 }
+    .gpu-overview-panel[open] > summary { border-bottom:1px solid var(--line) }
+    .gpu-overview-panel > .gpu-overview { margin:12px; }
     .gpu-overview { display:grid;grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr));gap:12px;margin-bottom:14px }
     .gpu-machine { padding:12px 16px;border:1px solid var(--line);border-radius:10px;background:#fff;min-width:0 }
     .gpu-machine-head { display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:9px }
@@ -184,7 +190,8 @@
     .service-extra { font-size:10px; color:var(--muted) }.service-extra summary { cursor:pointer; padding:3px 0 }.service-extra p { margin:5px 0; overflow-wrap:anywhere }
     .empty { padding:28px 18px; color:var(--muted); text-align:center; font-size:12px }
     .page-foot { color:#8a9790; font-size:11px; margin-top:20px; text-align:center }
-    .page-nav { display:flex; gap:8px; padding:12px max(24px,calc((100vw - 1488px)/2)); background:#fff; border-bottom:1px solid var(--line) }
+    .page-nav { display:flex; align-items:center; gap:8px; padding:12px max(24px,calc((100vw - 1488px)/2)); background:#fff; border-bottom:1px solid var(--line) }
+    .page-tabs { display:flex; flex:0 0 auto; gap:8px }
     .page-nav button { font-size:13px; padding:7px 18px; border-color:transparent }
     .page-nav button[aria-selected="true"] { color:var(--green); background:var(--soft); border-color:#bfded0 }
     .launch-fields { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px 16px; padding:14px 20px }
@@ -205,6 +212,8 @@
     .page-intro { display:flex; align-items:center; justify-content:space-between; gap:16px; margin:4px 0 18px }
     .page-intro h2 { font-size:21px; letter-spacing:-.5px }.page-intro p { margin:3px 0 0; color:var(--muted); font-size:12px }
     .page-nav button { display:flex; align-items:center; gap:9px }.page-nav button span { font:11px ui-monospace,monospace; opacity:.6 }
+    .page-nav .nav-label-full,.page-nav .nav-label-short { font:inherit; opacity:1 }
+    .page-nav .nav-label-short { display:none }
     .form-block { border-bottom:1px solid var(--line) }.form-block:last-child { border-bottom:0 }
     .form-block h3 { margin:0; padding:14px 20px 0; font-size:12px; color:#41665a }
     .launch-fields .third { grid-column:auto }.launch-fields.three { grid-template-columns:repeat(3,minmax(0,1fr)) }
@@ -249,18 +258,51 @@
     @media(max-width:1200px) { .media-grid { grid-template-columns:1fr } #preview-panel { border-left:0; border-top:1px solid var(--line) } }
     @media(max-width:1050px) { .layout { grid-template-columns:250px minmax(0,1fr) }.metric { padding:0 12px }.metric strong { font-size:23px }.service-head,.service-body { padding-left:16px; padding-right:16px } }
     @media(max-width:780px) { .layout,.services { grid-template-columns:1fr }.run-browser { position:static }.run-list { max-height:220px }.summary { grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px 0 }.metric:nth-child(2n) { border-right:0 }.metric strong { font-size:22px } header { padding:12px 14px } main { padding:12px 12px 20px }.detail-heading { padding:14px }.live-label { display:none }.section-head { padding:12px 14px }.header-actions { gap:6px }.detail-heading h2 { font-size:18px }.service-counts { display:flex; margin:4px 0 0 14px }.detail-tabs { padding:8px }.detail-tabs button { padding:6px 8px }.episode-table { max-height:280px } }
+    .page-nav { overflow-x:auto; overscroll-behavior-inline:contain; scrollbar-width:thin }
+    .page-nav button,.page-nav-link { flex:0 0 auto; white-space:nowrap }
+    .page-nav-link { display:inline-flex; align-items:center; padding:7px 18px; border:1px solid transparent; border-radius:9px; color:var(--ink); text-decoration:none; font-size:13px }
+    .page-nav-link:hover { border-color:#a4c8bb; background:#f7fbf9 }
+    .gpu-overview { scrollbar-width:thin; overscroll-behavior-inline:contain }
+    @media(max-width:780px) {
+      .gpu-overview { grid-auto-flow:column; grid-auto-columns:minmax(82vw,360px); grid-template-columns:none; overflow-x:auto; padding-bottom:4px; scroll-snap-type:x proximity }
+      .gpu-machine { scroll-snap-align:start }
+    }
+    @media(max-width:540px) {
+      header { gap:8px }
+      .brand { min-width:0; gap:9px }
+      .brand-mark { width:34px; height:34px; border-radius:8px }
+      .brand h1 { font-size:16px; white-space:nowrap }
+      .brand h1 span { display:none }
+      #caption { max-width:205px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap }
+      #refresh { width:36px; height:36px; padding:0; font-size:18px }
+      .page-nav { padding:8px 10px; gap:3px }
+      .page-nav button,.page-nav-link { padding:7px 10px; font-size:12px }
+      .page-nav button .nav-label-full,.page-nav-link .nav-label-full { display:none }
+      .page-nav button .nav-label-short,.page-nav-link .nav-label-short { display:inline; font:inherit; opacity:1 }
+      .episode-table { max-height:none; overflow:visible }
+      .episode-table table { display:block; width:100%; white-space:normal }
+      .episode-table thead { display:none }
+      .episode-table tbody { display:grid; gap:8px; padding:8px }
+      .episode-table tr { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); border:1px solid var(--line); border-radius:8px; padding:6px; background:#fff }
+      .episode-table tr.episode-selected { border-color:#a8d0bf; background:var(--soft) }
+      .episode-table td { display:flex; min-width:0; flex-direction:column; justify-content:center; gap:2px; padding:6px 5px; border:0; white-space:normal; overflow-wrap:anywhere }
+      .episode-table td::before { content:attr(data-label); color:var(--muted); font-size:10px }
+      .episode-table td:first-child { grid-column:1/-1; flex-direction:row; align-items:center; justify-content:space-between; border-bottom:1px solid var(--line) }
+      .episode-table td:last-child { grid-column:1/-1; align-items:flex-start }
+      .episode-table td .subtle { font-size:10px }
+    }
     @media(prefers-reduced-motion:reduce) { * { transition:none !important } }
   </style>
 </head>
 <body>
-  <header><div class="brand"><div class="brand-mark" aria-hidden="true">G</div><div><h1>GR00T <span style="font-weight:400;color:var(--muted)">/ 训练与评估工作台</span></h1><div id="caption" class="subtle" role="status">正在读取评估记录…</div></div></div><div class="header-actions"><span class="live-label">每 5 秒自动更新</span><button id="refresh" type="button">↻ 刷新</button></div></header>
-  <nav class="page-nav" role="tablist" aria-label="训练评估工作台页面"><button type="button" id="page-tab-training" role="tab" aria-controls="page-training" aria-selected="false" onclick="selectPage('training')">启动训练</button><button type="button" id="page-tab-launch" role="tab" aria-controls="page-launch" aria-selected="false" onclick="selectPage('launch')">推理评估</button><button type="button" id="page-tab-results" role="tab" aria-controls="page-results" aria-selected="true" onclick="selectPage('results')">评估结果</button><button type="button" id="page-tab-registry" role="tab" onclick="location.href='/registry'">实验台账</button><button type="button" id="page-tab-ai" onclick="location.href=location.protocol+'//'+location.hostname+':8772/ai'">AI 工作流 · 预览</button></nav>
+  <header><div class="brand"><div class="brand-mark" aria-hidden="true">G</div><div><h1>GR00T <span style="font-weight:400;color:var(--muted)">/ 训练与评估工作台</span></h1><div id="caption" class="subtle" role="status">正在读取评估记录…</div></div></div><div class="header-actions"><span class="live-label">每 5 秒自动更新</span><button id="refresh" type="button" aria-label="手动刷新" title="手动刷新">↻</button></div></header>
+  <nav class="page-nav" aria-label="训练评估工作台页面"><div class="page-tabs" role="tablist" aria-label="工作台"><button type="button" id="page-tab-training" role="tab" aria-label="启动训练" aria-controls="page-training" aria-selected="false" onclick="selectPage('training')"><span class="nav-label-full">启动训练</span><span class="nav-label-short">训练</span></button><button type="button" id="page-tab-launch" role="tab" aria-label="推理评估" aria-controls="page-launch" aria-selected="false" onclick="selectPage('launch')"><span class="nav-label-full">推理评估</span><span class="nav-label-short">推理</span></button><button type="button" id="page-tab-results" role="tab" aria-label="评估结果" aria-controls="page-results" aria-selected="true" onclick="selectPage('results')"><span class="nav-label-full">评估结果</span><span class="nav-label-short">结果</span></button></div><a class="page-nav-link" id="page-tab-registry" href="/registry" aria-label="实验台账"><span class="nav-label-full">实验台账</span><span class="nav-label-short">台账</span></a><a class="page-nav-link" id="page-tab-ai" href="/ai" aria-label="AI 工作流预览" title="AI 工作流预览"><span class="nav-label-full">AI 工作流 · 预览</span><span class="nav-label-short">AI</span></a></nav>
   <main>
-    <div id="gpu-overview" class="gpu-overview" aria-label="各设备实时显存占用">
+    <details class="gpu-overview-panel" aria-label="各设备实时显存占用"><summary><span>设备资源</span><small id="gpu-summary-status">正在读取 A100、4090 与 RTX 6000 Ada 状态</small></summary><div id="gpu-overview" class="gpu-overview">
       <div class="gpu-machine"><div class="gpu-machine-head"><strong>A100 · 训练 / 推理</strong><small id="remote-gpu-time">读取中…</small></div><div id="remote-gpus" class="gpu-cards"><div class="gpu-reading-error">正在读取 A100 显存…</div></div></div>
       <div class="gpu-machine"><div class="gpu-machine-head"><strong>4090 · 仿真评估</strong><small id="local-gpu-time">读取中…</small></div><div id="local-gpus" class="gpu-cards"><div class="gpu-reading-error">正在读取本机显存…</div></div></div>
       <div class="gpu-machine"><div class="gpu-machine-head"><strong>RTX 6000 Ada · 训练 / 评估</strong><small id="a6000-gpu-time">读取中…</small></div><div id="a6000-gpus" class="gpu-cards"><div class="gpu-reading-error">正在检查设备…</div></div></div>
-    </div>
+    </div></details>
     <details id="service-overview" class="service-overview"><summary>服务状态 <span class="service-counts"><span id="local-service-summary">4090 · 检查中…</span><span id="remote-service-summary">A100 · 检查中…</span><span id="a6000-service-summary">RTX 6000 Ada · 检查中…</span></span></summary>
     <div class="services">
       <section aria-label="4090本地评估服务"><div class="service-head"><h2>4090 <span class="subtle">/ 本地评估</span></h2><span id="local-service-count" class="subtle">检查中…</span></div><div id="local-services" class="service-body">正在检查本地进程…</div></section>
@@ -379,7 +421,7 @@
     <div class="page-foot">GR00T N1.6 · B1K-2025 · 调试记录与正式评估分别标记</div>
   </main>
 <script>
-  let runs = [], selected = null;
+  let runs = [], selected = null, refreshInFlight = false;
   let activePage='results', launchOptions=null, launchBusy=false, launchServices=[];
   let launchDeviceReady=true, launchDeviceLoading=false;
   let inferenceOptions=null, inferenceLoading=false, inferenceBusy=false, launchServiceChoice=null;
@@ -985,19 +1027,23 @@
     renderDetailTabs();
   }
   function renderGpuUsage(data) {
+    const labels={remote:'A100',local:'4090',a6000:'RTX 6000 Ada'},available=[];
     for(const side of ['remote','local','a6000']){
       const state=data?.[side], gpus=state?.gpus;
       $(side+'-gpu-time').textContent=state?.checked_at?'更新 '+state.checked_at:'每 5 秒刷新';
       if(state?.ok!==true || state.gpus_error || !gpus?.length){
         const message=state?.ok===false?(side==='a6000'?'离线 / 暂时不可达，显存未知':'连接失败，显存未知')+(state.last_seen?' · 最近在线 '+state.last_seen:''):state?.gpus_error?'显存读取失败':state?.ok===true?'未发现 GPU':'正在读取显存…';
         $(side+'-gpus').innerHTML='<div class="gpu-reading-error">'+esc(message)+'</div>';
+        available.push(labels[side]+' '+(state?.ok===false?'离线':'检查中'));
         continue;
       }
+      available.push(labels[side]+' '+gpus.length+' 卡');
       $(side+'-gpus').innerHTML=gpus.map(g=>{
         const percent=Math.max(0,Math.min(100,100*g.used_mb/g.total_mb));
         return `<div class="gpu-reading${percent>=90?' busy':''}" title="${esc(g.name)}"><div class="gpu-reading-title"><span>GPU ${esc(g.index)}</span><strong>${(g.used_mb/1024).toFixed(1)} / ${(g.total_mb/1024).toFixed(0)} GiB</strong></div><div class="gpu-meter"><span style="width:${percent.toFixed(1)}%"></span></div><small>显存 ${percent.toFixed(0)}% · GPU 利用率 ${esc(g.utilization)}%</small></div>`;
       }).join('');
     }
+    $('gpu-summary-status').textContent=available.join(' · ')+' · 每 5 秒更新';
   }
   function renderServices(data) {
     renderGpuUsage(data);
@@ -1071,7 +1117,7 @@
     for(const [gpu,data] of Object.entries(r.per_gpu||{})) for(const [env,state] of Object.entries(data.environments||{})) current.push({gpu,env,...state});
     const currentRows=current.map(e=>`<tr title="seed ${esc(safe(e.seed))}"><td><span class="chip gpu">GPU ${esc(e.gpu)}</span> ${esc(e.env.replace("runtime_env","env"))}</td><td>${esc(safe(e.instance_id))}</td><td>${Number(e.action_steps||0).toLocaleString()}</td><td>${e.task_progress==null?"—":`${num(e.task_progress)}%`}</td><td>${e.elapsed_s==null?"—":duration({elapsed_wall_s:e.elapsed_s})}</td></tr>`).join("");
     const eps=mediaEpisodes(r);
-    const rows=eps.map(e=>`<tr class="${mediaChoice===`episode:${e.episode_index}`?'episode-selected':''}" title="GPU ${esc(safe(e.gpu_index))} / env ${esc(safe(e.env_idx))} · seed ${esc(safe(e.seed))}"><td><button type="button" class="episode-button" onclick="chooseEpisode(${Number(e.episode_index)})">第 ${esc(safe(e.episode_index))} 集</button><div class="subtle">实例 ${esc(safe(e.instance_id))}</div></td><td>${e.valid===false?"无效":debug?"调试":e.success===true?"成功":e.success===false?"失败":"未判定"}</td><td>${qnum(e.q_score)}</td><td>${e.task_progress==null?"-":`${num(e.task_progress)}%`}</td><td>${Number(e.sim_steps||e.episode_length||0).toLocaleString()}</td><td>${e.duration_s==null?"-":duration({elapsed_wall_s:e.duration_s})}</td><td><span class="status ${e.human_review_needs_update?'interrupted':e.human_reviewed?'complete':'interrupted'}">${e.human_review_needs_update?'需更新':e.human_reviewed?'已标注':'待标注'}</span></td></tr>`).join("");
+    const rows=eps.map(e=>`<tr class="${mediaChoice===`episode:${e.episode_index}`?'episode-selected':''}" title="GPU ${esc(safe(e.gpu_index))} / env ${esc(safe(e.env_idx))} · seed ${esc(safe(e.seed))}"><td data-label="回合 / 实例"><button type="button" class="episode-button" onclick="chooseEpisode(${Number(e.episode_index)})">第 ${esc(safe(e.episode_index))} 集</button><div class="subtle">实例 ${esc(safe(e.instance_id))}</div></td><td data-label="结果">${e.valid===false?"无效":debug?"调试":e.success===true?"成功":e.success===false?"失败":"未判定"}</td><td data-label="Q">${qnum(e.q_score)}</td><td data-label="任务进度">${e.task_progress==null?"-":`${num(e.task_progress)}%`}</td><td data-label="动作步">${Number(e.sim_steps||e.episode_length||0).toLocaleString()}</td><td data-label="耗时">${e.duration_s==null?"-":duration({elapsed_wall_s:e.duration_s})}</td><td data-label="人工标注"><span class="status ${e.human_review_needs_update?'interrupted':e.human_reviewed?'complete':'interrupted'}">${e.human_review_needs_update?'需更新':e.human_reviewed?'已标注':'待标注'}</span></td></tr>`).join("");
     const live=r.status==="running"?`<div class="live-block"><h2 class="block-title">当前环境 <small>实时动作与任务进度</small></h2><div class="table-wrap"><table class="table-small"><thead><tr><th>GPU / 环境</th><th>实例</th><th>动作步</th><th>任务进度</th><th>已运行</th></tr></thead><tbody>${currentRows||"<tr><td colspan='5'>等待环境初始化或回合重置…</td></tr>"}</tbody></table></div></div>`:"";
     const notice=debug?"调试回合不计入正式成功率和平均 Q。":r.missing_q_score_episodes>0?`有 ${r.missing_q_score_episodes} 个有效回合未记录 Q，当前平均 Q 不代表完整成绩。`:"";
     const failure=r.failure_reason, failureNotice=failure?`<p class="notice error">评估异常：${esc(failure.message)} GPU ${esc(safe(failure.gpu_index))} / env ${esc(safe(failure.env_idx))} · 实例 ${esc(safe(failure.instance_id))} · seed ${esc(safe(failure.seed))}</p>`:"";
@@ -1484,16 +1530,19 @@
   $('review-secondary-edit').onclick=()=>void mutateReviewOption('supplement','rename');
   $('review-secondary-delete').onclick=()=>{if($('review-secondary-specific').value&&confirm('仅从当前阶段删除所选补充原因？'))void mutateReviewOption('supplement','delete');};
   async function refresh(){
+    if(refreshInFlight)return;
+    refreshInFlight=true;
     void refreshServices();
     const benchmark=typeof window!=='undefined'?window.benchmarkWorkbench:null;
-    if(benchmark && !benchmark.isNative()){await benchmark.refresh();return;}
     try {
+      if(benchmark && !benchmark.isNative()){await benchmark.refresh();return;}
       const res=await fetch("/api/results",{cache:"no-store"}); const data=await res.json();
       if(typeof window!=='undefined' && window.benchmarkWorkbench && !window.benchmarkWorkbench.isNative())return;
       const old=selected?._folder; runs=data.runs||[]; selected=runs.find(r=>r._folder===old)||runs[0]||null;
       $("caption").textContent=`自动刷新 · 最近更新 ${data.updated_at} · ${runs.length} 次评估`;
       render();if(activePage==='launch'){renderLaunchTemplates();void refreshLaunchJobs();void refreshInferenceJobs();}
     } catch(e){$("caption").textContent=`读取失败：${e.message}`;}
+    finally{refreshInFlight=false;}
   }
   $("run-search").oninput=render; $("status-filter").onchange=render;
   $('preview-toggle').onchange=togglePreview;
