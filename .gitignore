@@ -6,9 +6,6 @@ __pycache__/
 .venv/
 build/
 dist/
-datasets/**/*.npz
-datasets/**/*.tfrecord
-datasets/**/*.tfrecords
 checkpoints/**/*.pt
 checkpoints/**/*.pth
 checkpoints/**/*.safetensors
@@ -17,12 +14,10 @@ references/upstream/
 
 # Local resource links and large assets are machine-specific.
 /checkpoints/behavior_50t_checkpoint
-/datasets/b1k2025/parquet
-/datasets/b1k2025/meta-candidate
-/datasets/simulation/behavior-1k-assets
-/datasets/simulation/omnigibson-robot-assets
-/datasets/simulation/2025-challenge-task-instances
-/datasets/simulation/b1k2025
+/checkpoints/groot_n1d6_behavior1k/
+/.cache/
+/assets/simulation/
+/assets/datasets/
 /env/b1k2025-sim
 /env/isaac-sim-4.5
 /src/simulation/omnigibson
@@ -32,8 +27,6 @@ references/upstream/
 /.hermes/
 /build/
 /dist/
-/datasets/b1k2025/videos
-/datasets/b1k2025/meta
 
 # Paper reference PDFs (103M, too large for git)
 /paper/references/*.pdf
@@ -44,3 +37,27 @@ references/upstream/
 
 # Third-party reference source (read-only, 268 files)
 /src/references/
+
+# Optional quick benchmark checkout and isolated simulator environment.
+/third_party/LIBERO/
+/env/libero-smoke/
+/env/.uv-cache/
+
+# Evaluation artifacts and temporary data
+/Output/
+/agent_runs/
+/evaluation/.trash/
+/evaluation/V_0/
+/evaluation/V_1/
+/evaluation/logs/
+/evaluation/results/
+
+# Development and CI artifacts
+/.agents/
+/.codex/
+/.claude/
+/related_work/
+/src/references_code/
+
+# Cached files
+*.bak

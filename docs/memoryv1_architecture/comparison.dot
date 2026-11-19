@@ -1,0 +1,40 @@
+digraph comparison {
+  graph [rankdir=TB, bgcolor="white", pad="0.35", nodesep="0.5", ranksep="0.6",
+    fontname="Noto Sans CJK SC", fontsize=22, labelloc=t, compound=true,
+    label="MemoryVLA → 当前 MemoryV1\n保留双路检索 / 门控 / 合并；改变底座、读出和动作条件接口"];
+  node [shape=box, style="rounded,filled", fillcolor="#EFF6FF", color="#93B4D8",
+    fontname="Noto Sans CJK SC", fontsize=14, fontcolor="#16324F", margin="0.20,0.16", penwidth=1.3];
+  edge [color="#61758A", arrowsize=0.7, penwidth=1.4, fontname="Noto Sans CJK SC", fontsize=11];
+  subgraph cluster_ref {
+    label="原 MemoryVLA · 论文 / 本地固定参考"; fontsize=18; color="#CCD8E4"; style="rounded";
+    ri [label="当前 RGB + 指令\n常用单路第三人称图像"];
+    rv [label="Prismatic VLM\nDINOv2 + SigLIP → LLaMA-7B"];
+    rx [label="感知：视觉编码器输出（投影前）→ SE → 256×256\n认知：EOS → 1×4096"];
+    rm [label="双路 MemoryBank · 默认各 16 槽\n两层单头检索 + K 时间编码\n门控融合 + 相邻最相似槽合并\n论文写融合 F；参考代码默认写当前特征", fillcolor="#DEF7F0", color="#4CA991"];
+    rz [label="动作条件：完整融合特征 F_p / F_c\n认知条件拼入动作序列\n感知条件进入交叉注意力", fillcolor="#FFF0D7", color="#DA9C3D"];
+    ra [label="DiT-L：24 层 / 1024 宽\n噪声预测 MSE · 通常 10 步 DDIM\n典型输出 16×7"];
+    ri -> rv -> rx -> rm -> rz -> ra;
+  }
+  subgraph cluster_v1 {
+    label="当前 MemoryV1 · Task40 step4000 scalar / EOS / value"; fontsize=18; color="#4CA991"; style="rounded";
+    vi [label="当前三路 RGB + 指令\nstate 另走原动作分支"];
+    vv [label="GR00T N1.6 / Eagle（冻结）\nSigLIP2 + mlp1 → 保留 16 层 Qwen3 主干"];
+    vx [label="感知：视觉投影后 → 每相机 SE → 243×256\n认知：有效 user EOS → 1×2048"];
+    vm [label="双路 MemoryBank · 各 64 槽\n保留两层检索 / 门控 / 合并\n新增认知 Q/K 输入 LayerNorm\n融合 F.detach() 写库；另行读出 r 用于动作", fillcolor="#DEF7F0", color="#4CA991"];
+    vz [label="动作读出：r=(1−g)·末层历史 Value 消息\nP 路经零初始化 W_p，只加图像位置\nC 路经零初始化 α_c，只加 EOS\n保留原完整上下文 H 与 mask", fillcolor="#FFF0D7", color="#DA9C3D", penwidth=2];
+    va [label="原 GR00T 动作专家（冻结）\n32 层 / 内部 1536 宽 · 速度预测 MSE\n4 次 Euler · 50×128 → B1K 32×23"];
+    vi -> vv -> vx -> vm -> vz -> va;
+  }
+  {rank=same; ri; vi;}
+  {rank=same; rv; vv;}
+  {rank=same; rx; vx;}
+  {rank=same; rm; vm;}
+  {rank=same; rz; vz;}
+  {rank=same; ra; va;}
+  ri -> vi [style=invis];
+  rv -> vv [style=invis];
+  rx -> vx [style=invis];
+  rm -> vm [style=invis];
+  rz -> vz [style=invis];
+  ra -> va [style=invis];
+}

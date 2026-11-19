@@ -1,0 +1,22 @@
+digraph model {
+      graph [rankdir=TB, bgcolor="#ffffff", pad="0.3", nodesep="0.34", ranksep="0.55",
+             fontname="Noto Sans CJK SC", fontsize=20, compound=true];
+      node [shape=box, style="rounded,filled", color="#cbd5e1", fillcolor="#f1f5f9",
+            fontcolor="#172554", fontname="Noto Sans CJK SC", fontsize=17, margin="0.20,0.15", penwidth=1.3];
+      edge [color="#64748b", penwidth=1.6, arrowsize=0.8, fontname="Noto Sans CJK SC", fontsize=13];
+      
+      urdf [label="URDF：父子边 / 类型 / 轴 / origin\nlimits / 质量 / 惯性 / 几何", fillcolor="#f5f3ff"];
+      mapping [label="显式 mapping\n关节名称 ↔ OG索引 ↔ state / action维", fillcolor="#f5f3ff"];
+      measured [label="当前 q / 可用 qvel\n当前局部底盘速度 + availability mask"];
+      robotgraph [label="RobotGraph\n结构属性 [N,27] + 拓扑 mask", fillcolor="#ede9fe"];
+      fk [label="base_link 系 FK（当前观测）\n位置3 + 旋转6 + 有效位", fillcolor="#ede9fe"];
+      dyn [label="动态属性 [B,N,16]\nq编码 / qvel / 测量mask / FK / FK有效位", fillcolor="#ede9fe"];
+      embed [label="结构MLP + 动态MLP + 底盘Linear\n统一到128维", fillcolor="#ede9fe"];
+      attn [label="2层拓扑 Transformer（4 heads）\n仅允许图定义的局部交互", fillcolor="#ede9fe", color="#8b5cf6"];
+      tokens [label="Body Tokens [B,N,128]\nN随图变化；Padding 与缺测不同"];
+      pooled [label="排除 Padding 后均值池化\nBody bₜ：[B,128]", fillcolor="#fef3c7"];
+      urdf -> robotgraph; mapping -> measured; robotgraph -> fk; measured -> fk;
+      measured -> dyn; fk -> dyn; robotgraph -> embed; dyn -> embed; measured -> embed [label="局部速度6维"];
+      embed -> attn; robotgraph -> attn [style=dashed,label="拓扑约束"]; attn -> tokens -> pooled;
+    
+    }

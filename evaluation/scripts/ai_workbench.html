@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>研究协作 · GR00T 工作台</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/ai_workbench.css">
+  <script src="/ai_workbench.js" defer></script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="研究任务">
+      <a class="brand" href="/" data-workbench-link><span class="brand-icon">G</span><span><strong>GR00T</strong><small>研究工作台</small></span><span class="workspace-tag">LAB</span></a>
+      <button id="new-task" class="new-task" type="button"><span>＋</span> 新建研究任务 <kbd>N</kbd></button>
+      <button id="project-overview" class="overview-link" type="button" aria-current="page">▦　项目总览 <span>→</span></button>
+      <label class="search"><span aria-hidden="true">⌕</span><input id="task-search" type="search" placeholder="搜索任务" aria-label="搜索任务"></label>
+      <div class="sidebar-label"><span>研究任务</span><span id="task-count"></span></div>
+      <div class="list-filters" aria-label="任务筛选"><button data-filter="all" aria-pressed="true" type="button">全部</button><button data-filter="attention" aria-pressed="false" type="button">需要我处理 <span id="attention-count"></span></button></div>
+      <div id="task-list" class="task-list"></div>
+      <div class="sidebar-bottom"><a href="/" data-workbench-link><span>▤</span> 训练与评估 <span>↗</span></a><a href="/registry" data-workbench-link><span>◫</span> 实验台账 <span>↗</span></a><a href="/ai/architecture"><span>⊞</span> 架构解释版 <span>↗</span></a><div class="user-row"><span class="user-avatar">我</span><div><strong>我的研究空间</strong><small>MemoryVLA 项目</small></div><span class="online-dot"></span></div></div>
+    </aside>
+    <main>
+      <header class="topbar"><div class="breadcrumb"><span>MemoryVLA</span><span class="slash">/</span><strong id="breadcrumb-current">研究总览</strong></div><div class="topbar-right"><span class="prototype-label"><i></i>前端原型 · 全部为模拟数据</span><button id="demo-button" class="quiet" type="button" aria-haspopup="dialog">模拟后台状态</button></div></header>
+      <section id="project-workspace" class="project-workspace"><div class="project-heading"><div><div class="eyebrow">RESEARCH OPERATIONS</div><h1>研究总览</h1><p>统一追踪研究目标、阶段产物、执行状态和待审事项。</p></div><button class="primary" type="button" id="overview-new-task">＋ 新建研究任务</button></div><div id="project-metrics" class="project-metrics"></div><div class="overview-grid"><section class="surface"><div class="section-heading"><h2>研究任务进度</h2><span>各任务使用独立方案版本与运行快照</span></div><div id="project-task-table" class="table-scroll"></div></section><section class="surface"><div class="section-heading"><h2>待审与异常</h2><span id="control-count"></span></div><div id="control-list"></div></section></div><section class="surface project-activity"><div class="section-heading"><h2>最近执行活动</h2><span>AI 动作、系统执行与人工决定统一记录</span></div><div id="project-activity"></div></section></section>
+      <section id="empty-workspace" class="empty-workspace" hidden>
+        <div class="welcome"><div class="eyebrow">NEW RESEARCH TASK</div><h1>定义研究任务</h1><p>建立研究目标、对照方式与可执行边界，再进入方案审核。</p></div>
+        <form id="new-form" class="surface new-task-form"><label class="field">研究问题<textarea id="new-question" maxlength="2000" rows="3" required placeholder="例如：验证本次 Memory 修改是否改善动作预测。"></textarea></label><label class="field">判定依据<textarea id="new-criterion" maxlength="2000" rows="2" required placeholder="例如：固定数据、起点与训练预算，比较独立 Episode 的配对动作误差。"></textarea></label><div class="form-grid"><label class="field">任务类型<select id="new-kind"><option value="compare">方法改进 · 配对对照</option><option value="diagnose">问题诊断 · 历史干预</option><option value="evaluate">已有权重 · 固定评估</option></select></label><label class="field">验证协议<select id="new-protocol"><option value="offline">离线动作诊断 · MAE₈</option><option value="b1k">B1K 闭环 · Q-score</option><option value="libero">LIBERO · Spatial 成功率</option></select></label></div><div class="section-heading"><h3>关联材料</h3><button type="button" class="text-button" id="new-materials">＋ 从台账选择</button></div><div id="new-context" class="context-chips"></div><div class="form-note">当前按所选类型生成示例方案，尚未调用 AI。资源列表也为模拟台账。</div><div class="form-actions"><button type="button" id="cancel-new-task">返回总览</button><button type="submit" class="primary">建立任务与方案草稿</button></div></form>
+      </section>
+
+      <section id="task-workspace" class="task-workspace">
+        <header id="task-header" class="task-header"></header>
+        <div id="task-milestones" class="task-milestones" aria-label="研究阶段"></div>
+        <div id="control-gate" class="control-gate" aria-label="阶段控制节点"></div>
+        <nav class="task-tabs" role="tablist" aria-label="任务内容"><button id="tab-plan" role="tab" aria-selected="true" aria-controls="panel-plan" data-tab="plan" type="button">研究方案</button><button id="tab-code" role="tab" aria-selected="false" aria-controls="panel-code" data-tab="code" tabindex="-1" type="button">代码与审查</button><button id="tab-execution" role="tab" aria-selected="false" aria-controls="panel-execution" data-tab="execution" tabindex="-1" type="button">资源与执行</button><button id="tab-results" role="tab" aria-selected="false" aria-controls="panel-results" data-tab="results" tabindex="-1" type="button">评估与结论</button><button id="tab-records" role="tab" aria-selected="false" aria-controls="panel-records" data-tab="records" tabindex="-1" type="button">决策记录</button></nav>
+        <div class="task-body">
+          <div class="task-detail-column">
+            <section id="panel-plan" role="tabpanel" aria-labelledby="tab-plan"></section>
+            <section id="panel-code" role="tabpanel" aria-labelledby="tab-code" hidden></section>
+            <section id="panel-execution" role="tabpanel" aria-labelledby="tab-execution" hidden></section>
+            <section id="panel-results" role="tabpanel" aria-labelledby="tab-results" hidden></section>
+            <section id="panel-records" role="tabpanel" aria-labelledby="tab-records" hidden><div id="decision-records"></div><form id="message-form" class="record-form"><label class="field">新增决策记录<textarea id="message" maxlength="2000" rows="3" required placeholder="记录研究判断、变更原因或下一轮假设。调整执行参数请使用“修订方案”。"></textarea></label><button type="submit">保存记录</button><span>记录不修改当前方案或运行参数</span></form></section>
+          </div>
+          <aside id="task-context" class="task-context" aria-label="任务约束与产物"></aside>
+        </div>
+      </section>
+      <footer class="workspace-footer"><span>前端交互原型 · AI 行为、资源状态和实验成绩均为示例</span><span id="save-state" role="status">本地演示数据</span></footer>
+    </main>
+  </div>
+
+  <dialog id="materials-dialog" aria-labelledby="materials-title"><form id="materials-form"><div class="dialog-heading"><div><div class="eyebrow">共享资源目录</div><h2 id="materials-title">关联研究材料</h2><p>选择当前任务可以使用的材料。此列表为界面示例。</p></div><button type="button" class="close-button" data-close="materials-dialog" aria-label="关闭">×</button></div><div class="dialog-body" id="materials-list"></div><div class="dialog-footer"><span>正式接入后来自同一实验台账</span><button type="button" data-close="materials-dialog">取消</button><button type="submit" class="primary">使用所选材料</button></div></form></dialog>
+  <dialog id="plan-dialog" aria-labelledby="plan-title"><form id="plan-form"><div class="dialog-heading"><div><div class="eyebrow">本轮实验约定</div><h2 id="plan-title">调整方案</h2><p id="plan-edit-note"></p></div><button type="button" class="close-button" data-close="plan-dialog" aria-label="关闭">×</button></div><div class="dialog-body"><label class="field">要回答的问题<textarea name="question" rows="2" required maxlength="2000"></textarea></label><label class="field">这次怎么验证<textarea name="criterion" rows="2" required maxlength="2000"></textarea></label><div class="form-grid"><label class="field">验证方式<select name="protocol"><option value="offline">离线动作诊断 · MAE₈</option><option value="b1k">B1K 闭环评估 · Q-score</option><option value="libero">LIBERO · Spatial 成功率</option></select></label><label class="field">任务编号<input name="tasks" required pattern="\s*\d+\s*(,\s*\d+\s*)*"><small>多个编号用英文逗号分隔</small></label><label class="field" id="budget-field">每组训练步数<input name="steps" type="number" min="1" max="100000" required></label><label class="field">工作范围<select name="scope"><option value="research">实现、检查、训练与评估</option><option value="evaluate">仅评估已有权重</option></select></label></div><p id="plan-error" class="error" role="alert" hidden></p></div><div class="dialog-footer"><span>已完成的实验保留原方案</span><button type="button" data-close="plan-dialog">取消</button><button class="primary" type="submit">保存，重新确认</button></div></form></dialog>
+  <dialog id="artifact-dialog" class="wide-dialog" aria-labelledby="artifact-title"><div class="dialog-heading"><div><div class="eyebrow">研究产物</div><h2 id="artifact-title"></h2></div><button type="button" class="close-button" data-close="artifact-dialog" aria-label="关闭">×</button></div><div id="artifact-body" class="dialog-body"></div><div class="dialog-footer"><span>当前内容均为演示示例</span><button type="button" data-close="artifact-dialog">关闭</button></div></dialog>
+  <dialog id="demo-dialog" aria-labelledby="demo-title"><div class="dialog-heading"><div><div class="eyebrow">仅用于评审原型</div><h2 id="demo-title">预览后台返回的状态</h2><p>日常使用时由后台更新；这里手动模拟，不提交真实作业。</p></div><button type="button" class="close-button" data-close="demo-dialog" aria-label="关闭">×</button></div><div class="dialog-body"><div id="demo-actions" class="demo-actions"></div><button type="button" id="reset-demo" class="reset-demo">恢复初始示例任务</button></div></dialog>
+  <div id="toast" role="status" hidden></div>
+</body>
+</html>

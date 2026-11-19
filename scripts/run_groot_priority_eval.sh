@@ -1,0 +1,1 @@
+../evaluation/scripts/run_groot_priority_eval.sh

@@ -1,0 +1,110 @@
+<style>
+.benchmark-switch{background:#f5f9f7;border-bottom:1px solid var(--line);padding:14px max(24px,calc((100vw - 1488px)/2));display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.benchmark-switch label{display:flex;gap:12px;align-items:center;font-size:12px;font-weight:600;color:var(--muted)}
+.benchmark-switch select{font-family:inherit;font-size:14px;font-weight:600;border:1px solid #bfd7c9;border-radius:8px;background:white;padding:9px 34px 9px 12px;min-width:210px}
+.benchmark-switch p{margin:0;font-size:12px;color:var(--muted)}
+.benchmark-switch strong{color:var(--ink);font-size:13px;display:block;margin-bottom:4px}
+.bench-layout{display:grid;grid-template-columns:300px minmax(0,1fr);gap:20px;align-items:start}
+.bench-body{padding:20px}.bench-subtle{color:var(--muted);font-size:12px;line-height:1.7}.bench-status{font-size:11px;border-radius:5px;padding:3px 7px;background:#eef2ef;color:#53665a;white-space:nowrap}
+.bench-status.complete{background:#e8f5ef;color:#087f68}.bench-status.failed,.bench-status.interrupted{background:#fceceb;color:#a63730}.bench-status.running,.bench-status.starting{background:#fff3df;color:#9a651b}
+.bench-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;padding:20px}
+.bench-form label{display:grid;gap:7px;font-size:12px;color:var(--muted)}
+.bench-form input,.bench-form select,.bench-search{border:1px solid var(--line);border-radius:7px;padding:9px 10px;font:inherit;min-width:0;width:100%;box-sizing:border-box;background:#fafcfb;color:var(--ink)}
+.bench-wide{grid-column:1/-1}.bench-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.bench-actions .bench-subtle{margin-right:auto}
+.bench-message{white-space:pre-wrap;line-height:1.7;font-size:12px;color:var(--green);overflow-wrap:anywhere}.bench-message.error{color:var(--red)}
+.bench-jobs{max-height:620px;overflow:auto}.bench-job{width:100%;text-align:left;border:0;border-bottom:1px solid var(--line);border-radius:0;background:white;padding:14px;display:grid;gap:7px}
+.bench-job[aria-selected=true]{background:#edf6f1;box-shadow:inset 3px 0 #087f68}.bench-job-top{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:12px}
+.bench-job small{font-size:11px;color:var(--muted)}.bench-empty{padding:32px 20px;color:var(--muted);text-align:center;font-size:13px;line-height:1.8}
+.bench-note{border-left:3px solid #e3c27b;background:#fffaf0;padding:12px 15px;font-size:12px;line-height:1.7;color:#806129;margin:0 0 18px}
+.bench-table{width:100%;border-collapse:collapse;font-size:12px}.bench-table th,.bench-table td{text-align:left;padding:11px 10px;border-bottom:1px solid var(--line)}.bench-table th{color:var(--muted);font-weight:500}.bench-table-scroll{overflow-x:auto}
+.bench-kpis{display:flex;gap:28px;flex-wrap:wrap;margin:0 0 18px}.bench-kpis small{color:var(--muted);display:block;font-size:11px}.bench-kpis strong{font-size:22px;font-weight:600;line-height:1.7}
+.bench-chart{width:100%;height:180px;display:block;background:#fafcfb;border-radius:7px}.bench-legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11px;margin:10px 0 18px}
+.bench-camera-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.bench-camera-grid figure{margin:0;border:1px solid var(--line);border-radius:8px;overflow:hidden}.bench-camera-grid img{width:100%;max-height:300px;object-fit:contain;background:#17251e;display:block}.bench-camera-grid figcaption{padding:8px;font-size:11px;color:var(--muted)}
+.bench-progress{width:100%;height:7px;accent-color:#087f68;margin:10px 0}.bench-configuration{white-space:pre-wrap;overflow-wrap:anywhere;font-size:11px;background:#f5f7f6;padding:12px;max-height:380px;overflow:auto}
+.bench-next{display:flex;gap:12px;align-items:center;justify-content:space-between;border-top:1px solid var(--line);padding:16px 20px;font-size:12px;color:var(--muted)}
+#bench-result-switch{display:flex;gap:8px;align-items:center;margin-bottom:16px;flex-wrap:wrap}#bench-result-switch button[aria-pressed=true]{background:var(--soft);color:var(--green);border-color:#bfded0}
+#bench-code-checks{margin-bottom:18px;background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden}#bench-code-checks>summary{padding:15px 20px;cursor:pointer;font-size:13px;font-weight:600}#bench-code-checks>summary small{font-weight:400;color:var(--muted);margin-left:10px}
+#bench-code-checks .bench-form{border-top:1px solid var(--line)}#bench-tasks{min-height:112px}
+@media(max-width:800px){.benchmark-switch{padding:12px 16px;gap:10px}.bench-layout{grid-template-columns:1fr}.bench-jobs{max-height:230px}.bench-form{padding:16px}.bench-body{padding:16px}}
+@media(max-width:520px){.benchmark-switch label{width:100%}.benchmark-switch select{flex:1;min-width:0}.bench-form{grid-template-columns:1fr}.bench-camera-grid{grid-template-columns:1fr}.bench-next{flex-direction:column;align-items:flex-start}}
+</style>
+<div id="benchmark-selector" class="benchmark-switch">
+ <label for="benchmark-choice">Benchmark<select id="benchmark-choice"><option value="b1k">BEHAVIOR-1K</option><option value="libero">LIBERO</option><option value="mikasa">MIKASA-Robo · 待接入</option><option value="simpler">SimplerEnv · 待接入</option></select></label>
+ <div><strong id="benchmark-capability">训练、策略推理与闭环评估已接入</strong><p id="benchmark-description">三步共用当前 benchmark，记录按 benchmark 分开查看。</p></div>
+</div>
+<div id="bench-workspace" hidden>
+ <div id="bench-training" hidden>
+  <div class="page-intro"><div><h2 id="bench-training-title">LIBERO · 训练</h2><p class="bench-subtle">所选 benchmark 的数据与机器人接口决定可用训练方式。</p></div></div>
+  <section id="bench-training-unavailable"><div class="detail-heading"><h2>训练适配待接入</h2><span class="bench-status">尚不可启动</span></div>
+   <div class="bench-body"><p id="bench-training-description">当前已接通 LIBERO 环境检查；LIBERO 示教数据、动作归一化和机器人接口尚未接入当前训练器。</p><p class="bench-subtle">现有 B1K 训练任务与权重不会用于这里的训练。</p></div>
+   <div class="bench-next"><span id="bench-training-next">可以先检查仿真环境，再准备对应示教与策略适配。</span><button type="button" id="bench-to-launch">进入推理评估 →</button></div>
+  </section>
+  <section id="libero-training-card" hidden><div class="detail-heading"><h2>LIBERO · 新建训练 / 断点续训</h2><span class="bench-status">本机单卡</span></div>
+   <form id="libero-training-form" class="bench-form">
+    <label>套件<select id="libero-train-suite"></select></label><label>本机 GPU<select id="libero-train-gpu"></select></label>
+    <label class="bench-wide">训练任务<select id="libero-train-tasks" multiple required size="5"></select><small>按 Ctrl / Command 多选；每任务使用全部可用示教。</small></label>
+    <div class="bench-wide bench-actions"><span id="libero-data-state" class="bench-subtle"></span><button type="button" id="libero-prepare-data">准备所选任务数据</button></div>
+    <label>模型<select id="libero-train-arm"><option value="memory">V1 · Memory</option><option value="baseline">GR00T · Baseline</option></select></label>
+    <label>微调方式<select id="libero-train-mode"><option value="action_full">动作头全量 + 记忆</option><option value="lora">动作头 LoRA + 记忆</option></select><small>两种方式均冻结 Eagle；Baseline 不含记忆。</small></label>
+    <label class="bench-wide">初始化 / 续训权重<select id="libero-train-checkpoint"></select><small>通用预训练权重新建训练；LIBERO checkpoint 恢复模型与优化器，步数为目标总步数。</small></label>
+    <label>训练预算<select id="libero-train-preset"><option value="quick">快速迭代</option><option value="paper">论文步数参考</option><option value="custom">手动设置</option></select></label>
+    <label>目标总步数<input id="libero-train-steps" type="number" min="1" max="100000" value="300" required></label>
+    <details class="bench-wide"><summary>高级参数</summary><div class="bench-form">
+     <label>学习率<input id="libero-train-lr" type="number" min="0.00000001" max="0.001" step="any" value="0.00001" required></label>
+     <label>保存间隔<input id="libero-train-save" type="number" min="1" max="10000" value="100" required></label>
+     <label>每组有序帧数<input id="libero-train-group" type="number" min="1" max="32" value="16" required></label>
+     <label>随机种子<input id="libero-train-seed" type="number" min="0" max="4294967295" value="42" required></label>
+    </div></details>
+    <label class="bench-wide">备注<input id="libero-train-notes" maxlength="500" placeholder="例如：Spatial 三任务 · Memory 首轮"></label>
+    <div id="libero-training-message" class="bench-message bench-wide" role="status"></div>
+    <div class="bench-actions bench-wide"><span id="libero-recommendation" class="bench-subtle">快速迭代：每任务 300 步，上限 3000 步；用于检查与初步对照。</span><button id="libero-train-preview" type="button">检查配置</button><button id="libero-train-start" class="primary-button" type="submit">启动训练</button></div>
+   </form>
+  </section>
+ </div>
+ <div id="bench-launch" hidden>
+  <div class="page-intro"><div><h2 id="bench-launch-title">LIBERO · 推理评估</h2><p class="bench-subtle" id="bench-launch-description">先选择当前可运行的评估方式。</p></div></div>
+  <div class="bench-layout">
+   <section><div class="section-head"><h2>1 · 推理策略</h2></div><div class="bench-body"><strong id="bench-policy-title">GR00T · LIBERO</strong><p class="bench-subtle" id="bench-policy-description">选择 LIBERO 训练权重，自动加载策略并评估，结束后释放模型。</p><div class="bench-note" id="libero-policy-note">快测与完整时长评估分别标记；环境检查不使用模型。</div></div></section>
+   <section><div class="section-head"><h2>2 · 评估配置</h2><button type="button" id="bench-gpu-refresh">刷新资源</button></div>
+    <form id="bench-libero-form" class="bench-form">
+     <label class="bench-wide">运行方式<select id="libero-eval-kind"><option value="libero_eval">模型策略 · 闭环评估</option><option value="libero">零动作 · 环境检查</option></select></label>
+     <label class="bench-wide" id="libero-eval-checkpoint-field">LIBERO 权重<select id="libero-eval-checkpoint"></select></label>
+     <label>套件<select id="bench-suite"></select></label><label>本机 GPU<select id="bench-gpu"></select></label>
+     <label class="bench-wide">评估任务<select id="bench-tasks" multiple required aria-label="LIBERO 任务多选"></select><small>按住 Ctrl / Command 多选；默认 Task0。零动作环境检查每次最多 5 个任务。</small></label>
+     <label id="libero-eval-preset-field">评估协议<select id="libero-eval-preset"><option value="debug">快速调试 · 32 步 / 1 回合</option><option value="full">完整时长 · 50 回合 / 任务</option></select></label>
+     <label id="libero-eval-trials-field">每任务回合数<input id="libero-eval-trials" type="number" min="1" max="50" value="1"></label>
+     <label>每回合步数上限<input id="bench-steps" type="number" min="0" max="520" value="32" required><small id="libero-steps-help">0 表示套件完整时长；缩短时长仅用于调试。</small></label><label>环境 seed<input id="bench-seed" type="number" min="0" max="4294967295" value="42" required></label>
+     <label class="bench-wide">运行备注<input id="bench-notes" maxlength="500" placeholder="例如：验证环境安装 / 修改相机后回归"></label>
+     <div id="bench-libero-message" class="bench-message bench-wide" role="status"></div>
+     <div class="bench-actions bench-wide"><span class="bench-subtle" id="libero-eval-save-note">保存每回合录像、截图与结果</span><button type="button" id="bench-libero-preview">检查配置</button><button type="submit" id="bench-libero-start" class="primary-button">启动推理评估</button></div>
+    </form>
+    <div id="bench-not-connected" class="bench-body" hidden><p>此 benchmark 的运行环境和策略接口尚未接入。</p><button type="button" id="bench-switch-libero">切换到 LIBERO 环境检查</button></div>
+    <div class="bench-next"><span id="bench-last-run">结果会保存在当前 benchmark 下。</span><button type="button" id="bench-to-results">查看评估结果 →</button></div>
+   </section>
+  </div>
+ </div>
+ <div id="bench-results" hidden>
+  <div class="page-intro"><div><h2 id="bench-results-title">LIBERO · 评估结果</h2><p class="bench-subtle" id="bench-results-subtitle">环境检查记录独立保存，不参与 B1K 策略成绩。</p></div><button type="button" id="bench-run-new">＋ 新建检查</button></div>
+  <div class="bench-layout">
+   <section><div class="section-head"><h2>运行记录</h2><span id="bench-run-count" class="bench-subtle"></span></div><div class="bench-body"><input id="bench-search" class="bench-search" type="search" placeholder="搜索备注、检查类型…" aria-label="搜索 benchmark 记录"></div><div id="bench-job-list" class="bench-jobs"></div></section>
+   <section><div class="detail-heading"><div><h2 id="bench-detail-title">选择一次运行</h2><div id="bench-detail-subtitle" class="bench-subtle"></div></div><span id="bench-detail-status" class="bench-status"></span></div>
+    <div class="bench-body"><div class="bench-actions"><span id="bench-progress-label" class="bench-subtle"></span><button id="bench-stop" type="button" hidden>停止本次运行</button></div><progress id="bench-progress" class="bench-progress" max="1" value="0"></progress><div id="bench-detail-message" class="bench-message" role="status"></div></div>
+    <nav class="detail-tabs" aria-label="Benchmark 记录详情"><button type="button" data-bench-tab="metrics" aria-selected="true">指标与结论</button><button type="button" data-bench-tab="cameras" aria-selected="false">录像与相机</button><button type="button" data-bench-tab="logs" aria-selected="false">日志与配置</button></nav>
+    <div id="bench-pane-metrics" class="bench-body"></div><div id="bench-pane-cameras" class="bench-body" hidden></div>
+    <div id="bench-pane-logs" class="bench-body" hidden><pre id="bench-log" class="log"></pre><details><summary>运行配置与源码标识</summary><pre id="bench-config" class="bench-configuration"></pre></details><details><summary>原始指标报告</summary><pre id="bench-raw" class="bench-configuration"></pre></details></div>
+   </section>
+  </div>
+ </div>
+</div>
+<div id="bench-result-switch" hidden><span class="bench-subtle">BEHAVIOR-1K</span><button type="button" id="bench-policy-results" aria-pressed="true">策略评估</button><button type="button" id="bench-code-results" aria-pressed="false">开发快测</button></div>
+<details id="bench-code-checks" hidden><summary>训练前检查 <small>网络回归 / 真实动作短训练</small></summary>
+ <form id="bench-code-form" class="bench-form">
+  <div class="bench-wide bench-subtle">运行当前 V1 开发代码与固定 B1K 诊断样本，不评估训练表单选择的权重，也不保存正式训练模型。</div>
+  <label>检查项目<select id="bench-code-kind"><option value="network">网络回归 · 约 1 分钟</option><option value="action">真实动作短训练 · 每组约 3 分钟</option></select></label><label>本机 GPU<select id="bench-code-gpu"></select></label>
+  <label id="bench-arm-field" hidden>对照方式<select id="bench-arm"><option value="all">三组同初始化对照（推荐）</option><option value="memory">Memory · 完整记忆</option><option value="baseline">Baseline · 无记忆</option><option value="direct_empty">Direct · 关闭历史</option></select></label>
+  <label id="bench-code-steps-field" hidden>每组训练步数<input id="bench-code-steps" type="number" min="1" max="300" value="100"></label>
+  <label class="bench-wide">备注<input id="bench-code-notes" maxlength="500" placeholder="例如：修改检索后回归"></label>
+  <div id="bench-code-message" class="bench-message bench-wide" role="status"></div>
+  <div class="bench-actions bench-wide"><span class="bench-subtle">固定 GR00T-N1.6-3B 起点 · Task0/34/40 夹具</span><button type="button" id="bench-code-history">查看快测记录</button><button type="submit" id="bench-code-start">运行检查</button></div>
+ </form>
+</details>

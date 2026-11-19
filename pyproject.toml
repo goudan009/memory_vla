@@ -4,20 +4,28 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "vlamemory"
-version = "0.1.0"
-description = "Memory modules and OpenPI integration for vision-language-action models"
+version = "0.2.0"
+description = "PyTorch memory modules and GR00T N1.6 integration for vision-language-action models"
 requires-python = ">=3.10"
 dependencies = [
-    "einops>=0.7",
-    "flax>=0.9",
-    "jax>=0.4",
+    "torch>=2.0",
 ]
 
 [project.optional-dependencies]
-data   = ["torch>=2.0"]
-openpi = []   # pip install -e /nvme3/projects/vla_memory/code/openpi
+data = ["numpy>=1.24"]
+legacy-openpi = ["flax>=0.9", "jax>=0.4", "numpy>=1.24", "einops>=0.7"]
+# Version-specific model dependencies live in src/<version>/env/.
 
 [tool.setuptools.packages.find]
 where   = ["src"]
-include = ["vlamemory", "vlamemory.*"]
+include = ["vlamemory", "vlamemory.*", "v1_groot_memoryvla", "v1_groot_memoryvla.*", "v2_groot_memoryvla", "v2_groot_memoryvla.*", "v3_bodymemory", "v3_bodymemory.*"]
 namespaces = false
+
+[tool.setuptools.package-data]
+v2_groot_memoryvla = ["*.md", "configs/*.json"]
+v1_groot_memoryvla = ["README.md", "handoff.md", "LICENSE"]
+"v1_groot_memoryvla.configs" = ["deepspeed/*.json"]
+"v1_groot_memoryvla.model.modules" = ["nvidia/Eagle-Block2A-2B-v2/*.py", "nvidia/Eagle-Block2A-2B-v2/*.json", "nvidia/Eagle-Block2A-2B-v2/*.txt"]
+v3_bodymemory = ["README.md", "handoff.md", "LICENSE"]
+"v3_bodymemory.configs" = ["deepspeed/*.json"]
+"v3_bodymemory.model.modules" = ["nvidia/Eagle-Block2A-2B-v2/*.py", "nvidia/Eagle-Block2A-2B-v2/*.json", "nvidia/Eagle-Block2A-2B-v2/*.txt"]

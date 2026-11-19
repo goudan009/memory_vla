@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>AI 研究协作 · 架构解释版</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/ai_architecture.css">
+  <script src="/ai_architecture.js" defer></script>
+</head>
+<body>
+  <header class="app-header">
+    <a class="brand" href="/" data-workbench-link><span class="brand-mark">G</span><span><strong>GR00T <span>工作台</span></strong><small>训练、评估与研究协作</small></span></a>
+    <nav class="workbench-links" aria-label="工作台入口"><a href="/" data-workbench-link>训练与评估 ↗</a><a href="/registry" data-workbench-link>实验台账 ↗</a></nav>
+    <a class="preview-label" href="/ai">进入研究协作页面 ↗</a>
+  </header>
+  <main>
+    <div class="prototype-note"><span>当前为交互演示：AI、资源、代码和实验结果均为示例，操作保存在当前浏览器。</span><button type="button" id="reset-button" class="text-button">重置示例</button></div>
+    <nav class="view-nav" aria-label="研究协作页面"><button type="button" data-view="research" aria-current="page">研究任务</button><button type="button" data-view="team">角色与架构</button><button type="button" data-view="standards">标准与自动化</button><button type="button" data-view="knowledge">研究记录</button></nav>
+
+    <section id="view-research" class="view" aria-labelledby="research-title">
+      <div class="page-heading"><div><h1 id="research-title">你想验证什么？</h1><p>交办问题 → 审阅方案 → 复用工作台运行 → 查看证据与结论</p></div><button type="button" class="primary" id="new-task-button">＋ 交办研究任务</button></div>
+      <div class="research-layout">
+        <aside class="task-sidebar" aria-label="研究任务列表"><div class="section-heading"><h2>我的研究任务</h2><span id="task-count" class="muted"></span></div><div class="sidebar-search"><input id="task-search" type="search" placeholder="搜索研究问题" aria-label="搜索研究问题"></div><div id="task-list"></div><p class="sidebar-tip">先选择一个示例，右侧会告诉你当前要做什么。</p></aside>
+        <article class="task-detail" aria-label="当前研究任务">
+          <div id="task-heading"></div>
+          <ol id="stage-track" class="stage-track" aria-label="研究进度"></ol>
+          <div id="next-action" class="next-action" role="region" aria-label="当前交接"></div>
+          <nav class="detail-tabs" role="tablist" aria-label="研究任务详情"><button type="button" role="tab" id="tab-plan" data-tab="plan" aria-selected="true" aria-controls="panel-plan">方案与决策</button><button type="button" role="tab" id="tab-work" data-tab="work" aria-selected="false" aria-controls="panel-work" tabindex="-1">代码与执行</button><button type="button" role="tab" id="tab-results" data-tab="results" aria-selected="false" aria-controls="panel-results" tabindex="-1">结果与证据</button></nav>
+          <section id="panel-plan" class="tab-panel" role="tabpanel" aria-labelledby="tab-plan"></section>
+          <section id="panel-work" class="tab-panel" role="tabpanel" aria-labelledby="tab-work" hidden></section>
+          <section id="panel-results" class="tab-panel" role="tabpanel" aria-labelledby="tab-results" hidden></section>
+        </article>
+      </div>
+    </section>
+
+    <section id="view-team" class="view" aria-labelledby="team-title" hidden>
+      <div class="page-heading"><div><h1 id="team-title">谁负责判断，谁负责执行？</h1><p>五类职责，三个 AI 判断角色，两个固定执行服务。点选职责查看边界和交接。</p></div></div>
+      <div id="role-picker" class="role-picker" aria-label="研究职责"></div>
+      <div id="role-detail" class="surface role-detail" aria-live="polite"></div>
+      <div class="architecture-grid">
+        <section class="surface"><div class="section-heading"><h2>一次研究如何流转</h2><span class="tag">交接固定 · 内容开放</span></div><div class="handoff-flow"><div><b>1</b><strong>研究规划</strong><span>问题 → 实验方案</span></div><div><b>2</b><strong>代码工程</strong><span>方案 → 可审查变更</span></div><div><b>3</b><strong>资源与执行</strong><span>确认方案 → 实验产物</span></div><div><b>4</b><strong>评估分析</strong><span>证据 → 结论与下一轮</span></div></div><p class="section-note">结论回到研究规划。每次新尝试保留父任务和出发证据，失败实验也留下记录。</p></section>
+        <section class="surface"><div class="section-heading"><h2>人和 AI 使用同一套能力</h2></div><div class="shared-entry"><span>你 · 网页操作</span><span>AI · 工具调用</span><div><strong>同一套工作台服务与记录</strong><p>代码版本 · 资源目录 · 训练与评估入口 · 实验台账</p></div></div><p class="section-note">你调整共享方案后，AI 读取新修订；已经运行的实验保留当时的源码、配置和标准快照。</p></section>
+      </div>
+      <section class="surface references"><div class="section-heading"><h2>从这些项目借鉴什么</h2></div><div class="reference-grid"><a href="https://github.com/microsoft/RD-Agent" target="_blank" rel="noopener"><strong>RD-Agent ↗</strong><span>规划、实现、运行、反馈的阶段交接</span></a><a href="https://github.com/WecoAI/aideml" target="_blank" rel="noopener"><strong>AIDE ↗</strong><span>实验分支与逐次改进，保留失败尝试</span></a><a href="https://github.com/Fchaubard/autoresearcherUI" target="_blank" rel="noopener"><strong>autoresearcherUI ↗</strong><span>规划、实施与审议角色分离</span></a><a href="https://github.com/zenml-io/mcp-zenml" target="_blank" rel="noopener"><strong>ZenML MCP ↗</strong><span>已有平台能力对 AI 提供工具入口</span></a></div><p class="section-note">按职责参考这些设计，接入你现有的训练与评估能力。</p></section>
+      <details id="delivery-plan" class="surface references"><summary>查看落地方案：共享记录、工具约束与接入顺序</summary><div class="block" style="margin-top:20px"><h3>所有角色围绕同一份研究记录协作</h3><p>研究问题关联方案修订，方案关联代码变更与审查，运行保存源码、资源和标准快照，结论引用运行证据。下一轮研究保留父任务；失败记录也进入共享记录。</p></div><div class="block"><h3>怎样确保 AI 复用已有工作台</h3><p>网页和 AI 工具调用同一套服务。正式任务提交时绑定方案、源码和协议，由服务分发到现有训练、推理与评估入口。仅靠提示词或列出工具不能保证执行链路一致。</p></div><div class="block"><h3>按四步接入</h3><ol class="plain-list"><li>现在：确认前端里的角色分工、实验方案和交接方式。</li><li>共享数据：把研究任务、标准、审查与证据接到同一后端。</li><li>固定流程：串联已有检查、资源队列、训练与评估入口。</li><li>AI 判断：接入规划、代码工程、评估分析三类判断角色。</li></ol></div><p class="section-note">后续接入待你确认。当前所有按钮只模拟交互，不调用真实执行接口。</p></details>
+    </section>
+
+    <section id="view-standards" class="view" aria-labelledby="standards-title" hidden>
+      <div class="page-heading"><div><h1 id="standards-title">哪些事建立标准后持续执行？</h1><p>AI 在标准内探索；检查、排队、状态追踪和指标计算由固定程序完成。</p></div><span id="standard-version" class="tag"></span></div>
+      <div class="standards-layout"><form id="standards-form" class="surface settings-form"><div class="section-heading"><h2>共享标准 · 示例设置</h2></div><p class="section-note">保存为新版本，仅影响随后新建或重新生成的方案；已有运行保留原快照。</p><div class="form-grid"><label class="field">每分支默认训练步数<input name="defaultSteps" type="number" min="1" max="100000" required></label><label class="field">每分支预算上限<input name="maxSteps" type="number" min="1" max="100000" required></label><label class="field">失败后的最多重试次数<select name="retryLimit"><option value="0">0 次 · 直接等待处理</option><option value="1">1 次</option><option value="2">2 次</option></select></label></div><h3 class="form-section-title">事件触发规则</h3><p class="muted small">这里配置未来的后台行为；当前预览仍需点击按钮模拟交接。</p><label class="rule-option"><input type="checkbox" name="checkOnChange"><span><strong>代码变更后运行已有检查</strong><small>检查失败时停在审查阶段，保留失败输出。</small></span></label><label class="rule-option"><input type="checkbox" name="queueOnAvailable"><span><strong>资源满足条件时处理已确认任务</strong><small>通过同一队列分配资源并提交作业。</small></span></label><label class="rule-option"><input type="checkbox" name="evaluateOnCheckpoint"><span><strong>权重就绪后安排既定评估</strong><small>使用该方案绑定的协议和评估实例。</small></span></label><p id="standard-error" class="error-message" role="alert" hidden></p><div class="form-actions"><span id="standard-saved" role="status" class="muted small">设置保存在当前浏览器</span><button class="primary" type="submit">保存新标准版本</button></div></form>
+        <div class="standards-notes"><section class="surface"><div class="section-heading"><h2>评估协议各自固定</h2></div><div class="protocol-item"><strong>动作短窗诊断</strong><p>离线动作 MAE₈；正常、空或错误历史对照。</p></div><div class="protocol-item"><strong>B1K 闭环评估</strong><p>Q-score 与完整任务成功回合，关联相同实例。</p></div><div class="protocol-item"><strong>LIBERO 闭环评估</strong><p>套件内成功率；独立于 B1K 和离线动作误差。</p></div><p class="section-note">这些是协议示例。数据划分、完整时长、任务实例与指标实现，接入时由工作台的真实协议提供。</p></section><section class="surface"><div class="section-heading"><h2>保留判断自由的位置</h2></div><ul class="plain-list"><li>研究规划：提出假设、设计对照。</li><li>代码工程：实现方法、诊断错误。</li><li>评估分析：解释证据、建议下一步。</li></ul><p class="section-note">修改已确认的方案会创建新修订，重新确认后再运行。</p></section></div></div>
+    </section>
+
+    <section id="view-knowledge" class="view" aria-labelledby="knowledge-title" hidden>
+      <div class="page-heading"><div><h1 id="knowledge-title">先看做过什么，再决定下一步</h1><p>所有角色共享实验结论、失败记录和任务关系。</p></div><input id="knowledge-search" type="search" placeholder="搜索问题或结论" aria-label="搜索研究记录"></div><div id="knowledge-list"></div>
+    </section>
+    <footer><span>GR00T · AI 研究协作原型</span><span id="save-state" role="status">仅保存本地演示数据</span></footer>
+  </main>
+
+  <dialog id="task-dialog" aria-labelledby="dialog-title"><form id="task-form"><div class="dialog-heading"><div><h2 id="dialog-title">交办一个研究问题</h2><p>先说明想知道什么，AI 方案再交给你审阅。</p></div><button type="button" class="icon-button" data-close="task-dialog" aria-label="关闭">×</button></div><div class="dialog-body"><label class="field">你想验证什么？<textarea name="question" rows="2" maxlength="500" required placeholder="例如：我刚改了检索模块，想知道是否比当前版本更好。"></textarea></label><label class="field">你希望用什么证据回答？<textarea name="criterion" rows="2" maxlength="1000" required placeholder="例如：同样的数据、起点与预算下，比较动作误差；不要只看训练 loss。"></textarea></label><fieldset class="task-types"><legend>这次主要做什么？</legend><label><input name="kind" type="radio" value="compare" checked><span><strong>验证改进</strong><small>当前版本与候选方法对比</small></span></label><label><input name="kind" type="radio" value="diagnose"><span><strong>诊断原因</strong><small>控制变量，查清问题</small></span></label><label><input name="kind" type="radio" value="evaluate"><span><strong>评估已有权重</strong><small>复用已有模型与代码</small></span></label></fieldset><details id="advanced-settings"><summary>高级设置：协议、任务、预算与介入方式</summary><div class="form-grid advanced-grid"><label class="field">验证协议<select name="protocol"><option value="offline">动作短窗诊断 · MAE₈</option><option value="b1k">B1K 闭环 · Q-score</option><option value="libero">LIBERO 闭环 · 成功率</option></select></label><label class="field">任务编号<input name="tasks" value="0, 34, 40" required pattern="\s*\d+\s*(,\s*\d+\s*)*"><small>逗号分隔；LIBERO 此示例使用 Spatial 套件。</small></label><label class="field" id="steps-field">每分支训练步数<input name="steps" type="number" min="1" max="100000" required></label><label class="field">设备偏好<select name="device"><option value="auto">按能力和占用分配</option><option value="a100">A100</option><option value="local">本机 GPU</option></select></label><label class="field">权重起点<select name="checkpoint"><option value="base">通用预训练权重 · 示例</option><option value="behavior">B1K 专用权重 · 示例</option><option value="existing">已登记权重 · 接入后选择</option></select></label><label class="field">人工介入方式<select name="mode"><option value="controlled">确认方案和代码后按预算执行</option><option value="staged">每次交接由我确认</option></select></label></div><label class="checkbox-field"><input name="allowCode" type="checkbox" checked>允许实现与修改代码（仍需独立审查）</label></details><p id="form-error" class="error-message" role="alert" hidden></p><div class="form-note">本页按所选类型组织示例方案，尚未调用 AI。真实数据、权重、代码版本需在后续接入时绑定。</div></div><div class="dialog-footer"><span id="form-standard" class="muted small"></span><button type="button" data-close="task-dialog">取消</button><button type="submit" class="primary">准备示例方案</button></div></form></dialog>
+  <dialog id="reset-dialog" aria-labelledby="reset-title"><div class="dialog-heading"><div><h2 id="reset-title">恢复初始示例？</h2><p>清除这版原型在当前浏览器保存的任务、标准和演示记录。</p></div></div><div class="dialog-footer"><button type="button" data-close="reset-dialog">取消</button><button type="button" class="primary" id="confirm-reset">恢复示例</button></div></dialog>
+  <div id="toast" role="status" hidden></div>
+</body>
+</html>

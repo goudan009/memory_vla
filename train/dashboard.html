@@ -1,0 +1,305 @@
+<style>
+#page-training .train-sidebar-actions{padding:12px 14px}
+#page-training .train-sidebar-actions button{width:100%;color:var(--green);background:var(--soft);border-color:#bfded0}
+#page-training .train-jobs{display:grid;gap:8px;padding:0 10px 10px;max-height:calc(100vh - 430px);overflow:auto;scrollbar-gutter:stable}
+#page-training .train-job{font-size:12px}
+#page-training .train-job strong{font-size:13px}
+#page-training .train-job .subtle{margin-top:4px}
+#page-training .train-task-group{min-width:0;border:1px solid var(--line);border-radius:9px;background:#fff}
+#page-training .train-task-group > summary{display:flex;align-items:center;gap:6px;padding:9px 10px;cursor:pointer;font-size:12px;font-weight:600;list-style:none}
+#page-training .train-task-group > summary::before{content:'▸';color:var(--muted)}
+#page-training .train-task-group[open] > summary::before{content:'▾'}
+#page-training .train-task-group > summary small{margin-left:auto;color:var(--muted);font-size:10px;font-weight:400}
+#page-training .train-task-runs{display:grid;gap:6px;padding:0 6px 6px}
+#page-training .train-job-stats{display:flex;justify-content:space-between;gap:8px;font-variant-numeric:tabular-nums}
+#page-training .train-content{min-width:0}
+#page-training #train-config{overflow:clip}
+#page-training .train-config-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 16px;padding:14px 20px}
+#page-training .train-config-fields label{font-size:12px;color:#5e7268;display:grid;gap:5px;min-width:0;align-content:start}
+#page-training #train-validation-gpu,#page-training #train-validation-percent{height:38px}
+#page-training input:not([type=checkbox]),#page-training select,#page-training textarea{width:100%;min-width:0;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:#fafcfb;color:var(--ink);font:inherit}
+#page-training textarea{resize:vertical;min-height:70px;line-height:1.6}
+#page-training .train-job-note{font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:5px}
+#page-training #train-detail-notes{margin:0;padding:10px 20px;border-bottom:1px solid var(--line);background:#fafcfb;white-space:pre-wrap;font-size:12px;line-height:1.7;overflow-wrap:anywhere}
+#page-training .train-command-fields{align-items:end}
+#page-training .train-command-fields input,#page-training .train-command-fields button{height:38px}
+#page-training .train-command-fields .train-actions{min-height:38px;align-self:end}
+#page-training .train-param-groups{padding:14px 20px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+#page-training .train-param-group{min-width:0;border:1px solid var(--line);border-radius:9px;padding:12px 14px}
+#page-training .train-param-group h3{font-size:12px;margin:0 0 10px}
+#page-training .train-param-group dl{margin:0;display:grid;grid-template-columns:110px minmax(0,1fr);gap:7px 12px;font-size:12px;line-height:1.6}
+#page-training .train-param-group dt{color:var(--muted)}
+#page-training .train-param-group dd{margin:0;overflow-wrap:anywhere;white-space:pre-wrap}
+#page-training #train-params-source{padding:0 20px 14px}
+@media(max-width:1100px){#page-training .train-param-groups{grid-template-columns:1fr}}
+#page-training .train-wide{grid-column:1/-1}
+#page-training .train-hint{font-size:11px;color:var(--muted);line-height:1.6;overflow-wrap:anywhere}
+#page-training .train-check{display:flex;align-items:center;gap:8px}
+#page-training input[type=checkbox]{accent-color:var(--green)}
+#page-training .train-gpus{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+#page-training label.train-gpu{display:flex;align-items:center;gap:9px;padding:9px 12px;border:1px solid var(--line);border-radius:8px;cursor:pointer;background:#fafcfb}
+#page-training .train-gpu:has(input:checked){background:var(--soft);border-color:#9bcab8}
+#page-training .train-gpu strong{font-size:12px;font-weight:600;color:var(--ink)}
+#page-training .train-gpu small{display:block;color:var(--muted);font-size:10px}
+#page-training .train-toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 20px}
+#page-training .train-toolbar h3{margin:0;font-size:13px}
+#page-training .train-toolbar select{width:auto;font-size:12px}
+#page-training .train-chart-wrap{padding:0 14px}
+#page-training .train-curve-toolbar{flex-wrap:wrap}
+#page-training .train-curve-controls{display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-size:12px}
+#page-training .train-curve-controls label{display:flex;align-items:center;gap:6px;white-space:nowrap;color:var(--muted)}
+#page-training .train-curve-controls input[type=range]{width:96px;padding:0;border:0;accent-color:var(--green);background:transparent}
+#page-training .train-curve-controls output{min-width:28px;font-variant-numeric:tabular-nums;color:var(--ink)}
+#page-training .train-curve-legend{display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:0 20px;font-size:11px;color:var(--muted)}
+#page-training .train-curve-key{display:inline-block;width:18px;height:3px;margin-right:5px;vertical-align:middle;background:var(--curve-color,var(--green));border-radius:2px}
+#page-training .train-curve-key.raw{opacity:.25}
+#page-training #train-curve-readout{padding:5px 20px 10px;min-height:30px;font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums}
+#page-training #train-chart{touch-action:pan-y}
+#page-training svg{display:block;width:100%;height:auto;max-height:310px}
+#page-training .train-validation-line{margin:0;padding:4px 20px 14px;font-size:12px;color:var(--muted)}
+#page-training .train-info{margin:0;font-size:12px;line-height:1.7;white-space:pre-line;overflow-wrap:anywhere}
+#page-training .train-path{font:11px/1.7 ui-monospace,monospace;color:var(--muted);overflow-wrap:anywhere}
+#page-training .train-weight-origin{margin:14px 20px;padding:12px 14px;border:1px solid var(--line);border-radius:9px;background:#fafcfb}
+#page-training .train-weight-origin h3{margin:0 0 8px;font-size:13px}
+#page-training .train-weight-origin dl{display:grid;grid-template-columns:76px minmax(0,1fr);gap:7px 12px;margin:0;font-size:12px}
+#page-training .train-weight-origin dt{color:var(--muted)}
+#page-training .train-weight-origin dd{margin:0;overflow-wrap:anywhere}
+#page-training .train-message{padding:10px 14px;margin:0 0 14px;background:var(--soft);border-radius:9px;color:var(--green);font-size:12px;white-space:pre-line;overflow-wrap:anywhere}
+#page-training .train-message:empty{display:none}
+#page-training .train-error{color:var(--red);background:#fcf0ed}
+#page-training .train-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+#page-training .train-actions label{flex:1;min-width:180px}
+#page-training .train-sync-actions{padding:0 20px 14px}
+#page-training .train-sync-actions .train-check{font-size:12px}
+#page-training .train-sync-actions button{margin-left:auto;font-size:12px}
+#page-training .train-sync-state{padding:0 20px 14px}
+#page-training .train-table{max-height:300px;overflow:auto}
+#page-training .train-table table{font-size:12px}
+#page-training .train-table th{position:sticky;top:0}
+#page-training .train-control-note{padding:0 20px 14px}
+#page-training .train-config-head{padding:14px 20px;border-bottom:1px solid var(--line);font-size:12px;color:var(--muted)}
+#page-training .train-config-head p{margin:3px 0 0}
+#page-training .train-record-filters{display:grid;grid-template-columns:minmax(0,1fr) 88px;gap:6px;padding:0 12px 12px}
+#page-training .train-record-filters input,#page-training .train-record-filters select{padding:7px 8px;font-size:11px}
+#page-training .train-form-section{min-width:0}
+#page-training .train-form-heading{display:flex;align-items:center;gap:8px;margin:0;padding:14px 20px 0;font-size:13px}
+#page-training .train-form-heading span{display:grid;place-items:center;width:21px;height:21px;border-radius:6px;background:var(--soft);color:var(--green);font:12px ui-monospace,monospace}
+#page-training .train-identity{grid-template-columns:repeat(3,minmax(0,1fr));padding-bottom:16px}
+#page-training .train-setup-grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);border-top:1px solid var(--line)}
+#page-training .train-resource-section{border-left:1px solid var(--line)}
+#page-training .train-task-picker{padding:12px 20px 14px}
+#page-training .train-task-tools{display:flex;gap:8px;align-items:center}
+#page-training .train-task-tools input{flex:1;font-size:12px}
+#page-training .train-task-tools label{display:flex;align-items:center;gap:4px;white-space:nowrap;font-size:11px;color:var(--muted)}
+#page-training .train-task-list{display:grid;gap:5px;max-height:182px;overflow:auto;margin:9px 0;scrollbar-gutter:stable}
+#page-training .train-task-choice{display:flex;align-items:center;gap:8px;padding:7px 9px;border:1px solid var(--line);border-radius:7px;cursor:pointer;background:#fafcfb;font-size:12px;min-width:0}
+#page-training .train-task-choice:has(input:checked){border-color:#9bcab8;background:var(--soft)}
+#page-training .train-task-choice>span{flex:1;min-width:0}
+#page-training .train-task-choice strong{font-size:12px;font-weight:600}
+#page-training .train-task-choice .train-task-name{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted);font-size:10px}
+#page-training .train-data-badge{font-size:10px;color:var(--amber);white-space:nowrap}
+#page-training .train-data-badge.ready{color:var(--green)}
+#page-training .train-task-selection{display:flex;flex-wrap:wrap;gap:5px;align-items:center;min-height:24px;margin-bottom:7px}
+#page-training .train-task-selection button{padding:2px 7px;border-radius:5px;font-size:11px;background:var(--soft);border-color:#c4dfd3;color:var(--green)}
+#page-training .train-task-shortcuts{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+#page-training .train-task-shortcuts button{padding:0;border:0;background:none;color:var(--green);font-size:11px}
+#page-training #train-prepare-data{margin-top:8px;font-size:11px;padding:5px 8px}
+#page-training #train-data-status{display:block;margin-top:5px}
+#page-training .train-check{font-size:12px}
+#page-training .train-config-fields label.train-check{display:flex}
+#page-training .train-config-fields .train-check input{flex-shrink:0}
+#page-training .train-submit-summary{margin-right:auto;min-width:0;flex:1;font-size:11px;color:var(--muted);overflow-wrap:anywhere}
+#page-training .train-submit-summary strong{color:var(--ink);display:block;font-size:12px}
+#page-training .train-runtime-note{padding:10px 20px;border-bottom:1px solid var(--line);background:#f5f9f7;color:#536e62;font-size:12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+#page-training .train-runtime-note span{flex:1;min-width:180px;overflow-wrap:anywhere}
+#page-training .train-runtime-note button{padding:5px 9px;font-size:11px}
+#page-training .train-job-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:12px 20px;border-bottom:1px solid var(--line)}
+#page-training .train-job-actions .train-hint{flex:1;min-width:180px}
+#page-training #train-delete{color:var(--red)}
+#page-training .train-checkpoint-note{padding:0 20px 12px}
+#page-training .train-timing{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;padding:12px 20px;border-bottom:1px solid var(--line);background:#fafcfb}
+#page-training .train-timing label{display:block;color:var(--muted);font-size:11px}
+#page-training .train-timing strong{display:block;font-size:18px;font-variant-numeric:tabular-nums;font-weight:600}
+#page-training .train-timing small{display:block;font-size:10px;color:var(--muted)}
+#page-training .train-hyperparameters{grid-template-columns:repeat(3,minmax(0,1fr));border-top:1px solid var(--line)}
+#page-training #train-checkpoint-note{color:var(--muted);font-size:11px;overflow-wrap:anywhere}
+#page-training #train-message{position:sticky;top:8px;z-index:3;box-shadow:0 4px 16px #213e2f12}
+#page-training .train-recommendation{margin:14px 20px;padding:12px 14px;background:var(--soft);border:1px solid #c4dfd3;border-radius:9px}
+#page-training .train-recommendation .train-actions{margin-bottom:7px}
+#page-training #train-recommendation-status{font-size:12px;color:var(--green);margin:0 0 5px}
+#page-training #train-recommendation-summary{font-size:12px;line-height:1.7;margin:0}
+#page-training #train-recommendation-details{margin-top:6px}
+#page-training #train-recommendation-details summary{font-size:11px;color:var(--muted);cursor:pointer}
+#page-training #train-recommendation-notes{font-size:11px;color:var(--muted);line-height:1.8;white-space:pre-line;margin:0}
+@media(min-width:781px) and (max-width:1100px){#page-training .train-setup-grid{grid-template-columns:1fr}#page-training .train-resource-section{border-left:0;border-top:1px solid var(--line)}}
+@media(max-width:780px){#page-training .train-jobs{max-height:220px}}
+@media(max-width:650px){#page-training .train-setup-grid{grid-template-columns:1fr}#page-training .train-resource-section{border-left:0;border-top:1px solid var(--line)}}
+@media(max-width:540px){#page-training .train-config-fields{grid-template-columns:1fr;padding:14px}#page-training .train-toolbar{padding:12px 14px;flex-wrap:wrap}#page-training .train-toolbar select{max-width:100%}#page-training .train-task-picker{padding:12px 14px}#page-training .train-form-heading{padding-left:14px}#page-training .train-submit-summary{flex-basis:100%}}
+</style>
+<div class="page-intro"><h2>启动训练</h2><label>训练设备 <select id="train-device"><option value="a100">A100 · 多卡训练</option><option value="a6000">RTX 6000 Ada · 单卡 48GB</option></select></label><button id="train-refresh" type="button">↻ 刷新</button></div>
+<p id="train-device-hint" class="train-hint" hidden></p>
+<div id="train-message" class="train-message" role="status"></div>
+<div class="layout">
+ <section class="run-browser" aria-label="选择训练记录">
+  <div class="section-head"><h2>训练记录</h2><span id="train-count" class="subtle">读取中…</span></div>
+  <div class="train-sidebar-actions"><button id="train-new" type="button" aria-pressed="true">＋ 新建训练</button></div>
+  <div class="train-record-filters"><input id="train-job-search" type="search" placeholder="任务、版本、备注…" aria-label="搜索训练记录或备注"><select id="train-job-filter" aria-label="训练状态筛选"><option value="all">全部状态</option><option value="active">运行中</option><option value="queued">排队中</option><option value="complete">已完成</option><option value="failed">异常/停止</option></select></div>
+  <div id="train-jobs" class="train-jobs"><div class="empty">读取 A100 记录中…</div></div>
+ </section>
+ <div class="train-content">
+  <section id="train-config" aria-label="训练配置">
+   <div class="detail-heading"><div><h2>新建训练</h2><div class="subtle">选择任务与资源，提交后自动固定源码快照</div></div><span id="train-device-label" class="chip gpu">A100</span></div>
+   <form id="train-form">
+    <div class="train-form-section">
+    <h3 class="train-form-heading"><span>1</span>实验设置</h3>
+    <div class="train-config-fields train-identity">
+     <label>实验版本<input id="train-version" value="V_1" pattern="V_[0-9]+" required></label>
+     <label>方法<select id="train-arm"><option value="baseline">Baseline · 无记忆微调</option><option value="memory_v1">Memory · 完整记忆</option></select></label>
+     <label>训练步数<input id="train-steps" type="number" min="1000" step="1000" placeholder="选择任务和训练 GPU 后推荐" required></label>
+     <label class="train-wide">训练备注（可选）<textarea id="train-notes" rows="2" maxlength="2000" placeholder="例如：Task0/34/40 首轮 Baseline，对比记忆容量 64；本次只修改了……"></textarea></label>
+    </div>
+    </div>
+    <div class="train-setup-grid">
+    <div class="train-form-section">
+     <h3 class="train-form-heading"><span>2</span>训练任务 <small id="train-task-count" class="train-hint"></small></h3>
+     <div class="train-task-picker">
+      <select id="train-dataset" multiple hidden aria-label="已选训练任务"></select>
+      <div class="train-task-tools"><input id="train-task-search" type="search" placeholder="搜索任务编号或名称" aria-label="搜索训练任务"><label><input id="train-task-ready" type="checkbox">仅已就绪</label></div>
+      <div id="train-task-list" class="train-task-list" role="group" aria-label="训练任务多选列表"></div>
+      <div class="train-task-shortcuts"><button id="train-select-ready" type="button">选择已就绪任务</button><button id="train-clear-tasks" type="button">清空选择</button></div>
+      <div id="train-task-selection" class="train-task-selection" aria-label="已选任务"></div>
+      <div id="train-split" class="train-hint" aria-live="polite"></div>
+      <button id="train-prepare-data" type="button">准备所选缺失数据 → 当前设备</button>
+      <span id="train-data-status" class="train-hint"></span>
+     </div>
+    </div>
+    <div class="train-form-section train-resource-section">
+    <h3 class="train-form-heading"><span>3</span>GPU 与验证</h3>
+    <div class="train-config-fields">
+     <div class="train-wide"><div class="train-hint">训练 GPU · 可多选</div><div id="train-gpus" class="train-gpus"></div></div>
+     <label class="train-wide train-check"><input id="train-enqueue" type="checkbox">GPU 空闲后按顺序排队启动</label>
+     <label class="train-wide train-check"><input id="train-validation-enabled" type="checkbox" checked>启用独立 Episode 验证</label>
+     <label id="train-validation-gpu-field">验证 GPU<select id="train-validation-gpu"></select><span class="train-hint">优先选独立空闲卡；验证卡不计入训练卡数。</span></label>
+     <label id="train-validation-percent-field">验证集比例（%）<input id="train-validation-percent" type="number" min="1" max="50" step="1" value="10"></label>
+     <div id="train-batch" class="train-hint train-wide"></div>
+    </div>
+    </div>
+    </div>
+    <div class="train-config-fields train-hyperparameters">
+     <label>学习率<input id="train-lr" type="number" min="0.000000001" max="0.01" step="any" value="0.00001" required></label>
+     <label>全局窗口数 / 优化步<input id="train-windows" type="number" min="1" max="180" value="3" required><span class="train-hint">每窗口最多 32 决策，Episode 尾窗保留实际长度。</span></label>
+     <label>Microbatch / GPU<input id="train-microbatch" type="number" min="1" max="32" value="4" required><span class="train-hint">每次并行计算的决策数，控制显存。</span></label>
+    </div>
+    <div class="train-config-fields" style="border-top:1px solid var(--line)">
+     <label class="train-wide">初始权重<select id="train-checkpoint-choice" required><option value="" disabled selected>正在读取设备权重列表…</option></select><span id="train-checkpoint-note"></span></label>
+     <label class="train-wide">微调方式<select id="train-fine-tuning"><option value="action_full">动作头 / 记忆全参数微调（冻结 Eagle）</option><option value="full">整个模型全参数微调（包含 Eagle）</option><option value="lora">LoRA 微调</option><option value="custom">自定义组件冻结</option></select><span class="train-hint">下方冻结选项可覆盖模式默认值；LoRA 目标组件只更新低秩参数，未冻结的非目标组件按全参数更新。</span></label>
+     <details class="train-wide compact-fold"><summary>组件冻结与 LoRA 参数</summary><div class="train-config-fields">
+      <label>LLM<select id="train-freeze-llm"><option value="auto">跟随模式</option><option value="true">冻结</option><option value="false">训练</option></select></label>
+      <label>视觉编码器<select id="train-freeze-vision"><option value="auto">跟随模式</option><option value="true">冻结</option><option value="false">训练</option></select></label>
+      <label>视觉投影 mlp1<select id="train-freeze-vision-projector"><option value="auto">跟随模式</option><option value="true">冻结</option><option value="false">训练</option></select></label>
+      <label>动作 DiT<select id="train-freeze-action-dit"><option value="auto">跟随模式</option><option value="true">冻结</option><option value="false">训练</option></select></label>
+      <label>状态 / 动作投影与解码<select id="train-freeze-action-projector"><option value="auto">跟随模式</option><option value="true">冻结</option><option value="false">训练</option></select></label>
+      <label>动作输入 LayerNorm<select id="train-freeze-action-vlln"><option value="auto">跟随模式</option><option value="true">冻结</option><option value="false">训练</option></select></label>
+      <label>记忆模块<select id="train-freeze-memory"><option value="auto">跟随模式</option><option value="true">冻结</option><option value="false">训练</option></select></label>
+      <label>仅训练 LLM 最后 N 层<input id="train-llm-last-n-layers" type="number" min="0" step="1" value="0"><span class="train-hint">0 表示全部所选层；冻结 LLM 时不生效。</span></label>
+      <label class="train-check"><input id="train-gradient-checkpointing" type="checkbox">骨干梯度检查点（减少激活显存，增加重算）</label>
+      <div id="train-lora-fields" class="train-wide train-config-fields" hidden>
+       <label class="train-wide">LoRA 目标组件<input id="train-lora-targets" value="llm,action_dit"><span class="train-hint">逗号分隔：llm、vision、vision_projector、action_dit。适配所选组件的 Linear 层；状态/动作投影、LayerNorm、memory 单独全参数或冻结。</span></label>
+       <label>LoRA rank<input id="train-lora-rank" type="number" min="1" max="256" value="16"></label>
+       <label>LoRA alpha<input id="train-lora-alpha" type="number" min="0.001" step="any" value="32"></label>
+       <label>LoRA dropout<input id="train-lora-dropout" type="number" min="0" max="0.99" step="0.01" value="0"></label>
+      </div>
+      <div class="train-hint train-wide">全模型训练会重算 Eagle 并反传，显存需求高于冻结骨干。LoRA 默认适配 LLM 与动作 DiT，动作投影、LayerNorm、记忆全参数训练；可分别冻结。</div>
+     </div></details>
+     <label id="train-checkpoint-custom" class="train-wide" hidden>自定义设备权重路径<input id="train-checkpoint" list="train-checkpoints" required><datalist id="train-checkpoints"></datalist></label>
+    </div>
+    <details id="train-advanced" class="compact-fold"><summary>高级参数 · 记忆、验证、随机种子与消融</summary>
+     <div class="train-config-fields">
+      <label>消融方法名（可选）<input id="train-method" placeholder="ablation_no_perception" pattern="ablation_[a-z0-9_]+"></label>
+      <label>消融改动说明<input id="train-method-description" placeholder="对应源码或配置的实际改动"></label>
+      <div class="train-hint train-wide">消融名称用于追踪，不会自动关闭模块；使用 Memory 类型及对应的代码或配置。</div>
+      <label>随机种子<input id="train-seed" type="number" min="0" step="1" value="42" required></label>
+      <label>Weight decay<input id="train-weight-decay" type="number" min="0" step="any" value="0.01"></label>
+      <label>AdamW epsilon<input id="train-optimizer-eps" type="number" min="1e-16" step="any" value="1e-8"><span class="train-hint">优化器分母稳定项；过大可能抑制微弱梯度的更新。</span></label>
+      <label>梯度裁剪阈值<input id="train-max-grad-norm" type="number" min="0.000001" step="any" value="1"></label>
+      <label>记忆容量<select id="train-memory-length"><option value="16">16</option><option value="64" selected>64</option><option value="256">256</option></select></label>
+      <label>记忆接入方式<select id="train-memory-conditioning"><option value="residual">Residual Memory · 保留 GR00T 特征（默认）</option><option value="direct">Direct · 替换原条件特征</option></select></label>
+      <label>Residual readout<select id="train-memory-residual-readout"><option value="delta">Delta · 当前融合特征差值</option><option value="value">Value-only · 仅历史注意力 Value</option></select><span class="train-hint">Value-only 仅用于 Residual Memory；Direct 模式固定为 Delta。</span></label>
+      <label class="train-check"><input id="train-memory-cognitive-projection" type="checkbox">认知残差使用矩阵投影</label>
+      <label>认知残差作用范围<select id="train-memory-cognitive-scope"><option value="eos">EOS · 最后文本位置</option><option value="text">Text · 全部有效文本位置</option></select></label>
+      <label class="train-wide train-check"><input id="train-image-augmentation" type="checkbox" checked>启用训练图像增强</label>
+      <label>完整验证间隔（步）<input id="train-validation-interval" type="number" min="1000" step="1000" value="1000" required><span class="train-hint">关闭验证时忽略；权重仍每 1000 步保存。</span></label>
+      <label class="train-check"><input id="train-early-stopping" type="checkbox">验证停滞时自动早停</label>
+      <div class="train-hint train-wide">推荐关闭自动早停，先完成所设训练预算，再比较验证指标和任务成功率。手动启用后可能提前结束。</div>
+      <label class="train-wide train-check"><input id="train-share" type="checkbox">允许与现有进程共卡</label>
+      <div class="train-hint train-wide">每窗口最多 32 决策，记忆跨窗口延续并截断历史梯度。全局窗口数须能被训练卡数整除。记忆设置仅用于 Memory 类型。</div>
+     </div>
+    </details>
+    <details id="train-plan-details" class="compact-fold" hidden><summary>检查结果与启动参数</summary><pre id="train-plan" class="log" hidden></pre></details>
+    <div class="train-recommendation" aria-label="训练参数推荐">
+     <div class="train-actions"><label class="train-check"><input id="train-auto-recommend" type="checkbox" checked>自动推荐参数</label><button id="train-restore-recommendation" type="button">恢复推荐</button></div>
+     <p id="train-recommendation-status" role="status">等待生成推荐</p>
+     <p id="train-recommendation-summary">请选择训练任务和 GPU。</p>
+     <details id="train-recommendation-details" hidden><summary>查看推荐依据</summary><p id="train-recommendation-notes"></p></details>
+    </div>
+    <div class="launch-actions"><div id="train-submit-summary" class="train-submit-summary" aria-live="polite"></div><button id="train-check" type="button">检查配置</button><button id="train-submit" class="primary-button" type="submit">启动训练</button></div>
+   </form>
+   <details class="compact-fold"><summary>代码同步 · 4090 → 当前训练设备</summary>
+    <div class="train-actions train-sync-actions"><label class="train-check"><input type="checkbox" id="train-autosync">自动同步改动</label><button id="train-sync-once" type="button">立即同步</button></div>
+    <p id="train-sync-state" class="train-info train-sync-state"></p>
+    <div class="train-sync-state train-hint">启动训练时会自动同步并固定源码快照。自动同步每 4 秒检查，仅传代码与依赖配置，关闭浏览器后继续运行。</div>
+   </details>
+  </section>
+  <section id="train-monitor" aria-label="训练详情" hidden>
+   <div class="detail-heading"><div><div class="eyebrow" id="train-detail-subtitle"></div><h2 id="train-detail-title">训练详情</h2><div class="subtle" id="train-detail-gpu"></div></div><span id="train-detail-status"></span></div>
+   <p id="train-detail-notes" hidden></p>
+   <div id="train-detail-loading" class="empty" role="status" hidden>正在读取训练详情…</div>
+   <div id="train-monitor-body">
+   <div class="train-job-actions" aria-label="训练任务操作"><button id="train-stop-next" type="button" hidden>保存后停止</button><button id="train-resume-open" type="button" hidden>续跑训练</button><button id="train-cancel-top" type="button" hidden>取消排队</button><span id="train-action-hint" class="train-hint"></span><button id="train-delete" type="button" disabled>删除记录</button></div>
+   <form id="train-resume-panel" class="details" hidden>
+    <h3>断点续训</h3><p id="train-resume-summary" class="train-info"></p>
+    <div class="train-config-fields train-command-fields"><label>训练总步数<input id="train-resume-steps" type="number" min="1000" step="1000" required></label><div class="train-actions"><button id="train-resume-submit" type="submit">确认续跑</button><button id="train-resume-close" type="button">收起</button></div></div>
+    <p id="train-resume-budget" class="train-hint"></p>
+    <label class="train-check"><input id="train-resume-share" type="checkbox">允许与原训练卡上的其他服务共卡</label>
+    <p class="train-hint">沿用原源码、GPU、学习率、Batch、数据划分和种子；恢复优化器、采样位置及记忆状态。结果继续保存在当前记录中。</p>
+    <p id="train-resume-message" class="train-info" role="status"></p>
+   </form>
+   <div id="train-runtime-note" class="train-runtime-note" hidden><span id="train-runtime-text"></span><button id="train-runtime-controls" type="button">查看任务控制 →</button></div>
+   <div id="train-metrics" class="summary"></div>
+   <div class="train-timing" aria-label="训练时间估计">
+    <div><label>累计训练耗时</label><strong id="train-elapsed">—</strong><small>已记录优化循环；不含初始化、保存和验证</small></div>
+    <div><label>预计训练剩余</label><strong id="train-eta">—</strong><small id="train-eta-note">按最近 50 步估计；不含保存和验证</small></div>
+    <div><label>平均每优化步</label><strong id="train-step-time">—</strong><small id="train-step-time-note">等待计时记录</small></div>
+   </div>
+   <nav class="detail-tabs" role="tablist" aria-label="训练详情视图">
+    <button id="train-tab-curve" type="button" role="tab" aria-controls="train-pane-curve" aria-selected="true" data-train-tab="curve">训练曲线</button>
+    <button id="train-tab-controls" type="button" role="tab" aria-controls="train-pane-controls" aria-selected="false" data-train-tab="controls">权重与控制</button>
+    <button id="train-tab-info" type="button" role="tab" aria-controls="train-pane-info" aria-selected="false" data-train-tab="info">参数与日志</button>
+   </nav>
+   <div id="train-pane-curve" role="tabpanel" aria-labelledby="train-tab-curve">
+    <div class="train-toolbar train-curve-toolbar"><h3 id="train-chart-title">训练 Loss</h3><div class="train-curve-controls"><select id="train-curve-mode" aria-label="曲线统计方式"><option value="steps">逐步 Loss</option><option value="blocks">每 50 步平均</option><option value="epochs">完整 Epoch 平均</option></select><label>平滑<input id="train-curve-smoothing" aria-label="Loss 曲线平滑强度" type="range" min="0" max="0.99" step="0.01" value="0.9"><output id="train-curve-smoothing-value" for="train-curve-smoothing">0.90</output></label><label><input id="train-curve-raw" type="checkbox" checked>显示原始线</label></div></div>
+    <div id="train-curve-legend" class="train-curve-legend"><span id="train-curve-raw-key"><i class="train-curve-key raw"></i><span id="train-curve-source-label">逐步 Loss</span></span><span><i class="train-curve-key"></i><span id="train-curve-trend-label">EMA 平滑趋势</span></span><span>横轴：优化步 · 纵轴：Loss</span></div>
+    <div class="train-chart-wrap"><svg id="train-chart" viewBox="0 0 900 300" role="img" aria-label="训练 Loss 曲线"></svg></div>
+    <div id="train-curve-readout">悬停查看具体数值；平滑仅影响显示。</div>
+    <p id="train-validation-info" class="train-validation-line"></p>
+    <details class="compact-fold"><summary>Epoch 与验证数值</summary><div id="train-epoch-table" class="train-table"></div><div class="details train-hint">Loss 按动作决策数加权，横轴为优化步。离线验证指标与任务成功率分别统计。</div></details>
+   </div>
+   <div id="train-pane-controls" role="tabpanel" aria-labelledby="train-tab-controls" hidden>
+    <div id="train-cancel-panel" class="details" hidden><h3 id="train-cancel-title">取消本组排队</h3><p id="train-cancel-scope" class="train-info"></p><p class="train-hint">撤销后不会自动启动。保留配置和日志；需要训练时重新提交。此操作取消等待，不会强制抢占 GPU。</p><button id="train-cancel" type="button">取消本组排队</button></div>
+    <p id="train-cancel-message" class="train-info train-control-note" role="status"></p>
+    <div class="train-config-fields"><label class="train-wide">已保存权重<select id="train-saved-checkpoint"></select></label><div id="train-checkpoint-path" class="train-path train-wide"></div><div class="train-wide"><button id="train-use-checkpoint" type="button">用于推理评估 →</button></div></div>
+    <details id="train-stop-panel" class="compact-fold"><summary>指定保存后停止步数</summary><div class="train-config-fields train-command-fields"><label>停止步数<input id="train-stop-step" type="number" min="1" step="1" value="3000"></label><div class="train-actions"><button id="train-stop" type="button">设置停止点</button></div></div><p class="train-hint train-control-note">关闭验证或使用独立异步验证时，可指定未来任意整数步保存后停止，适合短训检查。旧同步验证模式仍需1000的整数倍。已排队验证继续完成。</p><p id="train-stop-message" class="train-info train-control-note" role="status"></p></details>
+   </div>
+   <div id="train-pane-info" role="tabpanel" aria-labelledby="train-tab-info" hidden>
+    <div id="train-recorded-params" class="train-param-groups" aria-label="本次训练参数"></div>
+    <p id="train-params-source" class="train-hint"></p>
+    <div class="train-weight-origin"><h3>权重起始点</h3><dl><dt>来源</dt><dd id="train-initial-weight-label">未记录</dd><dt>权重路径</dt><dd id="train-initial-weight-path" class="train-path">未记录</dd><dt>启动方式</dt><dd id="train-initial-weight-mode">未记录</dd><dt>记录依据</dt><dd id="train-initial-weight-record" class="train-path">未记录</dd></dl></div>
+    <div class="details"><div id="train-detail-info" class="train-info"></div></div>
+    <details class="compact-fold"><summary>原始训练配置</summary><pre id="train-raw-config" class="log"></pre></details>
+    <details class="compact-fold"><summary>训练日志</summary><pre id="train-log" class="log"></pre></details>
+    <details class="compact-fold"><summary>独立验证日志</summary><pre id="train-validation-log" class="log"></pre></details>
+   </div>
+   </div>
+  </section>
+ </div>
+</div>

@@ -6,7 +6,7 @@ print_config: false
 policy_name: pi_behavior_b1k_fast
 model:
   _target_: omnigibson.learning.policies.WebsocketPolicy
-  host: 127.0.0.1
+  host: 172.28.62.17
   port: 8000
 env_wrapper:
   _target_: omnigibson.learning.wrappers.RGBLowResWrapper
@@ -14,10 +14,10 @@ robot:
   type: R1Pro
   controllers: null
 task:
-  name: turning_on_radio
+  name: putting_shoes_on_rack
 eval_on_train_instances: false
 # null selects all 20 test entries in test_instances.csv; [0] selects the first.
-eval_instance_ids: null
+eval_instance_ids: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 test_hidden: false
 partial_scene_load: true
 # null follows SERF: twice the task's average demonstration length.
@@ -32,4 +32,4 @@ replay_action_log_path: null
 replay_until_step: null
 resume_record_suffix: resumed
 repro_action_chunk_size: 100
-log_path: outputs/evaluation/${task.name}/seed_${seed}
+log_path: outputs/evaluation/legacy_pi_behavior/${task.name}/seed_${seed}

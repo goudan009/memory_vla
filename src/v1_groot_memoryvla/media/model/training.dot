@@ -1,0 +1,22 @@
+digraph model {
+      graph [rankdir=TB, bgcolor="#ffffff", pad="0.3", nodesep="0.34", ranksep="0.55",
+             fontname="Noto Sans CJK SC", fontsize=20, compound=true];
+      node [shape=box, style="rounded,filled", color="#cbd5e1", fillcolor="#f1f5f9",
+            fontcolor="#172554", fontname="Noto Sans CJK SC", fontsize=17, margin="0.20,0.15", penwidth=1.3];
+      edge [color="#64748b", penwidth=1.6, arrowsize=0.8, fontname="Noto Sans CJK SC", fontsize=13];
+      
+      data [label="已有示范 Episode：30 Hz\nRGB / 82维 state / language / 23维 action"];
+      sampling [label="有序观测采样：原始帧 0,8,16,…\n每窗最多32决策，保留真实短尾窗", fillcolor="#ccfbf1"];
+      vision [label="训练 processor：每次访问重新增强\n冻结 Eagle：no_grad 编码当前图像/指令", fillcolor="#dbeafe"];
+      memory [label="可训练双路记忆 → direct 条件\nEpisode 内跨 microbatch/窗口延续", fillcolor="#ccfbf1"];
+      labels [label="标签 a：当前帧起未来32步\n归一化并填充至 [B,50,128]\n超出Episode：action=0、mask=0", fillcolor="#fff7ed"];
+      noise [label="训练 flow time τ + 随机噪声 ε\nxτ = (1−τ)ε + τa"];
+      head [label="原 state/action 编码器 + 动作专家\n预测速度 vθ", fillcolor="#dbeafe"];
+      loss [label="masked MSE：vθ 对比 a−ε\n按有效 action_mask 元素全局加权", fillcolor="#fef3c7"];
+      grad [label="反向更新记忆 + 原动作头\nEagle冻结；不穿过旧历史计算图", fillcolor="#fef3c7"];
+      data -> sampling; sampling -> vision; vision -> memory; memory -> head;
+      sampling -> head [label="当前 state → 原状态编码器"];
+      sampling -> labels; labels -> noise; noise -> head; head -> loss; labels -> loss [label="目标 / mask"];
+      loss -> grad;
+    
+    }

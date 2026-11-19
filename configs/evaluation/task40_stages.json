@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "task_id": 40,
+  "task_name": "make_microwave_popcorn",
+  "status": "draft_pending_demo_and_human_calibration",
+  "label": "Task40 S1–S9 诊断草案",
+  "time_axis": "action_steps",
+  "demonstration_calibration": {
+    "status": "agent_visual_check_two_demonstrations_expert_confirmation_pending",
+    "evidence": ["outputs/overnight_memory_task40_20261114/verification/demonstration400010_head.jpg", "outputs/overnight_memory_task40_20261114/verification/demonstration400070_head.jpg"],
+    "observation": "两条示教头部画面均显示先开门、再取袋、放入、关门后启动；稀疏画面不用于精确动作时间或接触真值。S3尝试与S4结果分开保留。"
+  },
+  "stages": [
+    {"id":"S1","name":"前往厨房","precondition":{},"entry_condition":{"in_kitchen":true},"attempt_condition":{"navigate_kitchen":true},"expected_behavior":"定位厨房并到达操作区域","success_predicate":{"in_kitchen":true},"failure_events":["navigation_error"],"valid_transitions":["S2"]},
+    {"id":"S2","name":"先选择微波炉","precondition":{"in_kitchen":true},"entry_condition":{"choose_microwave":true},"attempt_condition":{"choose_microwave":true},"expected_behavior":"先接近微波炉而非先取袋子","success_predicate":{"choose_microwave":true},"failure_events":["task_order_error"],"valid_transitions":["S3"]},
+    {"id":"S3","name":"尝试开门","precondition":{},"entry_condition":{"pull_door":true},"attempt_condition":{"pull_door":true},"expected_behavior":"操作微波炉门把手","success_predicate":{"pull_door":true},"failure_events":["contact_failure","task_order_error"],"valid_transitions":["S4"]},
+    {"id":"S4","name":"门真实打开","precondition":{},"entry_condition":{"pull_door":true},"attempt_condition":{"pull_door":true},"expected_behavior":"将门拉至物理 Open 状态","success_predicate":{"door_open":true},"failure_events":["execution_failure"],"valid_transitions":["S5"]},
+    {"id":"S5","name":"离开并前往袋子","precondition":{"door_open":true},"entry_condition":{"leave_for_bag":true},"attempt_condition":{"leave_for_bag":true},"expected_behavior":"开门后再前往爆米花袋","success_predicate":{"leave_for_bag":true,"door_open":true},"failure_events":["state_order_error"],"valid_transitions":["S6"]},
+    {"id":"S6","name":"抓取袋子","precondition":{"door_open":true},"entry_condition":{"grasp_bag":true},"attempt_condition":{"grasp_bag":true},"expected_behavior":"抓住并持握爆米花袋","success_predicate":{"bag_held":true},"failure_events":["grasp_failure","state_order_error"],"valid_transitions":["S7"]},
+    {"id":"S7","name":"放入微波炉","precondition":{"door_open":true},"entry_condition":{"place_bag":true},"attempt_condition":{"place_bag":true},"expected_behavior":"将袋子放入炉腔并释放","success_predicate":{"bag_inside":true,"bag_held":false},"failure_events":["execution_failure","state_order_error"],"valid_transitions":["S8"]},
+    {"id":"S8","name":"关闭炉门","precondition":{"bag_inside":true},"entry_condition":{"close_door":true},"attempt_condition":{"close_door":true},"expected_behavior":"袋子在炉内后关门","success_predicate":{"bag_inside":true,"door_open":false},"failure_events":["execution_failure","task_order_error"],"valid_transitions":["S9"]},
+    {"id":"S9","name":"启动微波炉","precondition":{"bag_inside":true,"door_open":false},"entry_condition":{"press_start":true},"attempt_condition":{"press_start":true},"expected_behavior":"关门且袋子在炉内后启动；完整成功仍由官方谓词决定","success_predicate":{"bag_inside":true,"door_open":false,"microwave_on":true},"failure_events":["execution_failure","task_order_error"],"valid_transitions":[]}
+  ],
+  "transition_rules": [
+    {"stage_id":"S5","trigger":"leave_for_bag","precondition":{"door_open":true},"error_type":"state_order_error","explanation":"门当前未开却离开前往袋子"},
+    {"stage_id":"S6","trigger":"bag_held","precondition":{"door_open":true},"error_type":"state_order_error","explanation":"开始持握袋子时，采样中的门仍关闭"},
+    {"stage_id":"S7","trigger":"place_bag","precondition":{"door_open":true},"error_type":"state_order_error","explanation":"门当前关闭却尝试放入"},
+    {"stage_id":"S9","trigger":"microwave_on","precondition":{"bag_inside":true,"door_open":false},"error_type":"task_order_error","explanation":"袋子未在炉内或门未关闭时启动"}
+  ]
+}

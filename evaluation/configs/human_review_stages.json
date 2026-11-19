@@ -1,0 +1,823 @@
+{
+  "schema_version": 2,
+  "tasks": {
+    "40": {
+      "stages": [
+        {
+          "id": "602d4d2929a4a8a1",
+          "label": "01 到达厨房"
+        },
+        {
+          "id": "5f0c12acfca294ea",
+          "label": "02 选择微波炉"
+        },
+        {
+          "id": "91192d8c426a54f8",
+          "label": "03 尝试开门"
+        },
+        {
+          "id": "9325f0a948c5f0d1",
+          "label": "04 前往爆米花袋"
+        },
+        {
+          "id": "ce05a00c8fcf4e42",
+          "label": "05 抓取袋子"
+        },
+        {
+          "id": "e265c770977d7028",
+          "label": "06 放入微波炉"
+        },
+        {
+          "id": "11f0e6fd232f991e",
+          "label": "07 关闭炉门"
+        },
+        {
+          "id": "1cc9257e73a66713",
+          "label": "08 启动微波炉"
+        },
+        {
+          "id": "2e78d17e85e54269",
+          "label": "09 完全完成了任务"
+        }
+      ],
+      "causes": {
+        "602d4d2929a4a8a1": [
+          {
+            "id": "D",
+            "label": "D. 任务决策错误",
+            "default_code": "D"
+          },
+          {
+            "id": "08ff5236d1794a73",
+            "label": "N. 导航与定位错误",
+            "default_code": "N"
+          },
+          {
+            "id": "M",
+            "label": "M. 操作执行错误",
+            "default_code": "M"
+          },
+          {
+            "id": "none",
+            "label": "S. 成功",
+            "default_code": "S"
+          }
+        ],
+        "5f0c12acfca294ea": [
+          {
+            "id": "def1003c27194430",
+            "label": "D. 任务决策错误",
+            "default_code": "D"
+          },
+          {
+            "id": "ad94516b1f484d27",
+            "label": "N. 导航与定位错误",
+            "default_code": "N"
+          },
+          {
+            "id": "M",
+            "label": "M. 操作执行错误",
+            "default_code": "M"
+          },
+          {
+            "id": "S",
+            "label": "S. 成功",
+            "default_code": "S"
+          }
+        ],
+        "91192d8c426a54f8": [
+          {
+            "id": "6774953a08ef42ab",
+            "label": "D. 任务决策错误",
+            "default_code": "D"
+          },
+          {
+            "id": "1b42042ae7424d6c",
+            "label": "N. 导航与定位错误",
+            "default_code": "N"
+          },
+          {
+            "id": "1656e331026f4429",
+            "label": "M. 操作执行错误",
+            "default_code": "M"
+          },
+          {
+            "id": "none",
+            "label": "S. 成功",
+            "default_code": "S"
+          }
+        ],
+        "9325f0a948c5f0d1": [
+          {
+            "id": "decision_error",
+            "label": "D. 任务决策错误",
+            "default_code": "D"
+          },
+          {
+            "id": "navigation_error",
+            "label": "N. 导航与定位错误",
+            "default_code": "N"
+          },
+          {
+            "id": "manipulation_precision",
+            "label": "M. 操作执行错误",
+            "default_code": "M"
+          },
+          {
+            "id": "none",
+            "label": "S. 成功",
+            "default_code": "S"
+          }
+        ],
+        "ce05a00c8fcf4e42": [
+          {
+            "id": "decision_error",
+            "label": "D. 任务决策错误",
+            "default_code": "D"
+          },
+          {
+            "id": "navigation_error",
+            "label": "N. 导航与定位错误",
+            "default_code": "N"
+          },
+          {
+            "id": "manipulation_precision",
+            "label": "M. 操作执行错误",
+            "default_code": "M"
+          },
+          {
+            "id": "none",
+            "label": "S. 成功",
+            "default_code": "S"
+          }
+        ],
+        "e265c770977d7028": [
+          {
+            "id": "decision_error",
+            "label": "D. 任务决策错误",
+            "default_code": "D"
+          },
+          {
+            "id": "navigation_error",
+            "label": "N. 导航与定位错误",
+            "default_code": "N"
+          },
+          {
+            "id": "manipulation_precision",
+            "label": "M. 操作执行错误",
+            "default_code": "M"
+          },
+          {
+            "id": "none",
+            "label": "S. 成功",
+            "default_code": "S"
+          }
+        ],
+        "11f0e6fd232f991e": [
+          {
+            "id": "decision_error",
+            "label": "D. 任务决策错误",
+            "default_code": "D"
+          },
+          {
+            "id": "navigation_error",
+            "label": "N. 导航与定位错误",
+            "default_code": "N"
+          },
+          {
+            "id": "manipulation_precision",
+            "label": "M. 操作执行错误",
+            "default_code": "M"
+          },
+          {
+            "id": "none",
+            "label": "S. 成功",
+            "default_code": "S"
+          }
+        ],
+        "1cc9257e73a66713": [
+          {
+            "id": "decision_error",
+            "label": "D. 任务决策错误",
+            "default_code": "D"
+          },
+          {
+            "id": "navigation_error",
+            "label": "N. 导航与定位错误",
+            "default_code": "N"
+          },
+          {
+            "id": "manipulation_precision",
+            "label": "M. 操作执行错误",
+            "default_code": "M"
+          },
+          {
+            "id": "none",
+            "label": "S. 成功",
+            "default_code": "S"
+          }
+        ],
+        "2e78d17e85e54269": [
+          {
+            "id": "D",
+            "label": "D. 任务决策错误",
+            "default_code": "D"
+          },
+          {
+            "id": "N",
+            "label": "N. 导航与定位错误",
+            "default_code": "N"
+          },
+          {
+            "id": "M",
+            "label": "M. 操作执行错误",
+            "default_code": "M"
+          },
+          {
+            "id": "none",
+            "label": "S. 成功",
+            "default_code": "S"
+          }
+        ]
+      },
+      "notes": {
+        "602d4d2929a4a8a1": {
+          "08ff5236d1794a73": [
+            {
+              "id": "N1",
+              "label": "N1 导航失败",
+              "default_code": "N1"
+            },
+            {
+              "id": "d74ff070e74f41f7",
+              "label": "N2 导航位置错误",
+              "default_code": "N2"
+            }
+          ],
+          "D": [
+            {
+              "id": "D1",
+              "label": "D1 初始决策错误",
+              "default_code": "D1"
+            },
+            {
+              "id": "D2",
+              "label": "D2 错误阶段切换",
+              "default_code": "D2"
+            }
+          ],
+          "M": [
+            {
+              "id": "M1",
+              "label": "M1 抓取与接触失败",
+              "default_code": "M1"
+            },
+            {
+              "id": "M2",
+              "label": "M2 动作精度与可达性不足",
+              "default_code": "M2"
+            },
+            {
+              "id": "M3",
+              "label": "M3 动作控制异常",
+              "default_code": "M3"
+            }
+          ],
+          "none": [
+            {
+              "id": "S1",
+              "label": "S1 任务完成",
+              "default_code": "S1"
+            }
+          ]
+        },
+        "5f0c12acfca294ea": {
+          "def1003c27194430": [
+            {
+              "id": "69cfccc9840341f2",
+              "label": "D1 初始决策错误",
+              "default_code": "D1"
+            },
+            {
+              "id": "731153ded3744d2b",
+              "label": "D2 错误阶段切换",
+              "default_code": "D2"
+            },
+            {
+              "id": "7c2eae98ae944d6c",
+              "label": "D3 任务流程错误"
+            }
+          ],
+          "ad94516b1f484d27": [
+            {
+              "id": "72befa8bc839464d",
+              "label": "N1 导航失败",
+              "default_code": "N1"
+            },
+            {
+              "id": "N2",
+              "label": "N2 导航位置错误",
+              "default_code": "N2"
+            }
+          ],
+          "M": [
+            {
+              "id": "M1",
+              "label": "M1 抓取与接触失败",
+              "default_code": "M1"
+            },
+            {
+              "id": "M2",
+              "label": "M2 动作精度与可达性不足",
+              "default_code": "M2"
+            },
+            {
+              "id": "M3",
+              "label": "M3 动作控制异常",
+              "default_code": "M3"
+            }
+          ],
+          "S": [
+            {
+              "id": "S1",
+              "label": "S1 任务完成",
+              "default_code": "S1"
+            }
+          ]
+        },
+        "91192d8c426a54f8": {
+          "6774953a08ef42ab": [
+            {
+              "id": "b5222d3c1f954a96",
+              "label": "D1 初始决策错误",
+              "default_code": "D1"
+            },
+            {
+              "id": "ee1c117aba2d47be",
+              "label": "D2 错误阶段切换",
+              "default_code": "D2"
+            },
+            {
+              "id": "1e5a4e4ad4d04743",
+              "label": "D3 任务流程错误"
+            }
+          ],
+          "1b42042ae7424d6c": [
+            {
+              "id": "N1",
+              "label": "N1 导航失败",
+              "default_code": "N1"
+            },
+            {
+              "id": "N2",
+              "label": "N2 导航位置错误",
+              "default_code": "N2"
+            }
+          ],
+          "1656e331026f4429": [
+            {
+              "id": "M1",
+              "label": "M1 抓取与接触失败",
+              "default_code": "M1"
+            },
+            {
+              "id": "M2",
+              "label": "M2 动作精度与可达性不足",
+              "default_code": "M2"
+            },
+            {
+              "id": "M3",
+              "label": "M3 动作控制异常",
+              "default_code": "M3"
+            }
+          ],
+          "none": [
+            {
+              "id": "S1",
+              "label": "S1 任务完成",
+              "default_code": "S1"
+            }
+          ]
+        },
+        "9325f0a948c5f0d1": {
+          "decision_error": [
+            {
+              "id": "D1",
+              "label": "D1 初始决策错误",
+              "default_code": "D1"
+            },
+            {
+              "id": "D2",
+              "label": "D2 错误阶段切换",
+              "default_code": "D2"
+            }
+          ],
+          "navigation_error": [
+            {
+              "id": "N1",
+              "label": "N1 导航失败",
+              "default_code": "N1"
+            },
+            {
+              "id": "N2",
+              "label": "N2 导航位置错误",
+              "default_code": "N2"
+            }
+          ],
+          "manipulation_precision": [
+            {
+              "id": "M1",
+              "label": "M1 抓取与接触失败",
+              "default_code": "M1"
+            },
+            {
+              "id": "M2",
+              "label": "M2 动作精度与可达性不足",
+              "default_code": "M2"
+            },
+            {
+              "id": "M3",
+              "label": "M3 动作控制异常",
+              "default_code": "M3"
+            }
+          ],
+          "none": [
+            {
+              "id": "S1",
+              "label": "S1 任务完成",
+              "default_code": "S1"
+            }
+          ]
+        },
+        "ce05a00c8fcf4e42": {
+          "decision_error": [
+            {
+              "id": "D1",
+              "label": "D1 初始决策错误",
+              "default_code": "D1"
+            },
+            {
+              "id": "D2",
+              "label": "D2 错误阶段切换",
+              "default_code": "D2"
+            }
+          ],
+          "navigation_error": [
+            {
+              "id": "N1",
+              "label": "N1 导航失败",
+              "default_code": "N1"
+            },
+            {
+              "id": "N2",
+              "label": "N2 导航位置错误",
+              "default_code": "N2"
+            }
+          ],
+          "manipulation_precision": [
+            {
+              "id": "M1",
+              "label": "M1 抓取与接触失败",
+              "default_code": "M1"
+            },
+            {
+              "id": "M2",
+              "label": "M2 动作精度与可达性不足",
+              "default_code": "M2"
+            },
+            {
+              "id": "M3",
+              "label": "M3 动作控制异常",
+              "default_code": "M3"
+            }
+          ],
+          "none": [
+            {
+              "id": "S1",
+              "label": "S1 任务完成",
+              "default_code": "S1"
+            }
+          ]
+        },
+        "e265c770977d7028": {
+          "decision_error": [
+            {
+              "id": "D1",
+              "label": "D1 初始决策错误",
+              "default_code": "D1"
+            },
+            {
+              "id": "D2",
+              "label": "D2 错误阶段切换",
+              "default_code": "D2"
+            }
+          ],
+          "navigation_error": [
+            {
+              "id": "N1",
+              "label": "N1 导航失败",
+              "default_code": "N1"
+            },
+            {
+              "id": "N2",
+              "label": "N2 导航位置错误",
+              "default_code": "N2"
+            }
+          ],
+          "manipulation_precision": [
+            {
+              "id": "M1",
+              "label": "M1 抓取与接触失败",
+              "default_code": "M1"
+            },
+            {
+              "id": "M2",
+              "label": "M2 动作精度与可达性不足",
+              "default_code": "M2"
+            },
+            {
+              "id": "M3",
+              "label": "M3 动作控制异常",
+              "default_code": "M3"
+            }
+          ],
+          "none": [
+            {
+              "id": "S1",
+              "label": "S1 任务完成",
+              "default_code": "S1"
+            }
+          ]
+        },
+        "11f0e6fd232f991e": {
+          "decision_error": [
+            {
+              "id": "D1",
+              "label": "D1 初始决策错误",
+              "default_code": "D1"
+            },
+            {
+              "id": "D2",
+              "label": "D2 错误阶段切换",
+              "default_code": "D2"
+            }
+          ],
+          "navigation_error": [
+            {
+              "id": "N1",
+              "label": "N1 导航失败",
+              "default_code": "N1"
+            },
+            {
+              "id": "N2",
+              "label": "N2 导航位置错误",
+              "default_code": "N2"
+            }
+          ],
+          "manipulation_precision": [
+            {
+              "id": "M1",
+              "label": "M1 抓取与接触失败",
+              "default_code": "M1"
+            },
+            {
+              "id": "M2",
+              "label": "M2 动作精度与可达性不足",
+              "default_code": "M2"
+            },
+            {
+              "id": "M3",
+              "label": "M3 动作控制异常",
+              "default_code": "M3"
+            }
+          ],
+          "none": [
+            {
+              "id": "S1",
+              "label": "S1 任务完成",
+              "default_code": "S1"
+            }
+          ]
+        },
+        "1cc9257e73a66713": {
+          "decision_error": [
+            {
+              "id": "D1",
+              "label": "D1 初始决策错误",
+              "default_code": "D1"
+            },
+            {
+              "id": "D2",
+              "label": "D2 错误阶段切换",
+              "default_code": "D2"
+            }
+          ],
+          "navigation_error": [
+            {
+              "id": "N1",
+              "label": "N1 导航失败",
+              "default_code": "N1"
+            },
+            {
+              "id": "N2",
+              "label": "N2 导航位置错误",
+              "default_code": "N2"
+            }
+          ],
+          "manipulation_precision": [
+            {
+              "id": "M1",
+              "label": "M1 抓取与接触失败",
+              "default_code": "M1"
+            },
+            {
+              "id": "M2",
+              "label": "M2 动作精度与可达性不足",
+              "default_code": "M2"
+            },
+            {
+              "id": "M3",
+              "label": "M3 动作控制异常",
+              "default_code": "M3"
+            }
+          ],
+          "none": [
+            {
+              "id": "S1",
+              "label": "S1 任务完成",
+              "default_code": "S1"
+            }
+          ]
+        },
+        "2e78d17e85e54269": {
+          "none": [
+            {
+              "id": "S1",
+              "label": "S1 任务完成",
+              "default_code": "S1"
+            },
+            {
+              "id": "99a7f9a7c7834194",
+              "label": "完全成功"
+            }
+          ],
+          "D": [
+            {
+              "id": "D1",
+              "label": "D1 初始决策错误",
+              "default_code": "D1"
+            },
+            {
+              "id": "D2",
+              "label": "D2 错误阶段切换",
+              "default_code": "D2"
+            }
+          ],
+          "N": [
+            {
+              "id": "N1",
+              "label": "N1 导航失败",
+              "default_code": "N1"
+            },
+            {
+              "id": "N2",
+              "label": "N2 导航位置错误",
+              "default_code": "N2"
+            }
+          ],
+          "M": [
+            {
+              "id": "M1",
+              "label": "M1 抓取与接触失败",
+              "default_code": "M1"
+            },
+            {
+              "id": "M2",
+              "label": "M2 动作精度与可达性不足",
+              "default_code": "M2"
+            },
+            {
+              "id": "M3",
+              "label": "M3 动作控制异常",
+              "default_code": "M3"
+            }
+          ]
+        }
+      },
+      "supplements": {
+        "91192d8c426a54f8": [
+          {
+            "id": "4883715a6be046bf",
+            "label": "多次尝试开门，未成功，直接跳到04阶段，04阶段成功，05阶段成功，但门关闭，导致06阶段失败"
+          },
+          {
+            "id": "5cce60e8909f4029",
+            "label": "多次尝试开门，未成功，直接跳到08阶段，08阶段成功，机器人来回晃动后失败"
+          },
+          {
+            "id": "73110ebf3c2d498e",
+            "label": "多次尝试开门，未成功，直接跳到04阶段，04阶段成功，05阶段失败"
+          },
+          {
+            "id": "ba4a9ec984644969",
+            "label": "多次尝试开门，未成功，直接失败"
+          },
+          {
+            "id": "9f689034b2e249e0",
+            "label": "单次尝试开门，未成功，静止直到失败"
+          },
+          {
+            "id": "5f36e6d3c435405a",
+            "label": "未曾尝试开门，直接跳到08阶段，08阶段成功，机器人来回晃动后失败"
+          },
+          {
+            "id": "85925a1653914540",
+            "label": "多次尝试开门，成功一半，过程中机器人侧翻摔倒"
+          },
+          {
+            "id": "aa53b8a342de4b5f",
+            "label": "多次尝试开门，成功一半，过程中机器人移动走开"
+          },
+          {
+            "id": "34b432dd8f0f4729",
+            "label": "多次尝试开门，成功一半，过程中机器人停止操作，直到失败"
+          }
+        ],
+        "e265c770977d7028": [
+          {
+            "id": "aabd8f124787417d",
+            "label": "袋子卡在门口，未完全放入开始07阶段，导致关门多次尝试后失败"
+          },
+          {
+            "id": "e506321030eb47d0",
+            "label": "03阶段门没有完全打开，导致06阶段放入袋子失败"
+          },
+          {
+            "id": "6fd9fe55ba1e4f6d",
+            "label": "右臂抓着爆米花袋，向错误的方向塞入，多次尝试，直到失败"
+          },
+          {
+            "id": "faac8791e1c644de",
+            "label": "右臂抓着爆米花袋，尝试塞入微波炉，但方向错误，把门又顶上"
+          }
+        ],
+        "5f0c12acfca294ea": [
+          {
+            "id": "6307c2812d4140c6",
+            "label": "初始选择了执行04阶段，04/05阶段成功，但门没开，导致06阶段多次尝试后失败"
+          },
+          {
+            "id": "7e39bd4e703b41e3",
+            "label": "初始选择了执行04阶段，04阶段成功，05阶段失败"
+          }
+        ],
+        "ce05a00c8fcf4e42": [
+          {
+            "id": "85e1d395233846db",
+            "label": "多次抓取，未成功，将目标打翻后失败"
+          },
+          {
+            "id": "fb2edd60e95e4c57",
+            "label": "未尝试抓取，未成功，机器人来回晃动"
+          },
+          {
+            "id": "6dc35f28fbde40c7",
+            "label": "多次抓取，未成功，来回抖动后失败"
+          }
+        ],
+        "11f0e6fd232f991e": [
+          {
+            "id": "e03cafd7a8224d96",
+            "label": "关门阶段，未选择关门，直接跳回04阶段，机器人来回晃动后失败"
+          },
+          {
+            "id": "03b15103cc4c4a39",
+            "label": "关门阶段，未选择关门，机器人来回晃动后失败"
+          }
+        ],
+        "9325f0a948c5f0d1": [
+          {
+            "id": "d28b15695ee84cc8",
+            "label": "未能导航到爆米花袋旁，机器人地盘来回晃动"
+          },
+          {
+            "id": "06923b3f23cc49de",
+            "label": "时间不足，开启微波炉门花费了较长时间"
+          }
+        ],
+        "1cc9257e73a66713": [
+          {
+            "id": "c0425459db48463a",
+            "label": "多次尝试启动按钮，未成功，直到失败"
+          }
+        ],
+        "602d4d2929a4a8a1": [
+          {
+            "id": "5b4d9353f4a445d2",
+            "label": "导航失败，未达到厨房，障碍物导致机器人摔倒"
+          }
+        ]
+      }
+    }
+  }
+}

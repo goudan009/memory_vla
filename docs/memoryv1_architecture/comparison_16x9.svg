@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+<defs><style>text{font-family:'Noto Sans CJK SC',sans-serif;fill:#17324d;font-size:23px}.title{font-size:38px;font-weight:700}.sub{font-size:23px;fill:#586d80}.head{font-size:27px;font-weight:700}.small{font-size:20px}.bold{font-weight:700}.box{fill:#eaf2ff;stroke:#94b1d1;stroke-width:2}.mem{fill:#e0f5ee;stroke:#54aa90;stroke-width:2}.new{fill:#fff0d8;stroke:#dca246;stroke-width:2}.arrow{fill:none;stroke:#68849d;stroke-width:3;marker-end:url(#a)}</style><marker id="a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#68849d"/></marker></defs>
+<rect width="1920" height="1080" fill="white"/>
+<text x="55" y="70" class="title">MemoryVLA → MemoryV1：保留记忆检索，适配预训练动作条件</text>
+<text x="57" y="115" class="sub">不是“两层注意力换成残差”：两层注意力决定怎么检索，残差决定检索后怎样接回 GR00T</text>
+<text x="55" y="190" class="head">原 MemoryVLA · 常用参考配置</text>
+<text x="55" y="592" class="head">当前 MemoryV1 · Task40 step4000 · residual / value / scalar / EOS</text>
+
+<text x="218" y="247" text-anchor="middle" class="bold">① 视觉语言主干</text>
+<text x="587" y="247" text-anchor="middle" class="bold">② 当前表示</text>
+<text x="956" y="247" text-anchor="middle" class="bold">③ 历史检索与写回</text>
+<text x="1325" y="247" text-anchor="middle" class="bold">④ 动作条件接口</text>
+<text x="1694" y="247" text-anchor="middle" class="bold">⑤ 动作专家</text>
+<rect x="55" y="275" width="326" height="235" rx="15" class="box"/>
+<text x="78" y="319" class="bold">Prismatic</text>
+<text x="78" y="363">DINOv2 + SigLIP</text>
+<text x="78" y="405">视觉语言投影 → LLaMA</text>
+<text x="78" y="461" class="small">感知与认知都源于当前输入</text>
+<rect x="424" y="275" width="326" height="235" rx="15" class="box"/>
+<text x="447" y="318" class="bold">P：256 × 256</text>
+<text x="447" y="357" class="small">视觉编码器输出，投影前</text>
+<text x="447" y="393" class="small">2176 通道 → SE → 256</text>
+<text x="447" y="443" class="bold">C：单 EOS，1 × 4096</text>
+<text x="447" y="481" class="small">来自 LLM 后的上下文表示</text>
+<rect x="793" y="275" width="326" height="235" rx="15" class="mem"/>
+<text x="816" y="318" class="bold">双路记忆，各 16 槽</text>
+<text x="816" y="359">两层交叉注意力 + 门控</text>
+<text x="816" y="400">历史 K 加时间编码</text>
+<text x="816" y="444">满库：相邻相似槽合并</text>
+<text x="816" y="482" class="small">论文写融合 F；代码见注¹</text>
+<rect x="1162" y="275" width="326" height="235" rx="15" class="new"/>
+<text x="1185" y="319" class="bold">融合 Fₚ、F꜀ 直接作条件</text>
+<text x="1185" y="362">P：视觉交叉注意力</text>
+<text x="1185" y="405">C：拼入动作序列</text>
+<text x="1185" y="461" class="small">动作专家按这一接口训练</text>
+<rect x="1531" y="275" width="326" height="235" rx="15" class="box"/>
+<text x="1554" y="319" class="bold">自身的 diffusion DiT</text>
+<text x="1554" y="363">24 层 / 1024 宽</text>
+<text x="1554" y="405">噪声预测，通常 DDIM 10 步</text>
+<text x="1554" y="461">典型动作块：16 × 7</text>
+<path d="M381 390H422" class="arrow"/><path d="M750 390H791" class="arrow"/><path d="M1119 390H1160" class="arrow"/><path d="M1488 390H1529" class="arrow"/>
+
+<rect x="55" y="630" width="326" height="240" rx="15" class="box"/>
+<text x="78" y="675" class="bold">GR00T N1.6 / Eagle</text>
+<text x="78" y="718">SigLIP2，三相机</text>
+<text x="78" y="760">下采样 + mlp1 → Qwen3</text>
+<text x="78" y="817" class="small">冻结原视觉语言主干</text>
+<rect x="424" y="630" width="326" height="240" rx="15" class="box"/>
+<text x="447" y="673" class="bold">P：243 × 256</text>
+<text x="447" y="711" class="small">mlp1 后、LLM 前 → SE</text>
+<text x="447" y="747" class="small">243 = 3 相机 × 9 × 9</text>
+<text x="447" y="797" class="bold">C：user EOS，1 × 2048</text>
+<text x="447" y="835" class="small">同样为当前上下文的单 token</text>
+<rect x="793" y="630" width="326" height="240" rx="15" class="mem"/>
+<text x="816" y="673" class="bold">双路记忆，各 64 槽²</text>
+<text x="816" y="714">保留两层检索 / 门控 / 合并</text>
+<text x="816" y="755">新增认知 Q/K LayerNorm</text>
+<text x="816" y="798">F.detach() 写回记忆库</text>
+<text x="816" y="835" class="small">动作读出另取历史 Value r</text>
+<rect x="1162" y="630" width="326" height="240" rx="15" class="new"/>
+<text x="1185" y="673" class="bold">保留完整原上下文 H</text>
+<text x="1185" y="714">H′ = H + 历史 Value 残差</text>
+<text x="1185" y="755">零初始化：初始行为不变</text>
+<text x="1185" y="798">P 加图像位置；C 加 EOS</text>
+<text x="1185" y="835" class="small">适配冻结的预训练动作专家</text>
+<rect x="1531" y="630" width="326" height="240" rx="15" class="box"/>
+<text x="1554" y="675" class="bold">原 GR00T 动作专家</text>
+<text x="1554" y="718">32 层 / 1536 宽，冻结</text>
+<text x="1554" y="760">flow 速度预测，Euler 4 步</text>
+<text x="1554" y="817" class="small">50 × 128 → B1K 32 × 23</text>
+<path d="M381 748H422" class="arrow"/><path d="M750 748H791" class="arrow"/><path d="M1119 748H1160" class="arrow"/><path d="M1488 748H1529" class="arrow"/>
+<rect x="55" y="910" width="1802" height="127" rx="15" fill="#f3f6fa"/>
+<text x="78" y="946" class="small">① 两边感知都来自视觉编码器；投影位置、网格和相机数不同。user EOS 是准确选 token，不是新增认知机制。</text>
+<text x="78" y="983" class="small">注¹ 论文描述融合特征写回；本地参考源码默认 update_fused=False。V1 主图使用融合写回。</text>
+<text x="78" y="1020" class="small">注² 64 槽是起始超参数，未证明优于16。残差的兼容性已有验证，任务收益仍需实验，不能据此宣称优于原 MemoryVLA。</text>
+</svg>

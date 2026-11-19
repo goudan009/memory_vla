@@ -1,0 +1,87 @@
+digraph architecture {
+  graph [rankdir=TB, bgcolor="white", pad="0.35", nodesep="0.35", ranksep="0.58",
+    fontname="Noto Sans CJK SC", fontsize=22, compound=true, newrank=true, labelloc=t,
+    label="MemoryV1 · GR00T N1.6 + Residual Value Memory\nTask40 step4000 配置：scalar / EOS · 64 槽 · Memory-only"];
+  node [shape=box, style="rounded,filled", fillcolor="#EFF6FF", color="#93B4D8",
+    fontname="Noto Sans CJK SC", fontsize=13, fontcolor="#16324F", margin="0.18,0.13", penwidth=1.25];
+  edge [color="#61758A", arrowsize=0.7, penwidth=1.3, fontname="Noto Sans CJK SC", fontsize=10.5];
+
+  rgb [label="当前三路 RGB\nhead / left wrist / right wrist"];
+  text [label="当前语言指令 / prompt"];
+  vision [label="原 Eagle 视觉路径（冻结）\nSigLIP2 → 空间下采样 → mlp1"];
+  visual [label="LLM 前视觉投影 V_t\n[B,3,81,2048]"];
+  llm [label="原 Eagle 语言主干（冻结）\n保留 16 层 · 与文本联合编码"];
+  h [label="完整上下文 H_t\n[B,S,2048] · S 随指令变化", penwidth=2];
+
+  rgb -> vision -> visual;
+  visual -> llm;
+  text -> llm;
+  llm -> h;
+  {rank=same; rgb; text;}
+
+  se [label="共享 BottleneckSE（逐相机）\n2048 → 512 → 256\n3 个 9×9 网格后按原顺序拼接",
+    fillcolor="#DEF7F0", color="#4CA991"];
+  p [label="当前感知 P_t\n[B,243,256]", fillcolor="#DEF7F0", color="#4CA991"];
+  c [label="取最后有效 user EOS\n当前认知 C_t [B,1,2048]", fillcolor="#DEF7F0", color="#4CA991"];
+  visual -> se -> p;
+  h -> c;
+  {rank=same; se; h;}
+  {rank=same; p; c;}
+
+  subgraph cluster_per {
+    label="感知记忆 · 256 维"; color="#B9DFD4"; style="rounded";
+    fontname="Noto Sans CJK SC"; fontsize=15;
+    pb [label="过去感知库 M_p\n最多 64 × [243,256]", shape=cylinder, fillcolor="#F2FAF7", color="#4CA991"];
+    pr [label="2 层单头交叉注意力\nQ：当前 / 上层输出\nK：M_p + 时间编码 · V：M_p", fillcolor="#DEF7F0", color="#4CA991"];
+    pg [label="GateFusion\ng_p = sigmoid(Linear([P_t,q₂]))", fillcolor="#DEF7F0", color="#4CA991"];
+    pf [label="融合写回 F_p\ng_p·P_t + (1−g_p)·q₂\ndetach / clone → 写库 / 合并", fillcolor="#DEF7F0", color="#4CA991"];
+    pv [label="历史 Value 读出 r_p\n(1−g_p)·A₂·(M_p Wv₂ᵀ)\nV 投影无 bias", fillcolor="#FFF0D7", color="#DA9C3D"];
+    pb -> pr [style=dashed, label="只读严格过去"];
+    pr -> pg;
+    pg -> pf [label="融合路径"];
+    pg -> pv [label="末层消息 × 历史门"];
+    pf:w -> pb:w [style=dashed, constraint=false, color="#4CA991"];
+  }
+  subgraph cluster_cog {
+    label="认知记忆 · 2048 维"; color="#B9DFD4"; style="rounded";
+    fontname="Noto Sans CJK SC"; fontsize=15;
+    cb [label="过去认知库 M_c\n最多 64 × [1,2048]", shape=cylinder, fillcolor="#F2FAF7", color="#4CA991"];
+    cr [label="2 层单头交叉注意力\nQ / K 投影前：无参数 LayerNorm\nK：M_c + 时间编码 · V：M_c", fillcolor="#DEF7F0", color="#4CA991"];
+    cg [label="GateFusion\ng_c = sigmoid(Linear([C_t,q₂]))", fillcolor="#DEF7F0", color="#4CA991"];
+    cf [label="融合写回 F_c\ng_c·C_t + (1−g_c)·q₂\ndetach / clone → 写库 / 合并", fillcolor="#DEF7F0", color="#4CA991"];
+    cv [label="历史 Value 读出 r_c\n(1−g_c)·A₂·(M_c Wv₂ᵀ)\nV 投影无 bias", fillcolor="#FFF0D7", color="#DA9C3D"];
+    cb -> cr [style=dashed, label="只读严格过去"];
+    cr -> cg;
+    cg -> cf [label="融合路径"];
+    cg -> cv [label="末层消息 × 历史门"];
+    cf:e -> cb:e [style=dashed, constraint=false, color="#4CA991"];
+  }
+  p -> pr [label="Query"];
+  c -> cr [label="Query"];
+  {rank=same; pb; cb;}
+  {rank=same; pr; cr;}
+  {rank=same; pg; cg;}
+  {rank=same; pf; pv; cv; cf;}
+
+  pout [label="W_p：Linear 256→2048\n无 bias · 零初始化\n只加到图像位置", fillcolor="#FFF0D7", color="#DA9C3D"];
+  cout [label="α_c：可学习标量\n零初始化\n只加到 user EOS", fillcolor="#FFF0D7", color="#DA9C3D"];
+  pv -> pout;
+  cv -> cout;
+  {rank=same; pout; cout;}
+  sum [label="按位置相加：H'_t = H_t + ΔH\n完整 [B,S,2048] · 保留原 mask\n初始化 / 空历史：ΔH = 0", fillcolor="#FFF0D7", color="#DA9C3D", penwidth=2];
+  h -> sum [label="保留原完整上下文", color="#3978B5", penwidth=2.5, minlen=5];
+  pout -> sum;
+  cout -> sum;
+
+  state [label="当前 state\n原 state_encoder（冻结）\n[B,1,1536]"];
+  noise [label="噪声 / 中间动作 + flow time\n原 action_encoder（冻结）\n[B,50,1536]"];
+  expert [label="原 vlln + 32 层 AlternateVLDiT + decoder（冻结）\nH'：原图像 / 非图像交叉注意力条件\nstate + action：自注意力序列", penwidth=2];
+  action [label="预测速度场 · 4 次 Euler 更新\n模型 [B,50,128] → processor → B1K [B,32,23]", fillcolor="#E9EEF6"];
+  sum -> expert;
+  state -> expert;
+  noise -> expert;
+  expert -> action;
+  {rank=same; state; expert; noise;}
+  note [shape=plaintext, fillcolor="white", label="蓝：原 GR00T 冻结模块　青：可训练 Memory　橙：历史读出 / 残差接口\n每观测读写一次；4 次 Euler 复用条件。F 写库，r 注入动作条件。\n超容量时：两路各自合并时间相邻且最相似的一对槽位，逐元素取平均。", fontsize=12];
+  action -> note [style=invis];
+}

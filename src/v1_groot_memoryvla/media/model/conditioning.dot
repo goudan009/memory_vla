@@ -1,0 +1,24 @@
+digraph model {
+      graph [rankdir=TB, bgcolor="#ffffff", pad="0.3", nodesep="0.34", ranksep="0.55",
+             fontname="Noto Sans CJK SC", fontsize=20, compound=true];
+      node [shape=box, style="rounded,filled", color="#cbd5e1", fillcolor="#f1f5f9",
+            fontcolor="#172554", fontname="Noto Sans CJK SC", fontsize=17, margin="0.20,0.15", penwidth=1.3];
+      edge [color="#64748b", penwidth=1.6, arrowsize=0.8, fontname="Noto Sans CJK SC", fontsize=13];
+      
+      subgraph cluster_base {label="A · 原版 Baseline"; color="#93c5fd";
+        bh [label="Eagle 完整上下文 H\n图像 + 指令 + 特殊 Token", fillcolor="#dbeafe"];
+        bz [label="[B,S,2048]\n保留原 image / attention masks"];
+        ba [label="原动作专家", fillcolor="#dbeafe"]; bh -> bz -> ba; }
+      subgraph cluster_old {label="B · 旧 V1：residual"; color="#cbd5e1";
+        rh [label="Eagle 完整上下文 H", fillcolor="#dbeafe"];
+        rd [label="图像位置加 Wr(P̂−P)\nuser EOS 加 Ĉ−C", fillcolor="#ccfbf1"];
+        rz [label="[B,S,2048]\n无历史时残差 = 0"];
+        ra [label="原动作专家", fillcolor="#dbeafe"]; rh -> rd -> rz -> ra; }
+      subgraph cluster_new {label="C · 当前 V1：direct"; color="#14b8a6";
+        dp [label="融合感知 P̂ → 投影\n243 × 2048", fillcolor="#ccfbf1"];
+        dc [label="融合认知 Ĉ\n1 × 2048", fillcolor="#ccfbf1"];
+        dz [label="拼接为 [B,244,2048]\nimage_mask = 243 个真 + 1 个假", fillcolor="#fef3c7"];
+        da [label="原动作专家", fillcolor="#dbeafe"]; dp -> dz; dc -> dz; dz -> da; }
+      {rank=same; bh; rh; dp; dc;} {rank=same; ba; ra; da;}
+    
+    }

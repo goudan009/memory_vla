@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>评估结果 · memory_vla</title>
+<style>
+  :root{
+    --bg:#f5f6f4; --card:#fff; --line:#e3e6e1; --ink:#1c211d; --muted:#6b736d;
+    --green:#256b4b; --soft:#eaf3ee; --warn:#9a6118; --warnbg:#fdf3e4; --bad:#a3322f; --badbg:#fdeceb;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+       font:14px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}
+  a{color:var(--green);text-decoration:none}
+  header{background:#fff;border-bottom:1px solid var(--line);padding:13px max(18px,calc((100vw - 1440px)/2));
+         display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+  h1{font-size:16px;margin:0;font-weight:600}
+  h1 span{font-weight:400;color:var(--muted);font-size:13px}
+  .sub{color:var(--muted);font-size:12px;margin-top:2px}
+  nav.tabs{background:#fff;border-bottom:1px solid var(--line);padding:0 max(18px,calc((100vw - 1440px)/2));
+           display:flex;gap:2px;overflow-x:auto}
+  nav.tabs button{border:none;background:none;padding:11px 15px;font:inherit;font-size:13.5px;cursor:pointer;
+                  color:var(--muted);border-bottom:2px solid transparent;white-space:nowrap}
+  nav.tabs button[aria-selected="true"]{color:var(--green);border-bottom-color:var(--green);font-weight:600}
+  nav.tabs button .n{font-size:11.5px;color:var(--muted);margin-left:4px}
+  main{padding:16px max(18px,calc((100vw - 1440px)/2)) 70px}
+  button,select,input{font:inherit;border:1px solid var(--line);background:#fff;color:var(--ink);
+        border-radius:6px;padding:6px 11px;cursor:pointer}
+  button:hover{background:var(--soft);border-color:#bfded0}
+  button.primary{background:var(--green);border-color:var(--green);color:#fff}
+  .acts{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:0 0 12px}
+  .toolbar input{min-width:190px;max-width:300px}
+  .toolbar select{padding:6px 9px}
+  .hint{color:var(--muted);font-size:12px}
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(126px,1fr));gap:9px;margin-bottom:14px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:11px 13px}
+  .card .k{font-size:11.5px;color:var(--muted)}
+  .card .v{font-size:19px;font-weight:600;margin-top:1px;font-variant-numeric:tabular-nums}
+  .card .v small{font-size:11.5px;font-weight:400;color:var(--muted)}
+  .card.warn{border-color:#eed9b8;background:var(--warnbg)} .card.warn .v{color:var(--warn)}
+  .card.bad{border-color:#f3c9c7;background:var(--badbg)} .card.bad .v{color:var(--bad)}
+  h2.sec{font-size:13px;font-weight:600;color:var(--muted);margin:20px 0 8px;letter-spacing:.3px}
+  table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+  th,td{padding:8px 11px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top;font-size:13px}
+  th{background:#fafbfa;font-weight:600;color:var(--muted);font-size:11.5px;white-space:nowrap}
+  tr:last-child td{border-bottom:none}
+  td.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .mono{font:12px ui-monospace,SFMono-Regular,Menlo,monospace}
+  .tag{display:inline-block;font-size:11px;padding:1px 7px;border-radius:10px;background:#eef1ee;
+       color:var(--muted);margin:1px 3px 1px 0;white-space:nowrap}
+  .tag.good{background:var(--soft);color:var(--green)}
+  .tag.warn{background:var(--warnbg);color:var(--warn)}
+  .tag.bad{background:var(--badbg);color:var(--bad)}
+  .empty{text-align:center;color:var(--muted);padding:36px}
+  .overview-head{display:flex;justify-content:space-between;align-items:end;gap:14px;flex-wrap:wrap;margin:20px 0 8px}
+  .overview-head h2{font-size:15px;margin:0}.overview-head p{font-size:12px;color:var(--muted);margin:3px 0 0}
+  .task-ledger{background:#fff;border:1px solid var(--line);border-radius:8px;margin:8px 0;overflow:hidden}
+  .task-ledger summary{display:flex;align-items:center;gap:10px;padding:11px 14px;cursor:pointer;list-style:none}
+  .task-ledger summary::-webkit-details-marker{display:none}.task-ledger summary:after{content:"+";margin-left:auto;color:var(--muted);font-size:17px}
+  .task-ledger[open] summary:after{content:"−"}.task-title{font-weight:600}.task-meta{font-size:11px;color:var(--muted)}
+  .task-count{margin-left:auto;color:var(--muted);font-size:11px}
+  .version-node,.group-node{background:#fff;border:1px solid var(--line);border-radius:8px;margin:9px 0;overflow:hidden}
+  .version-node>summary,.group-node>summary{display:flex;align-items:center;gap:10px;padding:12px 14px;cursor:pointer;list-style:none}
+  .version-node>summary::-webkit-details-marker,.group-node>summary::-webkit-details-marker{display:none}
+  .version-node>summary:after,.group-node>summary:after{content:"+";margin-left:auto;color:var(--muted);font-size:16px}
+  .version-node[open]>summary:after,.group-node[open]>summary:after{content:"−"}
+  .version-node>summary{background:#fff;font-size:14px}.version-node>summary strong{color:var(--green)}
+  .version-node>summary span,.group-node>summary span{font-size:11px;color:var(--muted);font-weight:400}
+  .group-node{margin:8px 10px;border-radius:6px}.group-node>summary{background:#fafbfa;padding:9px 12px}
+  .task-node{margin:6px 10px}.task-node .task-content{border-top:1px solid var(--line)}
+  .task-progress{display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:#fafbfa;padding:7px 10px;font-size:11px;color:var(--muted)}
+  .task-progress strong{color:var(--ink);font-weight:550}
+  .table-wrap{overflow:auto}.ledger-table{border:0;border-radius:0;min-width:860px}.ledger-table th,.ledger-table td{padding:8px 10px;font-size:12px}
+  .ledger-table th{font-size:10px}.ledger-table td:first-child{font-weight:550}
+  .metric-cell{font-variant-numeric:tabular-nums;white-space:nowrap}.metric-cell strong{font-size:13px}
+  .run-link{display:inline-block;max-width:220px;overflow:hidden;text-overflow:ellipsis;vertical-align:bottom;color:var(--green)}
+  .ledger-filter{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}.ledger-filter input{min-width:190px}
+  .row-actions{display:flex;gap:5px;align-items:center;white-space:nowrap}.row-actions button{padding:3px 7px;font-size:11px}
+  .annotation-note{display:block;color:var(--muted);font-size:11px;max-width:260px;overflow-wrap:anywhere}
+  dialog{width:min(480px,calc(100vw - 28px));border:1px solid var(--line);border-radius:8px;padding:0;color:var(--ink);box-shadow:0 18px 60px #18251e33}
+  dialog::backdrop{background:#15201966}.dialog-head{padding:14px 18px;border-bottom:1px solid var(--line);font-weight:600}
+  .dialog-body{padding:16px 18px;display:grid;gap:12px}.dialog-body label{display:grid;gap:4px;font-size:12px;color:var(--muted)}
+  .dialog-body input,.dialog-body textarea{width:100%;cursor:text}.dialog-body textarea{min-height:100px;resize:vertical}
+  .dialog-actions{display:flex;justify-content:flex-end;gap:8px;padding:12px 18px;border-top:1px solid var(--line)}
+  .status-pill{display:inline-flex;border-radius:4px;padding:2px 6px;background:#eef1ee;color:var(--muted);font-size:10px;white-space:nowrap}
+  .status-pill.complete{background:var(--soft);color:var(--green)}.status-pill.failed{background:var(--badbg);color:var(--bad)}
+  .status-pill.running{background:var(--warnbg);color:var(--warn)}
+  .small-path{display:block;color:var(--muted);font-size:10px;overflow-wrap:anywhere}
+  @media(max-width:760px){.ledger-table{min-width:790px}.task-ledger summary{gap:7px}.run-link{max-width:120px}}
+  .hidden{display:none!important}
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>实验台账 <span>/ 版本、实验进度与资源</span></h1>
+    <div class="sub" id="sub">正在读取评估记录…</div>
+  </div>
+  <div class="acts">
+  <a href="/">← 返回评估工作台</a>
+    <button type="button" id="rescan" class="primary">重新扫描</button>
+  </div>
+</header>
+
+<nav class="tabs" id="nav">
+  <button data-v="overview" aria-selected="true">任务结果</button>
+  <button data-v="exp">版本与实验<span class="n" id="n-exp"></span></button>
+  <button data-v="res">数据与权重<span class="n" id="n-res"></span></button>
+</nav>
+
+<main>
+  <section id="view-overview">
+    <div class="cards" id="cards"></div>
+    <div class="overview-head"><div><h2>按任务比较</h2><p>Q Score、完整成功率与任务进度是不同指标。评估状态表示流程是否结束，不代表任务成功；正式口径见 evaluation.md。</p></div></div>
+    <div id="task-overview"></div>
+  </section>
+
+  <section id="view-exp" class="hidden">
+    <p class="hint">按版本 → 实验组 → 任务 → 单次运行展开。训练步数用于跟踪训练进度；每条评估保留结果、人工标记和备注。</p>
+    <div class="ledger-filter">
+      <select id="ledger-version"><option value="all">全部版本</option></select>
+      <select id="ledger-arm"><option value="all">全部实验组</option></select>
+      <input id="ledger-task" type="search" placeholder="筛任务、运行或标记…">
+      <select id="ledger-archived"><option value="active">未归档</option><option value="all">全部记录</option><option value="archived">只看已归档</option></select>
+    </div>
+    <div id="chains"></div>
+  </section>
+
+  <section id="view-res" class="hidden">
+    <div class="overview-head"><div><h2>数据与权重资源</h2><p>汇总评估使用的数据集与模型权重的存放位置和占用。</p></div></div>
+    <div class="cards" id="res-cards"></div>
+    <div class="toolbar">
+      <select id="res-kind">
+        <option value="all">全部资源</option><option value="dataset">数据集</option>
+        <option value="weights">模型权重</option>
+      </select>
+      <select id="res-host"><option value="all">所有机器</option></select>
+      <input id="res-q" type="search" placeholder="搜资源名称 / 路径…">
+    </div>
+    <table><thead><tr>
+      <th style="width:56px">机器</th><th style="width:90px">类型</th><th>资源 / 路径</th>
+      <th style="width:90px">占用</th><th style="width:110px">更新时间</th>
+    </tr></thead><tbody id="res-rows"></tbody></table>
+  </section>
+</main>
+
+<dialog id="annotation-dialog">
+  <form id="annotation-form">
+    <div class="dialog-head">编辑实验标记</div>
+    <div class="dialog-body"><div class="hint" id="annotation-run"></div>
+      <label>标记<input id="annotation-label" maxlength="48" placeholder="例如：基线、动作修复前、复测"></label>
+      <label>备注<textarea id="annotation-notes" maxlength="500" placeholder="记录这次实验的目的、代码改动或观察"></textarea></label>
+    </div>
+    <div class="dialog-actions"><button type="button" id="annotation-cancel">取消</button><button class="primary" type="submit">保存</button></div>
+  </form>
+</dialog>
+
+<script>
+let D = null, A = {}, VIEW = "overview", editingKey = null;
+const KIND_LABEL = {all:"全部", weights:"模型权重", dataset:"数据集"};
+function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+function num(n,d=2){return (+n||0).toFixed(d);}
+function sizeTxt(g){ g=+g||0; return g>=1 ? num(g,1)+"G" : Math.round(g*1024)+"M"; }
+function pct(a,b){ return b? Math.round(a/b*100) : 0; }
+function statusText(s){return ({complete:"完成",completed:"完成",running:"运行中",starting:"启动中",failed:"失败",interrupted:"中断",stopped:"已停止"})[s]||s||"未知";}
+function statusClass(s){return ["complete","completed"].includes(s)?"complete":["failed","interrupted"].includes(s)?"failed":s==="running"||s==="starting"?"running":"";}
+function metric(value,digits=1,suffix=""){return value==null?"—":`${num(value,digits)}${suffix}`;}
+function evalRows(){
+  const items=(D.items||[]).filter(i=>i.kind==='eval');
+  return (D.experiments||[]).flatMap(c=>(c.evals||[]).map(e=>{
+    const item=items.find(i=>i.version===c.version&&i.group===c.arm&&String(i.task)===String(c.task)&&i.name===e.name)||{};
+    return {...e,...item,version:c.version,arm:c.arm,task:c.task,task_name:c.task_name,train:c.train,problems:c.problems};
+  }));
+}
+
+function renderOverview(){
+  const rows=evalRows().filter(r=>!A[r.id]?.hidden), tasks=new Map();
+  rows.forEach(r=>{if(!tasks.has(String(r.task)))tasks.set(String(r.task),[]);tasks.get(String(r.task)).push(r);});
+  const running=rows.filter(r=>["running","starting"].includes(r.status)).length;
+  const failed=rows.filter(r=>["failed","interrupted"].includes(r.status)).length;
+  const cards=[["评估次数",rows.length,"次"],["覆盖任务",tasks.size,"个"],["进行中",running,"次"],["失败 / 中断",failed,"次"]];
+  document.getElementById("cards").innerHTML=cards.map(([k,v,u])=>`<div class="card ${k==='失败 / 中断'&&v?'bad':''}"><div class="k">${k}</div><div class="v">${v}<small> ${u}</small></div></div>`).join("");
+  const body=[...tasks.entries()].sort((a,b)=>Number(a[0])-Number(b[0])).map(([task,list])=>{
+    list.sort((a,b)=>a.version.localeCompare(b.version,'zh-CN',{numeric:true})||a.arm.localeCompare(b.arm)||String(b.updated).localeCompare(String(a.updated)));
+    const first=list[0];
+    const grouped=new Map();
+    list.forEach(r=>{const key=`${r.version} · ${r.arm}`;if(!grouped.has(key))grouped.set(key,[]);grouped.get(key).push(r);});
+    const rowsHtml=[...grouped.entries()].map(([label,items])=>items.map((r,i)=>`<tr>
+      ${i===0?`<td rowspan="${items.length}"><span class="tag good">${esc(label)}</span></td>`:""}
+      <td><span class="run-link" title="${esc(r.name)}">${esc(r.name)}</span></td>
+      <td><span class="status-pill ${statusClass(r.status)}">${esc(statusText(r.status))}</span></td>
+      <td class="metric-cell"><strong>${metric(r.mean_q_score,3)}</strong></td>
+      <td class="metric-cell"><strong>${metric(r.success_rate==null?null:r.success_rate*100,1,'%')}</strong></td>
+      <td class="metric-cell"><strong>${metric(r.mean_progress,1,'%')}</strong></td>
+      <td>${esc(r.episodes??'—')}</td><td>${esc(r.updated||'—')}</td>
+    </tr>`).join("")).join("");
+    return `<details class="task-ledger" ${tasks.size<=8?'open':''}><summary><span class="task-title">Task ${esc(task)}</span><span class="task-meta">${esc(first.task_name||'')}</span><span class="task-count">${list.length} 次评估</span></summary>
+      <div class="table-wrap"><table class="ledger-table"><thead><tr><th>版本 / 组</th><th>运行</th><th>状态</th><th>Q 分数</th><th>成功率</th><th>任务进度</th><th>计划回合</th><th>更新</th></tr></thead><tbody>${rowsHtml}</tbody></table></div></details>`;
+  });
+  document.getElementById("task-overview").innerHTML=body.join('')||'<div class="empty">还没有评估记录。</div>';
+
+}
+
+function renderExp(){
+  const version=document.getElementById('ledger-version').value, arm=document.getElementById('ledger-arm').value;
+  const q=(document.getElementById('ledger-task').value||'').toLowerCase();
+  const archived=document.getElementById('ledger-archived').value;
+  const versions=new Map();let count=0;
+  const chains=(D.experiments||[]).filter(c=>(version==='all'||c.version===version)&&(arm==='all'||c.arm===arm));
+  const itemFor=(c,e)=>(D.items||[]).find(i=>i.kind==='eval'&&i.version===c.version&&i.group===c.arm&&String(i.task)===String(c.task)&&i.name===e.name)||{};
+  const visible=(c,e)=>{const hidden=!!A[itemFor(c,e).id]?.hidden;return archived==='all'||(archived==='archived'?hidden:!hidden);};
+  chains.forEach(c=>{
+    const taskMatch=`${c.task} ${c.task_name} ${c.version} ${c.arm}`.toLowerCase().includes(q);
+    const matching=(c.evals||[]).filter(e=>visible(c,e)&&(taskMatch||(`${e.name} ${A[itemFor(c,e).id]?.label||''} ${A[itemFor(c,e).id]?.notes||''}`).toLowerCase().includes(q)));
+    if(!matching.length&&!taskMatch) return;
+    count+=matching.length;
+    if(!versions.has(c.version))versions.set(c.version,new Map());
+    const groups=versions.get(c.version);if(!groups.has(c.arm))groups.set(c.arm,[]);groups.get(c.arm).push({...c,visibleEvals:matching});
+  });
+  document.getElementById('n-exp').textContent=count;
+  const renderTask=c=>{
+    const t=c.train, trainText=t?`${statusText(t.status)} · ${t.step||0}${t.total_steps?` / ${t.total_steps} 步`:''}`:'未登记训练';
+    const trainPath=t?.path?`<details><summary>训练记录与权重来源</summary><span class="small-path mono">${esc(t.path)}</span></details>`:'';
+    const rows=c.visibleEvals.map(e=>{
+      const item=itemFor(c,e),annotation=A[item.id]||{},path=item.path||e.path||'';
+      const source=path?`<details><summary>评估目录</summary><span class="small-path mono">${esc(path)}</span>${item.checkpoint_exists===false?'<span class="tag bad">评估权重缺失</span>':item.checkpoint_exists===true?'<span class="tag good">评估权重存在</span>':''}</details>`:'';
+      const label=annotation.label||annotation.notes?`<span class="tag warn">${esc(annotation.label||'已备注')}</span>${annotation.notes?`<span class="annotation-note">${esc(annotation.notes)}</span>`:''}`:'<span class="hint">未标记</span>';
+      const actions=`<div class="row-actions"><button type="button" data-edit="${esc(item.id)}" data-name="${esc(e.name)}">编辑标记</button>${annotation.hidden?`<button type="button" data-restore="${esc(item.id)}">恢复</button>`:`<button type="button" data-archive="${esc(item.id)}">归档</button>`}</div>`;
+      return `<tr><td><span class="run-link" title="${esc(e.name)}">${esc(e.name)}</span>${source}</td>
+        <td><span class="status-pill ${statusClass(item.status)}">${esc(statusText(item.status))}</span></td>
+        <td class="metric-cell">${metric(item.mean_q_score,3)}</td><td class="metric-cell">${metric((item.success_rate??e.success_rate)==null?null:(item.success_rate??e.success_rate)*100,1,'%')}</td>
+        <td class="metric-cell">${metric(item.mean_progress??e.mean_progress,1,'%')}</td><td>${esc(e.episodes??'—')}</td><td>${esc(item.updated||e.updated||'—')}</td><td>${label}${actions}</td></tr>`;
+    }).join('')||'<tr><td colspan="8" class="empty">尚无评估记录</td></tr>';
+    return `<details class="task-ledger task-node"><summary><span class="task-title">Task ${esc(c.task)} · ${esc(c.task_name||'')}</span><span class="task-meta">训练 ${esc(trainText)} · ${c.visibleEvals.length} 次评估</span></summary><div class="task-content"><div class="task-progress">训练进度：<strong>${esc(trainText)}</strong>${trainPath}</div><div class="table-wrap"><table class="ledger-table"><thead><tr><th>单次运行</th><th>状态</th><th>Q Score</th><th>成功率</th><th>任务进度</th><th>计划回合</th><th>更新时间</th><th>人工标记</th></tr></thead><tbody>${rows}</tbody></table></div></div></details>`;
+  };
+  const versionEntries=[...versions.entries()].sort((a,b)=>a[0].localeCompare(b[0],'zh-CN',{numeric:true}));
+  const html=versionEntries.map(([ver,groups],versionIndex)=>{
+    const groupHtml=[...groups.entries()].sort((a,b)=>a[0].localeCompare(b[0])).map(([group,items])=>{
+      items.sort((a,b)=>Number(a.task)-Number(b.task));
+      const tasksHtml=items.map(renderTask).join('');
+      return `<details class="group-node" ${groups.size<=2?'open':''}><summary><strong>${esc(group)}</strong><span>${items.length} 个任务 · ${items.reduce((n,c)=>n+c.visibleEvals.length,0)} 次评估</span></summary><div>${tasksHtml}</div></details>`;
+    }).join('');
+    const evalCount=[...groups.values()].flat().reduce((n,c)=>n+c.visibleEvals.length,0);
+    return `<details class="version-node" ${versionIndex===versionEntries.length-1?'open':''}><summary><strong>${esc(ver)}</strong><span>${groups.size} 个实验组 · ${evalCount} 次评估</span></summary><div>${groupHtml}</div></details>`;
+  });
+  document.getElementById('chains').innerHTML=html.join('')||'<div class="empty">没有符合筛选条件的实验记录。</div>';
+}
+
+function renderRes(){
+  const kind = document.getElementById("res-kind").value;
+  const host = document.getElementById("res-host").value;
+  const q = (document.getElementById("res-q").value||"").toLowerCase();
+  let items = (D.items||[]).filter(i=>["dataset","weights"].includes(i.kind));
+  const sum = {dataset:0, weights:0};
+  items.forEach(i=>sum[i.kind]=(sum[i.kind]||0)+(+i.size_gb||0));
+  document.getElementById("res-cards").innerHTML = [
+    ["数据集", num(sum.dataset,0), "G"],
+    ["模型权重", num(sum.weights,0), "G"],
+    ["资源总量", num(sum.dataset+sum.weights,0), "G"],
+  ].map(([k,v,u])=>`<div class="card"><div class="k">${k}</div><div class="v">${v}<small> ${u}</small></div></div>`).join("");
+  document.getElementById("n-res").textContent = items.length;
+
+  if(kind!=="all") items = items.filter(i=>i.kind===kind);
+  if(host!=="all") items = items.filter(i=>i.host===host);
+  if(q) items = items.filter(i=>(i.name+" "+i.path).toLowerCase().includes(q));
+  items.sort((a,b)=>(+b.size_gb||0)-(+a.size_gb||0));
+  document.getElementById("res-rows").innerHTML = items.length ? items.slice(0,300).map(i=>`
+    <tr><td><span class="tag h${esc(i.host)}">${esc(i.host)}</span></td>
+      <td><span class="tag">${esc(KIND_LABEL[i.kind]||i.kind)}</span></td>
+      <td><div>${esc(i.name)}</div><div class="mono" style="color:var(--muted)">${esc(i.path)}</div></td>
+      <td class="num">${sizeTxt(i.size_gb)}</td><td style="color:var(--muted)">${esc(i.updated||"")}</td></tr>`).join("")
+    : `<tr><td colspan="5" class="empty">没有匹配</td></tr>`;
+}
+
+function show(v){
+  VIEW = v;
+  document.querySelectorAll("#nav button").forEach(b=>b.setAttribute("aria-selected", String(b.dataset.v===v)));
+  ["overview","exp","res"].forEach(k=>document.getElementById("view-"+k).classList.toggle("hidden", k!==v));
+  if(v==="overview") renderOverview();
+  if(v==="exp") renderExp();
+  if(v==="res") renderRes();
+}
+function fillHostSelects(){
+  const hosts = (D.hosts||[]).map(h=>h.host);
+  ["res-host"].forEach(id=>{
+    document.getElementById(id).innerHTML = `<option value="all">所有存放位置</option>` +
+      hosts.map(h=>`<option value="${esc(h)}">${esc(h)}</option>`).join("");
+  });
+}
+function fillLedgerFilters(){
+  const chains=D.experiments||[];
+  const versions=[...new Set(chains.map(c=>c.version))].sort((a,b)=>a.localeCompare(b,'zh-CN',{numeric:true}));
+  const arms=[...new Set(chains.map(c=>c.arm))].sort();
+  const v=document.getElementById('ledger-version'),a=document.getElementById('ledger-arm');
+  const oldV=v.value,oldA=a.value;
+  v.innerHTML='<option value="all">全部版本</option>'+versions.map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join('');
+  a.innerHTML='<option value="all">全部实验组</option>'+arms.map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join('');
+  if(versions.includes(oldV))v.value=oldV;if(arms.includes(oldA))a.value=oldA;
+}
+async function load(force){
+  const sub = document.getElementById("sub");
+  sub.textContent = force ? "正在更新实验记录与资源清单，跨机扫描可能需要半分钟…" : "读取上次扫描结果…";
+  try{
+    const r = await fetch(force?"/api/registry?force=1":"/api/registry", {cache:"no-store"});
+    D = await r.json();
+    if(D.error) throw new Error(D.error);
+    try{const ar=await fetch('/api/registry/annotations',{cache:'no-store'});A=await ar.json();}catch(_){A={};}
+    if(!D.items || !D.items.length){
+      sub.innerHTML = `<span style="color:#a3322f">还没有扫描结果 —— 点右上角「重新扫描」跑一次</span>`;
+      return;
+    }
+    const s = D.summary || {};
+    sub.textContent = `数据更新时间 ${D.generated_at} · 扫描 ${s.scan_s}s · 刷新更新实验记录与资源清单`;
+    fillHostSelects(); fillLedgerFilters(); show(VIEW);
+  }catch(e){
+    sub.innerHTML = `<span style="color:#a3322f">读取失败：${esc(e.message)} —— 稍等一下再刷新，或点「重新扫描」</span>`;
+  }
+}
+document.getElementById("nav").onclick = e => { const b = e.target.closest("button"); if(b) show(b.dataset.v); };
+document.getElementById("rescan").onclick = () => load(true);
+["ledger-version","ledger-arm"].forEach(id=>document.getElementById(id).addEventListener("change", renderExp));
+document.getElementById('ledger-archived').addEventListener('change',renderExp);
+document.getElementById('ledger-task').addEventListener('input',renderExp);
+document.getElementById('chains').addEventListener('click',async e=>{
+  const edit=e.target.closest('[data-edit]'), archive=e.target.closest('[data-archive]'), restore=e.target.closest('[data-restore]');
+  if(edit){editingKey=edit.dataset.edit;document.getElementById('annotation-run').textContent=edit.dataset.name;document.getElementById('annotation-label').value=A[editingKey]?.label||'';document.getElementById('annotation-notes').value=A[editingKey]?.notes||'';document.getElementById('annotation-dialog').showModal();return;}
+  if(archive&&confirm('仅从评估台账隐藏这条记录，原始结果、日志和录像不会删除。可以在“只看已归档”中恢复。')) await saveAnnotation(archive.dataset.archive,{...(A[archive.dataset.archive]||{}),hidden:true});
+  if(restore) await saveAnnotation(restore.dataset.restore,{...(A[restore.dataset.restore]||{}),hidden:false});
+});
+async function saveAnnotation(key,value){
+  const response=await fetch('/api/registry/annotations',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({key,label:value.label||'',notes:value.notes||'',hidden:!!value.hidden})});
+  const result=await response.json();if(!response.ok)throw new Error(result.error||'保存失败');A=result;renderExp();if(VIEW==='overview')renderOverview();
+}
+document.getElementById('annotation-form').addEventListener('submit',async e=>{e.preventDefault();try{await saveAnnotation(editingKey,{label:document.getElementById('annotation-label').value,notes:document.getElementById('annotation-notes').value,hidden:!!A[editingKey]?.hidden});document.getElementById('annotation-dialog').close();}catch(error){alert(error.message);}});
+document.getElementById('annotation-cancel').onclick=()=>document.getElementById('annotation-dialog').close();
+["res-kind","res-host","res-q"].forEach(id=>document.getElementById(id).addEventListener("input", renderRes));
+load(false);
+</script>
+</body>
+</html>

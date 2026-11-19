@@ -43,12 +43,14 @@ def main() -> None:
         "observation/wrist_image_left": np.zeros((224, 224, 3), dtype=np.uint8),
         "observation/wrist_image_right": np.zeros((224, 224, 3), dtype=np.uint8),
         "observation/state": np.zeros(256, dtype=np.float32),
-        "task_index": np.asarray(21, dtype=np.int32),
+        # B1KPolicyWrapper sends the current task and stage as these tokens.
+        "tokenized_prompt": np.asarray([21, 0], dtype=np.int32),
+        "tokenized_prompt_mask": np.asarray([True, True], dtype=bool),
     }
     start = time.monotonic()
     result = policy.infer(obs)
     actions = np.asarray(result["actions"])
-    if actions.ndim != 3 or actions.shape[0] != 1 or actions.shape[-1] < 23:
+    if actions.ndim != 2 or actions.shape != (30, 23):
         raise RuntimeError(f"Unexpected action shape: {actions.shape}")
     if not np.isfinite(actions).all():
         raise RuntimeError("Model produced NaN or Inf actions")

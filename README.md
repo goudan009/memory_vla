@@ -1,64 +1,149 @@
 # VLA Memory
 
-**π0.5 + 记忆模块**研究项目。代码基座 = SERF 的 OpenPI/π0.5 实现，加入动作子空间条件记忆，先单任务跑通，再扩到 3-5 个任务。
+基于 **GR00T N1.6** 加入 MemoryVLA 的历史记忆方法，在 **B1K-2025** 上训练和评估。v1 首先验证普通记忆是否提供可重复收益，或能通过历史干预确认它在特定决策中的作用。
 
-训练期记忆写入（JIT 外 episode/timestep 传递）尚未闭环；`src/vlamemory` 已有核心实现和 OpenPI 集成快照，可做 CPU 单测。
+v1 已接通 256 维感知/2048 维认知双路记忆、历史组训练及在线 Episode Reset，采用增量残差加入原 VLM 特征。已完成真实 B1K 转换、官方 checkpoint 单批次训练和六项记忆集成验收；尚未执行正式 B1K 收益评估。用户说明见 [v1 README](src/v1_groot_memoryvla/README.md)，进度与验收证据统一维护在 [handoff.md](src/v1_groot_memoryvla/handoff.md)。
 
-## 目录
+## 项目架构
 
+采用“版本内维护模型与训练，版本间共用评估”的布局。v1 直接沿用 GR00T 的模块划分，后续记忆代码在对应模块内增加；不再额外嵌套一层 `gr00t/`。
+
+```text
+memory_vla/
+├── README.md                             整体架构、职责与入口
+├── pyproject.toml                        统一源码包发现及资源打包
+├── src/
+│   ├── references_code/                  原版参考，只读对照
+│   │   ├── Isaac-GR00T/                  官方 N1.6，固定提交，保留 Git
+│   │   ├── memoryvla/                    MemoryVLA 方法参考
+│   │   ├── mem/
+│   │   └── serf/
+│   ├── v1_groot_memoryvla/               v1 的完整开发代码
+│   │   ├── README.md / handoff.md / LICENSE
+│   │   ├── train.py                      本版训练入口
+│   │   ├── serve.py                      本版模型服务入口
+│   │   ├── configs/                      模型、数据与训练配置定义
+│   │   │   └── experiments/              本版具体实验参数的存放约定
+│   │   ├── model/                        GR00T 模型及 memory/ 双路残差适配
+│   │   ├── data/                         真实 B1K 转换、历史组 Dataset / Collator
+│   │   ├── experiment/                   Trainer、训练、保存和加载
+│   │   ├── policy/                       推理、独立历史状态与 Episode Reset
+│   │   ├── utils/                        本版内部工具
+│   │   ├── env/                          本版依赖清单、环境说明与上游留档
+│   │   └── tests/                        本版单元及模型集成测试
+│   └── vlamemory/                        已有记忆接口与历史实现，保留兼容
+├── baselines/
+│   └── groot_n1d6/                       原版基线的训练/服务入口与环境说明
+├── evaluation/                           Baseline / V1 / V2 共用
+│   ├── README.md                         正式评估使用说明
+│   ├── evaluation.md                     固定评估协议、指标与配对规则
+│   ├── configs/                          公共评估配置的职责和现有参数说明
+│   ├── targets/                          源码版本、checkpoint、服务和结果映射约定
+│   ├── scripts/                          正式启动、续跑、监控和结果查看
+│   ├── sim/                              共用仿真适配、Gym 注册、录像 wrapper
+│   ├── rollout_policy.py                 上游通用 rollout，已集中到此
+│   ├── open_loop_eval.py                 上游离线动作评估
+│   ├── real_robot/                       上游真机评估示例
+│   ├── baseline/                         基线结果，网页查看
+│   └── experiment_N/                     实验结果，已有 experiment_1
+├── tests/                                公共评估/协议测试及旧 vlamemory 测试
+├── env/                                  公共仿真环境说明及已有环境软链接
+├── scripts/                              公共资源工具与旧命令兼容入口
+├── assets/                               共用资源入口，不纳入 Git
+│   ├── simulation/                       场景、物体、机器人、任务实例和密钥
+│   └── datasets/b1k2025/                  演示数据：meta、data、videos
+├── checkpoints/                          按版本/运行组织模型权重
+├── outputs/                              按版本/运行组织训练日志等产物
+├── third_party/Isaac-GR00T/               已有运行快照，含两处延迟导入修改
+├── train/                                训练网页后端、源码同步与公共训练入口
+├── configs/                              旧实验/旧仿真配置，保留兼容
+└── paper/                                论文草稿与研究记录
 ```
-src/vlamemory/          记忆核心包（已实现）
-  memory/               记忆存储、均匀检索、动作子空间条件检索
-  modulation.py         检索结果注入 prefix 的接口
-  data/                 历史帧采样、episode sampler、dataloader
-  config.py             MemoryConfig 配置
-  integrations/openpi/  Pi0 / Pi0Config 接入快照（依赖外部 openpi）
-src/references/         第三方参考源码（memoryvla / mem / serf），只读
-src/simulation/         OmniGibson / joylo 入口（外部软链）
-configs/                实验配置（目前仅 evaluation/base_config.yaml）
-scripts/                执行入口：b1k_python.sh / evaluate_b1k.sh / check_b1k_sim.py 等
-evaluation/             serf_rgb 评估器（eval.py / eval_metrics.py）
-baselines/              对照方法适配代码（目前无实现）
-checkpoints/            权重入口，behavior_50t_checkpoint 软链指向 SERF-VLA 原件
-datasets/               数据入口，通过软链引用外部存储（无真实数据提交）
-env/                    运行环境说明（见 env/README.md）
-paper/                  论文稿（paper.md）和参考论文 PDF
-tests/                  测试用例（待补充）
-train/                  训练脚本（待实现）
-outputs/                运行日志与 agent 产物（gitignored）
+
+上图的 `experiment_N` 表示结果命名规则；V2 源码目录在实际开始开发时创建，沿用 v1 的结构。v1 的 `model/memory/`、历史 Dataset 和记忆配置均已接通。
+
+## 哪些归版本，哪些共用
+
+| 内容 | 存放位置 | 划分依据 |
+| --- | --- | --- |
+| 模型、记忆、历史采样、processor、Trainer、在线 reset | `src/<版本>/` | 会改变模型行为，随版本演进 |
+| 训练入口、训练参数、消融参数、依赖版本、模型测试 | `src/<版本>/{train.py,configs,env,tests}` | 需要独立训练与复现 |
+| 模型服务 | `src/<版本>/serve.py` | 加载本版代码与权重，对外遵守同一策略协议 |
+| 原版基线 | `baselines/groot_n1d6/` + 官方参考目录 | 使用固定的原版代码，独立进程运行 |
+| 仿真、观测/动作接入、任务、实例、seed、评分与录像 | `evaluation/` | 各版本必须遵守同一评估条件 |
+| 被评模型及服务地址记录 | `evaluation/targets/` 的约定 | 只描述评估对象，不包含模型实现 |
+| 仿真环境、资产/数据、初始预训练权重 | 根目录 `env/`、`assets/`、`checkpoints/` | 共用大资源，避免复制 |
+| 训练产物 | `checkpoints/<版本>/<运行>/`、`outputs/<版本>/<运行>/` | 共用存储入口，按版本隔离内容 |
+| 评估产物 | `evaluation/V_数字/{baseline,experment_数字}/` | 共用结果格式、汇总和查看工具；版本和分组支持自定义名称 |
+
+根 `pyproject.toml` 统一打包 `vlamemory` 和 `v1_groot_memoryvla`；版本的模型依赖放在各自 `env/requirements.txt`，不把所有版本依赖合成一个大环境。公共仿真进程与各版模型服务使用各自 Python 环境，通过 Policy Server 协议连接。模型加载涉及同名 Transformers 注册，原版与 v1 使用独立服务进程。
+
+训练和依赖清单使用真实文件，放在对应版本内；无需给根目录再加训练或依赖软链接。软链接用于大资源和外部运行环境，例如 `env/b1k2025-sim`。当前 v1 独立模型环境为 `src/v1_groot_memoryvla/.venv/`。
+
+保留根 `train/`、`configs/` 和旧 `vlamemory` 是为了兼容已有工具，不承载新的 v1 训练配置。不要直接移动已有评估结果。
+
+## 资产与数据路径
+
+所有资源从 `assets/` 进入，不再保留顶层 `datasets/` 或重复的 `simulation/b1k2025` 入口：
+
+```text
+assets/
+├── simulation/
+│   ├── behavior-1k-assets/             场景、物体，固定版本 3.7.2rc1
+│   ├── omnigibson-robot-assets/        机器人资产
+│   ├── 2025-challenge-task-instances/  任务实例及 metadata
+│   ├── 2025-challenge-hidden-instances/ 新补齐46项任务的官方隐藏测试状态
+│   └── omnigibson.key                 已有密钥入口，不提交 Git
+└── datasets/
+    └── b1k2025/
+        ├── meta/                      演示元数据
+        ├── data/                      演示 parquet，原入口名为 parquet
+        └── videos/                    演示图像视频
 ```
 
-## 安装（开发模式）
+这些入口链接到外部大资源目录，不复制大文件。当前演示数据链接保留原目标；仿真场景与机器人资产分别指向 `/nvme3/projects/SERF-VLA/datasets/behavior-1k-assets`、`/nvme3/projects/SERF-VLA/datasets/omnigibson-robot-assets`，任务实例指向 `/nvme3/shared/b1k2025/datasets/2025-challenge-task-instances`。2026-11-09 恢复后已确认场景版本为 `3.7.2rc1`，Task21/22/26 元数据和各 10 个隐藏测试实例可读取；Task21 单环境实际完成 256 步调试窗口，双环境显存限制见 [评测说明](evaluation/README.md)。正式评测仍依赖固定 GR00T 源码树中的隐藏测试实例，保持原路径。
+
+2026-11-10 补齐其余46项 B1K-2025 任务的460个官方隐藏测试状态，存于 `/data/datasets/b1k2025/2025-challenge-hidden-instances`，通过上面的 simulation 入口链接；固定 GR00T 的缺失 `test_instances/<task>` 目录再链接到该入口。已有 Task0/21/22/26 四项目录保留原样。当前全部50项任务均有0～9号测试实例，用 `./evaluation/scripts/run_groot_eval.sh --list-tasks` 查看；实际新任务短窗验收范围见评测说明。
+
+仿真默认读取本项目的 `assets/simulation/`。评测启动器仅通过显式设置 `BEHAVIOR_DATA` 覆盖资产根目录，忽略其他项目遗留的 `OMNIGIBSON_DATA_PATH`；单独调用 `scripts/b1k_python.sh` 时仍可通过 `OMNIGIBSON_DATA_PATH` 指定资源。资源根目录应直接包含上述三个资产目录及密钥。下载时可放在项目外的大容量目录，完成后将对应入口链接到实际解压目录。
+
+## 安装与训练入口
+
+命令均从项目根目录执行。在已具备依赖的独立模型环境中安装源码：
 
 ```bash
-# 在 /nvme3/envs/b1k2025-policy 环境里
-pip install -e . --no-deps   # 仅装 vlamemory 包本体
-# 集成 OpenPI：
-pip install -e /nvme3/projects/vla_memory/code/openpi --no-deps
+python -m pip install -e . --no-deps
+
+# v1 原生训练和模型服务的参数
+python -m v1_groot_memoryvla.train --help
+python -m v1_groot_memoryvla.serve --help
+
+# 原版基线入口：使用 baseline 自己的模型环境
+python baselines/groot_n1d6/train.py --help
+python baselines/groot_n1d6/serve.py --help
 ```
 
-`pyproject.toml` 的 `[tool.setuptools.packages.find]` 只打包 `src/vlamemory`，
-`src/references` 和 `src/simulation` 不会被装入发行包。
+v1 依赖、CUDA wheel 来源、固定上游版本、模型结构和训练命令见 [v1 README](src/v1_groot_memoryvla/README.md)，进度、验收与待办见 [handoff.md](src/v1_groot_memoryvla/handoff.md)。v1 的单 GPU 环境不依赖 DeepSpeed；原有模型和仿真环境保持独立。
 
-## 两套运行环境
+## 多版本共用评估
 
-详见 `env/README.md`。
+新训练按 `V_2_memory_task22_train02` 命名，新评估按 `evaluation/V_2/memory/task22_eval03/` 命名。完整规则、源码/权重关联和后端脚本职责见 [命名与版本管理](evaluation/NAMING.md)。下方旧分组命令仍兼容；新实验推荐使用 `--group memory` 或具体 `ablation_说明`。
 
-- **环境 1（4090）**：仿真 + 推理，Conda `b1k2025-sim`（Isaac Sim 4.5 + OmniGibson 3.7.1）
-- **环境 2（A100）**：模型训练，`/home/1024201092WYH/.venvs/lerobot_pi05`（LeRobot 0.4.3 + torch 2.7.1+cu126）；备选 `/nvme3/projects/vla_memory/code/openpi/.venv`（JAX/flax/openpi）
+先在模型侧启动所需版本及 checkpoint，再用同一套评估脚本指定其服务地址：
 
-## 资产路径速查
+```bash
+# 原有 baseline 默认入口
+./evaluation/scripts/run_groot_eval.sh
 
-| 资产 | 实际位置 |
-|---|---|
-| 50 任务底座权重 | `checkpoints/behavior_50t_checkpoint` → `/nvme3/projects/SERF-VLA/checkpoints/behavior-1k-solution/behavior_50t_checkpoint` |
-| 2025 演示数据（parquet） | `datasets/b1k2025/parquet` → `/nvme3/projects/SERF-VLA/datasets/2025-BEHAVIOR-1K-CHALLENGE/data` |
-| 仿真资产 | `datasets/simulation/behavior-1k-assets` → `/nvme3/projects/SERF-VLA/datasets/behavior-1k-assets` |
-| OmniGibson 源码 | `src/simulation/omnigibson` → `/nvme3/shared/b1k2025/BEHAVIOR-1K/OmniGibson` |
+# V_1 的 experment_1 分组；服务必须已加载本版 checkpoint
+./evaluation/scripts/run_groot_eval.sh --version V_1 --group experment_1 \
+  --model-name grootmeory --policy-host MODEL_HOST --policy-port 5557 \
+  --task 22 --seed 0 --run-tag v1_memory
 
-## 状态
+# 查看全部结果
+./evaluation/scripts/view_results.sh --once
+```
 
-- CPU 单测：`src/vlamemory` 核心包已通过（数据管线、记忆模块、前向 smoke）
-- 评估入口：`sh scripts/evaluate_b1k.sh` → `evaluation/serf_rgb/eval.py`（serf_rgb）
-- 仿真 smoke：`turning_on_radio` 200 步 RGB 正常（输出 `outputs/b1k2025_smoke_20261104/`）
-- 训练端到端：**尚未跑通**（JIT 外记忆写入、数据配方与权重路径需对齐）
+`--version` 选择版本目录（默认 `V_1`），`--group` 选择版本内的分组（默认 `baseline`，实验用 `experment_N`），两项也支持自定义单层名称。它们不是源码加载开关；`--model-name` 也只影响结果命名。每版可分别放 baseline 和多个实验，每次仍需记录准确的代码、配置、checkpoint 和服务地址。映射说明见 [评估对象约定](evaluation/targets/README.md)。
+
+正式评估沿用当前外部固定 runner，原有任务、计分、运行路径和结果不变。新集中的 `evaluation/sim/` 及通用 rollout 尚未替换正式 runner，也未完成仿真对齐验收。使用方法见 [evaluation/README.md](evaluation/README.md)，公平比较规则见 [evaluation/evaluation.md](evaluation/evaluation.md)。未微调的官方权重用于原版参照；检验记忆收益还需要同数据、同预算的无记忆微调对照。

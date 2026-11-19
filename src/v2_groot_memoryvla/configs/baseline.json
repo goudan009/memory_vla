@@ -1,0 +1,1 @@
+{"variant":"baseline","body_dim":128,"body_layers":2,"body_heads":4,"memory_dim":256,"memory_capacity":64,"injection_scale":0.01,"memory_conditioning":null,"memory_length":null}

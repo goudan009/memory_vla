@@ -1,0 +1,20 @@
+Building full-size random-weight model
+11/13 [18:06:15] INFO     | >>     |=> Building empty llama2 LLM base_llm.py:134
+                          from `meta-llama/Llama-2-7b-hf`                       
+11/13 [18:06:16] INFO     | >>     |=> Loading llama2 (Fast)     base_llm.py:151
+                          Tokenizer via the AutoTokenizer API                   
+Training forward: B=2, same episode at observations 0 and 8, R=4
+inference_first
+ ** reset memory ** 
+inference_history
+inference_reset
+ ** reset memory ** 
+Memory-only sweep: 18 writes, full 16-entry capacity
+{
+  "output": "/nvme3/projects/memory_vla/docs/memoryvla/forward_trace.json",
+  "loss": 1.0629347562789917,
+  "parameters": 8376742631,
+  "peak_gpu_gib": 16.310710906982422,
+  "seconds": 2.6977376511786133,
+  "events": 492
+}

@@ -1,0 +1,21 @@
+digraph model {
+      graph [rankdir=TB, bgcolor="#ffffff", pad="0.3", nodesep="0.34", ranksep="0.55",
+             fontname="Noto Sans CJK SC", fontsize=20, compound=true];
+      node [shape=box, style="rounded,filled", color="#cbd5e1", fillcolor="#f1f5f9",
+            fontcolor="#172554", fontname="Noto Sans CJK SC", fontsize=17, margin="0.20,0.15", penwidth=1.3];
+      edge [color="#64748b", penwidth=1.6, arrowsize=0.8, fontname="Noto Sans CJK SC", fontsize=13];
+      
+      current [label="当前 Token Xₜ\n感知：[1,243,256] / 认知：[1,1,2048]", fillcolor="#ccfbf1"];
+      history [label="历史融合特征 Fᵢ（i < t）\n持久记录已 detach", fillcolor="#f0fdfa"];
+      pe [label="历史决策索引 → sin/cos → MLP\n仅加入 Key"];
+      kv [label="K = history + PE\nV = history", fillcolor="#f0fdfa"];
+      retrieval [label="两层 CrossTransformerBlock\nQ 投影 / K,V 投影 → Attention\n残差 + LN → FFN → 残差 + LN", fillcolor="#ccfbf1", color="#14b8a6"];
+      fusion [label="门控融合\ng = sigmoid(W[Xₜ ; Rₜ] + b)\nFₜ = g·Xₜ + (1−g)·Rₜ", fillcolor="#ccfbf1"];
+      head [label="当前动作条件 → 动作 loss\n本步编码 / 检索 / 门控可训练", fillcolor="#fef3c7"];
+      write [label="detach().clone() 后写入 Fₜ\n超容量：合并最相似相邻记录", fillcolor="#f0fdfa"];
+      current -> retrieval [label="Q"]; history -> kv; pe -> kv; kv -> retrieval;
+      retrieval -> fusion [label="Rₜ"]; current -> fusion [label="Xₜ"];
+      fusion -> head; fusion -> write [style=dashed,label="切断跨历史梯度"];
+      {rank=same; current; history; pe;} {rank=same; head; write;}
+    
+    }

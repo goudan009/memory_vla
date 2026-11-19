@@ -1,0 +1,29 @@
+digraph model {
+      graph [rankdir=TB, bgcolor="#ffffff", pad="0.3", nodesep="0.34", ranksep="0.55",
+             fontname="Noto Sans CJK SC", fontsize=20, compound=true];
+      node [shape=box, style="rounded,filled", color="#cbd5e1", fillcolor="#f1f5f9",
+            fontcolor="#172554", fontname="Noto Sans CJK SC", fontsize=17, margin="0.20,0.15", penwidth=1.3];
+      edge [color="#64748b", penwidth=1.6, arrowsize=0.8, fontname="Noto Sans CJK SC", fontsize=13];
+      
+      obs [label="当前三视角 RGB + 任务指令\n每次只输入当前帧"];
+      eagle [label="① 原 Eagle VLM\n正式训练冻结", fillcolor="#dbeafe", color="#60a5fa"];
+      visual [label="LLM 前视觉投影 V\n[B,3,81,2048]", fillcolor="#dbeafe"];
+      eos [label="LLM 后 H 的 user EOS\n[B,1,2048]", fillcolor="#dbeafe"];
+      per [label="② 新增感知编码与记忆\nBottleneckSE → 检索 → 门控\n[B,243,256]", fillcolor="#ccfbf1", color="#14b8a6"];
+      cog [label="③ 新增认知记忆\n检索 → 门控\n[B,1,2048]", fillcolor="#ccfbf1", color="#14b8a6"];
+      ph [label="过去感知 bank\n严格早于当前决策", fillcolor="#f0fdfa"];
+      ch [label="过去认知 bank\n严格早于当前决策", fillcolor="#f0fdfa"];
+      projection [label="④ 新增线性接口\n256 → 2048", fillcolor="#ccfbf1", color="#14b8a6"];
+      condition [label="⑤ direct 条件 Z\n243 个感知 Token + 1 个认知 Token\n[B,244,2048]", fillcolor="#fef3c7", color="#f59e0b"];
+      state [label="当前 state [B,1,128]\n原 state_encoder → [B,1,1536]", fillcolor="#dbeafe"];
+      noisy [label="噪声动作 / 中间动作 + flow time\n原 action_encoder", fillcolor="#dbeafe"];
+      head [label="⑥ 原 vlln + 32 层动作专家 + 解码器\n训练：预测速度场；推理：4 次 Euler 更新", fillcolor="#dbeafe", color="#60a5fa"];
+      action [label="模型动作 [B,50,128]\nprocessor 解码为 [B,32,23]", fillcolor="#fef3c7"];
+      obs -> eagle; eagle -> visual; eagle -> eos;
+      visual -> per; eos -> cog; ph -> per [style=dashed,label="读取过去"]; ch -> cog [style=dashed,label="读取过去"];
+      per -> projection; projection -> condition; cog -> condition;
+      condition -> head; state -> head; noisy -> head; head -> action;
+      {rank=same; visual; eos;} {rank=same; per; cog;}
+      {rank=same; state; head; noisy;}
+    
+    }

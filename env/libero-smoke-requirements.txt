@@ -1,0 +1,13 @@
+# Python 3.10. Torch is reused read-only from the existing V1 environment by
+# scripts/libero_smoke.py; never install these into the training environment.
+robosuite==1.4.1
+mujoco==2.3.7
+bddl==1.0.1
+gym==0.25.2
+easydict==1.13
+numpy==1.26.4
+opencv-python==4.11.0.86
+numba==0.68.1
+llvmlite==0.50.0
+coverage==7.6.1
+PyYAML==6.0.3

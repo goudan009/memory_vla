@@ -23,10 +23,10 @@ from huggingface_hub import hf_hub_download, HfFileSystem
 REPO_ID = "behavior-1k/2025-challenge-demos"
 REPO_TYPE = "dataset"
 REVISION = "main"
-PARQUET_ROOT = Path("/nvme3/projects/SERF-VLA/datasets/2025-BEHAVIOR-1K-CHALLENGE/data")
-DOWNLOAD_ROOT = Path("/nvme3/shared/b1k2025/demos")
-PROJECT_ROOT = Path("/nvme3/projects/memory_vla")
-OUTPUT_DIR = PROJECT_ROOT / "outputs/b1k_download"
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+DOWNLOAD_ROOT = PROJECT_ROOT / "assets/datasets/b1k2025"
+PARQUET_ROOT = DOWNLOAD_ROOT / "data"
+OUTPUT_DIR = PROJECT_ROOT / "outputs/shared/downloads/b1k2025"
 STATUS_FILE = OUTPUT_DIR / "status.json"
 LOG_FILE = OUTPUT_DIR / "download.log"
 
