@@ -24,7 +24,10 @@ def run_viewer(assertions):
 const assert = require('node:assert/strict');
 const elements = {};
 global.setInterval=()=>0;
+global.location=new URL('http://localhost/');
+global.history={pushState(_state, _title, url) { global.location=new URL(url); }};
 function element() {
+  const queried = {};
   return {
     _innerHTML: '', textContent: '', value: '', hidden: false, src: '', children: [], options: [],
     set innerHTML(value) { this._innerHTML = value; this.children = []; },
@@ -32,6 +35,7 @@ function element() {
     loads: 0, pauses: 0, scrollHeight: 0,
     load() { this.loads++; }, pause() { this.pauses++; },
     appendChild(node) { this.children.push(node); },
+    querySelector(selector) { return queried[selector] ||= element(); },
     querySelectorAll() { return []; },
     setAttribute(name, value) { this[name] = value; },
     removeAttribute(name) { this[name] = ''; },

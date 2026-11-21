@@ -35,7 +35,7 @@ def classify(argv):
              script.endswith("rollout_policy.py") or "gr00t/eval/rollout_policy.py" in code)):
         return "evaluation"
     if (module in ("gr00t.eval.run_gr00t_server", "v1_groot_memoryvla.serve", "baselines.groot_n1d6.serve") or
-            script.endswith("run_gr00t_server.py") or
+            script.endswith(("run_gr00t_server.py", "/policy_server_diagnostic.py")) or
             (script.endswith("serve.py") and ("groot" in script.lower() or "memoryvla" in script))):
         return "inference"
     if module == 'torch.distributed.run' and 'v1_groot_memoryvla.experiment.task21_ddp' in argv:
@@ -98,7 +98,7 @@ def collect_snapshot(proc_root=Path("/proc")):
                 row.update(run_directory=output, label=Path(output).name,
                            n_workers=argument(argv,'--nproc-per-node',default='1'))
             else:
-                row.update(model=argument(argv, "--model-path", "--model_path"),
+                row.update(model=argument(argv, "--model-path", "--model_path", "--weights"),
                            configured_port=argument(argv, "--port", default="5555"))
             processes.append(row)
         except (FileNotFoundError, ProcessLookupError, PermissionError):

@@ -27,6 +27,8 @@ parser.add_argument('--log-dir', type=Path, help='日志目录，训练checkpoin
 parser.add_argument('--seed', type=int, default=42, help='动作随机种子，默认42')
 parser.add_argument('--history-mode', choices=('normal','empty','other_episode'), default='normal',
                     help='历史读取对照；other_episode要求至少两个并行环境')
+parser.add_argument('--task40-diagnostics', action='store_true',
+                    help='使用现有 Task40 轨迹记录协议，每个端口只绑定一个采集 worker')
 parser.add_argument('--foreground', action='store_true', help='前台运行，日志直接显示在终端')
 parser.add_argument('--dry-run', action='store_true', help='只打印命令，不启动服务或创建文件')
 parser.add_argument('--check-only', action='store_true', help='检查权重、源码、环境和端口，不启动服务')
@@ -54,9 +56,27 @@ command = [str(python), '-u', '-m', 'v1_groot_memoryvla.serve',
            '--use-sim-policy-wrapper', '--seed', str(args.seed)]
 if args.history_mode != 'normal':
     command += ['--history-mode', args.history_mode]
+diagnostic_script = source / 'Output/test_01/experiment_07/scripts/policy_server_diagnostic.py'
+if args.task40_diagnostics:
+    if args.history_mode != 'normal':
+        parser.error('Task40 采集的记忆模式由评估作业控制')
+    log_dir = (args.log_dir or PROJECT / 'Output/test_01/experiment_09/policy_services').expanduser().resolve()
+    log = log_dir / f'policy_{checkpoint_label}_port{args.port}.log'
+    output = log_dir / f'port{args.port}'
+    instrumentation_dir = source / 'evaluation/scripts'
+    if not (instrumentation_dir / 'task40_memory_instrumentation.py').is_file():
+        instrumentation_dir = PROJECT / 'evaluation/scripts'
+    bootstrap = ('import sys; sys.path.insert(0, sys.argv.pop(1)); '
+                 'from task40_memory_instrumentation import run_legacy_server; run_legacy_server()')
+    # Keep the archived script in argv for process discovery on the workbench.
+    command = [str(python), '-u', '-c', bootstrap, str(instrumentation_dir), str(diagnostic_script), '--task40-trace',
+               '--weights', str(checkpoint), '--output', str(output),
+               '--anchor', str(source / 'Output/test_01/experiment_01/checkpoints'),
+               '--host', args.host, '--port', str(args.port), '--remote-policy']
 result = dict(gpu_index=args.gpu_index, host=args.host, port=args.port, checkpoint=str(checkpoint),
               source_dir=str(source), python_path=str(python), seed=args.seed, history_mode=args.history_mode,
-              log=str(log), command=shlex.join(command))
+              log=str(log), command=shlex.join(command), task40_diagnostics=args.task40_diagnostics,
+              task40_trace=args.task40_diagnostics)
 if not args.json:
     print(f'GPU: {args.gpu_index} | 地址: {args.host}:{args.port}')
     print(f'权重: {checkpoint}')
@@ -69,6 +89,10 @@ if args.dry_run:
 for path in (python, source / 'src/v1_groot_memoryvla/serve.py', checkpoint / 'config.json'):
     if not path.is_file():
         parser.error(f'文件不存在：{path}；请在A100执行或通过参数指定路径')
+if args.task40_diagnostics and not diagnostic_script.is_file():
+    parser.error(f'Task40 诊断入口缺失：{diagnostic_script}')
+if args.task40_diagnostics and not (instrumentation_dir / 'task40_memory_instrumentation.py').is_file():
+    parser.error(f'Task40 诊断模块缺失：{instrumentation_dir / "task40_memory_instrumentation.py"}')
 # config.json is written before model shards during save_pretrained. A visible
 # checkpoint directory alone does not mean it is ready to serve.
 weights = []
@@ -91,8 +115,9 @@ for proc in Path('/proc').iterdir():
         continue
     try:
         argv = (proc / 'cmdline').read_bytes().decode(errors='replace').rstrip('\0').split('\0')
-        if ('-m' in argv and argv[argv.index('-m') + 1] in
-                ('v1_groot_memoryvla.serve', 'gr00t.eval.run_gr00t_server', 'baselines.groot_n1d6.serve')
+        if ((('-m' in argv and argv[argv.index('-m') + 1] in
+                ('v1_groot_memoryvla.serve', 'gr00t.eval.run_gr00t_server', 'baselines.groot_n1d6.serve'))
+                or any(value.endswith('/policy_server_diagnostic.py') for value in argv))
                 and '--port' in argv and argv[argv.index('--port') + 1] == str(args.port)):
             parser.error(f'端口{args.port}已有推理进程PID={proc.name}（可能正在加载），未启动新服务')
     except (OSError, IndexError):
@@ -110,12 +135,19 @@ if source.name == 'web_live':
     frozen=source.parent/('inference_'+manifest['digest'])
     if not frozen.exists():
         shutil.copytree(source,frozen,symlinks=True)
+    if args.task40_diagnostics:
+        command = [str(frozen / Path(arg).relative_to(source))
+                   if arg.startswith(str(source) + '/') else arg for arg in command]
     source=frozen
     environment['PYTHONPATH']=str(source/'src')
     result['source_dir']=str(source)
+    result['command']=shlex.join(command)
 if args.foreground:
     os.chdir(source)
     os.execvpe(str(python), command, environment)
+if args.task40_diagnostics:
+    (output / 'metrics').mkdir(parents=True, exist_ok=True)
+    (output / 'checkpoints').mkdir(exist_ok=True)
 log.parent.mkdir(parents=True, exist_ok=True)
 with log.open('a') as stream:
     process = subprocess.Popen(command, cwd=source, env=environment, stdin=subprocess.DEVNULL,

@@ -1,0 +1,34 @@
+{
+  "a100": {
+    "label": "A100",
+    "host": "a100.example.invalid"
+  },
+  "a6000": {
+    "label": "RTX 6000 Ada",
+    "host": "operator@192.0.2.30",
+    "single_gpu": true,
+    "paths": {
+      "project": "/data/projects/memory_vla",
+      "training": "/data/outputs/memory_vla/training",
+      "python": "/data/envs/n1d6-p0/bin/python",
+      "official": "/data/projects/Isaac-GR00T",
+      "base_checkpoint": "/data/models/GR00T-N1.6-3B",
+      "datasets": "/data/datasets"
+    },
+    "evaluation": {
+      "environment": {
+        "B1K_PYTHON": "/data/envs/b1k2025-sim/bin/python",
+        "B1K_SIM_PREFIX": "/data/envs/b1k2025-sim",
+        "BDDL_ROOT": "/data/projects/bddl",
+        "BEHAVIOR_DATA": "/data/datasets/b1k2025/simulation",
+        "CUDA_CACHE_PATH": "/data/cache/memory_vla/cuda",
+        "GROOT_CACHE_ROOT": "/data/cache/memory_vla",
+        "GROOT_DEVICE_ID": "a6000",
+        "GROOT_EVAL_ROOT": "/data/projects/memory_vla/evaluation",
+        "GROOT_REPO": "/data/projects/Isaac-GR00T",
+        "OMNIGIBSON_ROOT": "/data/projects/OmniGibson",
+        "XDG_CACHE_HOME": "/data/cache/memory_vla"
+      }
+    }
+  }
+}

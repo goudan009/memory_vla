@@ -1,5 +1,6 @@
 """SSH-side evaluation operations; executed using the 4090's current code."""
 import fcntl
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -12,20 +13,52 @@ class ObservedProcess:
         self.pid=row['pid']; self.row=row
 
     def poll(self):
-        stat=Path(f'/proc/{self.pid}/stat')
-        if stat.exists():
-            fields=stat.read_text().rsplit(')',1)[1].split()
+        try:
+            fields=Path(f'/proc/{self.pid}/stat').read_text().rsplit(')',1)[1].split()
             if fields[0]!='Z' and fields[19]==self.row['process_start']:
                 return None
+        except (FileNotFoundError, ProcessLookupError):
+            pass
         result=Path(self.row['output'])/'results.json'
         return 0 if result.exists() and json.loads(result.read_text()).get('status') in ('complete','completed') else 1
+
+
+def observed_job(row):
+    return dict(row, process=ObservedProcess(row), gpus=set(row['gpus']), log_path=Path(row['log']))
+
+
+def set_runtime_source(source):
+    for variable, relative in [('GROOT_REPO', 'vendor/Isaac-GR00T'),
+                               ('OMNIGIBSON_ROOT', 'vendor/OmniGibson'), ('BDDL_ROOT', 'vendor/bddl')]:
+        os.environ[variable] = str(source/relative)
+
+
+def set_task40_dependencies(project, dependencies):
+    if not dependencies:
+        raise ValueError('Task40 采集缺少已同步的运行依赖')
+    files = dependencies['files']
+    digest = hashlib.sha256(json.dumps(files, sort_keys=True).encode()).hexdigest()
+    if digest != dependencies['digest']:
+        raise ValueError('Task40 运行依赖清单校验失败')
+    root = project/'setup/task40_dependencies'/digest
+    for name, expected in files.items():
+        path = root/name
+        if not path.is_file() or hashlib.sha256(path.read_bytes()).hexdigest() != expected:
+            raise ValueError('Task40 运行依赖缺失或校验失败：'+name)
+    for variable, relative in dependencies['paths'].items():
+        os.environ[variable] = str(root/relative)
+
+
+def task40_status(status):
+    return dict(status, output_exists=Path(status['output']).is_dir())
 
 
 def dispatch(request):
     project=Path(request['project']); live=project/'deployments/web_live'
     os.environ.update(request['environment'])
-    for variable, relative in [('GROOT_REPO','vendor/Isaac-GR00T'),('OMNIGIBSON_ROOT','vendor/OmniGibson'),('BDDL_ROOT','vendor/bddl')]:
-        os.environ[variable]=str(live/relative)
+    os.environ['GROOT_TASK40_EXPERIMENT_ROOT'] = request['environment'].get(
+        'GROOT_TASK40_EXPERIMENT_ROOT', str(project/'Output/test_01/experiment_09'))
+    set_runtime_source(live)
     Path(os.environ['GROOT_EVAL_ROOT']).mkdir(parents=True,exist_ok=True)
     from groot_web_launch import LaunchManager
     record=project/'setup/evaluation_jobs.json'
@@ -34,6 +67,12 @@ def dispatch(request):
         fcntl.flock(lock,fcntl.LOCK_EX)
         rows=json.loads(record.read_text()) if record.exists() else []
         action=request['action']; payload=request.get('payload',{})
+        collect=payload.get('task40_collect') is True
+        if action in ('start', 'prepare') and collect:
+            readiness = project/'setup/simulation_ready.json'
+            if not readiness.is_file() or 40 not in json.loads(readiness.read_text()).get('task_ids', []):
+                raise ValueError('该设备的 Task40 仿真环境尚未验收完成')
+            set_task40_dependencies(project, request.get('task40_dependencies'))
         manager=LaunchManager(live,project/'setup/web_eval_logs')
         manager.policy_resolver=lambda host,port: request.get('policy_identity')
         if action=='options':
@@ -52,7 +91,8 @@ def dispatch(request):
             ready=project/'setup/simulation_ready.json'
             if not ready.is_file(): raise ValueError('该设备的仿真环境尚未验收完成')
             allowed=json.loads(ready.read_text()).get('task_ids',[])
-            if not payload.get('resume_from') and payload.get('task',21) not in allowed:
+            task_id = 40 if collect else payload.get('task',21)
+            if not payload.get('resume_from') and task_id not in allowed:
                 raise ValueError('该任务资产尚未准备好；当前可用任务：'+','.join(map(str,allowed)))
             manifest=json.loads((live/'web_source_manifest.json').read_text())
             if payload.get('resume_from'):
@@ -62,18 +102,22 @@ def dispatch(request):
                 manifest=json.loads((source/'web_source_manifest.json').read_text())
             else:
                 source=project/'deployments'/('eval_'+manifest['digest'])
-                if not source.exists(): shutil.copytree(live,source,symlinks=True)
+                if not source.exists():
+                    shutil.copytree(live, source, symlinks=True,
+                                    ignore=lambda path, names: {'Output'} if Path(path) == live else set())
             manager=LaunchManager(source,project/'setup/web_eval_logs')
-            for variable, relative in [('GROOT_REPO','vendor/Isaac-GR00T'),('OMNIGIBSON_ROOT','vendor/OmniGibson'),('BDDL_ROOT','vendor/bddl')]:
-                os.environ[variable]=str(source/relative)
+            set_runtime_source(source)
             manager.policy_resolver=lambda host,port: request.get('policy_identity')
             for row in rows:
                 if ObservedProcess(row).poll() is None:
-                    manager.jobs.append(dict(row,process=ObservedProcess(row),gpus=set(row['gpus']),log_path=Path(row['log'])))
+                    manager.jobs.append(observed_job(row))
             result=manager.start(payload)
             result.update(source=str(source),process_start=Path(f'/proc/{result["pid"]}/stat').read_text().rsplit(')',1)[1].split()[19])
             result['plan']=manager.jobs[-1]['plan']
             result['source_digest']=manifest['digest']
+            if collect:
+                result['task40_dependency_digest']=request['task40_dependencies']['digest']
+                result=task40_status(result)
             rows.append(result)
             pending=record.with_suffix('.pending'); pending.write_text(json.dumps(rows)); pending.replace(record)
             return result
@@ -81,9 +125,20 @@ def dispatch(request):
             result=[]
             for row in reversed(rows):
                 manager=LaunchManager(row['source'])
-                status=manager._status(dict(row,process=ObservedProcess(row),gpus=set(row['gpus']),log_path=Path(row['log'])))
-                result.append(dict(status,source=row['source']))
+                status=manager._status(observed_job(row))
+                status=dict(status,source=row['source'],source_digest=row.get('source_digest'))
+                if row.get('kind') == 'task40_collect':
+                    status=task40_status(dict(status,plan=row['plan'],
+                                              task40_dependency_digest=row.get('task40_dependency_digest')))
+                result.append(status)
             return result
+        if action=='stop_restore':
+            row=next((r for r in reversed(rows)
+                      if r.get('kind')=='task40_collect' and r['id']==payload.get('job')),None)
+            if row is None: raise ValueError('未找到该设备上的 Task40 采集记录')
+            manager=LaunchManager(row['source'])
+            manager.jobs.append(observed_job(row))
+            return manager.stop_restore(payload)
         if action in ('pause','delete'):
             row=next((r for r in reversed(rows) if r['folder']==payload['run']),None)
             if row is None: raise ValueError('未找到该设备上的评估记录')

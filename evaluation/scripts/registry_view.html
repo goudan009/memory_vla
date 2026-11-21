@@ -3,82 +3,74 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>评估结果 · memory_vla</title>
+<title>实验台账 · memory_vla</title>
+<script>if(window.top===window.self) location.replace('/?page=registry');</script>
 <style>
   :root{
-    --bg:#f5f6f4; --card:#fff; --line:#e3e6e1; --ink:#1c211d; --muted:#6b736d;
-    --green:#256b4b; --soft:#eaf3ee; --warn:#9a6118; --warnbg:#fdf3e4; --bad:#a3322f; --badbg:#fdeceb;
+    --card:#fff; --line:#dfe7eb; --ink:#1c3040; --muted:#526775;
+    --green:#26725d; --soft:#e8f3ef; --accent:#225879; --accent-soft:#eaf2f8;
+    --warn:#966017; --warnbg:#fbf1df; --bad:#a3322f; --badbg:#fdeceb;
   }
   *{box-sizing:border-box}
-  body{margin:0;background:var(--bg);color:var(--ink);
+  body{margin:0;color:var(--ink);
        font:14px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}
-  a{color:var(--green);text-decoration:none}
-  header{background:#fff;border-bottom:1px solid var(--line);padding:13px max(18px,calc((100vw - 1440px)/2));
+  a{color:var(--accent);text-decoration:none}
+  header{background:linear-gradient(110deg,#18394e,#225879);color:#fff;border-radius:12px;padding:20px 24px;
          display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
-  h1{font-size:16px;margin:0;font-weight:600}
-  h1 span{font-weight:400;color:var(--muted);font-size:13px}
-  .sub{color:var(--muted);font-size:12px;margin-top:2px}
-  nav.tabs{background:#fff;border-bottom:1px solid var(--line);padding:0 max(18px,calc((100vw - 1440px)/2));
-           display:flex;gap:2px;overflow-x:auto}
-  nav.tabs button{border:none;background:none;padding:11px 15px;font:inherit;font-size:13.5px;cursor:pointer;
-                  color:var(--muted);border-bottom:2px solid transparent;white-space:nowrap}
-  nav.tabs button[aria-selected="true"]{color:var(--green);border-bottom-color:var(--green);font-weight:600}
-  nav.tabs button .n{font-size:11.5px;color:var(--muted);margin-left:4px}
-  main{padding:16px max(18px,calc((100vw - 1440px)/2)) 70px}
+  h1{font-size:25px;margin:0;font-weight:700;letter-spacing:-.4px}
+  .sub{color:#e2eef6;font-size:12px;margin-top:4px}
+  nav.tabs{display:flex;gap:5px;overflow-x:auto;padding:0 0 8px;margin:16px 0 12px;border-bottom:1px solid var(--line)}
+  nav.tabs button{border:1px solid transparent;background:transparent;padding:8px 12px;font:inherit;font-size:13px;cursor:pointer;color:var(--muted);border-radius:8px;white-space:nowrap}
+  nav.tabs button[aria-selected="true"]{color:var(--accent);background:var(--accent-soft);border-color:#cbdee9;font-weight:650}
+  main{padding:0 0 4px}
   button,select,input{font:inherit;border:1px solid var(--line);background:#fff;color:var(--ink);
         border-radius:6px;padding:6px 11px;cursor:pointer}
-  button:hover{background:var(--soft);border-color:#bfded0}
-  button.primary{background:var(--green);border-color:var(--green);color:#fff}
+  button:hover{background:var(--accent-soft);border-color:#cbdee9}
+  :focus-visible{outline:2px solid #4181a5;outline-offset:2px}
+  button:disabled{opacity:.65;cursor:wait}
+  button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+  #rescan{background:#fff;color:#18394e;border-color:#dce8ef;white-space:nowrap}
   .acts{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-  .toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:0 0 12px}
-  .toolbar input{min-width:190px;max-width:300px}
-  .toolbar select{padding:6px 9px}
   .hint{color:var(--muted);font-size:12px}
-  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(126px,1fr));gap:9px;margin-bottom:14px}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:11px 13px}
-  .card .k{font-size:11.5px;color:var(--muted)}
-  .card .v{font-size:19px;font-weight:600;margin-top:1px;font-variant-numeric:tabular-nums}
-  .card .v small{font-size:11.5px;font-weight:400;color:var(--muted)}
-  .card.warn{border-color:#eed9b8;background:var(--warnbg)} .card.warn .v{color:var(--warn)}
-  .card.bad{border-color:#f3c9c7;background:var(--badbg)} .card.bad .v{color:var(--bad)}
-  h2.sec{font-size:13px;font-weight:600;color:var(--muted);margin:20px 0 8px;letter-spacing:.3px}
   table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--line);border-radius:8px;overflow:hidden}
   th,td{padding:8px 11px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top;font-size:13px}
   th{background:#fafbfa;font-weight:600;color:var(--muted);font-size:11.5px;white-space:nowrap}
   tr:last-child td{border-bottom:none}
-  td.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
   .mono{font:12px ui-monospace,SFMono-Regular,Menlo,monospace}
-  .tag{display:inline-block;font-size:11px;padding:1px 7px;border-radius:10px;background:#eef1ee;
-       color:var(--muted);margin:1px 3px 1px 0;white-space:nowrap}
-  .tag.good{background:var(--soft);color:var(--green)}
-  .tag.warn{background:var(--warnbg);color:var(--warn)}
-  .tag.bad{background:var(--badbg);color:var(--bad)}
   .empty{text-align:center;color:var(--muted);padding:36px}
-  .overview-head{display:flex;justify-content:space-between;align-items:end;gap:14px;flex-wrap:wrap;margin:20px 0 8px}
-  .overview-head h2{font-size:15px;margin:0}.overview-head p{font-size:12px;color:var(--muted);margin:3px 0 0}
-  .task-ledger{background:#fff;border:1px solid var(--line);border-radius:8px;margin:8px 0;overflow:hidden}
-  .task-ledger summary{display:flex;align-items:center;gap:10px;padding:11px 14px;cursor:pointer;list-style:none}
-  .task-ledger summary::-webkit-details-marker{display:none}.task-ledger summary:after{content:"+";margin-left:auto;color:var(--muted);font-size:17px}
-  .task-ledger[open] summary:after{content:"−"}.task-title{font-weight:600}.task-meta{font-size:11px;color:var(--muted)}
-  .task-count{margin-left:auto;color:var(--muted);font-size:11px}
-  .version-node,.group-node{background:#fff;border:1px solid var(--line);border-radius:8px;margin:9px 0;overflow:hidden}
-  .version-node>summary,.group-node>summary{display:flex;align-items:center;gap:10px;padding:12px 14px;cursor:pointer;list-style:none}
-  .version-node>summary::-webkit-details-marker,.group-node>summary::-webkit-details-marker{display:none}
-  .version-node>summary:after,.group-node>summary:after{content:"+";margin-left:auto;color:var(--muted);font-size:16px}
-  .version-node[open]>summary:after,.group-node[open]>summary:after{content:"−"}
-  .version-node>summary{background:#fff;font-size:14px}.version-node>summary strong{color:var(--green)}
-  .version-node>summary span,.group-node>summary span{font-size:11px;color:var(--muted);font-weight:400}
-  .group-node{margin:8px 10px;border-radius:6px}.group-node>summary{background:#fafbfa;padding:9px 12px}
-  .task-node{margin:6px 10px}.task-node .task-content{border-top:1px solid var(--line)}
-  .task-progress{display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:#fafbfa;padding:7px 10px;font-size:11px;color:var(--muted)}
-  .task-progress strong{color:var(--ink);font-weight:550}
-  .table-wrap{overflow:auto}.ledger-table{border:0;border-radius:0;min-width:860px}.ledger-table th,.ledger-table td{padding:8px 10px;font-size:12px}
-  .ledger-table th{font-size:10px}.ledger-table td:first-child{font-weight:550}
-  .metric-cell{font-variant-numeric:tabular-nums;white-space:nowrap}.metric-cell strong{font-size:13px}
-  .run-link{display:inline-block;max-width:220px;overflow:hidden;text-overflow:ellipsis;vertical-align:bottom;color:var(--green)}
-  .ledger-filter{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}.ledger-filter input{min-width:190px}
-  .row-actions{display:flex;gap:5px;align-items:center;white-space:nowrap}.row-actions button{padding:3px 7px;font-size:11px}
-  .annotation-note{display:block;color:var(--muted);font-size:11px;max-width:260px;overflow-wrap:anywhere}
+  .ledger-workspace{display:grid;grid-template-columns:minmax(220px,26%) minmax(0,1fr);gap:14px;align-items:start}
+  .ledger-list,.ledger-detail{background:#fff;border:1px solid var(--line);border-radius:12px;min-width:0}
+  .ledger-list{overflow:hidden}
+  .record-select{border:0;padding:0;background:transparent;color:var(--accent);font-weight:650;text-align:left;overflow-wrap:anywhere}
+  .record-context{display:block;margin-top:3px;font-size:11px;color:var(--muted);overflow-wrap:anywhere}
+  .ledger-list-head{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid var(--line)}
+  .ledger-list-head strong{font-size:13px}.ledger-list-head span{font-size:11px;color:var(--muted)}
+  .table-wrap{overflow:auto}.ledger-table{border:0;border-radius:0}.ledger-table th,.ledger-table td{padding:8px 10px;font-size:12px}
+  .ledger-filter{display:grid;grid-template-columns:minmax(200px,2fr) repeat(5,minmax(90px,1fr)) auto;gap:8px;align-items:center;margin:10px 0 12px;padding:10px;background:#fff;border:1px solid var(--line);border-radius:10px}
+  .ledger-filter :is(input,select){min-width:0;width:100%;background:#f8fafb}.ledger-filter input{cursor:text}
+  .ledger-detail{padding:16px}.ledger-detail h3{font-size:16px;margin:0 0 4px;overflow-wrap:anywhere}.ledger-detail .detail-run{font-size:12px;color:var(--muted);overflow-wrap:anywhere;margin-bottom:12px}
+  .detail-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
+  .detail-heading button{font-size:12px;color:var(--accent)}
+  .detail-kicker{color:var(--accent);font-size:11px;font-weight:650;margin-bottom:5px}
+  .detail-metrics{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--line);border-left:1px solid var(--line);margin:12px 0}.detail-metric{padding:8px;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}.detail-metric span{display:block;color:var(--muted);font-size:10px}.detail-metric strong{font-size:13px;font-variant-numeric:tabular-nums}
+  .detail-meta{display:grid;gap:9px;margin:12px 0}.detail-meta dt{color:var(--muted);font-size:10px}.detail-meta dd{margin:1px 0 0;font-size:11px;overflow-wrap:anywhere}.detail-actions{display:flex;flex-wrap:wrap;gap:6px;border-top:1px solid var(--line);padding-top:12px}.detail-actions button,.detail-actions a{font-size:11px;padding:5px 8px;border:1px solid var(--line);border-radius:5px;background:#fff;color:var(--ink)}
+  .secondary-filter{display:flex;flex-wrap:wrap}.secondary-filter input{flex:1 1 220px}.secondary-filter select{width:auto;max-width:100%}
+  .ledger-picker{max-height:480px;overflow:auto;padding:6px}
+  .ledger-picker button,.ledger-picker summary{width:100%;padding:6px 9px;border:1px solid transparent;border-radius:6px;text-align:left;overflow-wrap:anywhere}
+  .ledger-picker button{display:block}
+  .ledger-picker button[aria-current="true"]{background:var(--accent-soft);border-color:#cbdee9;color:var(--accent)}
+  .ledger-picker .compare-task{color:var(--accent);font-weight:650;font-size:12px}
+  .ledger-picker summary{cursor:pointer;font-weight:650;font-size:12px}
+  .ledger-picker summary:hover{background:var(--accent-soft)}
+  .tree-children{margin-left:6px;padding-left:6px;border-left:1px solid var(--line)}
+  .task-comparison .table-wrap{max-height:480px}
+  .task-comparison .ledger-table{min-width:0;table-layout:fixed;overflow:visible}
+  .task-comparison .ledger-table th{position:sticky;top:0;background:#f3f7fa;white-space:normal}
+  .task-comparison .ledger-table :is(th,td){padding:8px 6px}.task-comparison .ledger-table th:first-child{width:44%}
+  .resource-search-note{margin:0;padding:6px 14px;border-bottom:1px solid var(--line)}
+  #resource-detail .mono{padding:8px;background:#f4f7fa;border-radius:6px;font-size:12px}
+  #resource-detail .danger{color:var(--bad);border-color:#e7c5c3}
+  #resource-detail ul{margin:6px 0 0;padding-left:18px;overflow-wrap:anywhere}
   dialog{width:min(480px,calc(100vw - 28px));border:1px solid var(--line);border-radius:8px;padding:0;color:var(--ink);box-shadow:0 18px 60px #18251e33}
   dialog::backdrop{background:#15201966}.dialog-head{padding:14px 18px;border-bottom:1px solid var(--line);font-weight:600}
   .dialog-body{padding:16px 18px;display:grid;gap:12px}.dialog-body label{display:grid;gap:4px;font-size:12px;color:var(--muted)}
@@ -87,62 +79,62 @@
   .status-pill{display:inline-flex;border-radius:4px;padding:2px 6px;background:#eef1ee;color:var(--muted);font-size:10px;white-space:nowrap}
   .status-pill.complete{background:var(--soft);color:var(--green)}.status-pill.failed{background:var(--badbg);color:var(--bad)}
   .status-pill.running{background:var(--warnbg);color:var(--warn)}
-  .small-path{display:block;color:var(--muted);font-size:10px;overflow-wrap:anywhere}
-  @media(max-width:760px){.ledger-table{min-width:790px}.task-ledger summary{gap:7px}.run-link{max-width:120px}}
+  @media(max-width:960px){.ledger-filter{grid-template-columns:repeat(3,minmax(0,1fr))}.ledger-filter input{grid-column:1/-1}}
+  @media(max-width:700px){header{padding:14px 16px}.ledger-workspace{grid-template-columns:minmax(0,1fr)}.ledger-picker{max-height:240px}}
   .hidden{display:none!important}
 </style>
 </head>
 <body>
 <header>
   <div>
-    <h1>实验台账 <span>/ 版本、实验进度与资源</span></h1>
-    <div class="sub" id="sub">正在读取评估记录…</div>
+    <h1>实验台账</h1>
+    <div class="sub" id="sub" role="status">正在读取实验记录…</div>
   </div>
   <div class="acts">
-  <a href="/">← 返回评估工作台</a>
     <button type="button" id="rescan" class="primary">重新扫描</button>
   </div>
 </header>
 
-<nav class="tabs" id="nav">
-  <button data-v="overview" aria-selected="true">任务结果</button>
-  <button data-v="exp">版本与实验<span class="n" id="n-exp"></span></button>
-  <button data-v="res">数据与权重<span class="n" id="n-res"></span></button>
+<nav class="tabs" id="nav" aria-label="实验台账视图">
+  <button data-v="exp" aria-selected="true" aria-controls="view-exp">实验记录</button>
+  <button data-v="res" aria-selected="false" aria-controls="view-res">数据权重</button>
 </nav>
 
 <main>
-  <section id="view-overview">
-    <div class="cards" id="cards"></div>
-    <div class="overview-head"><div><h2>按任务比较</h2><p>Q Score、完整成功率与任务进度是不同指标。评估状态表示流程是否结束，不代表任务成功；正式口径见 evaluation.md。</p></div></div>
-    <div id="task-overview"></div>
-  </section>
-
-  <section id="view-exp" class="hidden">
-    <p class="hint">按版本 → 实验组 → 任务 → 单次运行展开。训练步数用于跟踪训练进度；每条评估保留结果、人工标记和备注。</p>
-    <div class="ledger-filter">
-      <select id="ledger-version"><option value="all">全部版本</option></select>
-      <select id="ledger-arm"><option value="all">全部实验组</option></select>
-      <input id="ledger-task" type="search" placeholder="筛任务、运行或标记…">
-      <select id="ledger-archived"><option value="active">未归档</option><option value="all">全部记录</option><option value="archived">只看已归档</option></select>
+  <section id="view-exp">
+    <div class="ledger-filter" aria-label="筛选实验记录">
+      <input id="ledger-task" type="search" placeholder="搜索任务、运行名、标记或备注…" aria-label="搜索实验记录">
+      <select id="ledger-version" aria-label="版本"><option value="all">全部版本</option></select>
+      <select id="ledger-arm" aria-label="实验组"><option value="all">全部实验组</option></select>
+      <select id="ledger-task-filter" aria-label="任务"><option value="all">全部任务</option></select>
+      <select id="ledger-status" aria-label="运行状态"><option value="all">全部状态</option><option value="complete">已完成</option><option value="running">运行中</option><option value="failed">失败 / 中断</option></select>
+      <select id="ledger-archived" aria-label="归档状态"><option value="active">未归档</option><option value="all">全部记录</option><option value="archived">只看已归档</option></select>
+      <button type="button" id="ledger-clear">清除筛选</button>
     </div>
-    <div id="chains"></div>
+    <div class="ledger-workspace">
+      <nav class="ledger-list" aria-label="实验记录目录"><div class="ledger-list-head"><strong>按任务浏览</strong><span id="ledger-count">0 条</span></div><div id="chains" class="ledger-picker"></div></nav>
+      <section class="ledger-detail task-comparison" id="experiment-detail" tabindex="-1" aria-label="任务对比与运行详情"><div class="empty">正在读取实验记录…</div></section>
+    </div>
   </section>
 
   <section id="view-res" class="hidden">
-    <div class="overview-head"><div><h2>数据与权重资源</h2><p>汇总评估使用的数据集与模型权重的存放位置和占用。</p></div></div>
-    <div class="cards" id="res-cards"></div>
-    <div class="toolbar">
-      <select id="res-kind">
+    <div class="ledger-filter secondary-filter">
+      <input id="res-q" type="search" placeholder="搜索资源名称或路径…" aria-label="搜索资源">
+      <select id="res-kind" aria-label="资源类型">
         <option value="all">全部资源</option><option value="dataset">数据集</option>
         <option value="weights">模型权重</option>
       </select>
-      <select id="res-host"><option value="all">所有机器</option></select>
-      <input id="res-q" type="search" placeholder="搜资源名称 / 路径…">
+      <select id="res-host" aria-label="存放位置"><option value="all">所有存放位置</option></select>
+      <select id="res-state" aria-label="资源清单状态"><option value="active">可见资源</option><option value="removed">已移除</option></select>
     </div>
-    <table><thead><tr>
-      <th style="width:56px">机器</th><th style="width:90px">类型</th><th>资源 / 路径</th>
-      <th style="width:90px">占用</th><th style="width:110px">更新时间</th>
-    </tr></thead><tbody id="res-rows"></tbody></table>
+    <div id="res-message" class="hint" role="status"></div>
+    <div class="ledger-workspace">
+      <nav class="ledger-list" aria-label="资源目录"><div class="ledger-list-head"><strong>按目录浏览</strong><span id="res-count"></span></div>
+        <p id="res-search-note" class="hint resource-search-note" hidden>跨目录搜索</p>
+        <div id="res-rows" class="ledger-picker"></div>
+      </nav>
+      <aside class="ledger-detail" id="resource-detail" tabindex="-1" aria-label="资源详情"></aside>
+    </div>
   </section>
 </main>
 
@@ -158,184 +150,300 @@
 </dialog>
 
 <script>
-let D = null, A = {}, VIEW = "overview", editingKey = null;
+let D = null, A = {}, VIEW = "exp", editingKey = null;
+let selectedExperiment = null, selectedTask = null, experimentsByTask = new Map(), visibleExperiments = [];
+let resourceRows = [], selectedResource;
 const KIND_LABEL = {all:"全部", weights:"模型权重", dataset:"数据集"};
 function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
 function num(n,d=2){return (+n||0).toFixed(d);}
 function sizeTxt(g){ g=+g||0; return g>=1 ? num(g,1)+"G" : Math.round(g*1024)+"M"; }
-function pct(a,b){ return b? Math.round(a/b*100) : 0; }
 function statusText(s){return ({complete:"完成",completed:"完成",running:"运行中",starting:"启动中",failed:"失败",interrupted:"中断",stopped:"已停止"})[s]||s||"未知";}
 function statusClass(s){return ["complete","completed"].includes(s)?"complete":["failed","interrupted"].includes(s)?"failed":s==="running"||s==="starting"?"running":"";}
 function metric(value,digits=1,suffix=""){return value==null?"—":`${num(value,digits)}${suffix}`;}
+function openBranches(path, expanded){
+  path.forEach((name,index)=>expanded.add(JSON.stringify(path.slice(0,index+1))));
+}
+function renderDirectory(rows, pathFor, renderItem, expanded, renderFolderIntro=()=> ''){
+  const root={folders:new Map(),items:[]};
+  for(const row of rows){
+    let branch=root;
+    for(const name of pathFor(row)){
+      if(!branch.folders.has(name))branch.folders.set(name,{folders:new Map(),items:[]});
+      branch=branch.folders.get(name);
+    }
+    branch.items.push(row);
+  }
+  function renderBranch(branch,path){
+    const folders=[...branch.folders].sort(([left],[right])=>left.localeCompare(right,'zh-CN',{numeric:true}));
+    return folders.map(([name,child])=>{
+      const childPath=[...path,name];
+      const key=JSON.stringify(childPath);
+      return `<details data-directory="${esc(key)}"${expanded.has(key)?' open':''}>
+        <summary>${esc(name)}</summary><div class="tree-children">${renderFolderIntro(childPath)}${renderBranch(child,childPath)}</div>
+      </details>`;
+    }).join('')+branch.items.map(renderItem).join('');
+  }
+  return renderBranch(root,[]);
+}
+const expandedExperiments=new Set(), expandedResources=new Set();
+for(const [id,expanded] of [['chains',expandedExperiments],['res-rows',expandedResources]]){
+  document.getElementById(id).addEventListener('toggle',event=>{
+    const folder=event.target;
+    if(!folder.dataset.directory)return;
+    if(folder.open)expanded.add(folder.dataset.directory);
+    else expanded.delete(folder.dataset.directory);
+  },true);
+}
 function evalRows(){
   const items=(D.items||[]).filter(i=>i.kind==='eval');
   return (D.experiments||[]).flatMap(c=>(c.evals||[]).map(e=>{
     const item=items.find(i=>i.version===c.version&&i.group===c.arm&&String(i.task)===String(c.task)&&i.name===e.name)||{};
-    return {...e,...item,version:c.version,arm:c.arm,task:c.task,task_name:c.task_name,train:c.train,problems:c.problems};
+    return {...e,...item,version:c.version,arm:c.arm,task:c.task,task_name:c.task_name,train:c.train,
+      recordKey:item.id||`${c.version}|${c.arm}|${c.task}|${e.name}`};
   }));
 }
 
-function renderOverview(){
-  const rows=evalRows().filter(r=>!A[r.id]?.hidden), tasks=new Map();
-  rows.forEach(r=>{if(!tasks.has(String(r.task)))tasks.set(String(r.task),[]);tasks.get(String(r.task)).push(r);});
-  const running=rows.filter(r=>["running","starting"].includes(r.status)).length;
-  const failed=rows.filter(r=>["failed","interrupted"].includes(r.status)).length;
-  const cards=[["评估次数",rows.length,"次"],["覆盖任务",tasks.size,"个"],["进行中",running,"次"],["失败 / 中断",failed,"次"]];
-  document.getElementById("cards").innerHTML=cards.map(([k,v,u])=>`<div class="card ${k==='失败 / 中断'&&v?'bad':''}"><div class="k">${k}</div><div class="v">${v}<small> ${u}</small></div></div>`).join("");
-  const body=[...tasks.entries()].sort((a,b)=>Number(a[0])-Number(b[0])).map(([task,list])=>{
-    list.sort((a,b)=>a.version.localeCompare(b.version,'zh-CN',{numeric:true})||a.arm.localeCompare(b.arm)||String(b.updated).localeCompare(String(a.updated)));
-    const first=list[0];
-    const grouped=new Map();
-    list.forEach(r=>{const key=`${r.version} · ${r.arm}`;if(!grouped.has(key))grouped.set(key,[]);grouped.get(key).push(r);});
-    const rowsHtml=[...grouped.entries()].map(([label,items])=>items.map((r,i)=>`<tr>
-      ${i===0?`<td rowspan="${items.length}"><span class="tag good">${esc(label)}</span></td>`:""}
-      <td><span class="run-link" title="${esc(r.name)}">${esc(r.name)}</span></td>
-      <td><span class="status-pill ${statusClass(r.status)}">${esc(statusText(r.status))}</span></td>
-      <td class="metric-cell"><strong>${metric(r.mean_q_score,3)}</strong></td>
-      <td class="metric-cell"><strong>${metric(r.success_rate==null?null:r.success_rate*100,1,'%')}</strong></td>
-      <td class="metric-cell"><strong>${metric(r.mean_progress,1,'%')}</strong></td>
-      <td>${esc(r.episodes??'—')}</td><td>${esc(r.updated||'—')}</td>
-    </tr>`).join("")).join("");
-    return `<details class="task-ledger" ${tasks.size<=8?'open':''}><summary><span class="task-title">Task ${esc(task)}</span><span class="task-meta">${esc(first.task_name||'')}</span><span class="task-count">${list.length} 次评估</span></summary>
-      <div class="table-wrap"><table class="ledger-table"><thead><tr><th>版本 / 组</th><th>运行</th><th>状态</th><th>Q 分数</th><th>成功率</th><th>任务进度</th><th>计划回合</th><th>更新</th></tr></thead><tbody>${rowsHtml}</tbody></table></div></details>`;
-  });
-  document.getElementById("task-overview").innerHTML=body.join('')||'<div class="empty">还没有评估记录。</div>';
-
+function showTaskComparison(){
+  const detail=document.getElementById('experiment-detail');
+  const rows=experimentsByTask.get(selectedTask);
+  if(!rows){detail.innerHTML='<div class="empty">没有符合筛选条件的实验记录。</div>';return;}
+  const comparison=rows.map(row=>`<tr><td>
+    <button type="button" class="record-select" data-compare-record="${esc(row.recordKey)}">${esc(row.name)}</button>
+    <span class="record-context">${esc(row.version)} / ${esc(row.arm)} · ${esc(statusText(row.status))}${A[row.id]?.label?` · ${esc(A[row.id].label)}`:''}</span></td>
+    <td>${metric(row.mean_q_score,3)}</td><td>${metric(row.success_rate==null?null:row.success_rate*100,1,'%')}</td>
+    <td>${metric(row.mean_progress,1,'%')}</td></tr>`).join('');
+  detail.innerHTML=`<div class="detail-kicker">任务对比</div><h3>${esc(selectedTask)}</h3>
+    <p class="hint">${rows.length} 次评估 · 按更新时间倒序</p>
+    <div class="table-wrap"><table class="ledger-table"><thead><tr><th>运行 / 版本</th><th>Q Score</th><th>成功率</th><th>任务进度</th></tr></thead><tbody>${comparison}</tbody></table></div>`;
 }
 
+function renderExperimentDetail(row){
+  const detail=document.getElementById('experiment-detail');
+  if(!row){detail.innerHTML='<div class="empty">选择一条实验记录查看详情</div>';return;}
+  const annotation=A[row.id]||{}, path=row.path||'未记录', trainPath=row.train?.path||'未登记训练路径';
+  const archiveAction=annotation.hidden?`<button type="button" data-detail-restore="${esc(row.id)}">恢复台账记录</button>`:`<button type="button" data-detail-archive="${esc(row.id)}">归档台账记录</button>`;
+  detail.innerHTML=`<div class="detail-heading"><div class="detail-kicker">运行详情</div><button type="button" data-back-to-task>返回任务对比</button></div>
+    <h3>${esc(experimentTaskLabel(row))}</h3><div class="detail-run">${esc(row.name||'未命名运行')}</div>
+    <span class="status-pill ${statusClass(row.status)}">${esc(statusText(row.status))}</span>
+    <div class="detail-metrics"><div class="detail-metric"><span>Q Score</span><strong>${metric(row.mean_q_score,3)}</strong></div><div class="detail-metric"><span>成功率</span><strong>${metric(row.success_rate==null?null:row.success_rate*100,1,'%')}</strong></div><div class="detail-metric"><span>任务进度</span><strong>${metric(row.mean_progress,1,'%')}</strong></div><div class="detail-metric"><span>计划回合</span><strong>${esc(row.episodes??'—')}</strong></div></div>
+    <dl class="detail-meta"><div><dt>版本 / 实验组</dt><dd>${esc(row.version)} / ${esc(row.arm)}</dd></div><div><dt>更新时间</dt><dd>${esc(row.updated||'—')}</dd></div><div><dt>评估目录</dt><dd class="mono">${esc(path)}</dd></div><div><dt>训练来源</dt><dd class="mono">${esc(trainPath)}</dd></div><div><dt>标记与备注</dt><dd>${esc(annotation.label||'未标记')}${annotation.notes?` · ${esc(annotation.notes)}`:''}</dd></div></dl>
+    <div class="detail-actions"><button type="button" data-open-results="${esc(row.id?.startsWith('eval:')?row.id.slice(5):'')}">打开评估结果</button>${row.id?`<button type="button" data-detail-edit="${esc(row.id)}" data-name="${esc(row.name)}">编辑标记</button>${archiveAction}`:''}</div>`;
+}
+function experimentTaskLabel(row){
+  return `Task ${row.task}${row.task_name?` · ${row.task_name.replaceAll('_',' ')}`:''}`;
+}
+function experimentDirectories(row){
+  return [experimentTaskLabel(row), row.version, row.arm];
+}
 function renderExp(){
-  const version=document.getElementById('ledger-version').value, arm=document.getElementById('ledger-arm').value;
-  const q=(document.getElementById('ledger-task').value||'').toLowerCase();
-  const archived=document.getElementById('ledger-archived').value;
-  const versions=new Map();let count=0;
-  const chains=(D.experiments||[]).filter(c=>(version==='all'||c.version===version)&&(arm==='all'||c.arm===arm));
-  const itemFor=(c,e)=>(D.items||[]).find(i=>i.kind==='eval'&&i.version===c.version&&i.group===c.arm&&String(i.task)===String(c.task)&&i.name===e.name)||{};
-  const visible=(c,e)=>{const hidden=!!A[itemFor(c,e).id]?.hidden;return archived==='all'||(archived==='archived'?hidden:!hidden);};
-  chains.forEach(c=>{
-    const taskMatch=`${c.task} ${c.task_name} ${c.version} ${c.arm}`.toLowerCase().includes(q);
-    const matching=(c.evals||[]).filter(e=>visible(c,e)&&(taskMatch||(`${e.name} ${A[itemFor(c,e).id]?.label||''} ${A[itemFor(c,e).id]?.notes||''}`).toLowerCase().includes(q)));
-    if(!matching.length&&!taskMatch) return;
-    count+=matching.length;
-    if(!versions.has(c.version))versions.set(c.version,new Map());
-    const groups=versions.get(c.version);if(!groups.has(c.arm))groups.set(c.arm,[]);groups.get(c.arm).push({...c,visibleEvals:matching});
-  });
-  document.getElementById('n-exp').textContent=count;
-  const renderTask=c=>{
-    const t=c.train, trainText=t?`${statusText(t.status)} · ${t.step||0}${t.total_steps?` / ${t.total_steps} 步`:''}`:'未登记训练';
-    const trainPath=t?.path?`<details><summary>训练记录与权重来源</summary><span class="small-path mono">${esc(t.path)}</span></details>`:'';
-    const rows=c.visibleEvals.map(e=>{
-      const item=itemFor(c,e),annotation=A[item.id]||{},path=item.path||e.path||'';
-      const source=path?`<details><summary>评估目录</summary><span class="small-path mono">${esc(path)}</span>${item.checkpoint_exists===false?'<span class="tag bad">评估权重缺失</span>':item.checkpoint_exists===true?'<span class="tag good">评估权重存在</span>':''}</details>`:'';
-      const label=annotation.label||annotation.notes?`<span class="tag warn">${esc(annotation.label||'已备注')}</span>${annotation.notes?`<span class="annotation-note">${esc(annotation.notes)}</span>`:''}`:'<span class="hint">未标记</span>';
-      const actions=`<div class="row-actions"><button type="button" data-edit="${esc(item.id)}" data-name="${esc(e.name)}">编辑标记</button>${annotation.hidden?`<button type="button" data-restore="${esc(item.id)}">恢复</button>`:`<button type="button" data-archive="${esc(item.id)}">归档</button>`}</div>`;
-      return `<tr><td><span class="run-link" title="${esc(e.name)}">${esc(e.name)}</span>${source}</td>
-        <td><span class="status-pill ${statusClass(item.status)}">${esc(statusText(item.status))}</span></td>
-        <td class="metric-cell">${metric(item.mean_q_score,3)}</td><td class="metric-cell">${metric((item.success_rate??e.success_rate)==null?null:(item.success_rate??e.success_rate)*100,1,'%')}</td>
-        <td class="metric-cell">${metric(item.mean_progress??e.mean_progress,1,'%')}</td><td>${esc(e.episodes??'—')}</td><td>${esc(item.updated||e.updated||'—')}</td><td>${label}${actions}</td></tr>`;
-    }).join('')||'<tr><td colspan="8" class="empty">尚无评估记录</td></tr>';
-    return `<details class="task-ledger task-node"><summary><span class="task-title">Task ${esc(c.task)} · ${esc(c.task_name||'')}</span><span class="task-meta">训练 ${esc(trainText)} · ${c.visibleEvals.length} 次评估</span></summary><div class="task-content"><div class="task-progress">训练进度：<strong>${esc(trainText)}</strong>${trainPath}</div><div class="table-wrap"><table class="ledger-table"><thead><tr><th>单次运行</th><th>状态</th><th>Q Score</th><th>成功率</th><th>任务进度</th><th>计划回合</th><th>更新时间</th><th>人工标记</th></tr></thead><tbody>${rows}</tbody></table></div></div></details>`;
+  if(!D)return;
+  const version=document.getElementById('ledger-version').value, arm=document.getElementById('ledger-arm').value, task=document.getElementById('ledger-task-filter').value, status=document.getElementById('ledger-status').value;
+  const q=document.getElementById('ledger-task').value.trim().toLowerCase(), archived=document.getElementById('ledger-archived').value;
+  const rows=evalRows().filter(row=>{
+    const annotation=A[row.id]||{}, text=`${row.name} ${row.version} ${row.arm} ${experimentTaskLabel(row)} ${row.task_name||''} ${annotation.label||''} ${annotation.notes||''}`.toLowerCase();
+    const statusMatch=status==='all'||statusClass(row.status)===status;
+    const archivedMatch=archived==='all'||(archived==='archived'?annotation.hidden:!annotation.hidden);
+    return (version==='all'||row.version===version)&&(arm==='all'||row.arm===arm)&&(task==='all'||String(row.task)===task)&&statusMatch&&(!q||text.includes(q))&&archivedMatch;
+  }).sort((a,b)=>String(b.updated||'').localeCompare(String(a.updated||'')));
+  visibleExperiments=rows;
+  experimentsByTask=new Map();
+  for(const row of rows){
+    const taskLabel=experimentTaskLabel(row);
+    if(!experimentsByTask.has(taskLabel))experimentsByTask.set(taskLabel,[]);
+    experimentsByTask.get(taskLabel).push(row);
+  }
+  document.getElementById('ledger-count').textContent=`${rows.length} 条`;
+  const selected=rows.find(row=>row.recordKey===selectedExperiment);
+  selectedExperiment=selected?.recordKey||null;
+  if(selected)selectedTask=experimentTaskLabel(selected);
+  if(!experimentsByTask.has(selectedTask))selectedTask=experimentsByTask.keys().next().value;
+  if(selectedTask)openBranches(selected?experimentDirectories(selected):[selectedTask],expandedExperiments);
+  const renderTaskAction=path=>{
+    if(path.length!==1)return '';
+    const [taskLabel]=path;
+    return `<button type="button" class="compare-task" data-compare-task="${esc(taskLabel)}" aria-current="${!selectedExperiment&&taskLabel===selectedTask}">任务对比 · ${experimentsByTask.get(taskLabel).length} 次评估</button>`;
   };
-  const versionEntries=[...versions.entries()].sort((a,b)=>a[0].localeCompare(b[0],'zh-CN',{numeric:true}));
-  const html=versionEntries.map(([ver,groups],versionIndex)=>{
-    const groupHtml=[...groups.entries()].sort((a,b)=>a[0].localeCompare(b[0])).map(([group,items])=>{
-      items.sort((a,b)=>Number(a.task)-Number(b.task));
-      const tasksHtml=items.map(renderTask).join('');
-      return `<details class="group-node" ${groups.size<=2?'open':''}><summary><strong>${esc(group)}</strong><span>${items.length} 个任务 · ${items.reduce((n,c)=>n+c.visibleEvals.length,0)} 次评估</span></summary><div>${tasksHtml}</div></details>`;
-    }).join('');
-    const evalCount=[...groups.values()].flat().reduce((n,c)=>n+c.visibleEvals.length,0);
-    return `<details class="version-node" ${versionIndex===versionEntries.length-1?'open':''}><summary><strong>${esc(ver)}</strong><span>${groups.size} 个实验组 · ${evalCount} 次评估</span></summary><div>${groupHtml}</div></details>`;
-  });
-  document.getElementById('chains').innerHTML=html.join('')||'<div class="empty">没有符合筛选条件的实验记录。</div>';
+  const renderItem=row=>`<button type="button" class="record-select" data-experiment="${esc(row.recordKey)}" aria-current="${row.recordKey===selectedExperiment}">
+    <span class="record-name">${esc(row.name)}</span><span class="record-context">${esc(statusText(row.status))} · 任务进度 ${metric(row.mean_progress,1,'%')}</span>
+  </button>`;
+  document.getElementById('chains').innerHTML=renderDirectory(rows,experimentDirectories,renderItem,expandedExperiments,renderTaskAction)||'<div class="empty">没有匹配的记录。</div>';
+  if(selected)renderExperimentDetail(selected);
+  else showTaskComparison();
 }
 
+const resourceKey=item=>JSON.stringify([item.kind,item.host,item.path||item.id||item.name]);
+const resourceSize=item=>item.size_gb==null?'—':sizeTxt(item.size_gb);
+function resourceDirectories(item){
+  const path=(item.path||'').replace(/^[^/]+:\//,'/');
+  return [item.host||'位置未记录', ...path.split('/').filter(Boolean).slice(0,-1)];
+}
 function renderRes(){
-  const kind = document.getElementById("res-kind").value;
-  const host = document.getElementById("res-host").value;
-  const q = (document.getElementById("res-q").value||"").toLowerCase();
-  let items = (D.items||[]).filter(i=>["dataset","weights"].includes(i.kind));
-  const sum = {dataset:0, weights:0};
-  items.forEach(i=>sum[i.kind]=(sum[i.kind]||0)+(+i.size_gb||0));
-  document.getElementById("res-cards").innerHTML = [
-    ["数据集", num(sum.dataset,0), "G"],
-    ["模型权重", num(sum.weights,0), "G"],
-    ["资源总量", num(sum.dataset+sum.weights,0), "G"],
-  ].map(([k,v,u])=>`<div class="card"><div class="k">${k}</div><div class="v">${v}<small> ${u}</small></div></div>`).join("");
-  document.getElementById("n-res").textContent = items.length;
-
-  if(kind!=="all") items = items.filter(i=>i.kind===kind);
-  if(host!=="all") items = items.filter(i=>i.host===host);
-  if(q) items = items.filter(i=>(i.name+" "+i.path).toLowerCase().includes(q));
-  items.sort((a,b)=>(+b.size_gb||0)-(+a.size_gb||0));
-  document.getElementById("res-rows").innerHTML = items.length ? items.slice(0,300).map(i=>`
-    <tr><td><span class="tag h${esc(i.host)}">${esc(i.host)}</span></td>
-      <td><span class="tag">${esc(KIND_LABEL[i.kind]||i.kind)}</span></td>
-      <td><div>${esc(i.name)}</div><div class="mono" style="color:var(--muted)">${esc(i.path)}</div></td>
-      <td class="num">${sizeTxt(i.size_gb)}</td><td style="color:var(--muted)">${esc(i.updated||"")}</td></tr>`).join("")
-    : `<tr><td colspan="5" class="empty">没有匹配</td></tr>`;
+  if(!D)return;
+  const kind=document.getElementById('res-kind').value;
+  const host=document.getElementById('res-host').value;
+  const query=document.getElementById('res-q').value.trim().toLowerCase();
+  const removed=document.getElementById('res-state').value==='removed';
+  resourceRows=(D.items||[]).filter(item=>
+    ['dataset','weights'].includes(item.kind) && (kind==='all'||item.kind===kind) &&
+    (host==='all'||item.host===host) && !!A[item.id]?.hidden===removed &&
+    `${item.name||''} ${item.path||''}`.toLowerCase().includes(query)
+  ).sort((left,right)=>(left.name||'').localeCompare(right.name||'','zh-CN',{numeric:true}));
+  document.getElementById('res-search-note').hidden=!query;
+  if(!resourceRows.some(item=>resourceKey(item)===selectedResource)){
+    selectedResource=query&&resourceRows.length?resourceKey(resourceRows[0]):undefined;
+  }
+  const selected=resourceRows.find(item=>resourceKey(item)===selectedResource);
+  if(selected && !query)openBranches(resourceDirectories(selected),expandedResources);
+  document.getElementById('res-count').textContent=`${resourceRows.length} 项`;
+  const renderItem=item=>`<button type="button" class="record-select" data-resource="${esc(resourceKey(item))}">
+    <span class="record-name">${esc(item.name||'未命名资源')}</span><span class="record-context">${esc(KIND_LABEL[item.kind])} · ${resourceSize(item)}${query&&item.path?` · ${esc(item.path)}`:''}</span>
+  </button>`;
+  document.getElementById('res-rows').innerHTML=renderDirectory(resourceRows,query?()=>[]:resourceDirectories,renderItem,expandedResources)||'<div class="empty">没有匹配的资源。</div>';
+  showResourceDetail();
+}
+function showResourceDetail(){
+  document.querySelectorAll('#res-rows [data-resource]').forEach(button=>button.setAttribute('aria-current',String(button.dataset.resource===selectedResource)));
+  const detail=document.getElementById('resource-detail');
+  const item=resourceRows.find(resource=>resourceKey(resource)===selectedResource);
+  if(!item){detail.innerHTML='<div class="empty">选择资源查看详情</div>';return;}
+  const removed=!!A[item.id]?.hidden;
+  const fileCount=item.kind==='dataset'?item.n_parquet:item.n_files;
+  const fileLabel=item.kind==='dataset'?'Parquet 文件数':'扫描识别的权重文件数';
+  const files=Array.isArray(item.files)?item.files:[];
+  detail.innerHTML=`<div class="detail-kicker">${esc(KIND_LABEL[item.kind])}${removed?' · 已移除':''}</div><h3>${esc(item.name||'未命名资源')}</h3>
+    <dl class="detail-meta"><div><dt>存放位置</dt><dd>${esc(item.host||'—')}</dd></div>
+    <div><dt>容量</dt><dd>${resourceSize(item)}</dd></div><div><dt>更新时间</dt><dd>${esc(item.updated||'—')}</dd></div>
+    ${fileCount==null?'':`<div><dt>${fileLabel}</dt><dd>${esc(fileCount)}</dd></div>`}
+    <div><dt>完整路径</dt><dd class="mono">${esc(item.path||'—')}</dd></div>
+    ${files.length?`<div><dt>扫描记录的文件示例</dt><dd><ul>${files.map(path=>`<li>${esc(path)}</li>`).join('')}</ul></dd></div>`:''}</dl>
+    ${item.id?`<div class="detail-actions"><button type="button" data-resource-manage class="${removed?'':'danger'}">${removed?'恢复到清单':'从台账移除'}</button></div>`:''}`;
 }
 
 function show(v){
   VIEW = v;
   document.querySelectorAll("#nav button").forEach(b=>b.setAttribute("aria-selected", String(b.dataset.v===v)));
-  ["overview","exp","res"].forEach(k=>document.getElementById("view-"+k).classList.toggle("hidden", k!==v));
-  if(v==="overview") renderOverview();
+  ["exp","res"].forEach(k=>document.getElementById("view-"+k).classList.toggle("hidden", k!==v));
+  if(!D)return;
   if(v==="exp") renderExp();
   if(v==="res") renderRes();
 }
 function fillHostSelects(){
-  const hosts = (D.hosts||[]).map(h=>h.host);
-  ["res-host"].forEach(id=>{
-    document.getElementById(id).innerHTML = `<option value="all">所有存放位置</option>` +
-      hosts.map(h=>`<option value="${esc(h)}">${esc(h)}</option>`).join("");
-  });
+  const hosts=[...new Set((D.items||[]).filter(item=>KIND_LABEL[item.kind] && item.host).map(item=>item.host))].sort();
+  const filter=document.getElementById('res-host');
+  const previous=filter.value;
+  filter.innerHTML='<option value="all">所有存放位置</option>'+hosts.map(host=>`<option value="${esc(host)}">${esc(host)}</option>`).join('');
+  if(hosts.includes(previous))filter.value=previous;
 }
 function fillLedgerFilters(){
   const chains=D.experiments||[];
   const versions=[...new Set(chains.map(c=>c.version))].sort((a,b)=>a.localeCompare(b,'zh-CN',{numeric:true}));
   const arms=[...new Set(chains.map(c=>c.arm))].sort();
-  const v=document.getElementById('ledger-version'),a=document.getElementById('ledger-arm');
-  const oldV=v.value,oldA=a.value;
+  const tasks=[...new Map(chains.map(c=>[String(c.task),c.task_name||''])).entries()].sort((a,b)=>Number(a[0])-Number(b[0]));
+  const v=document.getElementById('ledger-version'),a=document.getElementById('ledger-arm'),t=document.getElementById('ledger-task-filter');
+  const oldV=v.value,oldA=a.value,oldT=t.value;
   v.innerHTML='<option value="all">全部版本</option>'+versions.map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join('');
   a.innerHTML='<option value="all">全部实验组</option>'+arms.map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join('');
-  if(versions.includes(oldV))v.value=oldV;if(arms.includes(oldA))a.value=oldA;
+  t.innerHTML='<option value="all">全部任务</option>'+tasks.map(([id,name])=>`<option value="${esc(id)}">Task ${esc(id)}${name?` · ${esc(name)}`:''}</option>`).join('');
+  if(versions.includes(oldV))v.value=oldV;if(arms.includes(oldA))a.value=oldA;if(tasks.some(([id])=>id===oldT))t.value=oldT;
 }
 async function load(force){
   const sub = document.getElementById("sub");
-  sub.textContent = force ? "正在更新实验记录与资源清单，跨机扫描可能需要半分钟…" : "读取上次扫描结果…";
+  const scan = document.getElementById('rescan');
+  if(scan.disabled)return;
+  scan.disabled=true;
+  sub.textContent = force ? "正在重新扫描，跨机扫描可能需要半分钟…" : "读取上次扫描结果…";
   try{
-    const r = await fetch(force?"/api/registry?force=1":"/api/registry", {cache:"no-store"});
-    D = await r.json();
-    if(D.error) throw new Error(D.error);
-    try{const ar=await fetch('/api/registry/annotations',{cache:'no-store'});A=await ar.json();}catch(_){A={};}
-    if(!D.items || !D.items.length){
-      sub.innerHTML = `<span style="color:#a3322f">还没有扫描结果 —— 点右上角「重新扫描」跑一次</span>`;
-      return;
-    }
-    const s = D.summary || {};
-    sub.textContent = `数据更新时间 ${D.generated_at} · 扫描 ${s.scan_s}s · 刷新更新实验记录与资源清单`;
+    const response = await fetch(force?"/api/registry?force=1":"/api/registry", {cache:"no-store"});
+    const data = await response.json();
+    if(!response.ok||data.error)throw new Error(data.error||'读取实验台账失败');
+    const annotations=await fetch('/api/registry/annotations',{cache:'no-store'});
+    if(!annotations.ok)throw new Error('读取标记和归档状态失败');
+    A=await annotations.json();
+    D=data;
+    sub.textContent = D.items?.length ? `数据更新于 ${D.generated_at} · 扫描耗时 ${D.summary?.scan_s ?? '—'} 秒` : '暂无扫描记录，可点击「重新扫描」更新';
     fillHostSelects(); fillLedgerFilters(); show(VIEW);
   }catch(e){
-    sub.innerHTML = `<span style="color:#a3322f">读取失败：${esc(e.message)} —— 稍等一下再刷新，或点「重新扫描」</span>`;
-  }
+    sub.textContent = `更新失败：${e.message}`;
+  }finally{scan.disabled=false;}
 }
 document.getElementById("nav").onclick = e => { const b = e.target.closest("button"); if(b) show(b.dataset.v); };
 document.getElementById("rescan").onclick = () => load(true);
-["ledger-version","ledger-arm"].forEach(id=>document.getElementById(id).addEventListener("change", renderExp));
+["ledger-version","ledger-arm","ledger-task-filter","ledger-status"].forEach(id=>document.getElementById(id).addEventListener("change", renderExp));
 document.getElementById('ledger-archived').addEventListener('change',renderExp);
 document.getElementById('ledger-task').addEventListener('input',renderExp);
-document.getElementById('chains').addEventListener('click',async e=>{
-  const edit=e.target.closest('[data-edit]'), archive=e.target.closest('[data-archive]'), restore=e.target.closest('[data-restore]');
-  if(edit){editingKey=edit.dataset.edit;document.getElementById('annotation-run').textContent=edit.dataset.name;document.getElementById('annotation-label').value=A[editingKey]?.label||'';document.getElementById('annotation-notes').value=A[editingKey]?.notes||'';document.getElementById('annotation-dialog').showModal();return;}
-  if(archive&&confirm('仅从评估台账隐藏这条记录，原始结果、日志和录像不会删除。可以在“只看已归档”中恢复。')) await saveAnnotation(archive.dataset.archive,{...(A[archive.dataset.archive]||{}),hidden:true});
-  if(restore) await saveAnnotation(restore.dataset.restore,{...(A[restore.dataset.restore]||{}),hidden:false});
+function resetExperimentFilters(){
+  for(const id of ['ledger-version','ledger-arm','ledger-task-filter','ledger-status'])document.getElementById(id).value='all';
+  document.getElementById('ledger-archived').value='active';
+  document.getElementById('ledger-task').value='';
+}
+document.getElementById('ledger-clear').onclick=()=>{resetExperimentFilters();renderExp();};
+document.getElementById('chains').addEventListener('click',event=>{
+  const task=event.target.closest('[data-compare-task]');
+  const entry=event.target.closest('[data-experiment]');
+  if(!task&&!entry)return;
+  document.querySelector('#chains [aria-current="true"]')?.setAttribute('aria-current','false');
+  (task||entry).setAttribute('aria-current','true');
+  if(task){
+    selectedTask=task.dataset.compareTask;
+    selectedExperiment=null;
+    showTaskComparison();
+  }else{
+    selectedExperiment=entry.dataset.experiment;
+    const row=visibleExperiments.find(row=>row.recordKey===selectedExperiment);
+    selectedTask=experimentTaskLabel(row);
+    renderExperimentDetail(row);
+  }
+  if(matchMedia('(max-width:700px)').matches)document.getElementById('experiment-detail').focus();
+});
+document.getElementById('experiment-detail').addEventListener('click',async e=>{
+  const record=e.target.closest('[data-compare-record]');
+  const back=e.target.closest('[data-back-to-task]');
+  if(record||back){
+    selectedExperiment=record?.dataset.compareRecord||null;
+    renderExp();
+    document.getElementById('experiment-detail').focus();
+    return;
+  }
+  const results=e.target.closest('[data-open-results]');
+  if(results){window.parent.openRegistryResult(results.dataset.openResults);return;}
+  const edit=e.target.closest('[data-detail-edit]'),archive=e.target.closest('[data-detail-archive]'),restore=e.target.closest('[data-detail-restore]');
+  if(edit){editingKey=edit.dataset.detailEdit;document.getElementById('annotation-run').textContent=edit.dataset.name;document.getElementById('annotation-label').value=A[editingKey]?.label||'';document.getElementById('annotation-notes').value=A[editingKey]?.notes||'';document.getElementById('annotation-dialog').showModal();return;}
+  try{
+    if(archive&&confirm('仅从评估台账隐藏这条记录，原始结果、日志和录像不会删除。可以在“只看已归档”中恢复。')) await saveAnnotation(archive.dataset.detailArchive,{...(A[archive.dataset.detailArchive]||{}),hidden:true});
+    if(restore) await saveAnnotation(restore.dataset.detailRestore,{...(A[restore.dataset.detailRestore]||{}),hidden:false});
+  }catch(error){alert(error.message);}
 });
 async function saveAnnotation(key,value){
   const response=await fetch('/api/registry/annotations',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({key,label:value.label||'',notes:value.notes||'',hidden:!!value.hidden})});
-  const result=await response.json();if(!response.ok)throw new Error(result.error||'保存失败');A=result;renderExp();if(VIEW==='overview')renderOverview();
+  const result=await response.json();if(!response.ok)throw new Error(result.error||'保存失败');A=result;show(VIEW);
 }
+let resourceWritePending=false;
+document.getElementById('resource-detail').addEventListener('click',async event=>{
+  const button=event.target.closest('[data-resource-manage]');
+  if(!button||resourceWritePending)return;
+  const item=resourceRows.find(resource=>resourceKey(resource)===selectedResource);
+  if(!item?.id)return;
+  const hidden=!A[item.id]?.hidden;
+  if(hidden && !window.parent.confirm(`从台账移除「${item.name}」？原文件保留，可在「已移除」中恢复。`))return;
+  const message=document.getElementById('res-message');
+  resourceWritePending=true;
+  button.disabled=true;
+  try{
+    await saveAnnotation(item.id,{...A[item.id],hidden});
+    message.textContent=hidden?'已从台账移除，可在「已移除」中恢复。':'已恢复到资源清单。';
+  }catch(error){message.textContent=`操作失败：${error.message}`;}
+  finally{resourceWritePending=false;button.disabled=false;}
+});
 document.getElementById('annotation-form').addEventListener('submit',async e=>{e.preventDefault();try{await saveAnnotation(editingKey,{label:document.getElementById('annotation-label').value,notes:document.getElementById('annotation-notes').value,hidden:!!A[editingKey]?.hidden});document.getElementById('annotation-dialog').close();}catch(error){alert(error.message);}});
 document.getElementById('annotation-cancel').onclick=()=>document.getElementById('annotation-dialog').close();
-["res-kind","res-host","res-q"].forEach(id=>document.getElementById(id).addEventListener("input", renderRes));
+["res-kind","res-host","res-q","res-state"].forEach(id=>document.getElementById(id).addEventListener("input", renderRes));
+document.getElementById('res-rows').addEventListener('click',event=>{
+  const row=event.target.closest('[data-resource]');
+  if(!row)return;
+  selectedResource=row.dataset.resource;
+  showResourceDetail();
+  if(matchMedia('(max-width:700px)').matches)document.getElementById('resource-detail').focus();
+});
 load(false);
 </script>
 </body>

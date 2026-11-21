@@ -56,7 +56,9 @@ def main(args):
     bag = base.task.object_scope["popcorn__bag.n.01_1"].wrapped_obj
     states = {name: getattr(object_states, name) for name in ("Open", "Inside", "ToggledOn", "Cooked")}
     repeat = args.repeat_number
-    if repeat:
+    intervention = args.memory_intervention
+    record_mode = bool(repeat or intervention)
+    if record_mode:
         door_joint, = microwave.states[states["Open"]].relevant_joints_info[1]
         door = next(link for link in microwave.links.values() if link.prim_path == door_joint.body1)
         camera_sensors = {name: sensor for name, sensor in robot.sensors.items()
@@ -72,6 +74,7 @@ def main(args):
     episode = f"task40-instance{args.instance}-seed{args.seed}"
     session = source_start["clock"] if source_start else {"session_id": args.output.name, "env_ids": [0], "episode_ids": [episode]}
     decision = 0
+    fixed_first_state = {}
     cameras = ("left_wrist", "right_wrist", "head")
 
     def rgb(observation):
@@ -118,6 +121,8 @@ def main(args):
         micro = row["microwaves"][microwave.name]
         if micro["Open"]:
             return "door_opened"
+        if args.memory_intervention:
+            return "later_stage_before_opening" if micro["ToggledOn"] else None
         if ("TRUE" in row["grasp_states"].values()
                 or row["popcorn"][bag.name]["inside"][microwave.name] or micro["ToggledOn"]):
             return "later_stage_before_opening"
@@ -134,12 +139,27 @@ def main(args):
 
     def run_decision(branch, stream, container, video):
         nonlocal decision, obs
-        directory = (args.output / "metrics" if repeat else args.output) / branch / f"{decision:04d}"
+        directory = (args.output / "metrics" if record_mode else args.output) / branch / f"{decision:04d}"
         batch = {key: [value] if isinstance(value, str) else np.asarray(value)[None, None]
                  for key, value in obs.items()}
+        if args.memory_intervention and decision == anchor:
+            first_state_delta = {}
+            with np.load(args.source_run / "anchor_live_observation.npz", allow_pickle=False) as archive:
+                for key in archive.files:
+                    if key.startswith("video."):
+                        batch[key] = archive[key]
+                    elif key.startswith("state."):
+                        reference = fixed_first_state.setdefault(key, batch[key].copy())
+                        first_state_delta[key] = float(np.max(np.abs(batch[key] - reference)))
+                        batch[key] = reference
+            write_json(directory.parent / "first_input_delta.json", first_state_delta)
         language = save_policy_input(directory, batch)
         first_step, first_time = base._current_step, float(og.sim.current_time)
-        proposed, _ = client.get_action(batch, options=session)
+        options = dict(session, memory_diagnostics=True) if args.memory_intervention else session
+        proposed, diagnostics = client.get_action(batch, options=options)
+        if args.memory_intervention:
+            write_json(directory / "retrieval.json", diagnostics["memory_diagnostics"])
+            np.savez_compressed(directory / "proposed.npz", **proposed)
         if any(value.shape[1] < 8 or not np.isfinite(value).all() for value in proposed.values()):
             raise RuntimeError("Invalid policy action chunk")
         executed = {key: value[0, :8] for key, value in proposed.items()}
@@ -152,7 +172,7 @@ def main(args):
             if terminated or truncated or env._physx_crashed:
                 raise RuntimeError(f"Task40 terminated inside decision {decision}, control step {index}: {info}")
             row = dict(truth(), decision=decision, branch=branch)
-            if repeat:
+            if record_mode:
                 row["interaction"] = serializable(interaction())
                 reason = stop_reason(row)
             stream.write(json.dumps(row) + "\n")
@@ -176,9 +196,9 @@ def main(args):
         return reason
 
     def run_branch(branch, count, stop=None):
-        directory = (args.output / "metrics" if repeat else args.output) / branch
+        directory = (args.output / "metrics" if record_mode else args.output) / branch
         directory.mkdir()
-        video_path = args.output / "videos" / f"{branch}.mp4" if repeat else directory / "short.mp4"
+        video_path = args.output / "videos" / f"{branch}.mp4" if record_mode else directory / "short.mp4"
         with (directory / "truth.jsonl").open("x", buffering=1) as stream, av.open(str(video_path), "w") as video_file:
             encoder = video_file.add_stream("libx264", rate=30)
             encoder.width, encoder.height, encoder.pix_fmt = 768, 256, "yuv420p"
@@ -200,7 +220,7 @@ def main(args):
                 and not microwave.states[states["Open"]].get_value()
                 and not any(robot.is_grasping(arm=arm, candidate_obj=bag).name == "TRUE" for arm in robot.arm_names))
 
-    def restore(saved, before, path):
+    def restore(saved, before, path, repeat_index=None):
         nonlocal decision, obs
         assert saved["session"] == session
         og.sim.load_state(saved["sim"], serialized=True)
@@ -229,34 +249,42 @@ def main(args):
         sim_time = float(og.sim.current_time)
         refresh = {}
         camera_poses = []
-        for frame_index in range(1, 7 if repeat else 2):
+        for frame_index in range(1, 7 if record_mode else 2):
             og.sim.render()
             obs = preprocess_obs(env, base.get_obs()[0])
-            if repeat:
+            if record_mode:
                 refresh.update({f"{frame_index:02d}_{name}": frame.copy() for name, frame in rgb(obs).items()})
                 camera_poses.append({name: sensor.get_position_orientation() for name, sensor in camera_sensors.items()})
-        if repeat:
+        if record_mode:
             assert float(og.sim.current_time) == sim_time
-            np.savez_compressed(args.output / "metrics" / f"refresh_{repeat:02d}.npz", **refresh)
-            write_json(args.output / "metrics" / f"camera_poses_{repeat:02d}.json", camera_poses)
+            np.savez_compressed(args.output / "metrics" / f"refresh_{repeat_index:02d}.npz", **refresh)
+            write_json(args.output / "metrics" / f"camera_poses_{repeat_index:02d}.json", camera_poses)
 
     if args.source_run:
         before = json.loads((args.source_run / "anchor.json").read_text())
         checkpoint_path = args.source_run / "sim_checkpoint.pt"
         trials = []
-        for number in ([repeat] if repeat else range(1, 4)):
+        numbers = range(1, 4) if intervention or not repeat else (repeat,)
+        for number in numbers:
             saved = torch.load(checkpoint_path, weights_only=False)
             anchor = saved["decision"]
-            rebuilt = client.call_endpoint("task40_rebuild", {"decisions": anchor, "repeat_number": number})
+            condition = ("A_normal", "B_empty", "C_wrong")[number - 1] if args.memory_intervention else None
+            rebuilt = client.call_endpoint("task40_rebuild", {"decisions": anchor, "repeat_number": number,
+                                                             "intervention": condition})
             assert rebuilt == clock()
-            metrics = args.output / "metrics" if repeat else args.output
-            restore(saved, before, metrics / f"restore_compare_{number}.json")
-            branch = f"repeat_{number:02d}" if repeat else f"restore_{number}"
+            metrics = args.output / "metrics" if record_mode else args.output
+            restore(saved, before, metrics / f"restore_compare_{number}.json", number if record_mode else None)
+            branch = condition or (f"repeat_{number:02d}" if repeat else f"restore_{number}")
             print("TASK40_REPEAT_START", number, anchor, flush=True)
             reason = run_branch(branch, args.cycles)
             trials.append({"branch": branch, "decisions": decision - anchor,
                            "steps": base._current_step - saved["step"], "final_clock": clock(),
                            "stop_reason": reason or "decision_limit"})
+        if intervention:
+            for number, trial in enumerate(trials, 1):
+                write_json(metrics / f"trial_{number:02d}.json", {"anchor_decision": anchor, "anchor_step": saved["step"], **trial})
+            og.shutdown()
+            return
         if repeat:
             write_json(metrics / f"trial_{repeat:02d}.json", {"anchor_decision": anchor, "anchor_step": saved["step"], **trials[0]})
             print("TASK40_REPEAT_DONE", repeat, trials[0]["stop_reason"], flush=True)
@@ -307,6 +335,7 @@ if __name__ == "__main__":
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--source-run", type=Path)
     parser.add_argument("--repeat-number", type=int, choices=range(1, 4))
+    parser.add_argument("--memory-intervention", action="store_true")
     parser.add_argument("--behavior", type=Path, required=True)
     parser.add_argument("--groot", type=Path, required=True)
     parser.add_argument("--instance", type=int, default=4)
@@ -319,4 +348,6 @@ if __name__ == "__main__":
     parsed = parser.parse_args()
     if parsed.repeat_number and not parsed.source_run:
         parser.error("--repeat-number requires --source-run")
+    if parsed.memory_intervention and (not parsed.source_run or parsed.repeat_number):
+        parser.error("--memory-intervention requires --source-run and all three branches")
     main(parsed)

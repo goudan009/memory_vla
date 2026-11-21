@@ -1,17 +1,42 @@
 """Small web adapter for the canonical evaluation CLI; no simulator imports."""
 
 import json
+import math
 import os
 from pathlib import Path
 import re
 import shlex
+import signal
 import subprocess
 import threading
 import time
 import uuid
+from urllib.parse import urlencode
 
 from groot_tasks import TASK_NAMES
 from groot_eval_control import EvaluationControl
+
+
+TASK40_EXPERIMENT_KINDS = ('task40_collect', 'task40_forward')
+
+
+def task40_artifacts(output):
+    output = Path(output).resolve()
+    files = {'job.json': '运行配置', 'results.json': '轨迹结果',
+             'logs/simulator.log': '仿真日志', 'logs/forward.log': '前向日志', 'logs/failure.txt': '异常记录',
+             'metrics/gpu.csv': 'GPU 采样', 'metrics/repeat_audit.json': '恢复重复性对照'}
+    for path in sorted((output / 'metrics').glob('restore_*/lineage.json')):
+        files[path.relative_to(output).as_posix()] = '恢复轨迹来源'
+    for path in sorted((output / 'metrics').glob('episode_*/controlled_reclosure.json')):
+        files[path.relative_to(output).as_posix()] = f'{path.parent.name} 受控重关记录'
+    if (output / 'results.json').is_file():
+        files.update({path.relative_to(output).as_posix(): path.name
+                      for path in sorted((output / 'videos').glob('*.mp4'))})
+    return [{'path': relative, 'label': label,
+             'url': '/api/launch/artifact?' + urlencode({'run': output.name, 'path': relative})}
+            for relative, label in files.items()
+            if (output / relative).resolve().is_relative_to(output)
+            and (output / relative).is_file()]
 
 
 class LaunchManager:
@@ -24,6 +49,12 @@ class LaunchManager:
         self.lock = threading.Lock()
         self.policy_resolver = None
         self.control = EvaluationControl(self.root, self.evaluation)
+        self.task40_worker = self.root / 'evaluation/scripts/task40_restore_worker.py'
+        self.task40_forward_worker = self.root / 'evaluation/scripts/task40_forward_worker.py'
+        self.task40_runner = Path(os.environ.get('GROOT_TASK40_RUNNER', self.root / 'evaluation/scripts'))
+        self.task40_output = self.root / 'Output/test_01/experiment_07/workbench_runs'
+        self.task40_experiment = Path(os.environ.get('GROOT_TASK40_EXPERIMENT_ROOT',
+            self.root / 'Output/test_01/experiment_09'))
 
     def pause(self, request):
         with self.lock:
@@ -43,11 +74,19 @@ class LaunchManager:
                 versions[path.name] = sorted(p.name for p in path.iterdir()
                                              if p.is_dir() and not p.name.startswith("."))
         return {"tasks": [{"id": task, "name": name} for task, name in TASK_NAMES.items()],
-                "versions": versions, "evaluation_root": str(evaluation)}
+                "versions": versions, "evaluation_root": str(evaluation),
+                "task40_collect": {"sim_slots": {str(gpu): 2 for gpu in (0, 1)
+                    if (self.task40_experiment / 'metrics' / f'dual_gpu{gpu}_validated.json').is_file()}}}
 
     def argv(self, request):
         if not isinstance(request, dict):
             raise ValueError("启动参数必须是 JSON 对象")
+        if request.get('task40_restore') is True:
+            return self._task40_restore_argv(request)
+        if request.get('task40_collect') is True:
+            return self._task40_collect(request)
+        if request.get('task40_forward') is True:
+            return self._task40_forward(request)
         scalars = {"version", "group", "model_name", "mode", "gpu_index", "task", "preset",
                    "seed", "seed_mode", "policy_host", "policy_port", "run_tag",
                    "episodes_per_gpu", "debug_max_steps", "video_steps_per_render", "policy_checkpoint", "training_id"}
@@ -100,7 +139,82 @@ class LaunchManager:
             argv += ["--" + key.replace("_", "-"), *map(str, values)]
         return argv
 
+    def _task40_path(self, value, label):
+        if not isinstance(value, str) or not value or len(value) > 512:
+            raise ValueError(f'{label}路径不能为空')
+        path = Path(value).expanduser()
+        if not path.is_absolute():
+            path = self.root / path
+        path = path.resolve(strict=True)
+        if not path.is_relative_to(self.root):
+            raise ValueError(f'{label}必须位于当前项目目录内')
+        return path
+
+    def _task40_restore_argv(self, request):
+        allowed = {'task40_restore', 'restore_checkpoint', 'restore_weights', 'sim_gpu',
+                   'restore_seed', 'restore_cycles', 'restore_port', 'memory_mode'}
+        if set(request) - allowed:
+            raise ValueError('Task40 检查点恢复不接受普通评估参数')
+        anchor = self._task40_path(request.get('restore_checkpoint'), '检查点')
+        weights = self._task40_path(request.get('restore_weights'), '模型权重')
+        required = ('start.json', 'anchor.json', 'sim_checkpoint.pt', 'memory_online.pt',
+                    'anchor_live_observation.npz', 'prefix')
+        missing = [name for name in required if not (anchor / name).exists()]
+        if missing:
+            raise ValueError('检查点目录不完整，缺少：' + ', '.join(missing))
+        with (anchor / 'start.json').open() as stream:
+            start = json.load(stream)
+        with (anchor / 'sim_checkpoint.pt').open('rb') as stream:
+            if not stream.read(1):
+                raise ValueError('仿真检查点文件为空')
+        prefix = anchor / 'prefix'
+        prefix_decisions = sorted(int(path.name) for path in prefix.iterdir()
+                                  if path.is_dir() and path.name.isdigit()
+                                  and (path / 'decision.json').is_file())
+        if not prefix_decisions or prefix_decisions != list(range(len(prefix_decisions))):
+            raise ValueError('检查点缺少可回放的策略历史前缀')
+        if not (weights / 'config.json').is_file() or not (weights / 'model.safetensors.index.json').is_file():
+            raise ValueError('模型权重目录缺少 config.json 或 safetensors 索引')
+        if not self.task40_worker.is_file() or not self.task40_runner.joinpath('paired_sim_diagnostic.py').is_file():
+            raise ValueError('Task40 检查点恢复运行脚本缺失')
+        sim_gpu = request.get('sim_gpu', 0)
+        if type(sim_gpu) is not int or sim_gpu not in (0, 1):
+            raise ValueError('仿真 GPU 必须是 0 或 1')
+        policy_host = os.environ.get('GROOT_TASK40_POLICY_HOST', '172.28.62.17')
+        seed = request.get('restore_seed', 73002)
+        cycles = request.get('restore_cycles', 10)
+        port = request.get('restore_port', 5586)
+        mode = request.get('memory_mode', 'A_normal')
+        if type(seed) is not int or not 0 <= seed < 2**32:
+            raise ValueError('策略随机种子必须在 0 到 2^32-1 之间')
+        if type(cycles) is not int or not 1 <= cycles <= 60:
+            raise ValueError('连续决策数必须在 1 到 60 之间')
+        if type(port) is not int or not 1024 <= port <= 65535:
+            raise ValueError('策略端口必须在 1024 到 65535 之间')
+        if mode not in ('A_normal', 'B_empty'):
+            raise ValueError('记忆模式仅支持 A_normal 或 B_empty')
+        run_id = time.strftime('%Y%m%d-%H%M%S') + '-' + uuid.uuid4().hex[:8]
+        output = self.task40_output / run_id
+        plan = {'kind': 'task40_restore', 'task_id': 40, 'version': 'Task40',
+                'group': 'checkpoint_restore', 'output': str(output),
+                'instances': {str(sim_gpu): [0]}, 'policy_host': policy_host,
+                'restore_anchor': str(anchor), 'weights': str(weights), 'seed': seed,
+                'cycles': cycles, 'memory_mode': mode, 'policy_port': port}
+        argv = ['python3', '-u', str(self.task40_worker), '--root', str(self.root),
+                '--output', str(output), '--anchor', str(anchor), '--weights', str(weights),
+                '--sim-gpu', str(sim_gpu), '--policy-host', policy_host, '--seed', str(seed),
+                '--cycles', str(cycles), '--memory-mode', mode, '--port', str(port)]
+        return {'argv': argv, 'command': shlex.join(argv), 'plan': plan}
+
     def prepare(self, request):
+        if not isinstance(request, dict):
+            raise ValueError("启动参数必须是 JSON 对象")
+        if request.get('task40_restore') is True:
+            return self._task40_restore_argv(request)
+        if request.get('task40_collect') is True:
+            return self._task40_collect(request)
+        if request.get('task40_forward') is True:
+            return self._task40_forward(request)
         argv = self.argv(request)
         identity=None
         if self.policy_resolver:
@@ -133,24 +247,269 @@ class LaunchManager:
             argv[argv.index("--seed") + 1] = str(plan["base_seed"])
         return {"argv": argv, "command": shlex.join(argv), "plan": plan}
 
+    def _task40_collect(self, request):
+        allowed = {'task40_collect', 'sim_gpu', 'seed', 'cycles', 'instances', 'policy_host',
+                   'policy_port', 'sim_slots', 'repetitions', 'restore_checkpoint', 'restore_repeats',
+                   'controlled_reclosure'}
+        if set(request) - allowed:
+            raise ValueError('不支持的 Task40 采集参数')
+        directed = None
+        if 'restore_checkpoint' in request:
+            if self.task40_experiment.resolve() != self.root / 'Output/test_01/experiment_09':
+                raise ValueError('Task40 定向恢复仅支持本机评估')
+            draft = self._task40_path(request['restore_checkpoint'], '失败检查点')
+            directed = self._task40_failure_lineage(draft)
+        gpu = request.get('sim_gpu', 0)
+        seed = request.get('seed', directed['source_seed'] if directed else None)
+        cycles = request.get('cycles', 60 if directed else 300)
+        slots = request.get('sim_slots', 1)
+        repetitions = request.get('repetitions', 1)
+        restore_repeats = request.get('restore_repeats', 1)
+        controlled = request.get('controlled_reclosure', False)
+        instances = request.get('instances', [directed['instance']] if directed else None)
+        host = request.get('policy_host', '172.28.62.17')
+        port = request.get('policy_port')
+        if type(gpu) is not int or gpu not in (0, 1):
+            raise ValueError('仿真 GPU 必须是 0 或 1')
+        if type(slots) is not int or slots not in (1, 2):
+            raise ValueError('Task40 单卡环境数只能为 1 或 2')
+        if not isinstance(instances, list) or not 1 <= len(instances) <= 10 or any(type(i) is not int or i not in range(10) for i in instances) or len(set(instances)) != len(instances):
+            raise ValueError('请选择 1–10 个不同的 Task40 实例')
+        if type(repetitions) is not int or not 1 <= repetitions <= 10 // len(instances):
+            raise ValueError('每个作业最多执行 10 条轨迹')
+        if type(seed) is not int or not 0 <= seed <= 2**32 - len(instances) * repetitions:
+            raise ValueError('采集种子超出范围')
+        if type(cycles) is not int or not 1 <= cycles <= 300:
+            raise ValueError('决策数必须在 1 到 300 之间')
+        if 'restore_repeats' in request and (not directed or type(restore_repeats) is not int
+                                             or restore_repeats not in (1, 2)):
+            raise ValueError('Task40 恢复重复次数仅支持对同一检查点恢复 1 或 2 次')
+        if type(controlled) is not bool or (controlled and directed):
+            raise ValueError('Task40 受控重关必须从任务初始状态开始')
+        if directed and (instances != [directed['instance']] or seed != directed['source_seed']
+                         or repetitions != 1 or cycles > 60):
+            raise ValueError('Task40 定向恢复限原父轨迹实例和种子、单环境、每次最多 60 个决策')
+        if host != '172.28.62.17' or type(port) is not int or not 1024 <= port <= 65535:
+            raise ValueError('请选择一个已就绪的 A100 Task40 诊断推理端口')
+        identity = self.policy_resolver(host, port) if self.policy_resolver else None
+        if not identity or not identity.get('task40_diagnostics'):
+            raise ValueError('该端口未运行 Task40 诊断推理服务')
+        if controlled and not identity.get('task40_trace'):
+            raise ValueError('Task40 受控重关要求使用增强诊断推理端口')
+        if directed and (not identity.get('task40_trace') or identity.get('checkpoint') != directed['policy_weights']):
+            raise ValueError('Task40 定向恢复要求使用与父轨迹权重一致的增强诊断推理端口')
+        anchor = Path(os.environ.get('GROOT_TASK40_ANCHOR',
+            self.root / 'Output/test_01/experiment_01/checkpoints')).resolve(strict=True)
+        weights = Path(os.environ.get('GROOT_TASK40_WEIGHTS',
+            self.root / 'Output/task40_memory_overnight/replay/original_step4000')).resolve(strict=True)
+        output = self.task40_experiment / 'runs' / uuid.uuid4().hex[:12]
+        plan = {'kind': 'task40_collect', 'task_id': 40, 'version': identity.get('version'),
+                'group': 'experiment_09', 'output': str(output), 'instances': {str(gpu): instances},
+                'seed': seed, 'cycles': cycles, 'sim_slots': slots, 'repetitions': repetitions,
+                'policy_host': host, 'policy_port': port,
+                'policy_identity': identity}
+        argv = ['python3', '-u', str(self.task40_worker), '--root', str(self.root),
+                '--output', str(output), '--anchor', str(anchor), '--weights', str(weights),
+                '--sim-gpu', str(gpu), '--policy-host', host, '--port', str(port),
+                '--seed', str(seed), '--cycles', str(cycles)]
+        if directed:
+            plan.update(phase='directed_restore', restore_checkpoint=str(draft),
+                        lineage=directed, restore_repeats=restore_repeats)
+            if restore_repeats == 2:
+                argv += ['--restore-repeats', '2', '--renderer-audit']
+        else:
+            argv += ['--collect-instances', *map(str, instances), '--collect-repetitions', str(repetitions)]
+            if controlled:
+                plan.update(controlled_reclosure=True, phase='controlled_reclosure')
+        argv += ['--experiment-plan', json.dumps(plan, ensure_ascii=False)]
+        return {'argv': argv, 'command': shlex.join(argv), 'plan': plan}
+
+    def _task40_failure_lineage(self, checkpoint):
+        run = checkpoint.parent.parent
+        valid_runs = {self.root / 'Output/test_01/experiment_07/episodes', self.task40_experiment / 'runs'}
+        if checkpoint.parent.name != 'checkpoints' or run.parent not in valid_runs:
+            raise ValueError('失败检查点必须位于 Exp07 或 Exp09 的原始轨迹目录')
+
+        def archive_file(folder, filename):
+            file = folder / filename
+            if not file.is_file() or file.resolve() != file or not file.stat().st_size:
+                raise ValueError(f'Task40 归档文件缺失、为空或不在原目录：{file}')
+            return file
+
+        def read(folder, filename):
+            return json.loads(archive_file(folder, filename).read_text())
+
+        for filename in ('sim.pt', 'memory.pt', 'policy_rng_online.pt', 'observation.npz', 'physical.json'):
+            archive_file(checkpoint, filename)
+        try:
+            source = read(checkpoint, 'source.json')
+            branch, decision, step = (source[key] for key in ('branch', 'decision', 'step'))
+            match = re.fullmatch(r'episode_i([0-9])_s([0-9]{1,10})_A_normal', branch)
+            if not match or type(decision) is not int or decision < 1 or type(step) is not int or step != decision * 8:
+                raise ValueError('失败检查点必须关联任务初始状态的完整策略决策及对应物理步')
+            instance, seed = map(int, match.groups())
+            parent = run / 'metrics' / branch
+            trial = read(parent, 'trial.json')
+            initial = read(parent, 'initial.json')
+            if (trial['branch'], trial['instance'], trial['seed'], trial['start_step'], trial['mode'], trial['origin']) != (
+                    branch, instance, seed, 0, 'A_normal', None) or not step < trial['end_step'] or (
+                    trial['stop_reason'] == 'physx_crashed'):
+                raise ValueError('失败检查点与父轨迹实例、种子或起点不一致')
+            policy = initial['policy']
+            if policy['seed'] != seed or not policy['policy_weights']:
+                raise ValueError('父轨迹缺少匹配的策略身份')
+            target = parent / f'{decision:04d}'
+            anchor_decision = read(target, 'decision.json')
+            session = anchor_decision['session']
+            if session['episode_ids'] != [branch] or session['env_ids'] != [0]:
+                raise ValueError('父轨迹的策略会话与失败检查点不一致')
+            for index in range(decision + 1):
+                folder = parent / f'{index:04d}'
+                row = anchor_decision if index == decision else read(folder, 'decision.json')
+                if (row['decision'], row['start_step'], row['instance'], row['seed'], row['session']) != (
+                        index, index * 8, instance, seed, session):
+                    raise ValueError('父轨迹的决策前缀不连续或跨会话')
+                if index < decision:
+                    if (row['end_step'], row['executed_steps']) != ((index + 1) * 8, 8):
+                        raise ValueError('父轨迹的决策前缀缺少完整的动作块')
+                    for filename in ('observation.npz', 'executed.npz'):
+                        archive_file(folder, filename)
+            if (anchor_decision['language'] != source['language'] or
+                    archive_file(target, 'observation.npz').read_bytes() != (checkpoint / 'observation.npz').read_bytes()):
+                raise ValueError('失败检查点与父轨迹锚点观测或指令不一致')
+
+            baseline = initial['truth']
+            evidence = source['evidence']
+            if (baseline['step'] != 0 or baseline['Open'] is not False or baseline['ToggledOn'] is not False or
+                    evidence['final_open'] is not False or evidence['final_toggled_on'] is not False or
+                    source['memory_replay']['online_snapshot_saved'] is not True):
+                raise ValueError('失败检查点缺少闭门、未启动的在线历史')
+            contacts, peak = [], 0.0
+            with archive_file(parent, 'truth.jsonl').open() as stream:
+                for index in range(1, step + 1):
+                    truth = json.loads(next(stream, 'null'))
+                    if not truth or truth['step'] != index or truth['Open'] is not False or truth['ToggledOn'] is not False:
+                        raise ValueError('父轨迹物理前缀不连续或已开门、已启动')
+                    interaction = truth['interaction']
+                    if any(contact['body'] == interaction['door_body'] for arm in interaction['contacts'].values()
+                           for contact in arm):
+                        contacts.append(index)
+                        peak = max(peak, abs(truth['hinge'] - baseline['hinge']))
+            if len(contacts) < 3 or contacts != evidence['door_contact_steps'] or not math.isfinite(peak) or peak < 0.005:
+                raise ValueError('父轨迹缺少与检查点一致的真实闭门拉动证据')
+            saved_joints = read(checkpoint, 'physical.json')['joints']
+            microwave, = truth['microwaves']
+            if (truth['decision'] != decision - 1 or truth != anchor_decision['state_before'] or
+                    saved_joints[microwave] != truth['microwaves'][microwave]['joint_positions'] or
+                    saved_joints['robot_r1'] != truth['robots']['robot_r1']['joint_positions']):
+                raise ValueError('失败检查点物理状态与父轨迹锚点不一致')
+        except (KeyError, TypeError, AttributeError) as error:
+            raise ValueError('失败检查点或父轨迹记录格式不完整') from error
+        return {'source': 'directed_restore', 'prefix': str(parent), 'instance': instance, 'source_seed': seed,
+                'origin_id': f'instance={instance}/seed={seed}', 'parent_branch': branch,
+                'start_step': step, 'start_decision': decision,
+                'policy_weights': policy['policy_weights']}
+
+    def _task40_forward(self, request):
+        if set(request) - {'task40_forward', 'batch', 'policy_host', 'policy_port'}:
+            raise ValueError('不支持的 Task40 冻结前向参数')
+        batch = self._task40_path(request.get('batch'), '前向配置')
+        if not batch.is_relative_to(self.task40_experiment.resolve()) or batch.suffix != '.json' or not batch.is_file():
+            raise ValueError('前向配置必须是 Experiment 09 下的 JSON 文件')
+        host = request.get('policy_host', '172.28.62.17')
+        port = request.get('policy_port')
+        if host != '172.28.62.17' or type(port) is not int or not 1024 <= port <= 65535:
+            raise ValueError('请选择 A100 上的 Task40 前向诊断端口')
+        identity = self.policy_resolver(host, port) if self.policy_resolver else None
+        if not identity or not identity.get('task40_trace'):
+            raise ValueError('所选推理端口未启用 Task40 记忆前向诊断')
+        output = self.task40_experiment / 'runs' / uuid.uuid4().hex[:12]
+        plan = {'kind': 'task40_forward', 'task_id': 40, 'group': 'experiment_09',
+                'version': identity.get('version'), 'instances': {}, 'output': str(output),
+                'batch': str(batch), 'policy_host': host, 'policy_port': port, 'policy_identity': identity}
+        argv = ['bash', str(self.root / 'scripts/b1k_python.sh'), '-u', str(self.task40_forward_worker),
+                '--root', str(self.root), '--output', str(output), '--policy-host', host,
+                '--port', str(port), '--batch', str(batch), '--experiment-plan', json.dumps(plan, ensure_ascii=False)]
+        return {'argv': argv, 'command': shlex.join(argv), 'plan': plan}
+
+    @staticmethod
+    def _policy_port(plan):
+        if plan.get('policy_port') is not None:
+            return plan['policy_port']
+        server = plan.get('policy_server') or ''
+        match = re.fullmatch(r'172\.28\.62\.17:(\d+)', server)
+        return int(match[1]) if match else None
+
     def start(self, request):
         prepared = self.prepare(request)
         gpus = set(prepared["plan"]["instances"])
         with self.lock:
-            for job in self.jobs:
-                if job["process"].poll() is None and gpus & job["gpus"]:
-                    raise ValueError("该 GPU 已有网页启动的评估，请选择另一张 GPU 或等待结束")
+            plan = prepared['plan']
+            collect = plan.get('kind') == 'task40_collect'
+            experiment = plan.get('kind') in TASK40_EXPERIMENT_KINDS
+            active = [job for job in self.jobs if job['process'].poll() is None]
+            same_gpu = [job for job in active if gpus & job['gpus']]
+            port = self._policy_port(plan)
+            if port is not None and any(
+                    (experiment or job['plan'].get('kind') in TASK40_EXPERIMENT_KINDS)
+                    and self._policy_port(job['plan']) == port for job in active):
+                raise ValueError('该诊断推理端口已绑定另一作业')
+            if same_gpu:
+                if not (collect and plan['sim_slots'] == 2 and len(same_gpu) == 1
+                        and same_gpu[0]['plan'].get('kind') == 'task40_collect'):
+                    raise ValueError('该 GPU 已有工作台评估，请选择另一张 GPU 或等待结束')
+                first_output = Path(same_gpu[0]['plan']['output'])
+                if not any(first_output.glob('metrics/*/0000/decision.json')):
+                    raise ValueError('首个 worker 需完成第一轮决策后才能增加同卡 worker')
             job_id = uuid.uuid4().hex[:12]
             self.log_root.mkdir(parents=True, exist_ok=True)
-            log_path = self.log_root / f"{job_id}.log"
+            log_root = self.task40_experiment / 'logs' if experiment else self.log_root
+            log_root.mkdir(parents=True, exist_ok=True)
+            log_path = log_root / f"{job_id}.log"
+            if experiment:
+                prepared['plan']['job_id'] = job_id
+                prepared['plan']['started_at'] = time.strftime("%Y-%m-%d %H:%M:%S")
+                prepared['argv'][-1] = json.dumps(prepared['plan'], ensure_ascii=False)
+                prepared['command'] = shlex.join(prepared['argv'])
             with log_path.open("ab") as log:
                 process = subprocess.Popen(prepared["argv"], cwd=self.root, stdin=subprocess.DEVNULL,
                                            stdout=log, stderr=subprocess.STDOUT, start_new_session=True)
             job = {"id": job_id, "process": process, "gpus": gpus, "log_path": log_path,
                    "command": prepared["command"], "plan": prepared["plan"],
-                   "started_at": time.strftime("%Y-%m-%d %H:%M:%S")}
+                   "started_at": time.strftime("%Y-%m-%d %H:%M:%S"),
+                   "process_start": self._process_start(process.pid)}
             self.jobs.append(job)
             return self._status(job)
+
+    @staticmethod
+    def _process_start(pid):
+        try:
+            fields = (Path('/proc') / str(pid) / 'stat').read_text().rsplit(')', 1)[1].split()
+            return fields[19] if fields[0] != 'Z' else None
+        except (OSError, IndexError):
+            return None
+
+    def stop_restore(self, request):
+        if not isinstance(request, dict) or set(request) != {'job'} or not isinstance(request['job'], str):
+            raise ValueError('请选择一个 Task40 恢复任务')
+        with self.lock:
+            job = next((item for item in self.jobs if item['id'] == request['job']), None)
+            if job is None or job['plan'].get('kind') not in ('task40_restore', *TASK40_EXPERIMENT_KINDS):
+                raise ValueError('找不到可停止的 Task40 恢复任务')
+            pid = job['process'].pid
+            expected = job.get('process_start')
+            if self._process_start(pid) != expected or expected is None:
+                raise ValueError('恢复进程已结束或发生变化，请刷新任务状态')
+            arguments = (Path('/proc') / str(pid) / 'cmdline').read_bytes().decode(errors='replace')
+            worker = self.task40_forward_worker if job['plan'].get('kind') == 'task40_forward' else self.task40_worker
+            if str(worker) not in arguments:
+                raise ValueError('进程身份不匹配，未发送停止信号')
+            descriptor = os.pidfd_open(pid)
+            try:
+                signal.pidfd_send_signal(descriptor, signal.SIGTERM)
+            finally:
+                os.close(descriptor)
+            return {'state': 'stopping', 'job': request['job'], 'message': '正在停止并清理 Task40 策略与仿真进程'}
 
     def _status(self, job):
         code = job["process"].poll()
@@ -167,15 +526,47 @@ class LaunchManager:
             pass
         output = Path(plan["output"])
         evaluation = self.evaluation
-        return {"id": job["id"], "pid": job["process"].pid,
+        status = {"id": job["id"], "pid": job["process"].pid,
                 "state": "running" if code is None else "complete" if code == 0 else "failed",
                 "returncode": code, "started_at": job["started_at"], "output": str(output),
                 "folder": output.relative_to(evaluation).as_posix() if output.is_relative_to(evaluation) else None,
-                "result_ready": (output / "results.json").is_file(),
+                "result_ready": output.is_relative_to(evaluation) and (output / "results.json").is_file(),
                 "command": job["command"], "log": str(job["log_path"]),
                 "log_tail": "\n".join(tail.splitlines()[-20:]),
                 "task_id": plan.get("task_id"), "gpus": sorted(job["gpus"]),
-                "version": plan.get("version"), "group": plan.get("group")}
+                "version": plan.get("version"), "group": plan.get("group"),
+                "kind": plan.get("kind"), "seed": plan.get("seed"),
+                "policy_identity": plan.get("policy_identity"), "policy_port": self._policy_port(plan),
+                "process_start": job.get('process_start'), "batch": plan.get('batch')}
+        if plan.get('kind') in TASK40_EXPERIMENT_KINDS:
+            if plan.get('kind') == 'task40_collect' and 'phase' not in plan:
+                # Restored workbench records contain a reduced plan.
+                try:
+                    archived = json.loads((output / 'job.json').read_text())
+                except (OSError, ValueError):
+                    archived = {}
+            else:
+                archived = plan
+            if archived.get('phase') == 'directed_restore':
+                status.update(phase=archived['phase'], lineage=archived.get('lineage'))
+            elif archived.get('phase') == 'controlled_reclosure':
+                status['phase'] = archived['phase']
+            stage_file = output / 'metrics' / 'active_stage.json'
+            try:
+                progress = json.loads(stage_file.read_text())
+            except (OSError, ValueError):
+                progress = {'stage': 'initializing'} if code is None else {}
+            log_file = 'forward.log' if plan['kind'] == 'task40_forward' else 'simulator.log'
+            with_log = output / 'logs' / log_file
+            sim_tail = ''
+            if with_log.is_file():
+                with with_log.open('rb') as log:
+                    log.seek(max(0, with_log.stat().st_size - 8000))
+                    sim_tail = '\n'.join(log.read().decode(errors='replace').splitlines()[-15:])
+            status.update(result_ready=(output / 'results.json').is_file(), artifacts=task40_artifacts(output),
+                          progress=progress)
+            status['forward_log_tail' if plan['kind'] == 'task40_forward' else 'sim_log_tail'] = sim_tail
+        return status
 
     def snapshot(self):
         with self.lock:

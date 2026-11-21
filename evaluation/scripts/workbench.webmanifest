@@ -1,0 +1,25 @@
+{
+  "id": "/",
+  "name": "GR00T 训练与评估工作台",
+  "short_name": "GR00T 工作台",
+  "lang": "zh-CN",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "theme_color": "#123e34",
+  "background_color": "#f3f6f4",
+  "icons": [
+    {
+      "src": "/workbench-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/workbench-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

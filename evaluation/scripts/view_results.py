@@ -18,7 +18,7 @@ import webbrowser
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from groot_live_preview import read_preview, subscribe
-from groot_web_launch import LaunchManager
+from groot_web_launch import LaunchManager, task40_artifacts
 from groot_inference_launch import InferenceManager
 import vlm_diagnosis
 import experiment_registry
@@ -35,6 +35,11 @@ TASK40_VIDEOS = Path("/nvme3/projects/memory_vla/outputs/overnight_memory_task40
 TASK40_ANNOTATIONS_FILE = EVALUATION_ROOT.parent / "outputs" / "task40_annotations.json"
 TASK40_ANNOTATIONS_LOCK = threading.Lock()
 PAGE = Path(__file__).with_name("result_viewer.html")
+WORKBENCH_APP_FILES = {
+    "/workbench.webmanifest": "application/manifest+json",
+    "/workbench-icon-192.png": "image/png",
+    "/workbench-icon-512.png": "image/png",
+}
 TRAIN_TOOLS = EVALUATION_ROOT.parent / "train"
 sys.path.insert(0, str(TRAIN_TOOLS))
 from dashboard import TrainingManager
@@ -66,7 +71,8 @@ def restore_evaluation_jobs(manager, records):
     for row in reversed(records):
         manager.jobs.append(dict(id=row['id'],process=DetachedEvaluation(row),gpus=set(row['gpus']),
             log_path=Path(row['log']),command=row['command'],started_at=row['started_at'],
-            plan={k:row.get(k) for k in ['output','task_id','version','group']}))
+            process_start=row.get('process_start'),
+            plan={k:row.get(k) for k in ['output','task_id','version','group','kind','seed','policy_identity','policy_port','batch']}))
 
 
 def video_files(run_dir: Path) -> dict[str, Path]:
@@ -245,6 +251,8 @@ class Handler(BaseHTTPRequestHandler):
     evaluation_devices = None
     inference_devices = None
     benchmark_manager = None
+    evaluation_record = None
+    task40_launch_lock = threading.Lock()
 
     def _evaluation_for(self, device='local', run=None):
         if run and self.evaluation_devices:
@@ -286,10 +294,11 @@ class Handler(BaseHTTPRequestHandler):
             raise ValueError("台账修改字段不正确")
         key = request.get("key")
         if not isinstance(key, str) or len(key) > 2048:
-            raise ValueError("评估记录标识不正确")
+            raise ValueError("台账记录标识不正确")
         current = experiment_registry.cached()
-        if not any(i.get("kind") == "eval" and i.get("id") == key for i in current.get("items", [])):
-            raise ValueError("找不到对应评估记录，请先重新扫描")
+        if not any(item.get("kind") in {"eval", "dataset", "weights"} and item.get("id") == key
+                   for item in current.get("items", [])):
+            raise ValueError("找不到对应台账记录，请先重新扫描")
         label, notes, hidden = request.get("label", ""), request.get("notes", ""), request.get("hidden", False)
         if not isinstance(label, str) or len(label) > 48:
             raise ValueError("标记最多 48 个字符")
@@ -344,8 +353,26 @@ class Handler(BaseHTTPRequestHandler):
                     manager=self.inference_devices[device]
             action = route.rsplit('/', 1)[-1]
             operation = {'preview': 'prepare', 'start': 'start', 'sync': 'sync', 'stop': 'stop', 'dataset': 'prepare_dataset',
-                         'pause':'pause','delete':'delete','cancel':'cancel','resume':'resume'}[action]
-            value = getattr(manager, operation)(request)
+                         'pause':'pause','delete':'delete','restore-stop':'stop_restore','cancel':'cancel','resume':'resume'}[action]
+            if route == '/api/launch/start' and (request.get('task40_collect') is True
+                                                 or request.get('task40_forward') is True):
+                with self.task40_launch_lock:
+                    managers = [self.launch_manager, *(self.evaluation_devices or {}).values()]
+                    for other in managers:
+                        if other is manager:
+                            continue
+                        if any(row['state'] == 'running' and row.get('policy_port') == request.get('policy_port')
+                               for row in other.snapshot()):
+                            raise ValueError('该端口已绑定另一设备上的活动评估')
+                    value = manager.start(request)
+                    if manager is self.launch_manager and self.evaluation_record is not None:
+                        records = self.launch_manager.snapshot()
+                        self.evaluation_record.parent.mkdir(parents=True, exist_ok=True)
+                        pending = self.evaluation_record.with_suffix('.pending')
+                        pending.write_text(json.dumps(records, ensure_ascii=False))
+                        pending.replace(self.evaluation_record)
+            else:
+                value = getattr(manager, operation)(request)
         except (ValueError, OSError, subprocess.SubprocessError) as error:
             self._json({"error": str(error)}, 400)
             return
@@ -584,7 +611,7 @@ class Handler(BaseHTTPRequestHandler):
         if route in ('/api/benchmarks/preview', '/api/benchmarks/start', '/api/benchmarks/stop'):
             self._launch_post(route)
             return
-        if route in ("/api/launch/preview", "/api/launch/start", "/api/launch/pause", "/api/launch/delete", "/api/inference/preview", "/api/inference/start", "/api/inference/stop",
+        if route in ("/api/launch/preview", "/api/launch/start", "/api/launch/pause", "/api/launch/delete", "/api/launch/restore-stop", "/api/inference/preview", "/api/inference/start", "/api/inference/stop",
                      "/api/training/preview", "/api/training/start", "/api/training/sync", "/api/training/stop", "/api/training/cancel", "/api/training/delete", "/api/training/resume", "/api/training/dataset"):
             self._launch_post(route)
             return
@@ -675,6 +702,39 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_GET(self):
         route = urlparse(self.path).path
+        if route in WORKBENCH_APP_FILES:
+            body = PAGE.with_name(route[1:]).read_bytes()
+            self.send_response(200)
+            self.send_header("Content-Type", WORKBENCH_APP_FILES[route])
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+            return
+        if route == '/api/launch/artifact':
+            query = parse_qs(urlparse(self.path).query)
+            run = query.get('run', [''])[0]
+            path = query.get('path', [''])[0]
+            if not re.fullmatch(r'[a-f0-9]{12}', run):
+                self.send_error(404)
+                return
+            root = self.launch_manager.task40_experiment.resolve() / 'runs'
+            output = (root / run).resolve()
+            if output.parent != root or path not in {item['path'] for item in task40_artifacts(output)}:
+                self.send_error(404)
+                return
+            artifact = output / path
+            if artifact.suffix == '.mp4':
+                self._serve_video(artifact)
+            else:
+                data = artifact.read_bytes()
+                self.send_response(200)
+                self.send_header('Content-Type', 'application/json; charset=utf-8' if artifact.suffix == '.json'
+                                 else 'text/plain; charset=utf-8')
+                self.send_header('Content-Length', str(len(data)))
+                self.send_header('Cache-Control', 'no-store')
+                self.end_headers()
+                self.wfile.write(data)
+            return
         if route == '/api/human-review/stages':
             query = {k: v[0] for k, v in parse_qs(urlparse(self.path).query).items()}
             try:
@@ -1021,6 +1081,7 @@ def main() -> int:
     Handler.benchmark_manager = BenchmarkManager(EVALUATION_ROOT.parent)
     Handler.launch_manager = LaunchManager(EVALUATION_ROOT.parent)
     evaluation_record=EVALUATION_ROOT.parent/'outputs/shared/web_launch/evaluation_jobs.json'
+    Handler.evaluation_record = evaluation_record
     if evaluation_record.exists():
         restore_evaluation_jobs(Handler.launch_manager,json.loads(evaluation_record.read_text()))
     Handler.inference_manager = InferenceManager(EVALUATION_ROOT.parent, args.policy_monitor_host)
@@ -1073,8 +1134,7 @@ def main() -> int:
     finally:
         records=Handler.launch_manager.snapshot()
         for row in records:
-            path=Path('/proc')/str(row['pid'])/'stat'
-            row['process_start']=path.read_text().split()[21] if path.exists() else None
+            row['process_start']=Handler.launch_manager._process_start(row['pid'])
         evaluation_record.parent.mkdir(parents=True,exist_ok=True)
         evaluation_record.write_text(json.dumps(records,ensure_ascii=False))
         inference_record.parent.mkdir(parents=True,exist_ok=True)

@@ -75,15 +75,16 @@ def process_info(pid):
         args = (path/'cmdline').read_bytes().decode(errors='replace').rstrip(chr(0)).split(chr(0))
         module = argument(args, '-m')
         script = next((v for v in args[1:] if v.endswith('.py')), '')
+        diagnostic = script.endswith('/policy_server_diagnostic.py') and 'experiment_07/scripts/' in script
         if not Path(args[0]).name.startswith('python') or not (
             module in ('v1_groot_memoryvla.serve', 'gr00t.eval.run_gr00t_server', 'baselines.groot_n1d6.serve') or
-            script.endswith('run_gr00t_server.py') or
+            script.endswith('run_gr00t_server.py') or diagnostic or
             (script.endswith('serve.py') and ('groot' in script.lower() or 'memoryvla' in script))):
             return None
         stat = (path/'stat').read_text().rsplit(')',1)[1].split()
         if stat[0] in ('Z','X'):
             return None
-        checkpoint = argument(args, '--model-path', '--model_path')
+        checkpoint = argument(args, '--weights') if diagnostic else argument(args, '--model-path', '--model_path')
         if not checkpoint:
             return None
         environment = {}
@@ -107,7 +108,8 @@ def process_info(pid):
                     checkpoint_step=Path(checkpoint).name,checkpoint_resolved=str(Path(checkpoint).resolve()),policy_seed=argument(args,'--seed'),
                     history_mode=argument(args,'--history-mode',default='normal'),
                     checkpoint=checkpoint, gpu_index=environment.get('CUDA_VISIBLE_DEVICES', argument(args,'--device',default='—')),
-                    log=log, **info)
+                    log=log, task40_diagnostics=diagnostic, task40_trace=diagnostic and '--task40-trace' in args,
+                    **info)
     except (OSError, ValueError, IndexError):
         return None
 

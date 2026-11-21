@@ -50,7 +50,7 @@ class InferenceManager:
         return dict(result, host=self.bind_host, source_dir=self.default_source, python_path=self.default_python)
 
     def argv(self, request):
-        if not isinstance(request, dict) or set(request) - {"checkpoint", "gpu_index", "port", "seed", "source_dir", "python_path", "history_mode"}:
+        if not isinstance(request, dict) or set(request) - {"checkpoint", "gpu_index", "port", "seed", "source_dir", "python_path", "history_mode", "task40_diagnostics"}:
             raise ValueError("不支持的推理启动参数")
         history_mode=request.get('history_mode', 'normal')
         if history_mode not in ('normal', 'empty', 'other_episode'):
@@ -69,6 +69,11 @@ class InferenceManager:
             argv += ["--" + key.replace("_", "-"), str(value)]
         if history_mode != 'normal':
             argv += ['--history-mode', history_mode]
+        if 'task40_diagnostics' in request:
+            if type(request['task40_diagnostics']) is not bool:
+                raise ValueError('task40_diagnostics 必须是开关')
+            if request['task40_diagnostics']:
+                argv += ['--task40-diagnostics']
         return argv + ["--host", self.bind_host, "--json"]
 
     def _run(self, request, check=False):
@@ -117,6 +122,7 @@ class InferenceManager:
             raise ValueError('所选推理端口尚未就绪，请刷新并选择已就绪服务')
         keys=('version','method','training_id','train_number','checkpoint','checkpoint_step','source_dir',
               'source_digest','training_seed','policy_seed','history_mode','task_id','pid','start_ticks','host','port','naming_schema')
+        keys += ('task40_diagnostics', 'task40_trace', 'gpu_index')
         result={key:matches[0].get(key) for key in keys}
         result['checkpoint']=matches[0].get('checkpoint_resolved') or matches[0]['checkpoint']
         return dict(result, binding='observed_process')

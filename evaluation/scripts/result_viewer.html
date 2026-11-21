@@ -3,6 +3,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#123e34">
+  <link rel="manifest" href="/workbench.webmanifest">
+  <link rel="icon" href="/workbench-icon-192.png" type="image/png" sizes="192x192">
+  <link rel="apple-touch-icon" href="/workbench-icon-192.png">
   <title>GR00T · 训练与评估工作台</title>
   <style>
     :root { color-scheme:light; --ink:#20312e; --muted:#75827e; --line:#e5ebe8; --green:#087f68; --red:#b54747; --amber:#aa7424; --paper:#f3f6f4; --white:#fff; --soft:#eef7f3; }
@@ -194,6 +198,8 @@
     .page-tabs { display:flex; flex:0 0 auto; gap:8px }
     .page-nav button { font-size:13px; padding:7px 18px; border-color:transparent }
     .page-nav button[aria-selected="true"] { color:var(--green); background:var(--soft); border-color:#bfded0 }
+    #registry-frame { display:block; width:100%; border:0; min-height:120px }
+    body:has(#page-registry:not([hidden])) :is(.gpu-overview-panel,#bench-workspace) { display:none }
     .launch-fields { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px 16px; padding:14px 20px }
     .launch-fields label { font-size:12px; color:#5e7268; display:grid; gap:5px; min-width:0 }
     .launch-fields input,.launch-fields select { width:100%; min-width:0; padding:8px 10px; border:1px solid var(--line); border-radius:8px; background:#fafcfb; color:var(--ink) }
@@ -204,10 +210,13 @@
     .primary-button { background:var(--green); color:#fff; border-color:var(--green) }.primary-button:hover { background:#096b59; color:#fff }
     button:disabled { opacity:.5; cursor:default }
     fieldset { border:0; padding:0; margin:0; min-width:0 }
+    #collect-settings { display:contents }
     .launch-preview { padding:0 20px 18px; overflow-wrap:anywhere }.launch-preview pre { white-space:pre-wrap; font:11px/1.5 ui-monospace,monospace; background:#f4f7f5; border-radius:8px; padding:10px }
     .launch-job { padding:14px 18px; border-bottom:1px solid var(--line); font-size:12px; overflow-wrap:anywhere }
     .launch-job-top { display:flex; justify-content:space-between; gap:10px; align-items:center; margin-bottom:5px }
     .launch-job .log { margin-top:8px; max-height:160px }.launch-job button { margin-top:8px; padding:5px 10px; font-size:12px }
+    .launch-job-artifacts { display:flex; flex-wrap:wrap; gap:4px 14px; padding:6px 0 }
+    .launch-job-artifacts a { color:var(--green) }
     .launch-help { padding:14px 20px; border-bottom:1px solid var(--line); font-size:12px; color:var(--muted) }
     .page-intro { display:flex; align-items:center; justify-content:space-between; gap:16px; margin:4px 0 18px }
     .page-intro h2 { font-size:21px; letter-spacing:-.5px }.page-intro p { margin:3px 0 0; color:var(--muted); font-size:12px }
@@ -295,8 +304,16 @@
   </style>
 </head>
 <body>
-  <header><div class="brand"><div class="brand-mark" aria-hidden="true">G</div><div><h1>GR00T <span style="font-weight:400;color:var(--muted)">/ 训练与评估工作台</span></h1><div id="caption" class="subtle" role="status">正在读取评估记录…</div></div></div><div class="header-actions"><span class="live-label">每 5 秒自动更新</span><button id="refresh" type="button" aria-label="手动刷新" title="手动刷新">↻</button></div></header>
-  <nav class="page-nav" aria-label="训练评估工作台页面"><div class="page-tabs" role="tablist" aria-label="工作台"><button type="button" id="page-tab-training" role="tab" aria-label="启动训练" aria-controls="page-training" aria-selected="false" onclick="selectPage('training')"><span class="nav-label-full">启动训练</span><span class="nav-label-short">训练</span></button><button type="button" id="page-tab-launch" role="tab" aria-label="推理评估" aria-controls="page-launch" aria-selected="false" onclick="selectPage('launch')"><span class="nav-label-full">推理评估</span><span class="nav-label-short">推理</span></button><button type="button" id="page-tab-results" role="tab" aria-label="评估结果" aria-controls="page-results" aria-selected="true" onclick="selectPage('results')"><span class="nav-label-full">评估结果</span><span class="nav-label-short">结果</span></button></div><a class="page-nav-link" id="page-tab-registry" href="/registry" aria-label="实验台账"><span class="nav-label-full">实验台账</span><span class="nav-label-short">台账</span></a><a class="page-nav-link" id="page-tab-ai" href="/ai" aria-label="AI 工作流预览" title="AI 工作流预览"><span class="nav-label-full">AI 工作流 · 预览</span><span class="nav-label-short">AI</span></a></nav>
+  <header><div class="brand"><div class="brand-mark" aria-hidden="true">G</div><div><h1>GR00T <span style="font-weight:400;color:var(--muted)">/ 训练与评估工作台</span></h1><div id="caption" class="subtle" role="status">正在读取评估记录…</div></div></div><div class="header-actions"><span class="live-label">每 5 秒自动更新</span><button id="install-workbench" type="button" hidden>安装应用</button><button id="refresh" type="button" aria-label="手动刷新" title="手动刷新">↻</button></div></header>
+  <nav class="page-nav" aria-label="训练评估工作台页面">
+    <div class="page-tabs" role="tablist" aria-label="工作台">
+      <button type="button" id="page-tab-training" role="tab" aria-label="启动训练" aria-controls="page-training" aria-selected="false" onclick="selectPage('training')"><span class="nav-label-full">启动训练</span><span class="nav-label-short">训练</span></button>
+      <button type="button" id="page-tab-launch" role="tab" aria-label="推理评估" aria-controls="page-launch" aria-selected="false" onclick="selectPage('launch')"><span class="nav-label-full">推理评估</span><span class="nav-label-short">推理</span></button>
+      <button type="button" id="page-tab-results" role="tab" aria-label="评估结果" aria-controls="page-results" aria-selected="true" onclick="selectPage('results')"><span class="nav-label-full">评估结果</span><span class="nav-label-short">结果</span></button>
+      <button type="button" id="page-tab-registry" role="tab" aria-label="实验台账" aria-controls="page-registry" aria-selected="false" onclick="selectPage('registry')"><span class="nav-label-full">实验台账</span><span class="nav-label-short">台账</span></button>
+    </div>
+    <a class="page-nav-link" id="page-tab-ai" href="/ai" aria-label="AI 工作流预览" title="AI 工作流预览"><span class="nav-label-full">AI 工作流 · 预览</span><span class="nav-label-short">AI</span></a>
+  </nav>
   <main>
     <details class="gpu-overview-panel" aria-label="各设备实时显存占用"><summary><span>设备资源</span><small id="gpu-summary-status">正在读取 A100、4090 与 RTX 6000 Ada 状态</small></summary><div id="gpu-overview" class="gpu-overview">
       <div class="gpu-machine"><div class="gpu-machine-head"><strong>A100 · 训练 / 推理</strong><small id="remote-gpu-time">读取中…</small></div><div id="remote-gpus" class="gpu-cards"><div class="gpu-reading-error">正在读取 A100 显存…</div></div></div>
@@ -331,6 +348,8 @@
                   <label class="wide">Python 环境<input id="inference-python" required></label>
                   <label>推理种子<input id="inference-seed" type="number" min="0" max="4294967295" value="42" required></label>
                   <label>历史对照<select id="inference-history-mode"><option value="normal">正确历史 · 正常读取</option><option value="empty">无历史 · 关闭读取</option><option value="other_episode">错误历史 · 读取另一环境的历史</option></select><small>错误历史需要单卡双环境；当前观测和模型权重保持一致。</small></label>
+                  <label id="inference-task40-setting" class="switch wide"><input id="inference-task40" type="checkbox">Task40 记忆诊断服务</label>
+                  <small id="inference-task40-hint" class="wide" hidden>请选择包含 Task40 诊断入口的部署源码。采集作业管理每条轨迹的记忆与种子。</small>
                 </div></details>
                 <div class="launch-preview"><div id="inference-message" class="launch-message" role="status"></div><div id="inference-plan" hidden></div></div>
                 <div class="inline-actions"><span class="subtle">就绪后自动选用于本次评估</span><button type="button" id="inference-check">检查推理配置</button><button type="submit" id="inference-submit">启动推理</button></div>
@@ -339,10 +358,10 @@
             <details id="inference-history" class="compact-fold" open hidden><summary>推理服务 · 管理与日志</summary><div id="inference-manage-message" class="policy-path" role="status"></div><div id="inference-jobs" class="launch-jobs-list"></div></details>
           </section>
           <section id="eval-config" aria-label="启动评估">
-            <div class="section-head"><h2><span class="step-number">2</span>启动评估</h2><select id="launch-kind" aria-label="新建或续跑"><option value="new">新建评估</option><option value="resume">续跑已有评估</option></select></div>
+            <div class="section-head"><h2><span class="step-number">2</span>启动评估</h2><select id="launch-kind" aria-label="运行模式"><option value="new">新建评估</option><option value="resume">续跑已有评估</option><option value="restore">Task40 检查点恢复</option><option value="collect">Task40 轨迹采集 · Exp09</option><option value="forward">Task40 冻结前向 · Exp09</option></select></div>
             <form id="launch-form">
+              <div id="launch-device-field" class="launch-fields"><label class="wide">评估设备<select id="launch-device"><option value="local">4090 · 本机双卡</option><option value="a6000">RTX 6000 Ada · 单卡 48GB</option><option value="a100" disabled>A100 · 训练 / 推理设备</option></select><small id="launch-device-hint">先选设备，再选 GPU。</small></label></div>
               <fieldset id="launch-new">
-                <div class="launch-fields"><label class="wide">评估设备<select id="launch-device"><option value="local">4090 · 本机双卡</option><option value="a6000">RTX 6000 Ada · 单卡 48GB</option><option value="a100" disabled>A100 · 训练 / 推理设备</option></select><small id="launch-device-hint">先选设备，再选 GPU。</small></label></div>
                 <div class="launch-fields"><label class="wide">模型服务<select id="launch-service"><option value="">手动填写地址和端口</option></select><small id="launch-policy-summary">正在检查已有服务…</small></label></div>
                 <details id="launch-endpoint" class="compact-fold"><summary>权重路径与连接设置</summary><div class="policy-path" id="launch-policy-details"></div><div class="launch-fields"><label>Policy 主机<input id="launch-host" value="172.28.62.17" required></label><label>Policy 端口<input id="launch-port" type="number" min="1" max="65535" value="5556" required></label></div></details>
                 <div class="form-block">
@@ -378,6 +397,32 @@
                 <label class="wide">续跑目录<select id="launch-resume-run"><option value="">选择中断或失败的正式评估</option></select><small>沿用原任务、实例、种子与录像配置。</small></label>
                 <label>覆盖推理主机（可选）<input id="launch-resume-host" placeholder="留空沿用原配置"></label>
                 <label>覆盖推理端口（可选）<input id="launch-resume-port" type="number" min="1" max="65535" placeholder="留空沿用原配置"></label>
+              </fieldset>
+              <fieldset id="launch-restore" class="launch-fields" hidden disabled>
+                <label class="wide">Task40 物理检查点目录<input id="restore-anchor" required value="Output/test_01/experiment_03/checkpoints"><small>需要包含物理状态、在线记忆快照和可回放历史前缀。</small></label>
+                <label class="wide">MemoryVLA 权重目录<input id="restore-weights" required value="Output/task40_memory_overnight/replay/original_step4000"></label>
+                <label>仿真 GPU<select id="restore-sim-gpu"><option value="0">GPU 0</option><option value="1">GPU 1</option></select></label>
+                <label>策略随机种子<input id="restore-seed" type="number" min="0" max="4294967295" value="73002" required></label>
+                <label>连续决策数<input id="restore-cycles" type="number" min="1" max="60" value="10" required></label>
+                <label>A100 策略诊断端口<input id="restore-port" type="number" min="1024" max="65535" value="5586" required></label>
+                <label>记忆输入<select id="restore-memory-mode"><option value="A_normal">正常历史记忆</option><option value="B_empty">空记忆</option></select></label>
+                <div class="wide mode-note">仿真：4090。策略推理：A100 已启动的 Task40 独立诊断服务。</div>
+              </fieldset>
+              <fieldset id="launch-collect" class="launch-fields" hidden disabled>
+                <label class="wide"><span id="collect-policy-label">A100 Task40 诊断服务</span><select id="collect-policy" required><option value="">等待已就绪的诊断服务</option></select><small id="collect-policy-detail"></small></label>
+                <fieldset id="collect-settings">
+                  <label>仿真 GPU<select id="collect-gpu" required></select></label>
+                  <label>采集方式<select id="collect-source"><option value="fresh">任务初始状态</option><option value="directed">已记录的失败检查点</option><option value="controlled">任务初始状态 · 受控重关</option></select></label>
+                  <label id="collect-restore-field" class="wide" hidden>失败检查点目录<input id="collect-restore-checkpoint" disabled><small>填写 Exp07 或 Exp09 原始轨迹中的失败锚点路径。恢复使用该轨迹记录的记忆和随机状态。</small></label>
+                  <label id="collect-restore-repeats-field" hidden>恢复次数<select id="collect-restore-repeats" disabled><option value="1">单次恢复</option><option value="2">重复两次并比较</option></select></label>
+                  <label id="collect-slots-field" hidden>同卡并行上限<select id="collect-slots" disabled><option value="1">1 个环境</option><option value="2">2 个独立环境</option></select><small>每个作业使用独立的推理端口。</small></label>
+                  <label id="collect-seed-field">基础种子<input id="collect-seed" type="number" min="0" max="4294967295" required></label>
+                  <label>每条轨迹决策上限<input id="collect-cycles" type="number" min="1" max="300" value="300" required><small>每次决策执行 8 个动作步。</small></label>
+                  <label id="collect-repetitions-field">每实例重复次数<input id="collect-repetitions" type="number" min="1" max="10" value="1" required><small>环境初始化一次，每条轨迹使用独立种子。每个作业最多 10 条。</small></label>
+                  <label id="collect-instances-field" class="wide">实例编号<input id="collect-instances" placeholder="例如 0, 3, 6" required><small>可选择 1–10 个不同实例（0–9），种子按输入顺序递增。</small></label>
+                  <div id="collect-device-note" class="wide mode-note">从任务初始状态采集，归档至 Experiment 09。</div>
+                </fieldset>
+                <label id="forward-batch-field" class="wide" hidden>批次配置<input id="forward-batch" required disabled><small>填写 Output/test_01/experiment_09/ 下 JSON 配置的仓库相对路径。</small></label>
               </fieldset>
               <div class="launch-preview"><div id="launch-message" role="status" class="launch-message"></div><div id="launch-plan" hidden></div></div>
               <div class="launch-actions"><button type="button" id="launch-check">检查配置</button><button type="submit" id="launch-submit" class="primary-button">启动评估</button></div>
@@ -418,6 +463,7 @@
         </div>
       </section>
     </div>
+    <section id="page-registry" role="tabpanel" aria-labelledby="page-tab-registry" hidden></section>
     <div class="page-foot">GR00T N1.6 · B1K-2025 · 调试记录与正式评估分别标记</div>
   </main>
 <script>
@@ -427,6 +473,7 @@
   let inferenceOptions=null, inferenceLoading=false, inferenceBusy=false, launchServiceChoice=null;
   let pendingInference=null;
   let inferenceJobs=[];
+  let collectionPolicies=[];
   let inferenceStopTarget=null;
   let evaluationActionBusy=false;
   const evaluationStopping=new Set();
@@ -456,17 +503,48 @@
   const completion = r => Math.max(0,Math.min(100,100*(r.completed_episodes??r.recorded_episodes??0)/(r.requested_episodes||1)));
   const duration = r => { if (r.elapsed_wall_s == null) return "运行中"; let s=Math.floor(r.elapsed_wall_s),h=Math.floor(s/3600),m=Math.floor((s%3600)/60); return h?`${h}h ${String(m).padStart(2,"0")}m`:`${m}m ${String(s%60).padStart(2,"0")}s`; };
   function esc(s) { return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
-  function selectPage(page) {
+  const workbenchPages=['training','launch','results','registry'];
+  function workbenchPageFromURL() {
+    const page=new URLSearchParams(location.search).get('page');
+    return workbenchPages.includes(page)?page:'results';
+  }
+  function openRegistryPanel() {
+    if($('registry-frame')) return;
+    const frame=document.createElement('iframe');
+    frame.id='registry-frame';
+    frame.title='实验台账';
+    frame.src='/registry';
+    frame.addEventListener('load',()=>{
+      const body=frame.contentDocument.body;
+      const resize=()=>{ frame.style.height=`${Math.ceil(body.getBoundingClientRect().height)}px`; };
+      const observer=new ResizeObserver(resize);
+      observer.observe(body);
+      resize();
+    });
+    $('page-registry').append(frame);
+  }
+  function selectPage(page, updateURL=true) {
     const needsInference=page==='inference';
     if(needsInference) page='launch';
     activePage=page;
-    for(const name of ['training','launch','results']){
+    if(updateURL && workbenchPageFromURL()!==page){
+      const url=new URL(location.href);
+      if(page==='results') url.searchParams.delete('page');
+      else url.searchParams.set('page',page);
+      history.pushState(null,'',url);
+    }
+    for(const name of workbenchPages){
       $('page-'+name).hidden=name!==page;
       $('page-tab-'+name).setAttribute('aria-selected',String(name===page));
     }
     $('service-overview').hidden=page!=='results';
     if(page!=='results'){
       stopPreview();$('video-player').pause();renderPreviewControl(selected);
+    }
+    if(page==='registry'){
+      window.benchmarkWorkbench?.route(page);
+      openRegistryPanel();
+      return;
     }
     if(typeof window!=='undefined' && window.benchmarkWorkbench?.route(page)) return;
     if(page==='training'){
@@ -518,24 +596,40 @@
   function applyInferenceCheckpoint() {
     const known=inferenceOptions?.checkpoints.find(c=>c.path===$('inference-checkpoint').value);
     if(known && 'source_dir' in known) $('inference-source').value=known.source_dir||inferenceOptions.source_dir;
+    if($('inference-task40').checked){
+      const source=inferenceOptions?.task40_diagnostics?.source_dir ||
+        inferenceOptions?.sources.find(path=>path.split('/').at(-1).startsWith('task40_exp07_diagnostic_'));
+      if(source) $('inference-source').value=source;
+    }
     $('inference-plan').hidden=true;
   }
+  function updateInferenceDiagnostics() {
+    const a100=$('inference-device').value==='a100';
+    $('inference-task40-setting').hidden=!a100;
+    $('inference-task40').disabled=!a100;
+    const enabled=a100&&$('inference-task40').checked;
+    $('inference-task40-hint').hidden=!enabled;
+    $('inference-history-mode').disabled=enabled;
+  }
   function pendingPolicyBlocks() {
-    return $('launch-kind').value!=='resume' && pendingInference &&
+    return $('launch-kind').value==='new' && pendingInference &&
       pendingInference.host===$('launch-host').value && String(pendingInference.port)===$('launch-port').value &&
       pendingInference.state!=='ready';
   }
   function updateLaunchAvailability() {
     const blocked=pendingPolicyBlocks();
-    $('launch-submit').disabled=launchBusy||Boolean(blocked)||launchDeviceLoading||($('launch-kind').value!=='resume'&&!launchDeviceReady);
-    $('launch-submit').textContent=blocked?(pendingInference.state==='failed' || pendingInference.state==='stopped'?'推理未就绪':'等待推理就绪'):'启动评估';
+    const kind=$('launch-kind').value;
+    const collect=kind==='collect', forward=kind==='forward', usesDevice=kind==='new'||collect;
+    const unavailable=((collect||forward)&&!$('collect-policy').value)||(collect&&!$('collect-gpu').value);
+    $('launch-submit').disabled=launchBusy||Boolean(blocked)||unavailable||(usesDevice&&(launchDeviceLoading||!launchDeviceReady));
+    $('launch-check').disabled=launchBusy||unavailable||(collect&&(launchDeviceLoading||!launchDeviceReady));
+    $('launch-submit').textContent=blocked?(pendingInference.state==='failed' || pendingInference.state==='stopped'?'推理未就绪':'等待推理就绪'):
+      kind==='restore'?'启动检查点恢复':collect?'启动轨迹采集':forward?'启动冻结前向':'启动评估';
   }
-  async function inferenceAPI(path,payload) {
-    const device=$('inference-device').value||'a100';
+  async function inferenceAPI(path,payload,device=$('inference-device').value||'a100') {
     const response=await fetch('/api/inference/'+path+'?device='+device,payload===undefined?{cache:'no-store'}:
       {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...payload,device})});
     const result=await response.json();
-    if(device!==($('inference-device').value||'a100')) throw Error('推理设备已切换，请使用当前设备的配置');
     if(!response.ok) throw Error(result.error||'推理服务请求失败');
     return result;
   }
@@ -545,7 +639,9 @@
     inferenceLoading=true;$('inference-reload').disabled=true;
     $('inference-catalog-hint').textContent='正在读取所选设备的权重和显存…';
     try{
-      inferenceOptions=await inferenceAPI('options');
+      const loaded=await inferenceAPI('options',undefined,device);
+      if(device!==$('inference-device').value) return;
+      inferenceOptions=loaded;
       const data=inferenceOptions;
       $('inference-host-label').textContent=($('inference-device').value==='a6000'?'RTX 6000 Ada':'A100')+' · '+data.host;
       $('inference-checkpoints').innerHTML=data.checkpoints.map(c=>
@@ -577,6 +673,10 @@
       python_path:$('inference-python').value.trim(),seed:Number($('inference-seed').value),
       history_mode:$('inference-history-mode').value};
     if(!result.checkpoint || !result.source_dir || !result.python_path) throw Error('请填写权重、模型源码和Python路径');
+    if(!$('inference-task40').disabled&&$('inference-task40').checked){
+      result.task40_diagnostics=true;
+      result.history_mode='normal';
+    }
     return result;
   }
   async function submitInference(start) {
@@ -588,23 +688,33 @@
       const request=collectInferenceRequest();
       message.textContent=start?'正在向所选设备提交启动…':'正在检查所选设备的文件与端口…';
       const result=await inferenceAPI(start?'start':'preview',request);
-      message.textContent=start?'推理加载中，就绪后自动用于下方评估。可先填写任务配置。':'检查通过，尚未启动推理。';
+      message.textContent=start?(request.task40_diagnostics?'诊断推理加载中，就绪后可用于 Task40 轨迹采集。':'推理加载中，就绪后自动用于下方评估。可先填写任务配置。'):'检查通过，尚未启动推理。';
       message.className='launch-message good';
       $('inference-plan').hidden=false;
       $('inference-plan').innerHTML=`<div class="subtle">日志：${esc(result.log)}</div><details><summary>查看实际推理命令</summary><pre>${esc(result.command)}</pre></details>`;
       if(start){
-        pendingInference={...result,state:'loading',host:result.host||inferenceOptions?.host||'172.28.62.17'};
-        $('launch-host').value=pendingInference.host;$('launch-port').value=String(pendingInference.port);
-        launchServiceChoice=pendingInference.host+':'+pendingInference.port;
+        if(request.task40_diagnostics){
+          $('launch-kind').value='collect';updateLaunchForm();
+        }else{
+          pendingInference={...result,state:'loading',host:result.host||inferenceOptions?.host||'172.28.62.17'};
+          $('launch-host').value=pendingInference.host;$('launch-port').value=String(pendingInference.port);
+          launchServiceChoice=pendingInference.host+':'+pendingInference.port;
+        }
         await refreshInferenceJobs();void refreshServices();updatePolicySummary();updateLaunchAvailability();
       }
     }catch(error){message.textContent='未启动：'+error.message;message.className='launch-message error';}
     finally{inferenceBusy=false;$('inference-check').disabled=false;$('inference-submit').disabled=false;$('inference-device').disabled=false;}
   }
   async function refreshInferenceJobs() {
+    const device=$('inference-device').value;
+    if(device!=='a100'&&['collect','forward'].includes($('launch-kind').value)) void refreshCollectionPolicies();
     try{
-      const result=await inferenceAPI('jobs');
+      const result=await inferenceAPI('jobs',undefined,device);
+      if(device!==$('inference-device').value) return;
       inferenceJobs=result.jobs||[];
+      if(device==='a100'){
+        collectionPolicies=inferenceJobs;renderCollectionPolicies();
+      }
       const closed=inferenceJobs.find(job=>job.pid===inferenceStopTarget && ['stopped','failed'].includes(job.state));
       if(closed){
         $('inference-manage-message').textContent='端口 '+closed.port+' 的服务已关闭。';
@@ -626,7 +736,13 @@
       $('inference-history').hidden=!(result.jobs||[]).length;
       renderInferenceJobs();
       bindInferenceButtons($('inference-jobs'));
-    }catch(error){$('inference-history').hidden=false;$('inference-jobs').textContent='无法检查：'+error.message;}
+    }catch(error){
+      if(device!==$('inference-device').value) return;
+      if(device==='a100'){
+        collectionPolicies=[];renderCollectionPolicies(error.message);
+      }
+      $('inference-history').hidden=false;$('inference-jobs').textContent='无法检查：'+error.message;
+    }
   }
   function renderInferenceJobs() {
     const visibleJobs=inferenceJobs.filter(job=>['ready','loading','stopping'].includes(job.state));
@@ -643,10 +759,10 @@
         const members=entries.filter(job=>policyArm(job.checkpoint)===arm);
         return members.length?'<div class="run-subgroup"><h3>'+policyArmLabel(arm)+'</h3>'+members.map(job=>{
         const active=['ready','loading'].includes(job.state), stopping=inferenceStopping.has(job.pid)||job.state==='stopping';
-        return '<article class="launch-job"><div class="launch-job-top"><strong>GPU '+esc(job.gpu_index)+' · '+esc(job.port)+'</strong>'+statusBadge(job.state)+
+        return '<article class="launch-job"><div class="launch-job-top"><strong>GPU '+esc(job.gpu_index)+' · '+esc(job.port)+(job.task40_diagnostics?' · Task40 诊断':'')+'</strong>'+statusBadge(job.state)+
           '</div><div class="service-path" title="'+esc(job.checkpoint)+'">'+esc(job.label||shortModel(job.checkpoint))+'</div>'+
           '<div class="subtle">PID '+esc(job.pid)+' · '+esc(({normal:'正确历史',empty:'无历史',other_episode:'其他回合历史'})[job.history_mode||'normal'])+'</div>'+
-          (job.state==='ready'?'<button type="button" data-policy-host="'+esc(job.host)+'" data-policy-port="'+Number(job.port)+'">用于评估</button>':'')+
+          (job.state==='ready'?'<button type="button" data-policy-host="'+esc(job.host)+'" data-policy-port="'+Number(job.port)+'">'+(job.task40_diagnostics?'用于轨迹采集':'用于评估')+'</button>':'')+
           (active||stopping?'<button type="button" data-stop-policy="'+Number(job.pid)+'"'+(stopping||!job.start_ticks?' disabled':'')+'>'+(stopping?'关闭中…':'关闭服务')+'</button>':'')+
           '<details><summary class="subtle">推理日志</summary><pre class="log">'+esc(job.log_tail||'等待日志…')+'</pre></details></article>';
         }).join('')+'</div>':'';
@@ -681,6 +797,14 @@
       useInferenceService(button.dataset.policyHost,Number(button.dataset.policyPort)));
   }
   function useInferenceService(host,port) {
+    const job=inferenceJobs.find(job=>job.host===host&&Number(job.port)===port&&job.task40_diagnostics);
+    if(job){
+      if($('launch-kind').value!=='forward'||!job.task40_trace) $('launch-kind').value='collect';
+      updateLaunchForm();
+      $('collect-policy').value=host+':'+port;updateCollectionPolicyDetail();
+      $('launch-plan').hidden=true;updateLaunchAvailability();
+      return;
+    }
     pendingInference=null;
     $('launch-host').value=host;$('launch-port').value=String(port);
     launchServiceChoice=host+':'+port;$('launch-service').value=launchServiceChoice;
@@ -697,7 +821,7 @@
     updateLaunchGroups();
   }
   async function launchAPI(path, payload) {
-    const device=$('launch-device').value;
+    const device=payload?.task40_restore||payload?.task40_forward?'local':$('launch-device').value;
     const response=await fetch('/api/launch/'+path+(path==='options'?'?device='+encodeURIComponent(device):''),payload===undefined?{cache:'no-store'}:
       {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...payload,device})});
     const result=await response.json();
@@ -723,7 +847,7 @@
       $('launch-task').value=loaded.tasks.some(t=>String(t.id)===task)?task:String(loaded.tasks[0]?.id??'');
       $('launch-versions').innerHTML=Object.keys(launchOptions.versions).sort((a,b)=>b.localeCompare(a,undefined,{numeric:true})).map(v=>`<option value="${esc(v)}">`).join('');
       updateLaunchGroups();updateLaunchForm();
-    }catch(error){if(device!==$('launch-device').value) return;launchDeviceReady=false;$('launch-device-hint').textContent='设备暂不可用：'+error.message;launchOptions=null;}
+    }catch(error){if(device!==$('launch-device').value) return;launchDeviceReady=false;$('launch-device-hint').textContent='设备暂不可用：'+error.message;launchOptions=null;updateCollectionDevice();}
     finally{if(device===$('launch-device').value){launchDeviceLoading=false;updateLaunchAvailability();}}
   }
   function updateLaunchGroups() {
@@ -739,15 +863,90 @@
       `<option value="${esc(r._folder)}">${esc(r._folder)} · ${r.completed_episodes??0}/${r.requested_episodes??'?'} 集</option>`).join('');
     resume.value=old;
   }
+  function readyTask40Policies() {
+    const kind=$('launch-kind').value;
+    const traced=kind==='forward'||(kind==='collect'&&$('collect-source').value!=='fresh');
+    return collectionPolicies.filter(job=>job.state==='ready'&&(traced?job.task40_trace:job.task40_diagnostics));
+  }
+  function selectedCollectionPolicy() {
+    return readyTask40Policies().find(job=>job.host+':'+job.port===$('collect-policy').value);
+  }
+  function updateCollectionPolicyDetail(error) {
+    const policy=selectedCollectionPolicy();
+    const hint=$('launch-kind').value==='forward'?'请选择已就绪且启用 Task40 trace 的 A100 服务。':
+      '请选择已就绪的 Task40 诊断服务，也可在上方启动。';
+    $('collect-policy-detail').textContent=policy?policy.checkpoint:error?'无法读取 A100 推理服务：'+error:hint;
+  }
+  function renderCollectionPolicies(error) {
+    const field=$('collect-policy'), previous=field.value;
+    const ready=readyTask40Policies();
+    field.innerHTML='<option value="">选择诊断服务</option>'+ready.map(job=>{
+      const label=`GPU ${job.gpu_index} · ${job.host}:${job.port} · ${job.label||shortModel(job.checkpoint)}`;
+      return `<option value="${esc(job.host+':'+job.port)}">${esc(label)}</option>`;
+    }).join('');
+    if(ready.some(job=>job.host+':'+job.port===previous)) field.value=previous;
+    else if(!previous&&ready.length===1) field.selectedIndex=1;
+    updateCollectionPolicyDetail(error);updateLaunchAvailability();
+  }
+  async function refreshCollectionPolicies() {
+    try{
+      const result=await inferenceAPI('jobs',undefined,'a100');
+      collectionPolicies=result.jobs||[];renderCollectionPolicies();
+    }catch(error){collectionPolicies=[];renderCollectionPolicies(error.message);}
+  }
+  function updateCollectionSlots() {
+    const available=launchOptions?.task40_collect?.sim_slots?.[$('collect-gpu').value]===2;
+    $('collect-slots-field').hidden=!available;
+    $('collect-slots').disabled=!available;
+    if(!available) $('collect-slots').value='1';
+  }
+  function updateCollectionSource() {
+    const local=$('launch-device').value==='local', source=$('collect-source');
+    source.querySelector('option[value="directed"]').disabled=!local;
+    if(!local&&source.value==='directed') source.value='fresh';
+    const directed=source.value==='directed', cap=$('collect-cycles'), previousMax=Number(cap.max);
+    $('collect-restore-field').hidden=!directed;
+    $('collect-restore-checkpoint').disabled=!directed;
+    $('collect-restore-checkpoint').required=directed;
+    $('collect-restore-repeats-field').hidden=!directed;
+    $('collect-restore-repeats').disabled=!directed;
+    for(const field of ['seed','repetitions','instances']){
+      $('collect-'+field+'-field').hidden=directed;
+      $('collect-'+field).disabled=directed;
+    }
+    cap.max=directed?'60':'300';
+    if(cap.valueAsNumber===previousMax||cap.valueAsNumber>Number(cap.max)) cap.value=cap.max;
+    updateCollectionSlots();
+    renderCollectionPolicies();
+  }
+  function updateCollectionDevice() {
+    const local=$('launch-device').value==='local', config=launchOptions?.task40_collect;
+    const supported=config!==false&&(local||Boolean(config));
+    const gpus=supported&&launchDeviceReady?(launchOptions?.gpus||[]):[];
+    const field=$('collect-gpu'), previous=field.value;
+    field.innerHTML=gpus.map(g=>`<option value="${Number(g.index)}">GPU ${Number(g.index)} · ${esc(g.name)}</option>`).join('');
+    if(gpus.some(g=>String(g.index)===previous)) field.value=previous;
+    updateCollectionSource();
+    $('collect-device-note').textContent=launchOptions&&!supported?'该设备尚未开放 Task40 轨迹采集。':
+      '从任务初始状态采集，归档至 Experiment 09。';
+  }
   function updateLaunchForm() {
     const singleDevice=$('launch-device').value==='a6000';
     for(const option of $('launch-mode').options) option.disabled=singleDevice&&option.value.startsWith('dual');
     if(singleDevice&&$('launch-mode').value.startsWith('dual')) $('launch-mode').value='single1';
-    const resume=$('launch-kind').value==='resume', dual=$('launch-mode').value.startsWith('dual'), debug=$('launch-preset').value==='fast-debug';
-    $('launch-new').hidden=resume;$('launch-new').disabled=resume;
+    const kind=$('launch-kind').value, resume=kind==='resume', restore=kind==='restore', collect=kind==='collect', forward=kind==='forward';
+    const dual=$('launch-mode').value.startsWith('dual'), debug=$('launch-preset').value==='fast-debug';
+    $('launch-new').hidden=kind!=='new';$('launch-new').disabled=kind!=='new';
     $('launch-resume').hidden=!resume;$('launch-resume').disabled=!resume;
-    $('model-config').hidden=resume;
-    $('launch-host').disabled=resume;$('launch-port').disabled=resume;
+    $('launch-restore').hidden=!restore;$('launch-restore').disabled=!restore;
+    $('launch-collect').hidden=!(collect||forward);$('launch-collect').disabled=!(collect||forward);
+    $('collect-settings').hidden=!collect;$('collect-settings').disabled=!collect;
+    $('forward-batch-field').hidden=!forward;$('forward-batch').disabled=!forward;
+    $('collect-policy-label').textContent=forward?'A100 Task40 Trace 服务':'A100 Task40 诊断服务';
+    $('model-config').hidden=resume||restore;
+    $('launch-device-field').hidden=resume||restore||forward;
+    $('launch-device').disabled=resume||restore||forward||launchBusy;
+    $('launch-host').disabled=resume||restore;$('launch-port').disabled=resume||restore;
     $('launch-gpu').disabled=dual;
     $('launch-debug-field').hidden=!debug;$('launch-debug-steps').disabled=!debug;
     $('launch-mode-hint').textContent=debug?'快速调试不计正式成绩；默认每环境运行一个窗口。':
@@ -755,9 +954,55 @@
         '默认共 10 集，每环境 5 集；完整原生 timeout，action chunk=8。':'默认 10 集；完整原生 timeout，action chunk=8。';
     $('launch-mode-hint').textContent+=' 共卡准入：每卡空闲显存须大于 '+($('launch-mode').value.endsWith('2')?'24':'10')+' GiB。';
     $('launch-video-steps').disabled=!$('launch-video').checked;
+    if(collect) updateCollectionDevice();
+    if(collect||forward) renderCollectionPolicies();
     updateLaunchAvailability();
   }
   function collectLaunchRequest() {
+    if($('launch-kind').value==='forward'){
+      const policy=selectedCollectionPolicy();
+      if(!policy) throw Error('请选择已就绪且启用 Task40 trace 的 A100 服务');
+      const batch=$('forward-batch').value.trim().replace(/^\.\//,'');
+      if(!/^Output\/test_01\/experiment_09\/.+\.json$/.test(batch)||batch.split('/').includes('..'))
+        throw Error('批次配置须填写 Experiment 09 下 JSON 文件的仓库相对路径');
+      return {task40_forward:true,batch,policy_host:policy.host,policy_port:Number(policy.port)};
+    }
+    if($('launch-kind').value==='collect'){
+      const policy=selectedCollectionPolicy();
+      if(!policy) throw Error('请选择已就绪的 Task40 诊断服务');
+      if(!$('collect-gpu').value) throw Error('请选择可用的仿真 GPU');
+      if($('collect-source').value==='directed'){
+        const checkpoint=$('collect-restore-checkpoint').value.trim(), cycles=$('collect-cycles').valueAsNumber;
+        if(!checkpoint) throw Error('请填写失败检查点目录');
+        if(!Number.isInteger(cycles)||cycles<1||cycles>60) throw Error('定向恢复支持 1 到 60 次决策');
+        const request={task40_collect:true,sim_gpu:Number($('collect-gpu').value),restore_checkpoint:checkpoint,
+                restore_repeats:Number($('collect-restore-repeats').value),
+                cycles,policy_host:policy.host,policy_port:Number(policy.port)};
+        if(!$('collect-slots').disabled&&$('collect-slots').value==='2') request.sim_slots=2;
+        return request;
+      }
+      const tokens=$('collect-instances').value.trim().split(/[\s,，]+/);
+      if(tokens.some(token=>!/^\d$/.test(token))||new Set(tokens).size!==tokens.length)
+        throw Error('请输入 1–10 个不同的实例编号（0–9）');
+      const seed=$('collect-seed').valueAsNumber, cycles=$('collect-cycles').valueAsNumber;
+      const repetitions=$('collect-repetitions').valueAsNumber, trials=tokens.length*repetitions;
+      if(!Number.isInteger(repetitions)||repetitions<1||trials>10) throw Error('每个作业最多采集 10 条轨迹');
+      if(!Number.isInteger(seed)||seed<0||seed>2**32-trials) throw Error('基础种子或递增后的种子超出范围');
+      if(!Number.isInteger(cycles)||cycles<1||cycles>300) throw Error('每条轨迹的决策数必须在 1 到 300 之间');
+      const request={task40_collect:true,sim_gpu:Number($('collect-gpu').value),seed,cycles,
+        instances:tokens.map(Number),policy_host:policy.host,policy_port:Number(policy.port)};
+      if(repetitions>1) request.repetitions=repetitions;
+      if($('collect-source').value==='controlled') request.controlled_reclosure=true;
+      if(!$('collect-slots').disabled&&$('collect-slots').value==='2') request.sim_slots=2;
+      return request;
+    }
+    if($('launch-kind').value==='restore') return {
+      task40_restore:true, restore_checkpoint:$('restore-anchor').value.trim(),
+      restore_weights:$('restore-weights').value.trim(), sim_gpu:Number($('restore-sim-gpu').value),
+      restore_seed:Number($('restore-seed').value),
+      restore_cycles:Number($('restore-cycles').value), restore_port:Number($('restore-port').value),
+      memory_mode:$('restore-memory-mode').value
+    };
     if($('launch-kind').value==='resume'){
       if(!$('launch-resume-run').value) throw Error('请选择要续跑的评估目录');
       const request={resume_from:$('launch-resume-run').value};
@@ -876,7 +1121,8 @@
       $('launch-message').textContent='推理服务尚未就绪，请等待或选择已有服务。';
       $('launch-message').className='launch-message error';return;
     }
-    launchBusy=true;$('launch-submit').disabled=true;$('launch-check').disabled=true;$('launch-device').disabled=true;
+    launchBusy=true;$('launch-submit').disabled=true;$('launch-check').disabled=true;
+    $('launch-device').disabled=true;$('launch-kind').disabled=true;
     $('launch-plan').hidden=true;
     $('launch-message').className='launch-message';
     try{
@@ -884,24 +1130,86 @@
       $('launch-message').textContent=start?'正在校验参数并提交启动…':'正在检查现有启动脚本参数…';
       const result=await launchAPI(start?'start':'preview',request);
       const plan=result.plan;
+      const collect=request.task40_collect;
+      const forward=request.task40_forward;
+      const endpoint=`推理 ${esc(request.policy_host)}:${esc(request.policy_port)} · ${esc(plan?.policy_identity?.checkpoint||'')}`;
+      const info=plan&&forward?`批次 ${esc(request.batch)} · 本地控制器<br>${endpoint}`:
+        plan&&request.restore_checkpoint?`仿真 GPU ${esc(request.sim_gpu)} · 恢复 ${esc(request.restore_checkpoint)} · 重复 ${esc(request.restore_repeats)} 次 · 每次最多 ${esc(request.cycles)} 次决策<br>${endpoint}`:
+        plan&&collect?`${request.controlled_reclosure?'受控重关 · ':''}仿真 GPU ${esc(request.sim_gpu)} · 实例 ${esc(request.instances.join(', '))} · 每实例 ${esc(request.repetitions||1)} 次 · 基础种子 ${esc(request.seed)} · 每条最多 ${esc(request.cycles)} 次决策<br>${endpoint}`:
+        plan?.kind==='task40_restore'?'GPU 仿真/策略：'+esc(JSON.stringify(plan.instances))+' · 决策 '+esc(plan.cycles)+' · '+esc(plan.memory_mode):
+        plan?'实例分配：'+esc(JSON.stringify(plan.instances))+' · 种子 '+esc(plan.base_seed)+' · '+esc(plan.preset):'';
       $('launch-plan').hidden=false;
       $('launch-plan').innerHTML=`<details><summary>查看实际启动命令</summary><pre>${esc(result.command)}</pre></details>`+(plan?
-        `<div class="subtle">预计输出：${esc(plan.output)}<br>实例分配：${esc(JSON.stringify(plan.instances))} · 种子 ${esc(plan.base_seed)} · ${esc(plan.preset)}</div>`:'');
-      $('launch-message').textContent=start?'已提交后台启动。下方可查看启动状态，结果生成后点击“评估结果”。':
+        `<div class="subtle">预计输出：${esc(plan.output)}<br>${info}</div>`:'');
+      $('launch-message').textContent=start?(collect||forward?`已提交${forward?'冻结前向':'采集'}作业 ${result.id}。下方显示进度、日志和产物。`:
+        '已提交后台启动。下方可查看启动状态，结果生成后点击“评估结果”。'):
         '配置检查通过。尚未启动评估；最终目录编号由脚本自动分配。';
       $('launch-message').className='launch-message good';
-      if(start){await refreshLaunchJobs();await refresh();}
+      if(start){$('launch-history').open=true;await refreshLaunchJobs();await refresh();}
     }catch(error){$('launch-message').textContent='未启动：'+error.message;$('launch-message').className='launch-message error';}
-    finally{launchBusy=false;$('launch-check').disabled=false;$('launch-device').disabled=false;updateLaunchAvailability();}
+    finally{launchBusy=false;$('launch-kind').disabled=false;updateLaunchForm();}
+  }
+  function renderTask40Job(job, logPanel) {
+    const forward=job.kind==='task40_forward';
+    const policy=job.policy_identity||{};
+    const endpoint=[job.policy_host||policy.host,job.policy_port??policy.port].filter(Boolean).join(':');
+    const progress=job.progress||{};
+    const stages={initializing:forward?'初始化':'初始化仿真',prepare_policy:'准备推理',restore_sim:'恢复仿真',closed_loop:'闭环执行',
+      loading_batch:'读取批次',frozen_forward:'冻结前向',complete:'已完成',completed:'已完成',failed:'异常退出'};
+    const details=forward?[
+      progress.total==null?'':`完成 ${progress.completed??0}/${progress.total}`,
+      progress.stage==='frozen_forward'&&progress.index!=null?`当前 ${progress.index}/${progress.total}`:'',
+      progress.stage==='frozen_forward'?progress.condition:'',
+    ]:[progress.trial,progress.decisions==null?'':`决策 ${progress.decisions}`];
+    const phase=[stages[progress.stage]||progress.stage,...details].filter(Boolean).join(' · ');
+    const artifacts=(job.artifacts||[]).map(artifact=>{
+      if(typeof artifact.url!=='string'||!artifact.url) return '';
+      let url;
+      try{url=new URL(artifact.url,location.origin);}catch{return '';}
+      if(url.origin!==location.origin||!['http:','https:'].includes(url.protocol)) return '';
+      const label=forward&&artifact.path==='results.json'?'前向结果':artifact.label||artifact.path||'查看产物';
+      return `<a href="${esc(url.href)}" target="_blank" rel="noopener" title="${esc(artifact.path||'')}">${esc(label)}</a>`;
+    }).join('');
+    const configuration=forward?(job.batch?` · 批次 ${esc(job.batch)}`:''):` · 基础种子 ${esc(safe(job.seed))}`;
+    const workerLog=forward?job.forward_log_tail||job.sim_log_tail:job.sim_log_tail;
+    return `<div>作业 ${esc(job.id)}${configuration}</div>
+      <div>推理 ${esc(endpoint||'未记录')}${policy.gpu_index==null?'':' · A100 GPU '+esc(policy.gpu_index)} · ${esc(policy.version||job.version||'未记录版本')}</div>
+      ${policy.checkpoint?`<div class="subtle">${esc(policy.checkpoint)}</div>`:''}
+      ${phase?`<div>进度 ${esc(phase)}</div>`:''}
+      <div class="launch-job-artifacts">${artifacts||'<span class="subtle">暂无可打开的产物</span>'}</div>
+      ${job.artifact_sync_error?`<div class="launch-message error">产物同步失败：${esc(job.artifact_sync_error)}</div>`:''}
+      ${workerLog?logPanel(forward?'forward':'sim',forward?'前向日志':'仿真日志',workerLog):''}`;
   }
   async function refreshLaunchJobs() {
     try{
       const data=await launchAPI('jobs');
-      $('launch-history').hidden=!(data.jobs||[]).length;
-      $('launch-jobs').innerHTML=(data.jobs||[]).map(job=>`<article class="launch-job"><div class="launch-job-top"><strong>${esc(job.version||'')} / ${esc(job.group||'')} · Task${esc(job.task_id)}</strong>${statusBadge(job.state)}</div><div>GPU ${esc(job.gpus.join(', '))} · PID ${esc(job.pid)} · ${esc(job.started_at)}</div><div class="subtle">${esc(job.output)}</div>${job.result_ready?`<button type="button" data-run="${esc(job.folder||'')}">评估结果 →</button>`:''}<details><summary class="subtle">启动日志${job.returncode==null?'':` · 退出码 ${job.returncode}`}</summary><pre class="log">${esc(job.log_tail||'等待启动脚本输出…')}</pre></details></article>`).join('')||'<div class="empty">尚未从网页启动评估。</div>';
+      const jobs=data.jobs||[], list=$('launch-jobs');
+      const openPanels=new Set([...list.querySelectorAll('details[open][data-log]')].map(panel=>panel.dataset.log));
+      $('launch-history').hidden=!jobs.length;
+      list.innerHTML=jobs.map(job=>{
+        const collect=job.kind==='task40_collect', restore=job.kind==='task40_restore', forward=job.kind==='task40_forward';
+        const title=forward?'Task40 冻结前向 · Exp09':collect?(job.phase==='controlled_reclosure'?'Task40 受控重关 · Exp09':job.phase==='directed_restore'?'Task40 定向恢复 · Exp09':'Task40 轨迹采集 · Exp09'):restore?'Task40 检查点恢复 · '+safe(job.seed):
+          `${job.version||''} / ${job.group||''} · Task${job.task_id}`;
+        const device=forward?'本地控制器':`${job.device==='a6000'?'RTX 6000 Ada · ':job.device==='local'?'4090 · ':''}GPU ${esc((job.gpus||[]).join(', '))}`;
+        const logPanel=(kind,label,tail)=>{
+          const key=`${job.id}:${kind}`;
+          return `<details data-log="${esc(key)}"${openPanels.has(key)?' open':''}><summary class="subtle">${esc(label)}</summary><pre class="log">${esc(tail)}</pre></details>`;
+        };
+        return `<article class="launch-job" data-launch-job="${esc(job.id)}"><div class="launch-job-top"><strong>${esc(title)}</strong>${statusBadge(job.state)}</div>
+          <div>${device} · PID ${esc(safe(job.pid))} · ${esc(safe(job.started_at))}</div>
+          <div class="subtle">${esc(job.output||'')}</div>
+          ${collect||forward?renderTask40Job(job,logPanel):''}
+          ${restore&&job.state==='running'?`<button type="button" data-restore-stop="${esc(job.id)}">停止恢复任务</button>`:''}
+          ${!collect&&!forward&&job.result_ready?`<button type="button" data-run="${esc(job.folder||'')}">评估结果 →</button>`:''}
+          ${logPanel('launch','启动日志'+(job.returncode==null?'':` · 退出码 ${job.returncode}`),job.log_tail||'等待启动脚本输出…')}</article>`;
+      }).join('')||'<div class="empty">尚未从网页启动评估。</div>';
       $('launch-jobs').querySelectorAll('button[data-run]').forEach(button=>button.onclick=()=>void openLaunchResult(button.dataset.run));
-      for(const [index,job] of (data.jobs||[]).entries()){
-        if(!job.folder || !job.result_ready) continue;
+      $('launch-jobs').querySelectorAll('button[data-restore-stop]').forEach(button=>button.onclick=async()=>{
+        button.disabled=true;try{await launchAPI('restore-stop',{job:button.dataset.restoreStop});await refreshLaunchJobs();}
+        catch(error){button.disabled=false;button.title=error.message;}
+      });
+      for(const [index,job] of jobs.entries()){
+        if(['task40_collect','task40_forward'].includes(job.kind)||!job.folder||!job.result_ready) continue;
         const panel=$('launch-jobs').children[index],actions=document.createElement('div');actions.className='inline-actions';
         actions.innerHTML=evaluationButtons(runs.find(r=>r._folder===job.folder)||{_folder:job.folder,status:job.state,evaluation_mode:'official-eval'});
         panel.appendChild(actions);bindEvaluationButtons(actions);
@@ -952,6 +1260,14 @@
     await refresh();
     const run=runs.find(r=>r._folder===folder);
     if(!run){$('launch-message').textContent='结果目录尚未就绪，请稍后刷新。';return;}
+    selectResultRun(run);
+  }
+  function openRegistryResult(folder) {
+    const run=runs.find(item=>item._folder===folder);
+    if(run && (!window.benchmarkWorkbench || window.benchmarkWorkbench.isNative())) selectResultRun(run);
+    else selectPage('results');
+  }
+  function selectResultRun(run) {
     $('run-search').value='';$('status-filter').value='';
     selected=run;versionOpen.set(run.version??'legacy',true);resultTaskOpen.set(resultTaskKey(run),true);render();selectPage('results');
   }
@@ -1546,7 +1862,15 @@
   }
   $("run-search").oninput=render; $("status-filter").onchange=render;
   $('preview-toggle').onchange=togglePreview;
-  $('launch-kind').onchange=updateLaunchForm;
+  $('launch-kind').onchange=()=>{
+    updateLaunchForm();
+    const kind=$('launch-kind').value;
+    if(kind==='collect'||kind==='forward'){
+      $('launch-history').open=true;
+      if($('inference-device').value!=='a100') void refreshCollectionPolicies();
+      if(kind==='collect'&&!launchOptions&&!launchDeviceLoading) void loadLaunchOptions();
+    }
+  };
   for(const id of ['launch-mode','launch-preset','launch-video']) $(id).onchange=updateLaunchForm;
   $('launch-device').onchange=()=>{
     if(launchBusy) return;
@@ -1558,11 +1882,15 @@
     inferenceOptions=null;inferenceJobs=[];
     for(const id of ['inference-checkpoint','inference-source','inference-python']) $(id).value='';
     $('inference-gpu').innerHTML='';$('inference-plan').hidden=true;
+    updateInferenceDiagnostics();
     await loadInferenceOptions(true);void refreshInferenceJobs();
   }
   $('inference-device').onchange=()=>void selectInferenceDevice($('inference-device').value);
   $('launch-version').oninput=updateLaunchGroups;
   $('launch-template').onchange=copyLaunchTemplate;
+  $('collect-gpu').onchange=updateCollectionSlots;
+  $('collect-source').onchange=updateCollectionSource;
+  $('collect-policy').onchange=()=>updateCollectionPolicyDetail();
   $('launch-check').onclick=()=>void submitLaunch(false);
   $('launch-form').onsubmit=event=>{event.preventDefault();void submitLaunch(true);};
   $('launch-form').oninput=()=>{
@@ -1585,6 +1913,9 @@
     $('inference-version').value='';renderInferenceWeights();
     if(!$('inference-weight').value) $('inference-weight-path').open=true;
   };
+  $('inference-task40').onchange=()=>{
+    updateInferenceDiagnostics();applyInferenceCheckpoint();
+  };
   $('inference-reload').onclick=()=>void loadInferenceOptions(true);
   $('inference-check').onclick=()=>void submitInference(false);
   $('inference-form').onsubmit=event=>{event.preventDefault();void submitInference(true);};
@@ -1600,5 +1931,19 @@
 </script>
 <script src="/benchmarks.js"></script>
 <script src="/training.js"></script>
+<script>
+  if(workbenchPageFromURL()!=='results') selectPage(workbenchPageFromURL(),false);
+  window.addEventListener('popstate',()=>selectPage(workbenchPageFromURL(),false));
+  const installButton = document.getElementById('install-workbench');
+  window.addEventListener('beforeinstallprompt', event => {
+    event.preventDefault();
+    installButton.hidden = false;
+    installButton.onclick = async () => {
+      installButton.hidden = true;
+      await event.prompt();
+    };
+  });
+  window.addEventListener('appinstalled', () => { installButton.hidden = true; });
+</script>
 </body>
 </html>

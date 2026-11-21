@@ -51,7 +51,7 @@ MemoryVLA 的动作专家按自己的 P/C 条件接口训练。GR00T 的预训�
 
 残差保留 H，并将新增输出投影 / 标量初始化为零，使模型初始行为与原 GR00T 一致。它适合当前“冻结原模型、只训练 Memory”的目标。真实 B1K 的32个观测、31次有历史检查记录显示初始化特征及动作最大差均0。此性质是接口兼容性，不是任务成功率结论。
 
-证据：[direct 对照与诊断](../../task2_memory_training.md#L245)、[残差初始化验证](../../outputs/overnight_memory_task40_20261114/README.md#L53)。
+direct 对照与诊断见 `git show 9fd762f:task2_memory_training.md`。[残差初始化验证](../../outputs/overnight_memory_task40_20261114/README.md#L53)。
 
 ## 4. 为什么进一步从 delta 改成 value
 
