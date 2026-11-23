@@ -1,0 +1,18 @@
+{
+  "goal": "验收作者 MemoryVLA 方法在 GR00T 上的忠实适配，并用 Task40 同协议验证闭环行为。",
+  "created_at": "2026-11-23",
+  "author": "Codex",
+  "reason": "正式四卡训练已启动。将当前训练进度绑定到首个 2000 步权重节点，后续 4000、6000 步存档与按已就绪权重推进的评估分别验收。",
+  "mainline": ["alignment", "preflight", "checkpoint", "evaluation", "acceptance"],
+  "nodes": [
+    {"id": "alignment", "title": "上游方法对齐", "record": "上游方法与代码适配", "after": [], "acceptance": "锁定作者代码并核对双记忆、门控与 DiT 接入，归档源码差异和工程测试。"},
+    {"id": "resources", "title": "工作台与并行试跑", "record": "推理和四环境试跑", "after": [], "acceptance": "确认设备可用，四个仿真环境同时推进并封存试跑产物。"},
+    {"id": "panel", "title": "锁定历史对照", "record": "评估面板锁定", "after": [], "acceptance": "锁定 30 个共同起点，保留官方和旧 V1 的同协议结果。"},
+    {"id": "preflight", "title": "四卡真实预检", "record": "真实前后向、保存与恢复", "after": ["alignment", "resources"], "acceptance": "验证有效 Batch 128、记忆梯度、参数更新与保存后严格恢复，全部证据归档。"},
+    {"id": "checkpoint", "title": "训练至首个权重（2000 步）", "record": "2000 步权重", "after": ["preflight"], "acceptance": "归档首个完整 checkpoint 并验证重载。"},
+    {"id": "training", "title": "后续 4000、6000 步存档", "record": "4000/6000 步权重", "after": ["checkpoint"], "acceptance": "完成 6000 次更新并核对 4000、6000 步的完整 checkpoint，按同一训练谱系登记。"},
+    {"id": "evaluation", "title": "Task40 配对闭环", "record": "新权重配对评估", "after": ["checkpoint", "panel"], "acceptance": "三个 checkpoint 各完成 30 条匹配闭环，按权重就绪顺序开始，归档物理真值和录像。"},
+    {"id": "mechanism", "title": "机制对照与录像复核", "after": ["checkpoint", "panel"], "acceptance": "按已锁定面板，逐权重完成 A/B/C、S1/S2/S3 Probe 与 Gate 对照，并复核代表性录像。"},
+    {"id": "acceptance", "title": "实验 12 总验收", "after": ["evaluation", "training", "mechanism"], "acceptance": "复核前后向、严格续训和训练归档，综合同协议行为与机制结果，通过后在报告标记 EXPERIMENT_12_ACCEPTED=true。"}
+  ]
+}
