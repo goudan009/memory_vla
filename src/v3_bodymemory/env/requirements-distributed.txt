@@ -1,3 +1,0 @@
-# Optional: only for the original multi-GPU DeepSpeed/ZeRO training path.
-# Requires a matching CUDA Toolkit (including nvcc) and build toolchain.
-deepspeed==0.17.6; platform_machine != 'aarch64' or sys_platform != 'linux'

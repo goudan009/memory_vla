@@ -35,12 +35,39 @@ def head_hash(model):
 
 def load_model(checkpoint, memory, seed, *, finetuning=None, **memory_options):
     seeded(seed)
-    model, info = Gr00tN1d6.from_pretrained(checkpoint, memory_enabled=memory,
-        memory_train_sequence_length=32, tune_llm=False, tune_visual=False, tune_top_llm_layers=0,
-        backbone_trainable_params_fp32=False, torch_dtype=torch.float32, output_loading_info=True,
-        **memory_options)
+    fusion = memory_options.pop("exp10_fusion", None)
+    if fusion is not None:
+        config = Gr00tN1d6.config_class.from_pretrained(checkpoint)
+        diffusion = dict(config.diffusion_model_cfg)
+        diffusion.update(fusion)
+        config.diffusion_model_cfg = diffusion
+        # An explicit config consumes architectural kwargs, not from_pretrained.
+        for key, value in memory_options.items():
+            setattr(config, key, value)
+        config.memory_enabled = memory
+        config.memory_train_sequence_length = 32
+        config.tune_llm = config.tune_visual = False
+        config.tune_top_llm_layers = 0
+        config.backbone_trainable_params_fp32 = False
+        model, info = Gr00tN1d6.from_pretrained(
+            checkpoint, config=config, torch_dtype=torch.float32, output_loading_info=True)
+        expected = ("memory.cognitive_fusion." if fusion["memory_fusion_mode"] == "route_a"
+                    else "action_head.cognitive_fusion.")
+        assert all(key.startswith(expected) for key in info["missing_keys"]), info
+    else:
+        memory_training_length = memory_options.pop("memory_train_sequence_length", 32)
+        model, info = Gr00tN1d6.from_pretrained(checkpoint, memory_enabled=memory,
+            memory_train_sequence_length=memory_training_length, tune_llm=False, tune_visual=False, tune_top_llm_layers=0,
+            backbone_trainable_params_fp32=False, torch_dtype=torch.float32, output_loading_info=True,
+            **memory_options)
+        allowed_missing = ("memory.",)
+        if memory_options.get("memory_conditioning") == "openvla":
+            allowed_missing += ("action_head.memory_cognition_projection.", "action_head.memory_perception_projection.",
+                                "action_head.memory_unconditional_cognition.")
+        if memory and json.loads((Path(checkpoint) / "config.json").read_text()).get("memory_enabled"):
+            allowed_missing = ()
+        assert all(k.startswith(allowed_missing) for k in info["missing_keys"]), info["missing_keys"]
     assert not info["unexpected_keys"] and not info.get("mismatched_keys")
-    assert all(k.startswith("memory.") for k in info["missing_keys"])
     if finetuning is not None:
         from .finetuning import apply_finetuning
         # Memory initialization must not change the paired arms' LoRA seeds.

@@ -40,13 +40,15 @@ def set_task40_dependencies(project, dependencies):
     digest = hashlib.sha256(json.dumps(files, sort_keys=True).encode()).hexdigest()
     if digest != dependencies['digest']:
         raise ValueError('Task40 运行依赖清单校验失败')
-    root = project/'setup/task40_dependencies'/digest
+    root = Path(dependencies.get('base', project/'setup/task40_dependencies'))/digest
     for name, expected in files.items():
         path = root/name
         if not path.is_file() or hashlib.sha256(path.read_bytes()).hexdigest() != expected:
             raise ValueError('Task40 运行依赖缺失或校验失败：'+name)
     for variable, relative in dependencies['paths'].items():
         os.environ[variable] = str(root/relative)
+    if dependencies.get('directed'):
+        os.environ['GROOT_TASK40_ARCHIVE_ROOT'] = str(root)
 
 
 def task40_status(status):
@@ -58,6 +60,9 @@ def dispatch(request):
     os.environ.update(request['environment'])
     os.environ['GROOT_TASK40_EXPERIMENT_ROOT'] = request['environment'].get(
         'GROOT_TASK40_EXPERIMENT_ROOT', str(project/'Output/test_01/experiment_09'))
+    storage = request.get('task40_baseline_storage')
+    if storage:
+        os.environ['GROOT_TASK40_BASELINE_STORAGE'] = storage
     set_runtime_source(live)
     Path(os.environ['GROOT_EVAL_ROOT']).mkdir(parents=True,exist_ok=True)
     from groot_web_launch import LaunchManager
@@ -72,7 +77,16 @@ def dispatch(request):
             readiness = project/'setup/simulation_ready.json'
             if not readiness.is_file() or 40 not in json.loads(readiness.read_text()).get('task_ids', []):
                 raise ValueError('该设备的 Task40 仿真环境尚未验收完成')
-            set_task40_dependencies(project, request.get('task40_dependencies'))
+            dependencies = request.get('task40_dependencies')
+            set_task40_dependencies(project, dependencies)
+            if dependencies.get('directed'):
+                payload = dict(payload, restore_checkpoint=dependencies['directed'])
+            if storage and payload.get('experiment') == 'experiment_11':
+                for name, directory in (('GROOT_CACHE_ROOT', 'simulation'),
+                                        ('XDG_CACHE_HOME', 'xdg'), ('CUDA_CACHE_PATH', 'cuda')):
+                    cache = Path(storage)/'cache'/directory
+                    cache.mkdir(parents=True, exist_ok=True)
+                    os.environ[name] = str(cache)
         manager=LaunchManager(live,project/'setup/web_eval_logs')
         manager.policy_resolver=lambda host,port: request.get('policy_identity')
         if action=='options':

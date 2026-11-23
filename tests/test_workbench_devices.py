@@ -137,7 +137,8 @@ def test_optional_inference_uses_device_paths_and_ip_not_ssh_username():
     assert 'DEVICE_PATHS=' in manager.remote
 
 
-def test_task40_remote_rows_localize_under_exp09(tmp_path, monkeypatch):
+@pytest.mark.parametrize('group', ['experiment_09', 'experiment_11'])
+def test_task40_remote_rows_localize_under_experiment(tmp_path, monkeypatch, group):
     from groot_device_eval import DeviceEvaluationManager
 
     manager = object.__new__(DeviceEvaluationManager)
@@ -146,10 +147,10 @@ def test_task40_remote_rows_localize_under_exp09(tmp_path, monkeypatch):
     manager.device_id = 'a6000'
     manager.device = {'evaluation': {'environment': {}}}
     manager.host = 'mock-a6000'
-    relative = Path('Output/test_01/experiment_09')
+    relative = Path('Output/test_01') / group
     remote = Path(manager.project)/relative/'runs/123abc456def'
     local = manager.root/relative/'runs'/remote.name
-    row = dict(id='0123456789ab', kind='task40_collect', folder=None, output=str(remote),
+    row = dict(id='0123456789ab', kind='task40_collect', group=group, folder=None, output=str(remote),
                output_exists=False, state='running', artifacts=[], progress={'stage': 'initializing'},
                sim_log_tail='', plan={'output': str(remote)})
     calls = []
@@ -188,6 +189,9 @@ def test_task40_remote_rows_localize_under_exp09(tmp_path, monkeypatch):
         '/api/launch/artifact?run=123abc456def&path=logs%2Fsimulator.log',
     }
     assert not (local/'appdata').exists()
+    if group == 'experiment_11':
+        assert manager._localize(row)['result_ready']
+        assert len(calls) == 1
 
 
 def test_task40_remote_request_uses_collection_gpu_field(monkeypatch):

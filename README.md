@@ -2,7 +2,19 @@
 
 基于 **GR00T N1.6** 加入 MemoryVLA 的历史记忆方法，在 **B1K-2025** 上训练和评估。v1 首先验证普通记忆是否提供可重复收益，或能通过历史干预确认它在特定决策中的作用。
 
-v1 已接通 256 维感知/2048 维认知双路记忆、历史组训练及在线 Episode Reset，采用增量残差加入原 VLM 特征。已完成真实 B1K 转换、官方 checkpoint 单批次训练和六项记忆集成验收；尚未执行正式 B1K 收益评估。用户说明见 [v1 README](src/v1_groot_memoryvla/README.md)，进度与验收证据统一维护在 [handoff.md](src/v1_groot_memoryvla/handoff.md)。
+从 [实验进展](docs/research_progress.md) 开始，可查当前研究问题、运行状态、验收条件和对应源码。
+
+## 文档导航
+
+| 要做什么 | 从这里开始 |
+| --- | --- |
+| 启动或查询训练、推理、评估 | [工作台执行手册](docs/workbench_agent.md)、[CLI](workbench-cli/README.md)、[设备说明](train/DEVICES.md) |
+| 配环境、跑评估、看结果 | [运行环境](env/README.md)、[评估使用说明](evaluation/README.md)、[正式评估协议](evaluation/evaluation.md) |
+| 查基线和当前实现 | [GR00T 基线](baselines/groot_n1d6/README.md)、[V1](src/v1_groot_memoryvla/README.md)、[记忆融合源码](src/v1_groot_memoryvla/model/memory/fusion.py) |
+| 看架构和设计依据 | [V1 架构与设计依据](docs/memoryv1_architecture/README.md)、[MemoryVLA 源码分析](docs/memoryvla/README.md)、[工作台设计](docs/workbench/README.md) |
+| 查论文稿、旧诊断和命令 | [论文与研究笔记](paper/README.md)、[历史归档](docs/archive/README.md) |
+
+版本专用说明随源码放在 `src/<版本>/`；当前协作规则见 [AGENTS.md](AGENTS.md)。实时作业和设备状态以工作台为准。
 
 ## 项目架构
 
@@ -13,28 +25,27 @@ memory_vla/
 ├── README.md                             整体架构、职责与入口
 ├── pyproject.toml                        统一源码包发现及资源打包
 ├── src/
-│   ├── references_code/                  原版参考，只读对照
+│   ├── references_code/                  本地上游参考，不纳入 Git
 │   │   ├── Isaac-GR00T/                  官方 N1.6，固定提交，保留 Git
 │   │   ├── memoryvla/                    MemoryVLA 方法参考
 │   │   ├── mem/
 │   │   └── serf/
-│   ├── v1_groot_memoryvla/               v1 的完整开发代码
-│   │   ├── README.md / handoff.md / LICENSE
-│   │   ├── train.py                      本版训练入口
-│   │   ├── serve.py                      本版模型服务入口
-│   │   ├── configs/                      模型、数据与训练配置定义
-│   │   │   └── experiments/              本版具体实验参数的存放约定
-│   │   ├── model/                        GR00T 模型及 memory/ 双路残差适配
-│   │   ├── data/                         真实 B1K 转换、历史组 Dataset / Collator
-│   │   ├── experiment/                   Trainer、训练、保存和加载
-│   │   ├── policy/                       推理、独立历史状态与 Episode Reset
-│   │   ├── utils/                        本版内部工具
-│   │   ├── env/                          本版依赖清单、环境说明与上游留档
-│   │   └── tests/                        本版单元及模型集成测试
-│   └── vlamemory/                        已有记忆接口与历史实现，保留兼容
+│   └── v1_groot_memoryvla/               v1 的完整开发代码
+│       ├── README.md / handoff.md / LICENSE
+│       ├── train.py                      本版训练入口
+│       ├── serve.py                      本版模型服务入口
+│       ├── configs/                      模型、数据与训练配置定义
+│       │   └── experiments/              本版具体实验参数的存放约定
+│       ├── model/                        GR00T 模型及双路记忆融合
+│       ├── data/                         真实 B1K 转换、历史组 Dataset / Collator
+│       ├── experiment/                   Trainer、训练、保存和加载
+│       ├── policy/                       推理、独立历史状态与 Episode Reset
+│       ├── utils/                        本版内部工具
+│       ├── env/                          本版依赖清单、环境说明与上游留档
+│       └── tests/                        本版单元及模型集成测试
 ├── baselines/
 │   └── groot_n1d6/                       原版基线的训练/服务入口与环境说明
-├── evaluation/                           Baseline / V1 / V2 共用
+├── evaluation/                           基线与各版本共用
 │   ├── README.md                         正式评估使用说明
 │   ├── evaluation.md                     固定评估协议、指标与配对规则
 │   ├── configs/                          公共评估配置的职责和现有参数说明
@@ -44,9 +55,8 @@ memory_vla/
 │   ├── rollout_policy.py                 上游通用 rollout，已集中到此
 │   ├── open_loop_eval.py                 上游离线动作评估
 │   ├── real_robot/                       上游真机评估示例
-│   ├── baseline/                         基线结果，网页查看
-│   └── experiment_N/                     实验结果，已有 experiment_1
-├── tests/                                公共评估/协议测试及旧 vlamemory 测试
+│   └── V_*/                             基线与实验结果，不纳入 Git
+├── tests/                                公共评估、协议和工作台测试
 ├── env/                                  公共仿真环境说明及已有环境软链接
 ├── scripts/                              公共资源工具与旧命令兼容入口
 ├── assets/                               共用资源入口，不纳入 Git
@@ -56,11 +66,11 @@ memory_vla/
 ├── outputs/                              按版本/运行组织训练日志等产物
 ├── third_party/Isaac-GR00T/               已有运行快照，含两处延迟导入修改
 ├── train/                                训练网页后端、源码同步与公共训练入口
+├── workbench-cli/                        工作台命令行工具
+├── docs/                                 工作台手册、架构与历史归档
 ├── configs/                              旧实验/旧仿真配置，保留兼容
-└── paper/                                论文草稿与研究记录
+└── paper/                                论文草稿与研究笔记
 ```
-
-上图的 `experiment_N` 表示结果命名规则；V2 源码目录在实际开始开发时创建，沿用 v1 的结构。v1 的 `model/memory/`、历史 Dataset 和记忆配置均已接通。
 
 ## 哪些归版本，哪些共用
 
@@ -74,13 +84,13 @@ memory_vla/
 | 被评模型及服务地址记录 | `evaluation/targets/` 的约定 | 只描述评估对象，不包含模型实现 |
 | 仿真环境、资产/数据、初始预训练权重 | 根目录 `env/`、`assets/`、`checkpoints/` | 共用大资源，避免复制 |
 | 训练产物 | `checkpoints/<版本>/<运行>/`、`outputs/<版本>/<运行>/` | 共用存储入口，按版本隔离内容 |
-| 评估产物 | `evaluation/V_数字/{baseline,experment_数字}/` | 共用结果格式、汇总和查看工具；版本和分组支持自定义名称 |
+| 评估产物 | 如 `evaluation/V_2/memory/task22_eval03/` | 共用结果格式、汇总和查看工具；命名见 [规则](evaluation/NAMING.md) |
 
-根 `pyproject.toml` 统一打包 `vlamemory` 和 `v1_groot_memoryvla`；版本的模型依赖放在各自 `env/requirements.txt`，不把所有版本依赖合成一个大环境。公共仿真进程与各版模型服务使用各自 Python 环境，通过 Policy Server 协议连接。模型加载涉及同名 Transformers 注册，原版与 v1 使用独立服务进程。
+根 `pyproject.toml` 统一发现源码包；版本专用依赖见各版 README。公共仿真进程与各版模型服务使用各自 Python 环境，通过 Policy Server 协议连接。模型加载涉及同名 Transformers 注册，原版与 v1 使用独立服务进程。
 
 训练和依赖清单使用真实文件，放在对应版本内；无需给根目录再加训练或依赖软链接。软链接用于大资源和外部运行环境，例如 `env/b1k2025-sim`。当前 v1 独立模型环境为 `src/v1_groot_memoryvla/.venv/`。
 
-保留根 `train/`、`configs/` 和旧 `vlamemory` 是为了兼容已有工具，不承载新的 v1 训练配置。不要直接移动已有评估结果。
+根 `train/` 和 `configs/` 维护公共调度、设备配置和兼容入口；版本专用训练配置留在各版。不要直接移动已有评估结果。
 
 ## 资产与数据路径
 

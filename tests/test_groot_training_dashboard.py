@@ -62,6 +62,136 @@ def test_preview_keeps_batch_freeze_and_busy_gpu_permission(remote, monkeypatch)
     assert not remote.TRAINING.exists()
 
 
+def test_exp12_preview_and_worker_keep_locked_batch(remote, monkeypatch):
+    import argparse
+    from v1_groot_memoryvla.experiment.launch_task21_ddp import command
+
+    split = Path(remote.request['split'])
+    original = remote.read_json(split)
+    remote.atomic_json(split, dict(original, task=40))
+    monkeypatch.setattr(remote, 'OFFICIAL', Path(remote.request['checkpoint']))
+    monkeypatch.setattr(remote, 'catalog', lambda: dict(datasets=[
+        dict(task=40, dataset=remote.request['dataset'], split=str(split))]))
+    request = dict(remote.request, task=40, arm='memory_v1', steps=2, gpus=[0, 1, 2, 3],
+                   validation_enabled=False, global_windows_per_step=8, memory_length=16,
+                   memory_conditioning='openvla', memory_cognitive_qk_norm='none',
+                   learning_rate=2e-5, weight_decay=0., fine_tuning_mode='full')
+    plan = remote.prepare(request)
+    assert plan['train_episodes'] == 200 and plan['global_decisions'] == 128
+    assert plan['gradient_accumulation_steps'] == 8 and plan['checkpoint_interval'] == 2000
+    args = argparse.Namespace(**dict(plan, output=remote.TRAINING/'preview', async_validation_gpu=None,
+                                     train_only=False, paired=False, no_validation=True))
+    argv = command(args, args.arm, args.gpus)
+    assert '--nproc-per-node=4' in argv and argv[argv.index('--checkpoint-interval')+1] == '2000'
+    with pytest.raises(ValueError, match='four ranks'):
+        remote.prepare(dict(request, gpus=[0, 1]))
+    run_id = 'v1__test01__exp12__run001'
+    canonical = dict(request, version='V_1', steps=6000, run_id=run_id)
+    assert remote.prepare(canonical)['run_name'] == run_id
+    with pytest.raises(ValueError, match='训练标识'):
+        remote.prepare(dict(canonical, version='V_12'))
+    (remote.TRAINING/run_id).mkdir(parents=True)
+    with pytest.raises(ValueError, match='原作业续跑'):
+        remote.prepare(canonical)
+
+
+@pytest.fixture
+def exp10(remote):
+    split = Path(remote.request['split'])
+    remote.atomic_json(split, dict(task=40, seed=42, train=list(reversed(range(180))),
+                                 validation=list(range(180, 200)), cohort='fixed'))
+    checkpoint = Path(remote.request['checkpoint']).parent / 'V_2_memory_task40_train01/memory_v1/checkpoints/step-004000'
+    remote.atomic_json(checkpoint/'config.json', dict(memory_enabled=True))
+    remote.catalog = lambda: dict(datasets=[dict(task=40, dataset=remote.request['dataset'], split=str(split))])
+    return dict(remote.request, task=40, arm='memory_v1', steps=37, seed=99, validation_gpu=None,
+                experiment='experiment_10', fusion_variant='dit_attention',
+                fusion_dit_layers=[8], fusion_state_lambda=0, checkpoint=str(checkpoint))
+
+
+@pytest.mark.parametrize('variant,block', [('dit_attention', 8), ('dit_attention', 24), ('gated_eos', None)])
+def test_exp10_request_reaches_worker_through_shell(remote, exp10, variant, block):
+    exp10['fusion_variant'] = variant
+    if variant == 'gated_eos':
+        del exp10['fusion_dit_layers']
+    else:
+        exp10['fusion_dit_layers'] = [block]
+    plan = remote.prepare(exp10)
+    original = remote.read_json(Path(exp10['split']))
+    assert plan['split_value'] == original and plan['seed'] != original['seed']
+    assert not plan['asynchronous_validation']
+    output = remote.TRAINING/'preview'
+    remote.PYTHON = Path(sys.executable)
+    argv = remote.command(plan, ROOT, output)
+    # Start normally snapshots split_value here. Preview uses an existing
+    # fixture path so the real shell/launcher dry-run makes no output directory.
+    argv[argv.index('--split')+1] = exp10['split']
+    result = subprocess.run(argv + ['--dry-run'], check=True, capture_output=True, text=True)
+    ddp = json.loads(result.stdout)
+    worker = ddp['commands']['memory_v1']['argv']
+    assert ddp['experiment'] == 'experiment_10' and ddp['steps_each'] == 37 and ddp['validation_enabled']
+    assert worker[worker.index('--steps')+1] == '37'
+    assert worker[worker.index('--fine-tuning-mode')+1] == 'custom'
+    assert all('--freeze-' + name.replace('_', '-') in worker for name in remote.FINETUNING_COMPONENTS)
+    assert worker[worker.index('--fusion-variant')+1] == variant
+    assert worker[worker.index('--fusion-state-lambda')+1] == '0.0'
+    assert '--experiment' not in worker and '--async-validation' not in worker and '--no-validation' not in worker
+    if variant == 'dit_attention':
+        start = worker.index('--fusion-dit-layers')
+        assert worker[start+1:] == [str(block)]
+    else:
+        assert '--fusion-dit-layers' not in worker
+    assert not output.exists()
+
+
+def test_exp10_stage_gate_and_small_run_admission(remote, exp10, monkeypatch):
+    for update, message in [
+        (dict(experiment=None), 'require experiment'),
+        (dict(steps=1001), 'optimizer steps'),
+        (dict(fusion_dit_layers=[8, 24]), 'exactly one zero-based'),
+        (dict(fusion_dit_layers=[7]), 'exactly one zero-based'),
+        (dict(fusion_state_lambda=None), 'explicit nonnegative'),
+        (dict(freeze_action_dit=False), 'all base components frozen'),
+        (dict(microbatch=3), 'microbatch must be'),
+        (dict(validation_gpu=1), 'in-process validation'),
+    ]:
+        with pytest.raises(ValueError, match=message):
+            remote.prepare(dict(exp10, **update))
+    assert remote.prepare(exp10)['fusion_training']['ready'] is False
+    with pytest.raises(ValueError, match='Stage 2'):
+        remote.start(exp10)
+    assert not remote.TRAINING.exists()
+    trainer = remote.LIVE/'src/v1_groot_memoryvla/experiment/task21_ddp.py'
+    trainer.parent.mkdir(parents=True)
+    trainer.write_text("EXP10_FUSION_TRAINING = {'dit_attention': False}\n")
+    monkeypatch.setattr(remote, 'compute_pids', lambda gpus: [123])
+    assert remote.prepare(dict(exp10, enqueue=True))['fusion_training']['ready']
+    state = dict(exp10, fusion_state_lambda=.25, share_existing=True)
+    assert 'state supervision is not ready' in remote.prepare(state)['fusion_training']['reason']
+    trainer.write_text("EXP10_FUSION_TRAINING = {'dit_attention': True}\n")
+    plan = remote.prepare(state)
+    argv = remote.command(plan, remote.LIVE, remote.TRAINING/'new')
+    assert plan['fusion_training']['ready'] and argv[argv.index('--fusion-state-lambda')+1] == '0.25'
+    assert argv[argv.index('--allow-service-pids')+1] == '123'
+
+
+def test_exp10_start_snapshots_the_explicit_cohort(remote, exp10, monkeypatch):
+    trainer = remote.LIVE/'src/v1_groot_memoryvla/experiment/task21_ddp.py'
+    trainer.parent.mkdir(parents=True)
+    trainer.write_text("EXP10_FUSION_TRAINING = {'dit_attention': False}\n")
+    remote.atomic_json(remote.LIVE/'web_source_manifest.json', dict(digest='exp10-source'))
+    remote.request_digest = 'exp10-source'
+    monkeypatch.setattr(remote.subprocess, 'Popen', lambda *a, **kw: SimpleNamespace(pid=99999999))
+    job = remote.start(exp10)
+    output = Path(job['output'])
+    split = output/'config/data_split.json'
+    assert remote.read_json(split) == remote.read_json(Path(exp10['split']))
+    launch = remote.read_json(output/'config/web_launch.json')
+    assert launch['argv'][launch['argv'].index('--split')+1] == str(split)
+    assert launch['steps'] == 37 and launch['fusion_dit_layers'] == [8]
+    assert not (output/'memory_v1/validation_queue').exists()
+    assert not remote.resume_info(output, 'memory_v1')['available']
+
+
 def test_memory_training_settings_reach_worker_and_reject_architecture_swap(remote):
     request = dict(remote.request, arm='memory_v1')
     plan = remote.prepare(request)
@@ -69,6 +199,7 @@ def test_memory_training_settings_reach_worker_and_reject_architecture_swap(remo
     assert plan['memory_cognitive_qk_norm'] == 'layernorm'
     custom = remote.prepare(dict(request,memory_length=256,image_augmentation=False))
     argv = remote.command(custom,remote.LIVE,remote.TRAINING/'new')
+    assert not any(arg == '--experiment' or arg.startswith('--fusion-') for arg in argv)
     assert argv[argv.index('--memory-length')+1]=='256'
     assert argv[argv.index('--memory-conditioning')+1]=='residual'
     assert '--no-image-augmentation' in argv
@@ -350,6 +481,23 @@ def test_resume_reuses_snapshot_optimizer_seed_batch_and_output(remote,monkeypat
         remote.resume(dict(run=root.name,arm='baseline',steps=3000),controller_source='controller code')
 
 
+def test_resume_branch_previews_and_preserves_original_run(remote, monkeypatch):
+    root = resumable_job(remote, monkeypatch)
+    before = {p.relative_to(root): p.read_bytes() for p in root.rglob('*') if p.is_file()}
+    request = dict(run=root.name, arm='baseline', steps=3001, branch_version='V_11')
+    preview = remote.resume(dict(request, preview=True), controller_source=None)
+    assert preview['resume_step'] == 2000 and preview['gpus'] == [0, 2, 3]
+    assert not list(remote.TRAINING.glob('V_11*'))
+    result = remote.resume(request, controller_source='controller code')
+    output = Path(result['output'])
+    assert output != root and output.name == result['run']
+    assert remote.read_json(output/'config/web_launch.json')['parent_run'] == root.name
+    assert remote.read_json(output/'baseline/checkpoints/latest.json')['path'] == preview['checkpoint']
+    worker = remote.read_json(Path(result['attempt'])/'request.json')['worker_argv']
+    assert worker[worker.index('--output') + 1] == str(output)
+    assert {p.relative_to(root): p.read_bytes() for p in root.rglob('*') if p.is_file()} == before
+
+
 @pytest.mark.parametrize('case',['active','missing_rank','missing_weight','paired','busy','small_budget','running_validator'])
 def test_resume_refuses_incomplete_or_active_run_before_mutation(remote,monkeypatch,case):
     root=resumable_job(remote,monkeypatch)
@@ -468,6 +616,20 @@ def test_detail_weighted_loss_and_only_completed_checkpoints(remote):
     assert len(result['checkpoints'])==1 and result['checkpoints'][0]['step']==1000
 
 
+def test_detail_publishes_canonical_checkpoints_only_after_save(remote):
+    root = make_job(remote)
+    canonical = root.with_name('v1__test01__exp12__run001')
+    root.rename(canonical)
+    checkpoints = canonical/'baseline/checkpoints'
+    saved = checkpoints/f'{canonical.name}__step002000'
+    remote.atomic_json(saved/'config.json', {})
+    remote.atomic_json(checkpoints/f'{canonical.name}__step004000'/'config.json', {})
+    remote.atomic_json(checkpoints/'latest.json', dict(step=2000, path=str(saved)))
+    records = remote.detail(dict(run=canonical.name, arm='baseline'))['checkpoints']
+    assert records[0] == dict(step=2000, path=str(saved))
+    assert not any(row['step'] == 4000 for row in records)
+
+
 def test_initial_weights_use_recorded_worker_config_before_launch_selection(remote):
     root=make_job(remote)
     remote.atomic_json(root/'config/web_launch.json',dict(checkpoint=str(remote.OFFICIAL)))
@@ -577,6 +739,9 @@ def test_stop_at_next_checkpoint_is_calculated_from_latest_state(remote):
     result=remote.stop(dict(run=root.name,arm='baseline',next_checkpoint=True))
     assert result['stop_after_step']==3000
     assert remote.read_json(root/'metrics/stop_training.json')['stop_after_step']==3000
+    plan = remote.recorded_plan(root)
+    remote.atomic_json(root/'config/ddp_launch.json', plan | dict(checkpoint_interval=2000))
+    assert remote.stop(dict(run=root.name,arm='baseline',next_checkpoint=True))['stop_after_step']==4000
 
 
 def test_short_training_can_save_and_stop_before_periodic_checkpoint(remote):
@@ -607,6 +772,50 @@ def test_delete_training_record_preserves_checkpoints_and_other_runs(remote):
     assert [row['run'] for row in remote.jobs()['jobs']]==['other_training']
     assert all((root/path).read_bytes()==data for path,data in before.items())
     assert remote.detail(dict(run=root.name,arm='baseline'))['checkpoints'][0]['step']==1000
+
+
+def test_delete_moves_output_to_trash_and_preserves_run_number(remote, monkeypatch):
+    root = make_job(remote)
+    root = root.rename(root.with_name('V_1_baseline_task0_train04'))
+    remote.atomic_json(root/'baseline/status.json', dict(status='completed'))
+    source = remote.PROJECT/'deployments'/root.name
+    remote.atomic_json(source/'manifest.json', {})
+    monkeypatch.setattr(remote, 'live_run_processes', lambda root: [])
+    job = remote.jobs()['jobs'][0]
+    assert job['can_delete_files']
+
+    result = remote.delete(dict(run=root.name, arm='baseline', delete_files=True, expected_output=job['output']))
+
+    trash = remote.TRAINING/'.trash'/root.name
+    assert not result['files_preserved'] and result['trash_path'] == str(trash)
+    assert not root.exists()
+    assert (trash/'baseline/checkpoints/step-001000/config.json').is_file()
+    assert (source/'manifest.json').is_file()
+    assert remote.jobs()['jobs'] == []
+    _, number = remote.reserve_training(remote.TRAINING, remote.PROJECT/'deployments', 'V_1', 0, 'baseline')
+    assert number == 5
+
+
+@pytest.mark.parametrize('case,error', [('wrong_path','目录已变更'), ('shared','其他训练组'),
+    ('live','活跃进程'), ('queued','排队任务')])
+def test_delete_files_checks_target_and_run_state(remote, monkeypatch, case, error):
+    root = make_job(remote)
+    remote.atomic_json(root/'baseline/status.json', dict(status='completed'))
+    payload = dict(run=root.name, arm='baseline', delete_files=True, expected_output=str(root))
+    monkeypatch.setattr(remote, 'live_run_processes', lambda root: [123] if case == 'live' else [])
+    if case == 'wrong_path':
+        payload['expected_output'] = str(root.with_name('another_run'))
+    if case == 'shared':
+        remote.atomic_json(root/'memory_v1/status.json', dict(status='completed'))
+        assert not remote.jobs()['jobs'][0]['can_delete_files']
+    if case == 'queued':
+        remote.atomic_json(remote.TRAINING/'queues/pending/status.json',
+            dict(status='waiting_for_gpus', jobs=[dict(run=root.name, arm='baseline')]))
+
+    with pytest.raises(ValueError, match=error):
+        remote.delete(payload)
+    assert (root/'baseline/checkpoints/step-001000/config.json').is_file()
+    assert not (root/'config/dashboard_deleted_baseline.json').exists()
 
 
 @pytest.mark.parametrize('status,validation', [('training',{}),('queued',{}),('initializing',{}),

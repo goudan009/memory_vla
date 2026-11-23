@@ -10,7 +10,7 @@ import sys
 
 if '__file__' in globals():
     sys.path.insert(0, str(Path(__file__).resolve().parents[2]/'train'))
-from run_identity import training_identity, training_base
+from run_identity import EXPERIMENT_12_RUN, training_identity, training_base
 
 PROJECT = Path('/nvme3/projects/memory_vla')
 TRAINING = Path('/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training')
@@ -39,7 +39,9 @@ def checkpoint_info(checkpoint):
     if not root.is_relative_to(TRAINING):
         return dict(version='unversioned', run=root.name, label=root.name+' / '+path.name, source_dir=None)
     identity=training_identity(root,arm)
-    run=training_base(identity['version'],identity['task_id'],identity['method'])+'_train%02d'%identity['train_number']
+    run = root.name
+    if not EXPERIMENT_12_RUN.fullmatch(run):
+        run = training_base(identity['version'],identity['task_id'],identity['method'])+'_train%02d'%identity['train_number']
     return dict(identity,run=run,label=run+' / '+path.name)
 
 
@@ -76,9 +78,12 @@ def process_info(pid):
         module = argument(args, '-m')
         script = next((v for v in args[1:] if v.endswith('.py')), '')
         diagnostic = script.endswith('/policy_server_diagnostic.py') and 'experiment_07/scripts/' in script
+        restore_rng = any('from task40_memory_instrumentation import run_stateless_server; run_stateless_server()' in value
+                          for value in args[1:4])
+        native_trace = any('run_native_memory_server()' in value for value in args[1:4])
         if not Path(args[0]).name.startswith('python') or not (
             module in ('v1_groot_memoryvla.serve', 'gr00t.eval.run_gr00t_server', 'baselines.groot_n1d6.serve') or
-            script.endswith('run_gr00t_server.py') or diagnostic or
+            script.endswith('run_gr00t_server.py') or diagnostic or restore_rng or native_trace or
             (script.endswith('serve.py') and ('groot' in script.lower() or 'memoryvla' in script))):
             return None
         stat = (path/'stat').read_text().rsplit(')',1)[1].split()
@@ -108,7 +113,8 @@ def process_info(pid):
                     checkpoint_step=Path(checkpoint).name,checkpoint_resolved=str(Path(checkpoint).resolve()),policy_seed=argument(args,'--seed'),
                     history_mode=argument(args,'--history-mode',default='normal'),
                     checkpoint=checkpoint, gpu_index=environment.get('CUDA_VISIBLE_DEVICES', argument(args,'--device',default='—')),
-                    log=log, task40_diagnostics=diagnostic, task40_trace=diagnostic and '--task40-trace' in args,
+                    log=log, task40_diagnostics=diagnostic or restore_rng or native_trace,
+                    task40_trace=native_trace or (diagnostic and '--task40-trace' in args),
                     **info)
     except (OSError, ValueError, IndexError):
         return None

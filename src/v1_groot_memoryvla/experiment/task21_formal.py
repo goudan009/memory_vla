@@ -16,6 +16,7 @@ from .first_training import (cache_sequence, slice_features, seeded, write_json,
                              gradient_norms, bank_trace)
 from .task21_diagnostic import load_model, head_hash, append_record, action_predictions
 from .memory_training_options import add_memory_training_options
+from v1_groot_memoryvla.data.convert_b1k import ACTION_SLICES
 from v1_groot_memoryvla.data.dataset.episode_windows import EpisodeWindows
 from v1_groot_memoryvla.data.episode_split import validate_split
 from v1_groot_memoryvla.model.gr00t_n1d6.processing_gr00t_n1d6 import Gr00tN1d6Processor
@@ -167,6 +168,13 @@ def action_metrics(model, seq, normal, wrong, root, step, arm, donor_episode, em
                "mae_horizon32": float((error*mask).sum()/mask.sum()),
                "normal_empty_action_shift": float(np.abs(predictions["normal"]-predictions["empty"]).mean()),
                "normal_wrong_action_shift": float(np.abs(predictions["normal"]-predictions["wrong"]).mean())}
+        if getattr(model.action_head, "memory_fusion_mode", "legacy") != "legacy":
+            row["body_mae"] = {
+                group: {f"first{steps}": float((error[:, :steps, a:b]*mask[:, :steps, a:b]).sum()
+                                               / mask[:, :steps, a:b].sum())
+                        for steps in (8, 32) if mask[:, :steps, a:b].sum() > 0}
+                for group, (a, b) in ACTION_SLICES.items()
+            }
         append_record(root / "metrics/action_by_episode.jsonl", row)
         rows.append(row)
     np.savez_compressed(root / f"diagnostics/actions/step{step:06d}_episode{seq['episode']}.npz",
@@ -251,8 +259,8 @@ def validate(model, processor, train, validation, args, root, step):
     return result
 
 
-def save_model(model, processor, directory):
-    model.save_pretrained(directory, max_shard_size="5GB")
+def save_model(model, processor, directory, **kwargs):
+    model.save_pretrained(directory, max_shard_size="5GB", **kwargs)
     processor.save_pretrained(directory)
 
 
@@ -310,7 +318,9 @@ def initialize(args, checkpoint=None):
     eval_processor.eval()
     split = json.loads((args.output / "config/data_split.json").read_text())
     episode_tasks = validate_split(split)
-    train = EpisodeWindows(args.dataset, processor, split["train"], episode_tasks=episode_tasks)
+    openvla = getattr(args, "memory_conditioning", "residual") == "openvla"
+    train = EpisodeWindows(args.dataset, processor, split["train"], episode_tasks=episode_tasks,
+                           group_size=16 if openvla else 32)
     validation = EpisodeWindows(args.dataset, eval_processor, split["validation"], episode_tasks=episode_tasks)
     # The async step-0 job also passes a checkpoint explicitly, but that is
     # still the original GR00T model: build the same new adapter as training.
@@ -318,6 +328,12 @@ def initialize(args, checkpoint=None):
         "memory_conditioning": getattr(args, "memory_conditioning", "residual"),
         "memory_cognitive_qk_norm": getattr(args, "memory_cognitive_qk_norm", "layernorm"),
         "memory_length": getattr(args, "memory_length", 64)}
+    if openvla and not restoring:
+        if saved.get("memory_enabled"):
+            raise ValueError("OpenVLA starts from an official no-memory checkpoint")
+        memory_options.update(memory_update_fused=False, memory_residual_identity_init=False)
+    if openvla:
+        memory_options["memory_train_sequence_length"] = 16
     if not (restoring and saved.get("memory_enabled")) and memory_options["memory_conditioning"] == "residual":
         if not saved.get("memory_enabled"):
             memory_options["memory_residual_identity_init"] = True
@@ -336,6 +352,15 @@ def initialize(args, checkpoint=None):
             raise ValueError("Memory conditioning differs from checkpoint; start this run from the GR00T baseline checkpoint")
         if saved.get("memory_enabled") and saved.get("memory_cognitive_qk_norm", "none") != memory_options["memory_cognitive_qk_norm"]:
             raise ValueError("Memory QK normalization differs from checkpoint; start this run from the GR00T baseline checkpoint")
+    if getattr(args, "fusion_variant", None):
+        if not saved.get("memory_enabled"):
+            raise ValueError("Exp10 requires the original MemoryVLA checkpoint")
+        route = "route_a" if args.fusion_variant == "gated_eos" else "route_b"
+        # Keep the checkpoint's original memory configuration verbatim.
+        fusion = {"memory_fusion_mode": route}
+        if route == "route_b":
+            fusion["memory_fusion_block"] = args.fusion_dit_layers[0]
+        memory_options = {"exp10_fusion": fusion}
     model = load_model(checkpoint, args.arm == "memory_v1", args.seed, finetuning=args, **memory_options)
     model.backbone.cuda().eval()
     return processor, train, validation, model

@@ -259,7 +259,13 @@ class _Trace:
         native_eos = features[:, self.eos, :]
         parameter = self.adapter.cognitive_residual_scale
         native = parameter * self.gated[0, 0] if self.gated is not None else torch.zeros_like(self.base_eos[0, 0])
-        if not torch.equal(native_eos, self.base_eos + native.to(self.base_eos.dtype)):
+        expected_eos = self.base_eos + native.to(self.base_eos.dtype)
+        fusion_mode = getattr(self.head, "memory_fusion_mode", "legacy")
+        if fusion_mode == "route_a":
+            if self.scale != 1 or self.location != "eos":
+                raise ValueError("Use native scale and location to diagnose a learned fusion checkpoint")
+            self.arrays["learned_eos_residual"] = _array(native_eos.float() - expected_eos.float())
+        elif not torch.equal(native_eos, expected_eos):
             raise RuntimeError("Recorded cognitive residual does not reproduce the adapter's EOS")
         self.arrays["cognitive_native_scale"] = _array(parameter)
         self.arrays["cognitive_value_native_scaled"] = _array(native[None, None])
@@ -297,6 +303,11 @@ class _Trace:
             self.arrays["normalized_state"] = _array(action_input.state)
             output = original_action(backbone_output, action_input)
             self.arrays["normalized_actions"] = _array(output["action_pred"])
+            if "fusion_action_features" in output:
+                tokens = output["fusion_action_features"]
+                self.arrays["dit_action_tokens_pooled"] = _pooled(tokens)
+                if self.full:
+                    self.arrays["dit_action_tokens"] = _array(tokens)
             return output
 
         def get_action_with_features(backbone_features, **kwargs):
@@ -316,6 +327,67 @@ class _Trace:
 
         stack.enter_context(patch.object(self.head, "get_action", get_action))
         stack.enter_context(patch.object(self.head, "get_action_with_features", get_action_with_features))
+
+
+class _OpenVLATrace(_Trace):
+    """Observe the independent cognitive and perceptual DiT inputs."""
+
+    def _readout(self, _module, _args, output):
+        self.arrays["cognitive_readout"] = _array(output)
+        self.arrays["cognitive_readout_pooled"] = _pooled(output)
+
+    def _gate(self, _module, _args, output):
+        self.gated = output
+        self.arrays["cognitive_gated"] = _array(output)
+
+    def _after_memory(self, _module, _args, output):
+        self.arrays["expert_input_eos"] = _array(output["backbone_features"][:, self.eos, :])
+        self.arrays["cognitive_fused"] = _array(output["memory_cognitive_token"])
+        if self.full:
+            self.arrays["perceptual_fused"] = _array(output["memory_perceptual_tokens"])
+
+    def install(self, stack):
+        adapter, head = self.adapter, self.head
+        if adapter.training or head.training or self.scale != 1 or self.location != "eos":
+            raise ValueError("OpenVLA diagnostics require native inference without residual interventions")
+        stack.callback(adapter.register_forward_pre_hook(self._before_memory).remove)
+        stack.callback(adapter.cognitive.retrieval_blocks[-1].register_forward_hook(self._readout).remove)
+        stack.callback(adapter.cognitive.gate_fusion_blocks.register_forward_hook(self._gate).remove)
+        stack.callback(adapter.register_forward_hook(self._after_memory).remove)
+
+        def first_condition(_module, _args, kwargs):
+            if "dit_condition_eos" in self.arrays:
+                return
+            condition = kwargs["cognitive_condition"]
+            timed = condition + head.model.timestep_encoder(kwargs["timestep"])[:, None]
+            # Keep the shared comparison schema while recording the native
+            # condition against which the cognitive probe is measured.
+            self.arrays["dit_condition_eos"] = _array(timed)
+            self.arrays["dit_condition_pooled"] = _pooled(timed)
+            self.arrays["dit_cognitive_projection"] = _array(condition)
+            perceptual = kwargs["encoder_hidden_states"]
+            self.arrays["dit_perception_pooled"] = _pooled(perceptual)
+            if self.full:
+                self.arrays["dit_perception"] = _array(perceptual)
+
+        stack.callback(head.model.register_forward_pre_hook(first_condition, with_kwargs=True).remove)
+        original_action = head.get_action
+        original_dit = head.get_action_with_features
+
+        def get_action(backbone_output, action_input):
+            self.arrays["normalized_state"] = _array(action_input.state)
+            output = original_action(backbone_output, action_input)
+            self.arrays["normalized_actions"] = _array(output["action_pred"])
+            return output
+
+        def get_action_with_features(backbone_features, **kwargs):
+            self.dit_calls += 1
+            self.arrays["dit_state_features"] = _array(kwargs["state_features"])
+            self.arrays["embodiment_id"] = _array(kwargs["embodiment_id"])
+            return original_dit(backbone_features=backbone_features, **kwargs)
+
+        stack.enter_context(patch.object(head, "get_action", get_action))
+        stack.enter_context(patch.object(head, "get_action_with_features", get_action_with_features))
 
 
 @contextmanager
@@ -429,7 +501,9 @@ class Task40Instrumentation:
     def _forward(self, observation, session, before, scale, location, detail):
         if detail not in ("compact", "full"):
             raise ValueError("detail must be compact or full")
-        trace = _Trace(self.policy, scale, location, detail)
+        openvla = getattr(self.policy.model.action_head, "openvla_memory", False)
+        trace_type = _OpenVLATrace if openvla else _Trace
+        trace = trace_type(self.policy, scale, location, detail)
         with ExitStack() as stack:
             trace.install(stack)
             actions, info = self.wrapped.get_action(
@@ -456,6 +530,8 @@ class Task40Instrumentation:
             "model_features": trace.arrays,
             "retrieval": retrieval,
             "trace": {"user_eos_index": trace.eos_index, "cognitive_read": trace.gated is not None,
+                      "fusion_mode": "openvla" if openvla else getattr(trace.head, "memory_fusion_mode", "legacy"),
+                      "fusion_block": getattr(trace.head, "memory_fusion_block", None),
                       "scale_multiplier": scale, "location": location, "detail": detail},
         }
 
@@ -525,6 +601,27 @@ def register_task40_instrumentation(server, policy, wrapped):
     return extension
 
 
+def register_restore_rng(server):
+    def restore_rng(rng):
+        _restore_rng(_unpack_rng(rng))
+        return {"rng_sha256": hashlib.sha256(rng).hexdigest()}
+
+    server.register_endpoint("task40_restore_rng", restore_rng)
+
+
+def run_stateless_server():
+    """Expose archived policy RNG on the official no-memory service."""
+    from v1_groot_memoryvla.policy import server_client
+
+    class RestorePolicyServer(server_client.PolicyServer):
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            register_restore_rng(self)
+
+    with patch.object(server_client, "PolicyServer", RestorePolicyServer):
+        runpy.run_module("v1_groot_memoryvla.serve", run_name="__main__")
+
+
 def run_legacy_server():
     """Run the archived entry point with the same CLI and A100 runtime check."""
     from v1_groot_memoryvla.policy import server_client
@@ -539,3 +636,16 @@ def run_legacy_server():
         raise SystemExit("Missing Task40 trace process marker")
     with patch.object(server_client, "PolicyServer", InstrumentedPolicyServer):
         runpy.run_path(archive, run_name="__main__")
+
+
+def run_native_memory_server():
+    """Install Task40 endpoints on the current MemoryVLA policy server."""
+    from v1_groot_memoryvla.policy import server_client
+
+    class InstrumentedPolicyServer(server_client.PolicyServer):
+        def __init__(self, policy, *args, **kwargs):
+            super().__init__(policy, *args, **kwargs)
+            register_task40_instrumentation(self, policy.policy, policy)
+
+    with patch.object(server_client, "PolicyServer", InstrumentedPolicyServer):
+        runpy.run_module("v1_groot_memoryvla.serve", run_name="__main__")

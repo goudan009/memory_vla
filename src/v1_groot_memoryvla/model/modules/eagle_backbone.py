@@ -19,6 +19,7 @@ class EagleBackbone(torch.nn.Module):
         tune_top_llm_layers: int = 0,
         trainable_params_fp32: bool = False,
         transformers_loading_kwargs: dict = {},
+        preserve_checkpoint_dtype: bool = False,
     ):
         """
         EagleBackbone is to generate n_queries to represent the future action hidden states.
@@ -44,7 +45,10 @@ class EagleBackbone(torch.nn.Module):
             assert load_bf16, "nvidia/Eagle-Block2A-2B-v2 requires bfloat16 by default"
             eagle_path = os.path.join(os.path.dirname(__file__), "nvidia", "Eagle-Block2A-2B-v2")
             config = AutoConfig.from_pretrained(eagle_path, trust_remote_code=True)
-            self.model = AutoModel.from_config(config, trust_remote_code=True)
+            # A full-tuning checkpoint contains FP32 master weights. The
+            # nested Eagle config's BF16 default would round them during load.
+            dtype_kwargs = {"torch_dtype": torch.get_default_dtype()} if preserve_checkpoint_dtype else {}
+            self.model = AutoModel.from_config(config, trust_remote_code=True, **dtype_kwargs)
         else:
             raise ValueError(f"Model {model_name} not supported")
 
@@ -54,6 +58,7 @@ class EagleBackbone(torch.nn.Module):
 
         self.select_layer = select_layer
         self.return_visual_features = False
+        self.return_preprojected_vision = False
         self.set_trainable_parameters(tune_llm, tune_visual, tune_top_llm_layers)
         if load_bf16 and trainable_params_fp32:
             # cast trainable parameters to fp32
@@ -109,8 +114,9 @@ class EagleBackbone(torch.nn.Module):
         # 0. Set frozen module to eval
         keys_to_use = ["input_ids", "attention_mask", "pixel_values"]
         vl_input = {k: vl_input[k] for k in keys_to_use}
+        visual_options = {"return_preprojected_vision": True} if self.return_preprojected_vision else {}
         result = self.model(**vl_input, output_hidden_states=True,
-                            return_visual_features=self.return_visual_features)
+                            return_visual_features=self.return_visual_features, **visual_options)
         outputs = result["hidden_states"][-1]
         image_mask = vl_input["input_ids"] == self.model.config.image_token_index
         attention_mask = vl_input["attention_mask"] == 1
@@ -122,16 +128,15 @@ class EagleBackbone(torch.nn.Module):
             }
         )  # [B, T2, hidden_size]
         if self.return_visual_features:
-            b, _, d = outputs.shape
+            b = outputs.shape[0]
             # Eagle flattens image grids into a single [all_visual_tokens, D].
             # Preserve camera order for both B1K (three) and LIBERO (two).
             visual = result["visual_features"]
             images = len(vl_input['pixel_values'])
-            if (not images or images % b or visual.ndim != 2 or visual.shape[0] % images
-                    or visual.shape[-1] != d):
+            if not images or images % b or visual.ndim != 2 or visual.shape[0] % images:
                 raise ValueError("Visual grids must contain the same camera count per sample")
             cameras, grid = images // b, visual.shape[0] // images
             if cameras < 1 or not torch.all(image_mask.sum(1) == cameras * grid):
                 raise ValueError("Visual grids do not match the image tokens in each sample")
-            features["visual_features"] = visual.reshape(b, cameras, grid, d)
+            features["visual_features"] = visual.reshape(b, cameras, grid, visual.shape[-1])
         return features

@@ -1,3 +1,0 @@
-# Optional export/deployment tools; not needed for standard training.
-onnx>=1.20.0
-tensorrt>=10.14.1.48.post1

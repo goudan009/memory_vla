@@ -13,6 +13,9 @@ def components(model):
         projector.append(head.position_embedding)
     if head.state_dropout_prob > 0:
         projector.append(head.mask_token)
+    if getattr(head, "openvla_memory", False):
+        projector.extend((head.memory_cognition_projection, head.memory_perception_projection,
+                          head.memory_unconditional_cognition))
     return dict(llm=[model.backbone.model.language_model], vision=[model.backbone.model.vision_model],
                 vision_projector=[model.backbone.model.mlp1], action_dit=[head.model],
                 action_projector=projector, action_vlln=[head.vlln], memory=[model.memory] if model.memory is not None else [])
@@ -92,7 +95,13 @@ def apply_finetuning(model, args):
     model.config.tune_projector = model.action_head.tune_projector
     model.config.tune_vlln = model.action_head.tune_vlln
     model.config.fine_tuning_options = options
-    if options['gradient_checkpointing']:
+    if getattr(args, "fusion_variant", None):
+        if any(parameter.requires_grad for parameter in model.parameters()):
+            raise ValueError("Exp10 requires all original parameter groups frozen")
+        fusion = (model.memory.cognitive_fusion if args.fusion_variant == "gated_eos"
+                  else model.action_head.cognitive_fusion)
+        fusion.requires_grad_(True).float()
+    if options['gradient_checkpointing'] and not getattr(model.action_head, 'openvla_memory', False):
         for group in ('llm', 'vision'):
             module = groups[group][0]
             if any(p.requires_grad for p in module.parameters()):
@@ -108,4 +117,6 @@ def apply_finetuning(model, args):
                     for name, modules in groups.items()}, lora_modules=all_paths,
         frozen_eagle=not any(p.requires_grad for p in model.backbone.parameters()))
     model.finetuning_summary = summary
+    if getattr(args, "fusion_variant", None):
+        summary["fusion_parameters"] = {n: p.numel() for n, p in model.named_parameters() if p.requires_grad}
     return summary

@@ -53,6 +53,19 @@ def test_history_controls_are_forwarded_and_validated():
         manager.argv(payload(history_mode='random'))
 
 
+def test_task40_experiment_10_service_archives_outside_exp09():
+    manager = InferenceManager(ROOT)
+    args = manager.argv(payload(task40_diagnostics=True, experiment='experiment_10'))
+    assert '--task40-diagnostics' in args
+    assert args[args.index('--log-dir') + 1].endswith('/experiment_10/policy_services')
+    args = manager.argv(payload(task40_diagnostics=True, experiment='experiment_11'))
+    assert args[args.index('--log-dir') + 1].endswith('/experiment_11/policy_services')
+    with pytest.raises(ValueError, match='Task40'):
+        manager.argv(payload(task40_diagnostics=True, experiment='experiment_09'))
+    with pytest.raises(ValueError, match='Task40'):
+        manager.argv(payload(experiment='experiment_10'))
+
+
 def local_args(tmp_path,port):
     checkpoint=tmp_path/'checkpoint';checkpoint.mkdir()
     (checkpoint/'config.json').write_text('{}')
@@ -82,6 +95,26 @@ def test_check_only_checks_real_files_and_busy_port_without_creating_logs(tmp_pa
         occupied.bind(('127.0.0.1',port));occupied.listen()
         result=subprocess.run(args+['--check-only'],text=True,capture_output=True)
     assert result.returncode!=0 and '端口不可用' in result.stderr
+
+
+def test_training_snapshot_can_use_shared_task40_archive(tmp_path):
+    args = local_args(tmp_path, free_port())
+    project = tmp_path / 'project'
+    archive = project / 'Output/test_01/experiment_07/scripts/policy_server_diagnostic.py'
+    archive.parent.mkdir(parents=True)
+    archive.write_text('')
+    instrumentation = tmp_path / 'source/evaluation/scripts/task40_memory_instrumentation.py'
+    instrumentation.parent.mkdir(parents=True)
+    instrumentation.write_text('')
+    script = Path(args[1]).read_text().replace(
+        "PROJECT = Path('/nvme3/projects/memory_vla')", f"PROJECT = Path({str(project)!r})", 1)
+    result = subprocess.run(['bash', '-s', '--', *args[2:], '--task40-diagnostics', '--check-only'],
+                            input=script, text=True, capture_output=True)
+    assert result.returncode == 0, result.stderr
+    command = shlex.split(json.loads(result.stdout)['command'])
+    assert str(instrumentation.parent) in command
+    assert str(archive) in command
+    assert command[command.index('--anchor') + 1] == str(project / 'Output/test_01/experiment_01/checkpoints')
 
 
 @pytest.mark.parametrize('indexed', [False, True])
@@ -215,6 +248,13 @@ def test_checkpoint_version_and_source_match_saved_training_metadata(tmp_path, m
     assert info['version']=='V_1' and info['run']=='V_1_baseline_task21_train01' and info['source_dir']=='/baseline'
     info=remote_control.checkpoint_info('/outside/custom/checkpoints/step-001000')
     assert info['version']=='unversioned'
+    run = 'v1__test01__exp12__run001'
+    root = tmp_path/run
+    (root/'config').mkdir(parents=True)
+    (root/'config/web_launch.json').write_text(json.dumps(dict(source='/snapshot/exp12', version='V_1')))
+    info = remote_control.checkpoint_info(str(root/'memory_v1/checkpoints'/f'{run}__step002000'))
+    assert (info['version'], info['run'], info['training_id'], info['source_dir']) == (
+        'V_1', run, run, '/snapshot/exp12')
 
 
 def test_discovered_policy_stop_checks_identity_and_only_signals_selected_process(tmp_path):

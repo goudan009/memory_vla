@@ -8,7 +8,10 @@ import shlex
 import subprocess
 import threading
 
-from groot_web_launch import task40_artifacts
+from groot_web_launch import (
+    LaunchManager, TASK40_BASELINE_EXPERIMENT, TASK40_DEFAULT_EXPERIMENT,
+    TASK40_NEXT_EXPERIMENT, task40_artifacts,
+)
 
 
 TASK40_EXPERIMENT = Path('Output/test_01/experiment_09')
@@ -29,14 +32,20 @@ class DeviceEvaluationManager:
     def _watch(self):
         while not self.closed.is_set():
             try:
+                before = {row['id'] for row in self.jobs}
                 rows=[self._localize(row) for row in self._remote('snapshot')]
-                self.jobs=rows;self.error=None
+                observed = {row['id'] for row in rows}
+                with self.lock:
+                    started_during_poll = [row for row in self.jobs
+                                           if row['id'] not in before and row['id'] not in observed]
+                    self.jobs = started_during_poll + rows
+                    self.error = None
             except (ValueError,OSError,subprocess.SubprocessError) as error: self.error=str(error)
             self.closed.wait(5)
 
     def close(self): self.closed.set()
 
-    def _sync_task40_dependencies(self):
+    def _sync_task40_dependencies(self, request=None):
         # Keep this allowlist separate from the workbench source manifest and snapshots.
         files = [TASK40_RUNNER/'paired_sim_diagnostic.py']
         files.extend(TASK40_ANCHOR/name for name in (
@@ -47,15 +56,36 @@ class DeviceEvaluationManager:
         files.extend(path.relative_to(self.root) for path in decisions)
         files.extend(TASK40_WEIGHTS/name for name in (
             'config.json', 'embodiment_id.json', 'processor_config.json', 'statistics.json'))
+        directed = None
+        request = request or {}
+        if request.get('experiment') == TASK40_BASELINE_EXPERIMENT and request.get('restore_checkpoint'):
+            manager = LaunchManager(self.root)
+            checkpoint = manager._task40_path(request['restore_checkpoint'], '失败检查点')
+            lineage = manager._task40_failure_lineage(checkpoint)
+            prefix = Path(lineage['prefix'])
+            files.extend((checkpoint/name).relative_to(self.root) for name in (
+                'sim.pt', 'memory.pt', 'policy_rng_online.pt', 'observation.npz', 'physical.json', 'source.json'))
+            files.extend((prefix/name).relative_to(self.root) for name in ('initial.json', 'trial.json', 'truth.jsonl'))
+            for index in range(lineage['start_decision'] + 1):
+                files.extend((prefix/f'{index:04d}'/name).relative_to(self.root)
+                             for name in ('decision.json', 'observation.npz'))
+                if index < lineage['start_decision']:
+                    files.append((prefix/f'{index:04d}'/'executed.npz').relative_to(self.root))
+            directed = checkpoint.relative_to(self.root).as_posix()
         hashes = {path.as_posix(): hashlib.sha256((self.root/path).read_bytes()).hexdigest() for path in files}
         digest = hashlib.sha256(json.dumps(hashes, sort_keys=True).encode()).hexdigest()
-        destination = Path(self.project)/'setup/task40_dependencies'/digest
+        storage = getattr(self, 'device', {}).get('evaluation', {}).get('task40_baseline_storage')
+        baseline = request.get('experiment') == TASK40_BASELINE_EXPERIMENT
+        dependency_root = (Path(storage)/'dependencies' if baseline and storage else
+                           Path(self.project)/'setup/task40_dependencies')
+        destination = dependency_root/digest
         self.training._ssh(shlex.join(['mkdir', '-p', str(destination)]))
         subprocess.run(['rsync', '-aL', '--relative', '--checksum', '--from0', '--files-from=-', '--timeout=30',
                         '-e', 'ssh -o BatchMode=yes -o ConnectTimeout=5', str(self.root)+'/',
                         self.host+':'+str(destination)+'/'], input='\0'.join(hashes)+'\0',
-                       capture_output=True, text=True, timeout=60, check=True)
-        return {'digest': digest, 'files': hashes, 'paths': {
+                       capture_output=True, text=True, timeout=90, check=True)
+        return {'digest': digest, 'files': hashes, 'directed': directed,
+                'base': str(dependency_root), 'paths': {
             'GROOT_TASK40_RUNNER': TASK40_RUNNER.as_posix(),
             'GROOT_TASK40_ANCHOR': TASK40_ANCHOR.as_posix(),
             'GROOT_TASK40_WEIGHTS': TASK40_WEIGHTS.as_posix(),
@@ -88,8 +118,10 @@ class DeviceEvaluationManager:
             policy_port = payload.get('policy_port', None if collect else port)
             if not collect or (policy_host == host and type(policy_port) is int and 1024 <= policy_port <= 65535):
                 identity = self.policy_resolver(policy_host, int(policy_port))
+        evaluation = self.device['evaluation']
         request=dict(action=action,payload=payload,policy_identity=identity,project=self.project,
-                     environment=self.device['evaluation']['environment'],task40_dependencies=task40_dependencies)
+                     environment=evaluation['environment'], task40_dependencies=task40_dependencies,
+                     task40_baseline_storage=evaluation.get('task40_baseline_storage'))
         module=(self.root/'evaluation/scripts/groot_device_eval_remote.py').read_text()
         code='import sys\nsys.path.insert(0,'+repr(self.project+'/deployments/web_live/evaluation/scripts')+')\n'
         code+=module+'\nprint(json.dumps(dispatch('+repr(request)+'),ensure_ascii=False))\n'
@@ -109,7 +141,7 @@ class DeviceEvaluationManager:
     def prepare(self, request):
         with self.training.lock:
             self.training._sync()
-            dependencies=self._sync_task40_dependencies() if request.get('task40_collect') is True else None
+            dependencies=self._sync_task40_dependencies(request) if request.get('task40_collect') is True else None
         return self._remote('prepare',request,dependencies)
 
     def start(self, request):
@@ -117,20 +149,44 @@ class DeviceEvaluationManager:
             collect=request.get('task40_collect') is True
             with self.training.lock:
                 self.training._sync(force=True)
-                dependencies=self._sync_task40_dependencies() if collect else None
-            return self._localize(self._remote('start',request,dependencies), sync=not collect)
+                dependencies=self._sync_task40_dependencies(request) if collect else None
+            row = self._localize(self._remote('start',request,dependencies), sync=not collect)
+            self.jobs = [row, *(old for old in self.jobs if old['id'] != row['id'])]
+            return row
 
     def _localize_task40(self, row, sync):
         remote = Path(row['output'])
-        remote_root = Path(self.device['evaluation']['environment'].get(
-            'GROOT_TASK40_EXPERIMENT_ROOT', Path(self.project)/TASK40_EXPERIMENT))/'runs'
+        remote_base = Path(self.device['evaluation']['environment'].get(
+            'GROOT_TASK40_EXPERIMENT_ROOT', Path(self.project)/TASK40_EXPERIMENT))
+        local_base = Path(os.environ.get('GROOT_TASK40_EXPERIMENT_ROOT', self.root/TASK40_EXPERIMENT)).resolve()
+        group = row.get('group', TASK40_DEFAULT_EXPERIMENT)
+        storage = self.device['evaluation'].get('task40_baseline_storage')
+        if group == TASK40_BASELINE_EXPERIMENT and storage:
+            remote_base = Path(storage)/group
+            local_base = local_base.with_name(group)
+        elif group in (TASK40_NEXT_EXPERIMENT, TASK40_BASELINE_EXPERIMENT):
+            remote_base = remote_base.with_name(group)
+            local_base = local_base.with_name(group)
+        elif group != TASK40_DEFAULT_EXPERIMENT:
+            raise ValueError('不支持的 Task40 采集组')
+        remote_root = remote_base/'runs'
         if remote.parent != remote_root or not re.fullmatch(r'[a-f0-9]{12}', remote.name):
-            raise ValueError('Task40 采集输出不在远端 Experiment 09 的 runs 目录内')
-        local_root = Path(os.environ.get('GROOT_TASK40_EXPERIMENT_ROOT', self.root/TASK40_EXPERIMENT)).resolve()/'runs'
+            raise ValueError('Task40 采集输出不在所选远端实验的 runs 目录内')
+        local_root = local_base/'runs'
         local = local_root/remote.name
         if local.resolve().parent != local_root:
-            raise ValueError('Task40 采集输出不在本地 Experiment 09 的 runs 目录内')
-        if sync and row.get('output_exists'):
+            raise ValueError('Task40 采集输出不在所选本地实验的 runs 目录内')
+        marker_path = local/'.device.json'
+        terminal = row.get('state') in ('complete', 'failed', 'stopped', 'cancelled')
+        sealed = False
+        if group == TASK40_BASELINE_EXPERIMENT and terminal:
+            try:
+                marker = json.loads(marker_path.read_text())
+                sealed = (marker.get('sealed_job') == row['id'] and marker.get('remote_output') == str(remote)
+                          and (row['state'] != 'complete' or (local/'results.json').is_file()))
+            except (OSError, ValueError):
+                pass
+        if sync and row.get('output_exists') and not sealed:
             try:
                 local.mkdir(parents=True, exist_ok=True)
                 subprocess.run(['rsync', '-a', '--partial-dir=.rsync-partial', '--timeout=10',
@@ -139,7 +195,9 @@ class DeviceEvaluationManager:
                                 self.host+':'+str(remote)+'/', str(local)+'/'],
                                capture_output=True, text=True, timeout=20, check=True)
                 marker = dict(device=self.device_id, remote_output=str(remote), source=row.get('source'))
-                (local/'.device.json').write_text(json.dumps(marker))
+                if group == TASK40_BASELINE_EXPERIMENT and terminal:
+                    marker['sealed_job'] = row['id']
+                marker_path.write_text(json.dumps(marker))
             except (OSError, subprocess.SubprocessError) as error:
                 detail = getattr(error, 'stderr', None)
                 if isinstance(detail, bytes):

@@ -10,6 +10,7 @@ PolicyClient. The workbench supplies the A100 endpoint and checkpoint identity
 in its job metadata. The default matrix tests cognitive history removal, an
 optional cognitive donor, and normal memory at 1x, 2x, 5x and 10x in EOS and
 DiT conditions. Top-level scales, locations and detail can reduce that matrix.
+Set paired_donor to compare the donor at every selected scale and location.
 """
 
 import argparse
@@ -33,6 +34,8 @@ from task40_memory_instrumentation import (
 
 LOG = logging.getLogger("task40_forward")
 ENDPOINT = "task40_frozen_forward"
+PROBE_FIELDS = ("current_pooled", "cognitive_bank_pooled",
+                "cognitive_readout_pooled", "dit_condition_pooled")
 
 
 def read_json(path):
@@ -160,7 +163,32 @@ def stage_for(entry, record):
     return {**stage, "toggled_on": rows[-1]["ToggledOn"], "inside": rows[-1].get("Inside")}
 
 
-def donor_for(root, row, target, target_record, target_snapshot, stage, analysis):
+def replay_snapshot(client, entry, record, cache):
+    """Build a checkpoint-native stream from the archived prefix."""
+    parent, decision = entry.parent, record["decision"]
+    session, key = record["session"], slot_key(record["session"])
+    if cache.get("parent") != parent or cache["decision"] > decision:
+        client.reset()
+        cache.clear()
+        cache.update(parent=parent, decision=0, digest=sha256())
+    for index in range(cache["decision"], decision):
+        folder = parent / f"{index:04d}"
+        meta = read_json(folder / "decision.json")
+        check((meta["decision"], meta["start_step"], meta["end_step"], meta["session"]) ==
+              (index, index * 8, (index + 1) * 8, session), f"Invalid replay history at {folder}")
+        vision = folder / "observation.npz"
+        cache["digest"].update(sha256(vision.read_bytes()).digest())
+        cache["digest"].update(json.dumps(meta["language"], sort_keys=True).encode())
+        client.call_endpoint("get_action", {"observation": load_arrays(vision) | meta["language"],
+                                             "options": session})
+    cache["decision"] = decision
+    reply = client.call_endpoint("task40_memory_snapshot", {"session": session})
+    snapshot = unpack_memory(reply["memory"])
+    check_clock(snapshot, key, decision)
+    return snapshot, {"replayed": decision, "input_sha256": cache["digest"].hexdigest()}
+
+
+def donor_for(root, row, target, target_record, target_snapshot, stage, analysis, reconstruct_state=reconstruct):
     if not row.get("donor"):
         return None, None
     donor = resolve(root, row["donor"])
@@ -185,7 +213,7 @@ def donor_for(root, row, target, target_record, target_snapshot, stage, analysis
               "Different-stage donor lacks a confirmed stage contrast")
     else:
         raise ValueError(f"Unsupported donor relation: {relation}")
-    snapshot, lineage = reconstruct(donor, donor_record)
+    snapshot, lineage = reconstruct_state(donor, donor_record)
     original = target_snapshot["cognitive"]["bank"].get(target_key, [])
     replacement = snapshot["cognitive"]["bank"].get(donor_key, [])
     check(bool(original) and len(original) == len(replacement), "Donor cognitive occupancy must match and be nonzero")
@@ -201,7 +229,7 @@ def donor_for(root, row, target, target_record, target_snapshot, stage, analysis
                                    "stage": donor_stage, "relation": relation}
 
 
-def conditions(scales, locations, use_donor):
+def conditions(scales, locations, use_donor, paired_donor=False):
     yield "A_normal", 1.0, "eos", (), ()
     yield "B_empty_cognitive", 1.0, "eos", ("cognitive",), ()
     if use_donor:
@@ -210,11 +238,13 @@ def conditions(scales, locations, use_donor):
         for location in locations:
             if (scale, location) != (1.0, "eos"):
                 yield scale_name(location, scale), scale, location, (), ()
+                if use_donor and paired_donor:
+                    yield scale_name(location, scale, "C_donor"), scale, location, (), ("cognitive",)
 
 
-def scale_name(location, scale):
+def scale_name(location, scale, prefix="A"):
     label = str(int(scale)) if scale.is_integer() else str(scale)
-    return f"A_{location}_{label}x"
+    return f"{prefix}_{location}_{label}x"
 
 
 def summarize_banks(snapshot, key):
@@ -230,7 +260,11 @@ def summarize_banks(snapshot, key):
 def run_decision(args, row, folder, client, analysis, config, progress):
     source = resolve(args.root, row["target"])
     record = read_json(source / "decision.json")
-    snapshot, lineage = reconstruct(source, record)
+    def native(entry, meta):
+        return replay_snapshot(client, entry, meta, progress_cache)
+    progress_cache = getattr(args, "replay_cache", {})
+    reconstruct_state = native if config["replay_prefix"] else reconstruct
+    snapshot, lineage = reconstruct_state(source, record)
     session, decision = record["session"], record["decision"]
     key = slot_key(session)
     bank_summary = summarize_banks(snapshot, key)
@@ -238,7 +272,7 @@ def run_decision(args, row, folder, client, analysis, config, progress):
     rng = artifact(source, record, "rng_before")
     rng_values = unpack_memory(rng)
     stage = stage_for(source, record) if row.get("donor") else None
-    donor, donor_info = donor_for(args.root, row, source, record, snapshot, stage, analysis)
+    donor, donor_info = donor_for(args.root, row, source, record, snapshot, stage, analysis, reconstruct_state)
     observation = load_arrays(source / "observation.npz")
     language = record["language"]
     check(sum(name.startswith("video.") for name in observation) == 3
@@ -250,7 +284,25 @@ def run_decision(args, row, folder, client, analysis, config, progress):
     online_features = load_arrays(source / "model_features.npz")
     check("dit_condition_eos" in online_features and "normalized_actions" in online_features,
           f"{source} lacks the instrumented online DiT and action features")
-    labels = list(conditions(config["scales"], config["locations"], donor is not None))
+    labels = list(conditions(config["scales"], config["locations"], donor is not None, config["paired_donor"]))
+    rendered_inputs, renderer_sources = {}, {}
+    if row.get("restore_rgb_frames"):
+        runs = args.root / "Output/test_01/experiment_10/runs"
+        cameras = {name for name in observation if name.startswith("video.")}
+        for index, value in enumerate(row["restore_rgb_frames"], 1):
+            frame = resolve(args.root, value)
+            check(frame.is_relative_to(runs.resolve()) and frame.name == "render_06.npz",
+                  "Restore RGB diagnostic requires a sixth-refresh frame from Experiment 10")
+            recovered = load_arrays(frame)
+            check(set(recovered) == observation.keys() - language.keys()
+                  and all(np.array_equal(recovered[key], observation[key]) for key in recovered.keys() - cameras)
+                  and all((recovered[key].shape, recovered[key].dtype) == (observation[key].shape, observation[key].dtype)
+                          for key in cameras), "Recovered observation changed state or RGB format")
+            name = f"restore_rgb_{index}"
+            rendered_inputs[name] = observation | {key: recovered[key] for key in cameras}
+            renderer_sources[name] = {"frame": str(frame), "sha256": sha256(frame.read_bytes()).hexdigest()}
+        rendered_inputs["restore_rgb_1_repeat"] = rendered_inputs["restore_rgb_1"]
+        labels = [labels[0]] + [(name, 1.0, "eos", (), ()) for name in rendered_inputs]
     source_metadata = {
         "source": str(source), "decision": decision, "session": session, "stage": stage,
         "start_step": record["start_step"], "seed": record.get("seed"), "instance": record.get("instance"),
@@ -259,6 +311,8 @@ def run_decision(args, row, folder, client, analysis, config, progress):
         "input_observation_sha256": sha256((source / "observation.npz").read_bytes()).hexdigest(),
         "language": language,
     }
+    if renderer_sources:
+        source_metadata["restore_rgb_sources"] = renderer_sources
     (folder / "memory_before.pt").write_bytes(memory)
     (folder / "rng_before.pt").write_bytes(rng)
     if donor is not None:
@@ -268,17 +322,19 @@ def run_decision(args, row, folder, client, analysis, config, progress):
     comparisons = {}
     variants = {}
     baseline_features = baseline_actions = baseline_rng = baseline_retrieval = None
+    fusion_modes = set()
     for ordinal, (name, scale, location, empty, swap) in enumerate(labels, 1):
         progress.update(condition=name, condition_index=ordinal, conditions=len(labels))
         write_json(args.output / "metrics" / "active_stage.json", progress)
         LOG.info("decision=%s source=%s condition=%s", decision, source, name)
-        request = {"observation": observation, "session": session, "memory": memory, "rng": rng,
+        request = {"observation": rendered_inputs.get(name, observation), "session": session, "memory": memory, "rng": rng,
                    "scale": scale, "location": location, "detail": config["detail"],
                    "empty_banks": list(empty), "donor_banks": list(swap)}
         if swap:
             request["donor_memory"] = donor
         response = client.call_endpoint(ENDPOINT, request)
         trace = response["trace"]
+        fusion_modes.add(trace.get("fusion_mode", "legacy"))
         check(response["schema_version"] == SCHEMA_VERSION and response["decision"] == decision
               and trace["input_memory_sha256"] == source_metadata["input_memory_sha256"]
               and trace["input_rng_sha256"] == source_metadata["input_rng_sha256"]
@@ -318,10 +374,11 @@ def run_decision(args, row, folder, client, analysis, config, progress):
                 **analysis.contrast(baseline_features, features, baseline_actions, actions),
                 "retrieval": analysis.retrieval_contrast(baseline_retrieval, retrieval),
             }
-            check(all(np.array_equal(baseline_features[field], features[field])
-                      for field in ("input_ids", "normalized_state", "pre_backbone_features_eos",
-                                    "current_pooled", "dit_state_features", "embodiment_id")),
-                  f"Non-memory model inputs differ at {name}")
+            fixed_fields = ("input_ids", "normalized_state", "dit_state_features", "embodiment_id")
+            if name not in rendered_inputs:
+                fixed_fields += ("pre_backbone_features_eos", "current_pooled")
+            check(all(np.array_equal(baseline_features[field], features[field]) for field in fixed_fields),
+                  f"Fixed model inputs differ at {name}")
         variants[name] = {
             "trace_file": f"{name}/trace.json",
             "rng_after_matches_normal": analysis.rng_equal(baseline_rng, rng_state),
@@ -340,6 +397,15 @@ def run_decision(args, row, folder, client, analysis, config, progress):
     if donor is not None:
         first, second = "B_empty_cognitive", "C_donor_cognitive"
         comparisons[f"{first}_to_{second}"] = compare_saved(first, second)
+        if config["paired_donor"]:
+            for scale in config["scales"]:
+                for location in config["locations"]:
+                    if (scale, location) != (1.0, "eos"):
+                        first, second = scale_name(location, scale), scale_name(location, scale, "C_donor")
+                        comparisons[f"{first}_to_{second}"] = compare_saved(first, second)
+    if rendered_inputs:
+        for second in ("restore_rgb_1_repeat", "restore_rgb_2"):
+            comparisons[f"restore_rgb_1_to_{second}"] = compare_saved("restore_rgb_1", second)
     if {"eos", "dit_condition"}.issubset(set(config["locations"])):
         for scale in config["scales"]:
             first = "A_normal" if scale == 1 else scale_name("eos", scale)
@@ -349,14 +415,25 @@ def run_decision(args, row, folder, client, analysis, config, progress):
     # Online collection is compact. Compare every recorded field and allow additional full trace fields.
     online_exact = (analysis.all_equal(online["features"], allow_extra_right=True)
                     and analysis.all_equal(online["actions"]))
+    check(len(fusion_modes) == 1, "A frozen batch changed the loaded fusion path")
+    fusion_mode, = fusion_modes
+    if config.get("allow_cross_checkpoint", False):
+        check(fusion_mode in ("route_a", "route_b"), "Expected an Experiment 10 learned-fusion model")
+        fixed_fields = ("input_ids", "normalized_state", "pre_backbone_features_eos",
+                        "current_pooled", "dit_state_features", "embodiment_id")
+        check(all(np.array_equal(online_features[field], baseline_features[field]) for field in fixed_fields),
+              "Cross-checkpoint forward changed a frozen model input")
+    else:
+        check(fusion_mode in ("legacy", "openvla"), "Learned-fusion comparisons require allow_cross_checkpoint")
     results = {"source": str(source), "decision": decision, "stage": stage,
-               "baseline_matches_online": online_exact,
+               "baseline_matches_online": online_exact, "fusion_mode": fusion_mode,
                "variants": variants, "comparisons": comparisons,
                "kinematics": analysis.action_targets(folder, source, row.get("kinematics"), args.root, record)}
     write_json(folder / "contrasts.json", results)
-    if not online_exact or any(not row["rng_after_matches_normal"] for row in variants.values()):
+    if ((not online_exact and not config.get("allow_cross_checkpoint", False))
+            or any(not row["rng_after_matches_normal"] for row in variants.values())):
         LOG.warning("decision=%s has an online baseline mismatch or differing post-forward RNG", decision)
-    return {key: results[key] for key in ("source", "decision", "stage", "baseline_matches_online")} | {
+    return {key: results[key] for key in ("source", "decision", "stage", "baseline_matches_online", "fusion_mode")} | {
         "metrics": str((folder / "contrasts.json").relative_to(args.output)),
         "all_rng_after_match": all(row["rng_after_matches_normal"] for row in variants.values()),
     }
@@ -370,12 +447,29 @@ def load_plan(path):
     scales = [float(scale) for scale in plan.get("scales", [1, 2, 5, 10])]
     locations = plan.get("locations", ["eos", "dit_condition"])
     detail = plan.get("detail", "full")
+    paired_donor = plan.get("paired_donor", False)
+    cross_checkpoint = plan.get("allow_cross_checkpoint", False)
+    replay_prefix = plan.get("replay_prefix", False)
     check(scales and len(scales) == len(set(scales)) and all(math.isfinite(s) and s >= 0 for s in scales),
           "Scales must be distinct, finite and nonnegative")
     check(isinstance(locations, list) and locations and len(locations) == len(set(locations))
           and set(locations) <= {"eos", "dit_condition"}, "Specify unique eos and/or dit_condition locations")
     check(detail in {"full", "compact"}, "Detail must be full or compact")
-    return {"decisions": rows, "scales": scales, "locations": locations, "detail": detail}
+    check(type(paired_donor) is bool and (not paired_donor or all(row.get("donor") for row in rows)),
+          "Paired donor grid requires a donor for every decision")
+    check(type(cross_checkpoint) is bool and (not cross_checkpoint or (scales == [1.] and locations == ["eos"])),
+          "Cross-checkpoint comparisons must use native scale and fusion location")
+    check(type(replay_prefix) is bool and not (replay_prefix and cross_checkpoint),
+          "Prefix replay and legacy cross-checkpoint mode are mutually exclusive")
+    for row in rows:
+        if "restore_rgb_frames" in row:
+            frames = row["restore_rgb_frames"]
+            check(isinstance(frames, list) and len(frames) == 2 and all(isinstance(path, str) for path in frames)
+                  and frames[0] != frames[1] and not row.get("donor") and not cross_checkpoint
+                  and scales == [1.] and locations == ["eos"],
+                  "Restore RGB diagnostic requires two distinct frames and native normal memory")
+    return {"decisions": rows, "scales": scales, "locations": locations, "detail": detail,
+            "paired_donor": paired_donor, "allow_cross_checkpoint": cross_checkpoint, "replay_prefix": replay_prefix}
 
 
 def connect(args):
@@ -391,13 +485,66 @@ def connect(args):
     return client
 
 
+def export_probe(args, client, episodes, results, progress):
+    metrics = args.output / "metrics"
+    check(isinstance(episodes, list) and episodes, "Missing probe cohort")
+    for ordinal, row in enumerate(episodes, 1):
+        target = resolve(args.root, row["episode"])
+        check(target.is_relative_to(args.root / "Output/test_01"), "Invalid probe episode path")
+        decisions = row["decisions"]
+        check(decisions and decisions == sorted(set(decisions)) and decisions[0] >= 0,
+              "Probe decisions must be ordered and unique")
+        client.reset()
+        values = {field: [] for field in PROBE_FIELDS}
+        selected = set(decisions)
+        session = read_json(target / "0000/decision.json")["session"]
+        digest = sha256()
+        for index in range(decisions[-1] + 1):
+            if index % 10 == 0:
+                progress.update(stage="replaying_probe", index=ordinal, total=len(episodes),
+                                episode=str(target), decision=index)
+                write_json(metrics / "active_stage.json", progress)
+            entry = target / f"{index:04d}"
+            record = read_json(entry / "decision.json")
+            check((record["decision"], record["start_step"], record["session"]) ==
+                  (index, index * 8, session), f"Probe prefix discontinuity at {entry}")
+            obs = entry / "observation.npz"
+            digest.update(sha256(obs.read_bytes()).digest())
+            digest.update(json.dumps(record["language"], sort_keys=True).encode())
+            observation = load_arrays(obs) | record["language"]
+            if index not in selected:
+                client.call_endpoint("get_action", {"observation": observation, "options": session})
+                continue
+            response = client.call_endpoint("task40_trace_infer", {
+                "observation": observation, "session": session, "decision": index, "detail": "compact"})
+            check(response["schema_version"] == SCHEMA_VERSION and response["decision"] == index,
+                  f"Probe clock mismatch at {entry}")
+            for field in PROBE_FIELDS:
+                vector = np.asarray(response["model_features"][field])
+                check(vector.ndim == 1 and vector.size and np.isfinite(vector).all(),
+                      f"Invalid probe field {field} at {entry}")
+                values[field].append(vector)
+        snapshot = unpack_memory(client.call_endpoint("task40_memory_snapshot", {"session": session})["memory"])
+        check_clock(snapshot, slot_key(session), decisions[-1] + 1)
+        name = f"probe_{ordinal:04d}.npz"
+        np.savez_compressed(metrics / name, decisions=decisions,
+                            **{field: np.stack(vectors) for field, vectors in values.items()})
+        results["decisions"].append({"episode": str(target), "rows": len(decisions),
+                                     "file": f"metrics/{name}", "prefix_sha256": digest.hexdigest()})
+        progress["completed"] = ordinal
+        LOG.info("probe episode %s/%s exported %s decisions from %s",
+                 ordinal, len(episodes), len(decisions), target)
+
+
 def main(args, client_factory=connect):
     args.root = args.root.resolve()
     args.output = args.output.resolve()
     exp09 = args.root / "Output/test_01/experiment_09"
     for parent in args.output.parents:
         if parent.parent == exp09.parent and parent.name.startswith("experiment_"):
-            check(parent == exp09, "Frozen forward output must not be written under a prior experiment")
+            group = json.loads(args.experiment_plan).get("group", exp09.name)
+            check(group in (exp09.name, "experiment_10", "experiment_11", "experiment_12") and parent.name == group,
+                  "Frozen forward output must match its registered experiment")
     args.output.mkdir(parents=True, exist_ok=False)
     for name in ("logs", "metrics"):
         (args.output / name).mkdir()
@@ -419,6 +566,15 @@ def execute(args, client_factory):
     progress = {"stage": "loading_batch", "completed": 0}
     write_json(metrics / "active_stage.json", progress)
     try:
+        raw = read_json(args.batch)
+        if "probe_episodes" in raw:
+            job = {**json.loads(args.experiment_plan or "{}"), "phase": "native_probe_export",
+                   "endpoint": "task40_trace_infer", "batch": str(args.batch.resolve())}
+            write_json(args.output / "job.json", job)
+            results["configuration"] = job
+            export_probe(args, client_factory(args), raw["probe_episodes"], results, progress)
+            results["status"] = "completed"
+            return 0
         configuration = load_plan(args.batch)
         for row in configuration["decisions"]:
             for name in ("target", "donor"):
@@ -433,6 +589,7 @@ def execute(args, client_factory):
         results["configuration"] = job
         analysis = load_analysis(args.root)
         client = client_factory(args)
+        args.replay_cache = {}
         for ordinal, row in enumerate(configuration["decisions"], 1):
             progress.update(stage="frozen_forward", index=ordinal, total=len(configuration["decisions"]),
                             target=row["target"], condition=None)

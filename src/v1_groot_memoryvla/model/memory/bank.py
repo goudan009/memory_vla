@@ -106,9 +106,10 @@ class GateFusion(nn.Module):
 
 
 class MemoryBank(nn.Module):
-    def __init__(self, dim, capacity=16, retrieval_layers=2, qk_norm="none"):
+    def __init__(self, dim, capacity=16, retrieval_layers=2, qk_norm="none", update_fused=True):
         super().__init__()
         self.capacity = capacity
+        self.update_fused = update_fused
         self.retrieval_blocks = nn.ModuleList(CrossTransformerBlock(dim, qk_norm) for _ in range(retrieval_layers))
         self.timestep_encoder = TimestepEmbedder(dim, dim // 4)
         self.gate_fusion_blocks = GateFusion(dim)
@@ -128,8 +129,8 @@ class MemoryBank(nn.Module):
                 self.last_written.pop(key, None)
 
     def read_fuse_write(self, current, key, timestep, return_value_message=False, history_override=None,
-                        capture_diagnostics=False, capture_attention=False):
-        """Read strictly past features, fuse, then detach/clone the fused write."""
+                        capture_diagnostics=False, capture_attention=False, return_history=False):
+        """Read strictly past features, fuse, and store a detached snapshot."""
         history = self.bank.get(key, []) if history_override is None else history_override
         self.last_diagnostics = None
         if capture_diagnostics:
@@ -169,11 +170,16 @@ class MemoryBank(nn.Module):
             # has bitwise zero residual, including in BF16.
             fused = current
             message = torch.zeros_like(current)
-        self._write(key, timestep, fused.squeeze(0))
+        if return_history:
+            # Materialized before _write can append or merge slots; no current
+            # observation and no gradient into an earlier memory write.
+            pre_write = memory.detach() if history else current[:, :0].detach()
+        self._write(key, timestep, (fused if self.update_fused else current).squeeze(0))
         if capture_diagnostics:
             self.last_diagnostics.update(slots_after_write=len(self.bank[key]),
                 merges_after_write=self.merge_count.get(key,0))
-        return (fused, message) if return_value_message else fused
+        result = (fused, message) if return_value_message else fused
+        return (result, pre_write) if return_history else result
 
     @torch.no_grad()
     def _write(self, key, timestep, fused):

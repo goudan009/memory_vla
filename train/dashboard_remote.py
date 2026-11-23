@@ -19,6 +19,7 @@ import time
 if '__file__' in globals():
     sys.path.insert(0, str(Path(__file__).resolve().parent))
 from run_identity import NAMING_SCHEMA, method_name, training_base, training_identity, reserve_training
+from run_identity import EXPERIMENT_12_RUN, checkpoint_step
 
 # This RPC is also executed as source over SSH, without importing the model stack.
 import importlib.util
@@ -51,6 +52,7 @@ BASE_CHECKPOINT = Path(_paths.get('base_checkpoint', BASE_CHECKPOINT))
 DATASETS = Path(_paths.get('datasets', DATASETS))
 DEVICE_LABEL = _device.get('device_label', 'A100')
 WAITING_QUEUE_STATES = {'waiting_for_four_runs', 'waiting_for_gpus', 'queued'}
+TERMINAL_TRAINING_STATES = {'complete', 'completed', 'stopped', 'failed', 'cancelled'}
 
 
 def run_name(version, task, arm):
@@ -58,6 +60,8 @@ def run_name(version, task, arm):
 
 
 def display_name(root, arm, task):
+    if EXPERIMENT_12_RUN.fullmatch(root.name):
+        return root.name
     identity = training_identity(root, arm, task)
     return training_base(identity['version'],identity['task_id'],identity['method'])+'_train%02d'%identity['train_number'] if identity['task_id'] is not None else root.name
 
@@ -150,11 +154,16 @@ def catalog():
             files=set(index.get('weight_map',{}).values())
             if files and all((path/name).is_file() for name in files):
                 checkpoints.append(dict(path=str(path),label=label,training_profile=checkpoint_training_profile(path)))
-    for file in sorted(TRAINING.glob('*/*/checkpoints/step-*/config.json'), key=lambda p: p.stat().st_mtime, reverse=True):
+    for file in sorted(TRAINING.glob('*/*/checkpoints/*/config.json'), key=lambda p: p.stat().st_mtime, reverse=True):
         root=file.parents[3]
-        if root.is_symlink():
+        step = checkpoint_step(file.parent.name, root.name)
+        if root.is_symlink() or step is None:
             continue
         arm=file.parents[2].name
+        if EXPERIMENT_12_RUN.fullmatch(root.name):
+            latest = read_json(root/arm/'checkpoints/latest.json',{}).get('step',0)
+            if step > latest:
+                continue
         task=read_json(root/'config/data_split.json',{}).get('task')
         checkpoints.append(dict(path=str(file.parent), label=display_name(root,arm,task)+' / '+file.parent.name,
             training_profile=checkpoint_training_profile(file.parent)))
@@ -170,6 +179,19 @@ def _path(value, label):
     return Path(value)
 
 
+def fusion_contract():
+    path = _options_file.with_name('launch_task21_ddp.py')
+    spec = importlib.util.spec_from_file_location('workbench_ddp_launcher', path)
+    module = importlib.util.module_from_spec(spec)
+    try:
+        spec.loader.exec_module(module)
+    except (FileNotFoundError, ImportError) as error:
+        raise ValueError('Exp10 launcher not deployed; sync the workbench source and retry preview') from error
+    if not hasattr(module, 'fusion_options'):
+        raise ValueError('Exp10 launcher not deployed; sync the workbench source and retry preview')
+    return module
+
+
 def prepare(request):
     allowed = {'task', 'tasks', 'task_name', 'dataset', 'split', 'checkpoint', 'gpus', 'validation_gpu',
                'arm', 'steps', 'global_windows_per_step', 'microbatch', 'seed', 'learning_rate', 'share_existing', 'version',
@@ -177,11 +199,21 @@ def prepare(request):
                'memory_length', 'memory_conditioning', 'memory_residual_readout', 'memory_cognitive_qk_norm', 'image_augmentation', 'fine_tuning_mode',
                'validation_interval', 'disable_early_stopping', 'notes', 'lora_targets', 'lora_rank', 'lora_alpha',
                'lora_dropout', 'llm_last_n_layers', 'gradient_checkpointing', 'weight_decay', 'max_grad_norm',
-               'optimizer_eps', 'memory_cognitive_residual_projection', 'memory_cognitive_residual_scope',
+               'optimizer_eps', 'memory_cognitive_residual_projection', 'memory_cognitive_residual_scope', 'run_id',
+               'experiment', 'fusion_variant', 'fusion_dit_layers', 'fusion_state_lambda', 'fusion_state_panel',
                *('freeze_' + name for name in FINETUNING_COMPONENTS)}
     if not isinstance(request, dict) or set(request)-allowed:
         raise ValueError('不支持的训练参数')
-    fine_tuning = resolve_finetuning(request)
+    fusion = {}
+    if any(key in request for key in ('experiment', 'fusion_variant', 'fusion_dit_layers', 'fusion_state_lambda', 'fusion_state_panel')):
+        contract = fusion_contract()
+        fusion = contract.fusion_options(dict(request, checkpoint=_path(request.get('checkpoint'), '权重')))
+    openvla = request.get('memory_conditioning') == 'openvla'
+    tuning_request = request
+    if fusion:
+        tuning_request = dict(fine_tuning_mode='custom', **{'freeze_' + name: True for name in FINETUNING_COMPONENTS})
+        tuning_request.update(request)
+    fine_tuning = resolve_finetuning(tuning_request)
     weight_decay, max_grad_norm = request.get('weight_decay', .01), request.get('max_grad_norm', 1.)
     if type(weight_decay) not in (int,float) or not math.isfinite(weight_decay) or weight_decay < 0:
         raise ValueError('Weight decay须为非负有限数')
@@ -190,8 +222,10 @@ def prepare(request):
     optimizer_eps = request.get('optimizer_eps', 1e-8)
     if type(optimizer_eps) not in (int,float) or not math.isfinite(optimizer_eps) or optimizer_eps <= 0:
         raise ValueError('AdamW epsilon须为正有限数')
-    validation_interval = request.get('validation_interval', 1000)
-    if type(validation_interval) is not int or validation_interval < 1000 or validation_interval % 1000:
+    validation_interval = request.get('validation_interval', 500 if fusion else 1000)
+    if fusion and (type(validation_interval) is not int or validation_interval != 500):
+        raise ValueError('Exp10 uses in-process validation every 500 steps and at the final step')
+    if not fusion and (type(validation_interval) is not int or validation_interval < 1000 or validation_interval % 1000):
         raise ValueError('验证间隔须为1000的正整数倍')
     disable_early_stopping = request.get('disable_early_stopping', False)
     if type(disable_early_stopping) is not bool:
@@ -206,21 +240,25 @@ def prepare(request):
         if type(request.get(key, True if key=='validation_enabled' else False)) is not bool:
             raise ValueError(key+'必须为开关')
     validation_enabled=request.get('validation_enabled',True)
-    if _device.get('single_gpu') and validation_enabled:
+    if fusion and (not validation_enabled or request.get('validation_gpu') is not None):
+        raise ValueError('Exp10 uses in-process validation; do not specify validation_gpu')
+    if not fusion and _device.get('single_gpu') and validation_enabled:
         raise ValueError('该设备只有一张卡，请关闭独立 Episode 验证；训练后再单独评估权重')
     validation_gpu=request.get('validation_gpu') if validation_enabled else None
-    if validation_enabled and type(validation_gpu) is not int:
+    if not fusion and validation_enabled and type(validation_gpu) is not int:
         raise ValueError('开启验证时请选择验证GPU')
     percent=request.get('validation_percent',10) if validation_enabled else 0
     if type(percent) is not int or not (1<=percent<=50 if validation_enabled else percent==0):
         raise ValueError('验证比例应为1–50之间的整数百分比')
-    selected=set(gpus+([validation_gpu] if validation_enabled else []))
+    selected=set(gpus+([validation_gpu] if validation_gpu is not None else []))
     if not selected <= {g['index'] for g in gpu_info()}:
         raise ValueError('所选GPU不存在')
     tasks=request.get('tasks',[request.get('task')])
     if not isinstance(tasks,list) or not tasks or any(type(t) is not int or not 0<=t<50 for t in tasks) or len(set(tasks))!=len(tasks):
         raise ValueError('请选择不重复的任务编号0–49')
     tasks=sorted(tasks)
+    if fusion and tasks != [40]:
+        raise ValueError('Exp10 fusion is restricted to Task40')
     task_label=tasks[0] if len(tasks)==1 else '_'.join(map(str,tasks))
     if request.get('arm') not in ['baseline', 'memory_v1']:
         raise ValueError('请选择Baseline或MemoryVLA v1')
@@ -237,12 +275,21 @@ def prepare(request):
     if method.startswith('ablation_') and not description.strip():
         raise ValueError('消融需要填写实际代码或配置改动说明；名称不会自动关闭模块')
     name_base=training_base(version,task_label,method)
-    if request['steps'] < 1000 or request['steps'] % 1000:
+    run_id = request.get('run_id')
+    if 'run_id' in request:
+        if (not openvla or version != 'V_1' or method != 'memory' or task_label != 40
+                or not isinstance(run_id, str) or not EXPERIMENT_12_RUN.fullmatch(run_id)):
+            raise ValueError('Experiment 12 训练标识须使用 v1__test01__exp12__run001 格式')
+        if (TRAINING/run_id).exists() or (TRAINING/'.trash'/run_id).exists() or (PROJECT/'deployments'/run_id).exists():
+            raise ValueError('该训练标识已存在，请从原作业续跑')
+    if not fusion and not openvla and (request['steps'] < 1000 or request['steps'] % 1000):
         raise ValueError('当前保存周期为1000，请填写1000的整数倍步数')
     if not 1 <= request['global_windows_per_step'] <= 180 or request['global_windows_per_step'] % len(gpus):
         raise ValueError('全局窗口数必须能被训练卡数整除，且在1–180之间')
     if not 1 <= request['microbatch'] <= 32 or not 0 <= request['seed'] < 2**32:
         raise ValueError('microbatch或seed超出范围')
+    if fusion and request['microbatch'] not in (1, 2, 4, 8, 16, 32):
+        raise ValueError('Exp10 microbatch must be 1, 2, 4, 8, 16, or 32')
     lr = request.get('learning_rate')
     if type(lr) not in [int, float] or not math.isfinite(lr) or not 0 < lr <= .01:
         raise ValueError('学习率必须在0到0.01之间')
@@ -254,8 +301,8 @@ def prepare(request):
     image_augmentation = request.get('image_augmentation', True)
     if type(memory_length) is not int or memory_length < 1:
         raise ValueError('记忆容量必须为正整数')
-    if memory_conditioning not in ('direct', 'residual'):
-        raise ValueError('记忆接入方式必须为direct或residual')
+    if memory_conditioning not in ('direct', 'residual', 'openvla'):
+        raise ValueError('记忆接入方式必须为direct、residual或openvla')
     if memory_residual_readout not in ('delta', 'value'):
         raise ValueError('Residual readout必须为delta或value')
     if memory_conditioning != 'residual' and memory_residual_readout != 'delta':
@@ -266,11 +313,32 @@ def prepare(request):
     if not re.fullmatch(r'[A-Za-z0-9_]{1,100}', name):
         raise ValueError('任务名格式不正确')
     checkpoint = _path(request.get('checkpoint'), '权重')
+    if openvla and (
+        fusion or tasks != [40] or request['arm'] != 'memory_v1' or checkpoint.resolve() != OFFICIAL.resolve()
+        or len(gpus) != 4 or request['global_windows_per_step'] != 8 or request['microbatch'] not in (1, 2, 4)
+        or request['steps'] not in (2, 6000) or request['seed'] != 42 or lr != 2e-5
+        or weight_decay != 0. or optimizer_eps != 1e-8 or max_grad_norm != 1.
+        or validation_enabled or memory_length != 16 or request.get('memory_cognitive_qk_norm') != 'none'
+        or fine_tuning['fine_tuning_mode'] != 'full' or fine_tuning['llm_last_n_layers']
+        or any(fine_tuning['freeze_' + name] for name in FINETUNING_COMPONENTS)
+    ):
+        raise ValueError('Exp12 requires official B1K Task40, four ranks, eight 16-decision groups, '
+                         'full fine-tuning, 16 slots, no QK norm, and the locked optimizer and seed')
     known = catalog()['datasets']
     sources=[]
     splits={}
     train,validation,mapping=[],[],{}
     count=2*percent
+    explicit_split = None
+    if fusion:
+        explicit_split = read_json(_path(request.get('split'), '数据划分'))
+        if not isinstance(explicit_split, dict):
+            raise ValueError('Exp10 requires an explicit Task40 split file')
+        contract.validate_exp10_split(explicit_split)
+        count = len(explicit_split['validation'])
+        if count % 2 or count > 100 or ('validation_percent' in request and count != 2*percent):
+            raise ValueError('Exp10 validation_percent must match the explicit Episode split')
+        percent = count // 2
     if request['global_windows_per_step']>200-count:
         raise ValueError('全局窗口数不能超过每个任务的训练Episode数，请减少窗口数或验证比例')
     for task in tasks:
@@ -279,7 +347,7 @@ def prepare(request):
             raise ValueError(f'Task{task}数据尚未在{DEVICE_LABEL}就绪，请先准备数据')
         source=dict(source)
         original=read_json(Path(source['split']))
-        if 'tasks' not in request and (request.get('dataset')!=source['dataset'] or read_json(_path(request.get('split'),'数据划分'))!=original):
+        if not fusion and 'tasks' not in request and (request.get('dataset')!=source['dataset'] or read_json(_path(request.get('split'),'数据划分'))!=original):
             raise ValueError('请选择已登记的数据集和对应Episode划分')
         ids=original['train']+original['validation']
         if original.get('task')!=task or len(ids)!=200 or len(set(ids))!=200 or set(original['train']) & set(original['validation']):
@@ -288,7 +356,11 @@ def prepare(request):
             raise ValueError(f'Task{task}数据不存在')
         if any(e in mapping for e in ids):
             raise ValueError('多任务Episode编号重复，不能直接合并')
-        if count==len(original['validation']) and request['seed']==original.get('seed',42):
+        if fusion:
+            if request.get('dataset') != source['dataset'] or explicit_split != original:
+                raise ValueError('Exp10 requires the registered Task40 dataset and its exact Episode split')
+            selected_train,selected_validation=explicit_split['train'],explicit_split['validation']
+        elif count==len(original['validation']) and request['seed']==original.get('seed',42):
             selected_train,selected_validation=original['train'],original['validation']
         else:
             ids=sorted(ids)
@@ -302,12 +374,16 @@ def prepare(request):
         train_episodes_per_task=200-count,validation_episodes_per_task=count,
         validation_enabled=validation_enabled,episode_tasks=mapping,per_task=splits)
     split.update(task=tasks[0]) if len(tasks)==1 else split.update(tasks=tasks,task_sampling='equal task cycle')
+    if fusion:
+        split = explicit_split
     if not (checkpoint/'config.json').is_file() or not PYTHON.is_file():
         raise ValueError('数据集、checkpoint或目标设备 Python 环境不存在')
     saved_config = read_json(checkpoint/'config.json')
+    if fusion and not saved_config.get('memory_enabled'):
+        raise ValueError('Exp10 initialization must be a MemoryVLA checkpoint')
     if 'memory_conditioning' not in request and saved_config.get('memory_enabled'):
         memory_conditioning = saved_config.get('memory_conditioning', 'residual')
-        if memory_conditioning not in ('direct', 'residual'):
+        if memory_conditioning not in ('direct', 'residual', 'openvla'):
             raise ValueError('权重保存的记忆接入方式无效')
     if 'memory_residual_readout' not in request and saved_config.get('memory_enabled'):
         memory_residual_readout = saved_config.get('memory_residual_readout', 'delta')
@@ -340,18 +416,25 @@ def prepare(request):
     if (request['arm']=='memory_v1' and saved_config.get('memory_enabled')
             and saved_config.get('memory_residual_readout', 'delta') != memory_residual_readout):
         raise ValueError('Residual readout与权重不同；本轮请从原始GR00T权重开始')
+    if fusion:
+        trainer = LIVE/'src/v1_groot_memoryvla/experiment/task21_ddp.py'
+        fusion['fusion_training'] = contract.fusion_readiness(fusion, trainer)
     existing = compute_pids(selected)
     if existing and not request.get('share_existing') and not request.get('enqueue'):
         raise ValueError('所选GPU有现有进程，请换卡，或显式勾选共卡；不会停止现有进程')
     return dict(version=version, method=method, method_description=description, notes=notes.strip(), naming_schema=NAMING_SCHEMA,
         device_id=_device.get('device_id','a100'), device_label=DEVICE_LABEL,
-        run_name=name_base+'_trainNN', task=task_label, tasks=tasks, task_name=name, arm=request['arm'],
+        run_name=run_id or name_base+'_trainNN', task=task_label, tasks=tasks, task_name=name, arm=request['arm'],
+        **({'run_id': run_id} if run_id else {}),
         datasets=sources,dataset=sources[0]['dataset'] if len(tasks)==1 else None,
         checkpoint=str(checkpoint), split=sources[0]['split'] if len(tasks)==1 else None, split_value=split, gpus=gpus,
         validation_gpu=validation_gpu, validation_enabled=validation_enabled, validation_percent=percent,
         train_episodes=len(train),validation_episodes=len(validation),enqueue=request.get('enqueue',False),
         share_existing=request.get('share_existing',False),steps=request['steps'],
-        global_windows_per_step=request['global_windows_per_step'], global_decisions=32*request['global_windows_per_step'],
+        global_windows_per_step=request['global_windows_per_step'], global_decisions=(16 if openvla else 32)*request['global_windows_per_step'],
+        **(dict(gradient_accumulation_steps=32//request['microbatch'], scheduler='constant',
+                warmup_steps=0, sharding='FULL_SHARD',
+                training_protocol='memoryvla_openvla_b1k_v1') if openvla else {}),
         microbatch=request['microbatch'], seed=request['seed'], learning_rate=lr, existing_pids=existing,
         memory_length=memory_length, memory_conditioning=memory_conditioning,
         memory_residual_readout=memory_residual_readout, image_augmentation=image_augmentation,
@@ -360,7 +443,9 @@ def prepare(request):
         **fine_tuning, weight_decay=weight_decay, max_grad_norm=max_grad_norm, validation_interval=validation_interval,
         disable_early_stopping=disable_early_stopping,
         frozen_eagle=all(fine_tuning['freeze_' + k] for k in ('llm', 'vision', 'vision_projector')),
-        lora=fine_tuning['fine_tuning_mode']=='lora', checkpoint_interval=1000, asynchronous_validation=validation_enabled,
+        lora=fine_tuning['fine_tuning_mode']=='lora', checkpoint_interval=2000 if openvla else 1000,
+        asynchronous_validation=validation_gpu is not None,
+        **fusion,
         initialization='New optimizer from selected weights; not an optimizer-state resume')
 
 
@@ -384,7 +469,9 @@ def command(plan, source, output):
                '--memory-residual-readout', plan.get('memory_residual_readout', 'delta'),
                '--memory-cognitive-qk-norm', plan.get('memory_cognitive_qk_norm', 'layernorm'),
                '--image-augmentation' if plan.get('image_augmentation', True) else '--no-image-augmentation']
-    if plan['validation_enabled']:
+    if plan.get('experiment'):
+        result += ['--experiment', plan['experiment'], *fusion_contract().fusion_argv(plan)]
+    elif plan['validation_enabled']:
         result += ['--async-validation-gpu', str(plan['validation_gpu']),
                    '--validation-interval', str(plan.get('validation_interval', 1000))]
     else:
@@ -437,28 +524,49 @@ def materialize_dataset(plan, output):
 
 def start(request):
     plan = prepare(request)
+    if plan.get('experiment') and not plan['fusion_training']['ready']:
+        raise ValueError(plan['fusion_training']['reason'])
+    if plan.get('fusion_state_lambda', 0) > 0:
+        panel = Path(plan.get('fusion_state_panel', ''))
+        if len(plan['gpus']) != 1 or not panel.is_file():
+            raise ValueError('Exp10 state loss requires one training GPU and a verified state panel')
     manifest = read_json(LIVE/'web_source_manifest.json')
     if not manifest or manifest['digest'] != request_digest:
         raise ValueError('同步源码版本不匹配，请重新同步')
-    run_id, number = reserve_training(TRAINING, PROJECT/'deployments',plan['version'],plan['task'],plan['method'])
+    if 'run_id' in plan:
+        run_id = plan['run_id']
+        try:
+            (TRAINING/run_id).mkdir(parents=True)
+        except FileExistsError as error:
+            raise ValueError('该训练标识已存在，请从原作业续跑') from error
+        number = int(run_id[-3:])
+    else:
+        run_id, number = reserve_training(TRAINING, PROJECT/'deployments',plan['version'],plan['task'],plan['method'])
     plan.update(training_id=run_id,train_number=number,run_name=run_id)
     output = TRAINING/run_id
     source = PROJECT/'deployments'/run_id
     shutil.copytree(LIVE, source, symlinks=True)
     plan['dataset']=materialize_dataset(plan,output)
+    if plan.get('fusion_state_panel'):
+        panel = Path(plan['fusion_state_panel'])
+        target = output/'config/task40_state_panel.pt'
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(panel, target)
+        plan['fusion_state_panel_source'] = str(panel)
+        plan['fusion_state_panel'] = str(target)
     argv = command(plan, source, output)
     atomic_json(output/'config/data_split.json', plan.pop('split_value'))
     atomic_json(output/'config/web_launch.json', dict(plan, source=str(source), source_manifest=manifest, argv=argv))
     atomic_json(output/'config/source_manifest.json', manifest)
     (output/plan['arm']).mkdir(exist_ok=True)
-    if plan['validation_enabled']:
+    if plan['asynchronous_validation']:
         atomic_json(output/(plan['arm']+'/validation_queue/step-000000.json'), dict(step=0, checkpoint=plan['checkpoint']))
     (output/'logs').mkdir(exist_ok=True)
     status='queued' if plan['enqueue'] else 'submitted'
     if plan['enqueue']:
         queue=TRAINING/'queues'/run_id
         atomic_json(queue/'config.json',dict(output=str(output),arm=plan['arm'],argv=argv,
-            gpus=plan['gpus']+([plan['validation_gpu']] if plan['validation_enabled'] else []),
+            gpus=plan['gpus']+([plan['validation_gpu']] if plan['asynchronous_validation'] else []),
             allowed_processes={str(pid):process_start(pid) for pid in plan['existing_pids']} if plan['share_existing'] else {}))
         atomic_json(queue/'status.json',dict(status='queued',jobs=[dict(run=run_id,arm=plan['arm'])],
             created_at=datetime.datetime.now().isoformat()))
@@ -547,7 +655,9 @@ def resume_info(root, arm):
     latest=read_json(root/arm/'checkpoints/latest.json',{})
     failed=read_json(root/'status.json',{}).get('status')=='failed'
     info=dict(available=False,step=latest.get('step'),reason='')
-    if state.get('status') not in terminal and not failed:
+    if launch.get('experiment'):
+        info['reason']='Exp10 fusion runs have a fixed small-run budget; resume is not supported'
+    elif state.get('status') not in terminal and not failed:
         info['reason']='请先等待训练停止或结束'
     elif len(plan.get('commands',{}))!=1:
         info['reason']='配对运行暂不支持单独续跑，请使用原配对命令'
@@ -565,8 +675,13 @@ def resume_info(root, arm):
         checkpoint=Path(latest.get('path',''))
         index=read_json(checkpoint/'model.safetensors.index.json',{})
         weights=set(index.get('weight_map',{}).values()) or {'model.safetensors'}
-        files=[root/arm/'checkpoints/latest_optimizer.pt',
-               *[root/arm/f'checkpoints/latest_rank-{r:03d}.pt' for r in range(config.get('world_size',0))],
+        openvla=config.get('training_protocol')=='memoryvla_openvla_b1k_v1'
+        state_dir=checkpoint/'training_state' if openvla else root/arm/'checkpoints'
+        optimizer_files=([state_dir/f'optimizer_rank-{r:03d}.pt' for r in range(config.get('world_size',0))]
+                         if openvla else [state_dir/'latest_optimizer.pt'])
+        files=[*optimizer_files,
+               *[state_dir/f'latest_rank-{r:03d}.pt' for r in range(config.get('world_size',0))],
+               *([state_dir/'scheduler.json'] if openvla else []),
                checkpoint/'config.json',*[checkpoint/name for name in weights],
                Path(launch['source'])/'src/v1_groot_memoryvla/experiment/task21_ddp.py',
                Path(launch['source'])/'train/run_groot_train.sh']
@@ -576,13 +691,15 @@ def resume_info(root, arm):
             info['reason']='模型、优化器、各 rank 状态或原源码快照不完整'
         elif any(latest.get(k)!=config.get(k) for k in ['world_size','seed','global_windows_per_step']):
             info['reason']='断点与原训练配置不匹配'
+        elif openvla and latest['step'] >= config['steps']:
+            info['reason']='Exp12 has reached its locked training budget'
         else:
             previous=read_json(root/'config/web_resume_latest.json',{})
-            minimum=1000*math.ceil(max(config['steps'],latest['step']+1)/1000)
+            minimum=config['steps'] if openvla else 1000*math.ceil(max(config['steps'],latest['step']+1)/1000)
             info.update(available=True,checkpoint=str(checkpoint),source=launch['source'],
                 gpus=launch['gpus'],seed=config['seed'],min_steps=minimum,
                 default_steps=max(minimum,previous.get('steps',config['steps'])),
-                validation_enabled=validation_enabled,validation_gpu=validation_gpu)
+                validation_enabled=validation_enabled,validation_gpu=validation_gpu, fixed_budget=openvla)
     return info
 
 
@@ -599,12 +716,20 @@ config=json.loads((root/arm/'config/ddp.json').read_text())
 config.update(steps=int(sys.argv[4]),resume_step=int(sys.argv[5]))
 args=argparse.Namespace(**config)
 manifest=resume_manifest(args,root/arm,config['world_size'])
+state_dir=root/arm/'checkpoints'
+if config.get('training_protocol') == 'memoryvla_openvla_b1k_v1':
+    state_dir=Path(manifest['path'])/'training_state'
+    scheduler=json.loads((state_dir/'scheduler.json').read_text())
+    assert scheduler['last_epoch']==manifest['step'], 'Scheduler step mismatch'
 for rank in range(config['world_size']):
-    state=torch.load(root/arm/f'checkpoints/latest_rank-{rank:03d}.pt',map_location='cpu',weights_only=True,mmap=True)
+    state=torch.load(state_dir/f'latest_rank-{rank:03d}.pt',map_location='cpu',weights_only=True,mmap=True)
     assert all(state[k]==manifest[k] for k in ('step','epoch','position')), 'rank checkpoint mismatch'
-optimizer=torch.load(root/arm/'checkpoints/latest_optimizer.pt',map_location='cpu',weights_only=True,mmap=True)
-assert optimizer['state'], 'Missing optimizer state'
-assert all(0<int(value['step'])<=manifest['step'] for value in optimizer['state'].values()), 'Optimizer step mismatch'
+optimizers=([state_dir/f'optimizer_rank-{rank:03d}.pt' for rank in range(config['world_size'])]
+            if config.get('sharding')=='FULL_SHARD' else [state_dir/'latest_optimizer.pt'])
+for path in optimizers:
+    optimizer=torch.load(path,map_location='cpu',weights_only=True,mmap=True)
+    assert optimizer['state'], 'Missing optimizer state'
+    assert all(0<int(value['step'])<=manifest['step'] for value in optimizer['state'].values()), 'Optimizer step mismatch'
 '''
     result=subprocess.run([str(PYTHON),'-c',code,info['source'],str(root),arm,str(steps),str(info['step'])],
         capture_output=True,text=True,timeout=60,env=dict(os.environ,PYTHONDONTWRITEBYTECODE='1',
@@ -625,6 +750,117 @@ def replace_option(argv, key, value=None, multiple=False):
     return argv
 
 
+def repartition_resume(root, arm, info, gpus):
+    """Move live single-task Episode state by the original virtual slot owner."""
+    code = """
+import json
+import re
+import sys
+from collections import defaultdict
+from pathlib import Path
+from types import SimpleNamespace
+
+import torch
+from v1_groot_memoryvla.experiment.task21_ddp import EpisodePlan
+
+root, arm, world = Path(sys.argv[1]), sys.argv[2], int(sys.argv[3])
+split = json.loads((root/'config/data_split.json').read_text())
+config_dir = root/arm/'config'
+config = json.loads((config_dir/'ddp.json').read_text())
+checkpoints = root/arm/'checkpoints'
+manifest = json.loads((checkpoints/'latest.json').read_text())
+old_world = manifest['world_size']
+assert len(set(split.get('episode_tasks', {}).values())) <= 1, 'Multi-task cursors require task-specific migration'
+selected = set(split['train'])
+by_episode = defaultdict(list)
+for line in (Path(config['dataset'])/'meta/episodes.jsonl').read_text().splitlines():
+    row = json.loads(line)
+    eid = row['episode_index']
+    if eid in selected:
+        by_episode[eid] = list(range((row['length']+255)//256))
+assert set(by_episode) == selected
+plan = EpisodePlan(SimpleNamespace(by_episode=by_episode), config['global_windows_per_step'],
+                   config['seed']+manifest['epoch'])
+assert plan.steps == config['steps_per_epoch'] and 0 <= manifest['position'] <= plan.steps
+ownership = {}
+runtime = [[] for _ in range(world)]
+keys = ('bank', 'last_written', 'merge_count')
+for rank in range(old_world):
+    path = checkpoints/f'latest_rank-{rank:03d}.pt'
+    state = torch.load(path, map_location='cpu', weights_only=True, mmap=True)
+    assert all(state[k] == manifest[k] for k in ('step','epoch','position'))
+    for bank_index, bank in enumerate(state['memory_runtime']):
+        for target in runtime:
+            if len(target) == bank_index:
+                target.append({field: {} for field in keys})
+        for field in keys:
+            for key, value in bank[field].items():
+                episode = re.fullmatch(r'dataset0/episode([0-9]+)', key)
+                assert episode, key
+                slot = plan.owner[int(episode[1])]
+                assert slot % old_world == rank
+                ownership[key] = slot
+                destination = runtime[slot % world][bank_index][field]
+                assert key not in destination
+                destination[key] = value
+for rank, banks in enumerate(runtime):
+    temporary = checkpoints/f'migrated_rank-{rank:03d}.pt'
+    torch.save(dict(step=manifest['step'], epoch=manifest['epoch'],
+                    position=manifest['position'], memory_runtime=banks), temporary)
+for rank in range(world):
+    (checkpoints/f'migrated_rank-{rank:03d}.pt').replace(checkpoints/f'latest_rank-{rank:03d}.pt')
+for rank in range(world, old_world):
+    (checkpoints/f'latest_rank-{rank:03d}.pt').unlink()
+config['world_size'] = manifest['world_size'] = world
+(config_dir/'ddp.json').write_text(json.dumps(config, indent=2))
+(checkpoints/'latest.json').write_text(json.dumps(manifest, indent=2))
+print(json.dumps(dict(from_world=old_world, to_world=world, virtual_slots=ownership,
+                      epoch=manifest['epoch'], position=manifest['position'])))
+"""
+    result = subprocess.run([str(PYTHON), '-c', code, str(root), arm, str(len(gpus))],
+        capture_output=True, text=True, timeout=60,
+        env=dict(os.environ, PYTHONPATH=str(Path(info['source'])/'src'),
+                 PYTHONDONTWRITEBYTECODE='1', PYTHONNOUSERSITE='1',
+                 HF_HUB_OFFLINE='1', TRANSFORMERS_OFFLINE='1'))
+    if result.returncode:
+        raise ValueError('训练分支的 rank 状态转换失败：'+(result.stderr or result.stdout)[-1600:])
+    atomic_json(root/'config/rank_migration.json', json.loads(result.stdout.splitlines()[-1]))
+
+
+def fork_resume(root, arm, info, version, gpus):
+    """Keep the source run read-only and copy the mutable training state."""
+    identity = training_identity(root, arm)
+    name, number = reserve_training(TRAINING, PROJECT/'deployments', version,
+                                   identity['task_id'], identity['method'])
+    branch = TRAINING/name
+    for relative in ['config', 'logs', f'{arm}/config', f'{arm}/checkpoints']:
+        (branch/relative).mkdir(parents=True)
+    for relative in ['config/data_split.json', 'config/source_manifest.json',
+                     f'{arm}/config/ddp.json', f'{arm}/config/finetuning.json',
+                     f'{arm}/checkpoints/latest.json', f'{arm}/checkpoints/latest_optimizer.pt',
+                     *[f'{arm}/checkpoints/latest_rank-{i:03d}.pt' for i in range(len(info['gpus']))]]:
+        source = root/relative
+        if source.is_file():
+            shutil.copy2(source, branch/relative)
+    launch = read_json(root/'config/web_launch.json')
+    launch.update(version=version, run_name=name, training_id=name, train_number=number, gpus=gpus,
+                  parent_run=root.name, parent_checkpoint=info['checkpoint'],
+                  argv=replace_option(launch['argv'], '--output', branch))
+    plan = recorded_plan(root)
+    command = plan['commands'][arm]
+    command['CUDA_VISIBLE_DEVICES'] = ','.join(map(str, gpus))
+    command['argv'] = replace_option(command['argv'], '--output', branch)
+    if len(gpus) != len(info['gpus']):
+        repartition_resume(branch, arm, info, gpus)
+        command['argv'] = [
+            f'--nproc-per-node={len(gpus)}' if part.startswith('--nproc-per-node=') else part
+            for part in command['argv']
+        ]
+    atomic_json(branch/'config/ddp_launch.json', plan)
+    atomic_json(branch/'config/web_launch.json', launch)
+    return branch
+
+
 def resume(request, controller_source):
     root,arm=job_root(request)
     # Serialize independently of the HTTP process so retries cannot submit twice.
@@ -636,19 +872,57 @@ def resume(request, controller_source):
         if live_run_processes(root):
             raise ValueError('原运行仍有训练或验证进程，请等待退出后续跑')
         steps=request.get('steps')
-        if type(steps) is not int or steps%1000 or steps<info['min_steps']:
+        branch_version=request.get('branch_version')
+        preview=request.get('preview', False)
+        monitor_interval=request.get('monitor_interval', 0)
+        if type(preview) is not bool:
+            raise ValueError('预检选项必须是开关')
+        if type(monitor_interval) is not int or not 0 <= monitor_interval <= 1000:
+            raise ValueError('训练监测间隔须为 0–1000 步')
+        if monitor_interval and (arm != 'memory_v1' or info['validation_enabled'] or info.get('fixed_budget')):
+            raise ValueError('扩展监测目前用于关闭验证的记忆模型训练')
+        if info.get('fixed_budget') and (type(steps) is not int or steps != info['min_steps'] or
+                branch_version is not None or request.get('gpus', info['gpus']) != info['gpus']):
+            raise ValueError('Exp12 resume preserves the original optimizer budget and four GPU ranks')
+        if branch_version is not None:
+            if not isinstance(branch_version, str) or not re.fullmatch(r'V_[0-9]+', branch_version):
+                raise ValueError('独立分支版本请使用 V_1、V_2 等格式')
+            if info['validation_enabled']:
+                raise ValueError('独立分支目前仅支持原训练关闭验证的作业')
+            original_steps=read_json(root/arm/'config/ddp.json')['steps']
+            if type(steps) is not int or steps < original_steps or steps <= info['step']:
+                raise ValueError('独立分支总步数必须超过恢复步数，且不得小于原始训练预算')
+        elif type(steps) is not int or steps%1000 or steps<info['min_steps']:
             raise ValueError(f"总步数须为1000的整数倍，且至少为 {info['min_steps']}；填写总步数而非新增步数")
         share=request.get('share_existing',False)
         if type(share) is not bool:
             raise ValueError('共卡选项必须是开关')
         launch=read_json(root/'config/web_launch.json')
-        selected=info['gpus']+([info['validation_gpu']] if info['validation_enabled'] else [])
+        gpus=request.get('gpus', info['gpus'])
+        if gpus != info['gpus']:
+            if branch_version is None or not isinstance(gpus, list) or not gpus or any(
+                    type(g) is not int for g in gpus) or len(set(gpus)) != len(gpus):
+                raise ValueError('改变训练 GPU 需要独立分支和不重复的 GPU 编号')
+            gpu_rows={row['index']:row for row in gpu_info()}
+            windows=read_json(root/arm/'config/ddp.json')['global_windows_per_step']
+            if windows % len(gpus) or any(g not in gpu_rows for g in gpus):
+                raise ValueError('GPU 必须可用，且物理 rank 数必须整除原有效全局窗口数')
+        selected=gpus+([info['validation_gpu']] if info['validation_enabled'] else [])
         occupied=compute_pids(selected)
         if occupied and not share:
             raise ValueError('原训练GPU有现有进程，请等待释放，或显式勾选允许共卡；不会停止现有进程')
         validate_resume(root,arm,info,steps)
+        if preview:
+            return dict(run=root.name, arm=arm, branch_version=branch_version,
+                        steps=steps, resume_step=info['step'], gpus=selected,
+                        checkpoint=info['checkpoint'], source=info['source'],
+                        training_root=str(TRAINING), free_bytes=shutil.disk_usage(TRAINING).free,
+                        monitor_interval=monitor_interval)
         if not controller_source:
             raise ValueError('续跑控制器缺失，请刷新网页后重试')
+        if branch_version is not None:
+            root=fork_resume(root,arm,info,branch_version,gpus)
+            launch=read_json(root/'config/web_launch.json')
         worker=recorded_plan(root)['commands'][arm]['argv']
         worker=replace_option(replace_option(worker,'--steps',steps),'--resume-step',info['step'])
         worker[0]=str(PYTHON)
@@ -658,10 +932,11 @@ def resume(request, controller_source):
         parent=root/'config/web_resumes';parent.mkdir(exist_ok=True)
         number=max([int(p.name.split('-')[-1]) for p in parent.glob('resume-*') if p.is_dir()]+[0])+1
         attempt=parent/f'resume-{number:03d}';attempt.mkdir()
-        spec=dict(run=root.name,arm=arm,source=info['source'],output=str(root),gpus=info['gpus'],
+        spec=dict(run=root.name,arm=arm,source=info['source'],output=str(root),gpus=gpus,
             steps=steps,resume_step=info['step'],checkpoint=info['checkpoint'],argv=argv,worker_argv=worker,
             validation_enabled=info['validation_enabled'],existing_pids=occupied,
-            requested_at=datetime.datetime.now().isoformat(),attempt=str(attempt))
+            requested_at=datetime.datetime.now().isoformat(),attempt=str(attempt),
+            monitor_interval=monitor_interval)
         atomic_json(attempt/'request.json',spec)
         (attempt/'controller.py').write_text(controller_source)
         # Preserve the old stop request, status and any uncheckpointed metrics.
@@ -839,11 +1114,12 @@ def jobs():
                 try: os.kill(process['pid'],0)
                 except ProcessLookupError: status='failed'
             validation = read_json(root/arm/'validation_status.json',{})
-            terminal = {'complete','completed','stopped','failed','cancelled'}
-            can_delete = status in terminal and validation.get('status') in terminal | {None, 'disabled'}
+            can_delete = (status in TERMINAL_TRAINING_STATES
+                          and validation.get('status') in TERMINAL_TRAINING_STATES | {None, 'disabled'})
             result.append(dict(run=root.name, name=display_name(root,arm,split.get('task')), arm=arm, task=split.get('task'), status=status,
                 **training_identity(root,arm,split.get('task')),
                 step=state.get('step', (last or {}).get('step',0)), max_steps=stop.get('stop_after_step',state.get('total_steps',plan.get('steps_each'))),
+                checkpoint_interval=plan.get('checkpoint_interval', 1000),
                 gpus=cmd.get('CUDA_VISIBLE_DEVICES'), training_complete=state.get('training_complete',False),
                 validation=validation, last=last,
                 source=(read_json(root/'config/web_process.json',{}).get('source') or
@@ -852,6 +1128,8 @@ def jobs():
                         locations.get('memory_source' if arm=='memory_v1' else 'baseline_controller_source')),
                 output=str(root), stop_reason=stop.get('reason'), queue=queue,
                 stop_after_step=stop.get('stop_after_step'), can_delete=can_delete,
+                can_delete_files=can_delete and set(plan['commands']) == {arm}
+                    and not (root/('baseline' if arm == 'memory_v1' else 'memory_v1')).exists(),
                 resume=resume_info(root,arm),
                 notes=read_json(root/'config/web_launch.json',{}).get('notes',''),
                 delete_block_reason='' if can_delete else '请先停止训练或取消排队，并等待独立验证结束。',
@@ -994,9 +1272,9 @@ def detail(request):
             checkpoints.append(dict(step=published['step'],path=str(Path(published['checkpoint']).resolve())))
     latest=read_json(root/arm/'checkpoints/latest.json',{}).get('step',0)
     published_steps={p['step'] for p in checkpoints}
-    for file in (root/arm/'checkpoints').glob('step-*/config.json'):
-        step=int(file.parent.name.split('-')[-1])
-        if step<=latest and step not in published_steps:
+    for file in (root/arm/'checkpoints').glob('*/config.json'):
+        step=checkpoint_step(file.parent.name, root.name)
+        if step is not None and step<=latest and step not in published_steps:
             checkpoints.append(dict(step=step,path=str(file.parent.resolve())))
     checkpoints.sort(key=lambda p:p['step'],reverse=True)
     state = read_json(root/arm/'status.json', {})
@@ -1032,7 +1310,9 @@ def stop(request):
     state=read_json(root/arm/'status.json',{})
     target=request.get('step')
     if request.get('next_checkpoint') is True:
-        target=(state.get('step',0)//1000+1)*1000
+        interval=plan.get('checkpoint_interval',1000)
+        target=min((state.get('step',0)//interval+1)*interval,
+                   state.get('total_steps',plan['steps_each']))
     if state.get('status') not in ('training','running'):
         raise ValueError('仅运行中的训练可以设置停止点；排队任务请使用取消排队')
     if state.get('training_complete'):
@@ -1052,14 +1332,35 @@ def stop(request):
 
 def delete(request):
     root, arm = job_root(request)
-    job = next((row for row in jobs()['jobs'] if row['run']==root.name and row['arm']==arm), None)
-    if not job or not job['can_delete']:
-        raise ValueError('请先停止训练或取消排队，并等待独立验证结束后删除记录')
-    control = dict(status='deleted',run=root.name,arm=arm,files_preserved=True,
-        deleted_at=datetime.datetime.now().isoformat())
-    # Keep all checkpoint paths usable by inference/evaluation and retain run numbering.
-    atomic_json(root/'config'/f'dashboard_deleted_{arm}.json',control)
-    return control
+    delete_files = request.get('delete_files', False)
+    if type(delete_files) is not bool:
+        raise ValueError('同时移除目录必须是开关')
+    training_root = TRAINING.resolve()
+    if root.is_symlink() or root.resolve().parent != training_root or (root/'config').is_symlink():
+        raise ValueError('训练目录不在允许的设备训练路径内')
+    with (TRAINING/'.gpu_queue.lock').open('a') as lock:
+        fcntl.flock(lock, fcntl.LOCK_EX)
+        job = next((row for row in jobs()['jobs'] if row['run'] == root.name and row['arm'] == arm), None)
+        if not job or not job['can_delete']:
+            raise ValueError('请先停止训练或取消排队，并等待独立验证结束后删除记录')
+        control = dict(status='deleted', run=root.name, arm=arm, files_preserved=not delete_files,
+                       deleted_at=datetime.datetime.now().isoformat())
+        if not delete_files:
+            atomic_json(root/'config'/f'dashboard_deleted_{arm}.json', control)
+            return control
+        if request.get('expected_output') != job['output']:
+            raise ValueError('训练目录已变更，请重新打开删除确认')
+        if not job['can_delete_files']:
+            raise ValueError('该输出目录包含其他训练组，只能删除记录')
+        if (job['queue'] or {}).get('status') in WAITING_QUEUE_STATES or live_run_processes(root):
+            raise ValueError('训练目录仍有排队任务或活跃进程，请等待结束')
+        trash = training_root/'.trash'
+        trash.mkdir(exist_ok=True)
+        target = trash/root.name
+        if trash.is_symlink() or os.path.lexists(target):
+            raise ValueError('回收目录异常或已存在同名记录，未移动训练目录')
+        root.rename(target)
+        return dict(control, output=job['output'], trash_path=str(target))
 
 
 if __name__=='__main__':

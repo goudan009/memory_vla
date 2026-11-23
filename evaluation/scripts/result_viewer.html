@@ -7,7 +7,7 @@
   <link rel="manifest" href="/workbench.webmanifest">
   <link rel="icon" href="/workbench-icon-192.png" type="image/png" sizes="192x192">
   <link rel="apple-touch-icon" href="/workbench-icon-192.png">
-  <title>GR00T · 训练与评估工作台</title>
+  <title>4090 WYH工作台</title>
   <style>
     :root { color-scheme:light; --ink:#20312e; --muted:#75827e; --line:#e5ebe8; --green:#087f68; --red:#b54747; --amber:#aa7424; --paper:#f3f6f4; --white:#fff; --soft:#eef7f3; }
     * { box-sizing:border-box }
@@ -271,6 +271,84 @@
     .page-nav button,.page-nav-link { flex:0 0 auto; white-space:nowrap }
     .page-nav-link { display:inline-flex; align-items:center; padding:7px 18px; border:1px solid transparent; border-radius:9px; color:var(--ink); text-decoration:none; font-size:13px }
     .page-nav-link:hover { border-color:#a4c8bb; background:#f7fbf9 }
+    .page-nav-link[aria-current="page"] { color:var(--green); background:var(--soft); border-color:#bfded0 }
+    body.agent-board #benchmark-selector, body.agent-board #page-results,
+    body.agent-board #bench-result-switch, body.agent-board .page-foot { display:none }
+    #agent-experiment-versions { display:flex; gap:6px; padding:10px; overflow-x:auto }
+    #agent-experiment-versions:empty { display:none }
+    #agent-experiment-versions button { flex:0 0 auto; padding:6px 9px; font-size:12px; white-space:nowrap }
+    #agent-experiment-versions button[aria-pressed="true"] { background:var(--soft); border-color:#9bcab8; color:var(--green) }
+    #agent-experiment-list { border:1px solid var(--line); border-radius:9px; overflow:hidden }
+    #agent-experiment-list:empty { display:none }
+    #agent-experiment-list button { display:block; width:100%; padding:9px 12px; text-align:left; border:0; border-radius:0 }
+    #agent-experiment-list button + button { border-top:1px solid var(--line) }
+    #agent-experiment-list button[aria-pressed="true"] { background:var(--soft); color:var(--green) }
+    .agent-document { padding:16px 20px; overflow-wrap:anywhere; min-width:0 }
+    .agent-document h3 { margin:12px 0 8px }
+    .agent-document p { margin:8px 0; line-height:1.7 }
+    .agent-document details { margin-top:12px }
+    .agent-document summary { cursor:pointer; color:var(--green) }
+    .agent-document pre { white-space:pre-wrap; margin:10px 0 0; font:inherit; line-height:1.7 }
+    #agent-board .detail-tabs { flex-wrap:wrap }
+    .agent-focus { display:grid; gap:10px; margin-bottom:18px }
+    #agent-progress-record .agent-focus { grid-template-columns:repeat(2,minmax(0,1fr)) }
+    .agent-now,.agent-next { background:#f5f8fb; border-left:3px solid #4879aa; border-radius:6px; padding:11px 13px }
+    .agent-next { background:#fff8ed; border-color:#bc8339 }
+    .agent-now p,.agent-next p { margin:4px 0 0 }
+    .agent-counts { display:grid; grid-template-columns:repeat(auto-fit,minmax(85px,1fr)); gap:8px; margin:12px 0 }
+    .agent-count { padding:10px 12px; background:#f7f9f8; border:1px solid var(--line); border-radius:8px }
+    .agent-count strong { display:block; font-size:21px; font-variant-numeric:tabular-nums }
+    .agent-stage { display:grid; grid-template-columns:minmax(125px,1fr) minmax(0,3fr); gap:12px; padding:12px 0; border-bottom:1px solid var(--line); line-height:1.6 }
+    .agent-stage strong { display:block; margin-bottom:4px }
+    .agent-badge { display:inline-block; padding:2px 8px; border-radius:5px; font-size:12px; font-weight:650 }
+    .agent-done { color:#14634f; background:#e9f5ef }.agent-active { color:#255f96; background:#eaf2fd }
+    .agent-waiting { color:#815817; background:#fff3d9 }.agent-blocked { color:#9f3437; background:#ffeded }
+    .agent-recorded { color:#4d5e68; background:#ebf1f4 }
+    .agent-unknown { color:#626e68; background:#eef2f0 }
+    .agent-completion { display:grid; grid-column:1/-1; gap:5px; margin:0 0 4px; font-weight:650 }
+    .agent-completion progress { width:100%; height:10px; accent-color:var(--green) }
+    .agent-result-table { overflow:auto; margin:12px 0 }
+    .agent-result-table table { white-space:normal }
+    .agent-result-intro { font-size:15px; font-weight:550 }
+    .agent-report-download { display:inline-block; margin-top:8px }
+    .workflow-heading { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px }
+    .workflow-heading h3 { margin:0 }
+    .workflow-heading label { display:flex; align-items:center; gap:8px; color:var(--muted); font-size:12px }
+    .workflow-heading select { padding:5px 8px; border:1px solid var(--line); border-radius:7px; background:white }
+    .workflow-goal { color:var(--muted) }
+    .workflow-summary { display:flex; flex-wrap:wrap; align-items:baseline; gap:8px 18px; padding:12px 14px; margin:12px 0; background:#f5f8fb; border:1px solid #d5e2ef; border-radius:9px }
+    .workflow-summary strong { flex:1 1 210px }
+    .workflow-summary small,.workflow-meta { color:var(--muted) }
+    .workflow-summary.blocked { background:#fff3f0; border-color:#edc6bf }
+    .workflow-graph { position:relative; display:grid; gap:28px; padding:14px 22px; background:#f7faf9; border:1px solid var(--line); border-radius:10px }
+    .workflow-graph canvas { position:absolute; inset:0; width:100%; height:100%; pointer-events:none }
+    .workflow-level { display:flex; gap:8px; justify-content:center; position:relative }
+    .workflow-node { flex:1 1 0; max-width:240px; min-width:0; text-align:left; padding:8px 10px; background:white; border:1px solid #d5dfda; border-radius:8px; white-space:normal; overflow-wrap:anywhere }
+    .workflow-node strong { display:block; font-size:13px; line-height:1.45; margin-bottom:5px }
+    .workflow-node .agent-badge { font-size:11px; line-height:1.45 }
+    .workflow-node[data-main="true"] { border-top:3px solid #529180 }
+    .workflow-node[data-current="true"] { border-color:#427caf; box-shadow:0 0 0 2px #c9dff3 }
+    .workflow-node[data-current="true"].workflow-blocked { border-color:#aa4645; box-shadow:0 0 0 2px #f5d2cd }
+    .workflow-node[aria-pressed="true"] { background:#f0f7f4 }
+    .workflow-node:focus-visible { outline:2px solid #427caf; outline-offset:2px }
+    .agent-ready { color:#1c5e52; background:#e7f5ef }
+    .workflow-node-detail { padding:10px 12px; margin:10px 0; border-left:3px solid #8bb8a8; background:#f7faf9; border-radius:5px }
+    .workflow-node-detail p { margin:4px 0 }
+    .workflow-version-notes { color:var(--muted); font-size:12px }
+    #agent-workflow { margin-bottom:18px }
+    @media(max-width:780px) {
+      #agent-board { gap:12px }
+      #agent-board .run-list { overflow:visible; scrollbar-gutter:auto }
+      #agent-experiment-list { display:flex; overflow-x:auto; overscroll-behavior-inline:contain }
+      #agent-experiment-list button { flex:0 0 auto; width:auto; white-space:nowrap }
+      #agent-experiment-list button + button { border-top:0; border-left:1px solid var(--line) }
+      #agent-progress-record .agent-focus { grid-template-columns:1fr }
+      .agent-document { padding:12px 14px }
+      .workflow-graph { padding-inline:14px }
+      .workflow-level { gap:5px }
+      .workflow-node { padding:7px 5px }
+    }
+    @media(max-width:450px) { .agent-stage { grid-template-columns:1fr; gap:5px } }
     .gpu-overview { scrollbar-width:thin; overscroll-behavior-inline:contain }
     @media(max-width:780px) {
       .gpu-overview { grid-auto-flow:column; grid-auto-columns:minmax(82vw,360px); grid-template-columns:none; overflow-x:auto; padding-bottom:4px; scroll-snap-type:x proximity }
@@ -304,7 +382,7 @@
   </style>
 </head>
 <body>
-  <header><div class="brand"><div class="brand-mark" aria-hidden="true">G</div><div><h1>GR00T <span style="font-weight:400;color:var(--muted)">/ 训练与评估工作台</span></h1><div id="caption" class="subtle" role="status">正在读取评估记录…</div></div></div><div class="header-actions"><span class="live-label">每 5 秒自动更新</span><button id="install-workbench" type="button" hidden>安装应用</button><button id="refresh" type="button" aria-label="手动刷新" title="手动刷新">↻</button></div></header>
+  <header><div class="brand"><div class="brand-mark" aria-hidden="true">W</div><div><h1>4090 WYH工作台</h1><div id="caption" class="subtle" role="status">正在读取评估记录…</div></div></div><div class="header-actions"><span class="live-label">每 5 秒自动更新</span><button id="install-workbench" type="button" hidden>安装应用</button><button id="refresh" type="button" aria-label="手动刷新" title="手动刷新">↻</button></div></header>
   <nav class="page-nav" aria-label="训练评估工作台页面">
     <div class="page-tabs" role="tablist" aria-label="工作台">
       <button type="button" id="page-tab-training" role="tab" aria-label="启动训练" aria-controls="page-training" aria-selected="false" onclick="selectPage('training')"><span class="nav-label-full">启动训练</span><span class="nav-label-short">训练</span></button>
@@ -312,7 +390,7 @@
       <button type="button" id="page-tab-results" role="tab" aria-label="评估结果" aria-controls="page-results" aria-selected="true" onclick="selectPage('results')"><span class="nav-label-full">评估结果</span><span class="nav-label-short">结果</span></button>
       <button type="button" id="page-tab-registry" role="tab" aria-label="实验台账" aria-controls="page-registry" aria-selected="false" onclick="selectPage('registry')"><span class="nav-label-full">实验台账</span><span class="nav-label-short">台账</span></button>
     </div>
-    <a class="page-nav-link" id="page-tab-ai" href="/ai" aria-label="AI 工作流预览" title="AI 工作流预览"><span class="nav-label-full">AI 工作流 · 预览</span><span class="nav-label-short">AI</span></a>
+    <a class="page-nav-link" id="page-tab-ai" href="/ai" aria-label="AI 工作流" title="AI 工作流"><span class="nav-label-full">AI 工作流</span><span class="nav-label-short">AI</span></a>
   </nav>
   <main>
     <details class="gpu-overview-panel" aria-label="各设备实时显存占用"><summary><span>设备资源</span><small id="gpu-summary-status">正在读取 A100、4090 与 RTX 6000 Ada 状态</small></summary><div id="gpu-overview" class="gpu-overview">
@@ -327,6 +405,25 @@
       <section aria-label="RTX 6000 Ada服务"><div class="service-head"><h2>RTX 6000 Ada <span class="subtle">/ 100.100.2.30</span></h2><span id="a6000-service-count" class="subtle">检查中…</span></div><div id="a6000-services" class="service-body">正在检查单卡设备…</div></section>
     </div>
     </details>
+    <div id="agent-board" class="layout" hidden>
+      <section class="run-browser" aria-label="实验目录">
+        <div class="section-head"><h2>实验目录</h2><span id="agent-experiment-count" class="subtle"></span></div>
+        <div id="agent-experiment-versions" role="group" aria-label="实验版本"></div>
+        <div class="run-list"><div id="agent-experiment-list"></div></div>
+      </section>
+      <section class="detail" aria-label="实验记录">
+        <div class="detail-heading"><div><div id="agent-experiment-path" class="subtle">Output</div><h2 id="agent-experiment-title">AI 工作流</h2></div></div>
+        <nav class="detail-tabs" role="tablist" aria-label="实验记录">
+          <button id="agent-tab-task" type="button" role="tab" aria-selected="false" aria-controls="agent-task" tabindex="-1">任务安排</button>
+          <button id="agent-tab-progress" type="button" role="tab" aria-selected="true" aria-controls="agent-progress">运行进度</button>
+          <button id="agent-tab-results" type="button" role="tab" aria-selected="false" aria-controls="agent-results" tabindex="-1">实验结果</button>
+        </nav>
+        <div id="agent-error" class="agent-document" role="status" hidden></div>
+        <section id="agent-task" class="agent-document" role="tabpanel" aria-labelledby="agent-tab-task" hidden></section>
+        <section id="agent-progress" class="agent-document" role="tabpanel" aria-labelledby="agent-tab-progress"><div id="agent-workflow"></div><div id="agent-live"></div><div id="agent-progress-record"></div></section>
+        <section id="agent-results" class="agent-document" role="tabpanel" aria-labelledby="agent-tab-results" hidden></section>
+      </section>
+    </div>
     <div id="page-training" role="tabpanel" aria-labelledby="page-tab-training" hidden></div>
     <div id="page-launch" role="tabpanel" aria-labelledby="page-tab-launch" hidden>
       <div class="page-intro"><div><h2>推理评估</h2></div></div>
@@ -409,6 +506,7 @@
                 <div class="wide mode-note">仿真：4090。策略推理：A100 已启动的 Task40 独立诊断服务。</div>
               </fieldset>
               <fieldset id="launch-collect" class="launch-fields" hidden disabled>
+                <label>实验<select id="collect-experiment"><option value="experiment_09">Experiment 09</option><option value="experiment_10">Experiment 10</option></select></label>
                 <label class="wide"><span id="collect-policy-label">A100 Task40 诊断服务</span><select id="collect-policy" required><option value="">等待已就绪的诊断服务</option></select><small id="collect-policy-detail"></small></label>
                 <fieldset id="collect-settings">
                   <label>仿真 GPU<select id="collect-gpu" required></select></label>
@@ -420,9 +518,9 @@
                   <label>每条轨迹决策上限<input id="collect-cycles" type="number" min="1" max="300" value="300" required><small>每次决策执行 8 个动作步。</small></label>
                   <label id="collect-repetitions-field">每实例重复次数<input id="collect-repetitions" type="number" min="1" max="10" value="1" required><small>环境初始化一次，每条轨迹使用独立种子。每个作业最多 10 条。</small></label>
                   <label id="collect-instances-field" class="wide">实例编号<input id="collect-instances" placeholder="例如 0, 3, 6" required><small>可选择 1–10 个不同实例（0–9），种子按输入顺序递增。</small></label>
-                  <div id="collect-device-note" class="wide mode-note">从任务初始状态采集，归档至 Experiment 09。</div>
+                  <div id="collect-device-note" class="wide mode-note"></div>
                 </fieldset>
-                <label id="forward-batch-field" class="wide" hidden>批次配置<input id="forward-batch" required disabled><small>填写 Output/test_01/experiment_09/ 下 JSON 配置的仓库相对路径。</small></label>
+                <label id="forward-batch-field" class="wide" hidden>批次配置<input id="forward-batch" required disabled></label>
               </fieldset>
               <div class="launch-preview"><div id="launch-message" role="status" class="launch-message"></div><div id="launch-plan" hidden></div></div>
               <div class="launch-actions"><button type="button" id="launch-check">检查配置</button><button type="submit" id="launch-submit" class="primary-button">启动评估</button></div>
@@ -504,6 +602,7 @@
   const duration = r => { if (r.elapsed_wall_s == null) return "运行中"; let s=Math.floor(r.elapsed_wall_s),h=Math.floor(s/3600),m=Math.floor((s%3600)/60); return h?`${h}h ${String(m).padStart(2,"0")}m`:`${m}m ${String(s%60).padStart(2,"0")}s`; };
   function esc(s) { return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
   const workbenchPages=['training','launch','results','registry'];
+  const agentBoardPage=location.pathname==='/ai'||location.pathname==='/ai/';
   function workbenchPageFromURL() {
     const page=new URLSearchParams(location.search).get('page');
     return workbenchPages.includes(page)?page:'results';
@@ -526,6 +625,12 @@
   function selectPage(page, updateURL=true) {
     const needsInference=page==='inference';
     if(needsInference) page='launch';
+    if(agentBoardPage){
+      const url=new URL('/',location.href);
+      if(page!=='results') url.searchParams.set('page',page);
+      location.assign(url);
+      return;
+    }
     activePage=page;
     if(updateURL && workbenchPageFromURL()!==page){
       const url=new URL(location.href);
@@ -865,7 +970,7 @@
   }
   function readyTask40Policies() {
     const kind=$('launch-kind').value;
-    const traced=kind==='forward'||(kind==='collect'&&$('collect-source').value!=='fresh');
+    const traced=kind==='forward'||(kind==='collect'&&($('collect-source').value!=='fresh'||$('collect-experiment').value==='experiment_10'));
     return collectionPolicies.filter(job=>job.state==='ready'&&(traced?job.task40_trace:job.task40_diagnostics));
   }
   function selectedCollectionPolicy() {
@@ -928,7 +1033,7 @@
     if(gpus.some(g=>String(g.index)===previous)) field.value=previous;
     updateCollectionSource();
     $('collect-device-note').textContent=launchOptions&&!supported?'该设备尚未开放 Task40 轨迹采集。':
-      '从任务初始状态采集，归档至 Experiment 09。';
+      '';
   }
   function updateLaunchForm() {
     const singleDevice=$('launch-device').value==='a6000';
@@ -963,9 +1068,12 @@
       const policy=selectedCollectionPolicy();
       if(!policy) throw Error('请选择已就绪且启用 Task40 trace 的 A100 服务');
       const batch=$('forward-batch').value.trim().replace(/^\.\//,'');
-      if(!/^Output\/test_01\/experiment_09\/.+\.json$/.test(batch)||batch.split('/').includes('..'))
-        throw Error('批次配置须填写 Experiment 09 下 JSON 文件的仓库相对路径');
-      return {task40_forward:true,batch,policy_host:policy.host,policy_port:Number(policy.port)};
+      const experiment=$('collect-experiment').value;
+      if(!batch.startsWith('Output/test_01/'+experiment+'/')||!batch.endsWith('.json')||batch.split('/').includes('..'))
+        throw Error('批次配置须使用所选实验下 JSON 文件的仓库相对路径');
+      const request={task40_forward:true,batch,policy_host:policy.host,policy_port:Number(policy.port)};
+      if(experiment!=='experiment_09') request.experiment=experiment;
+      return request;
     }
     if($('launch-kind').value==='collect'){
       const policy=selectedCollectionPolicy();
@@ -978,6 +1086,7 @@
         const request={task40_collect:true,sim_gpu:Number($('collect-gpu').value),restore_checkpoint:checkpoint,
                 restore_repeats:Number($('collect-restore-repeats').value),
                 cycles,policy_host:policy.host,policy_port:Number(policy.port)};
+        if($('collect-experiment').value!=='experiment_09') request.experiment=$('collect-experiment').value;
         if(!$('collect-slots').disabled&&$('collect-slots').value==='2') request.sim_slots=2;
         return request;
       }
@@ -991,6 +1100,7 @@
       if(!Number.isInteger(cycles)||cycles<1||cycles>300) throw Error('每条轨迹的决策数必须在 1 到 300 之间');
       const request={task40_collect:true,sim_gpu:Number($('collect-gpu').value),seed,cycles,
         instances:tokens.map(Number),policy_host:policy.host,policy_port:Number(policy.port)};
+      if($('collect-experiment').value!=='experiment_09') request.experiment=$('collect-experiment').value;
       if(repetitions>1) request.repetitions=repetitions;
       if($('collect-source').value==='controlled') request.controlled_reclosure=true;
       if(!$('collect-slots').disabled&&$('collect-slots').value==='2') request.sim_slots=2;
@@ -1150,17 +1260,17 @@
     finally{launchBusy=false;$('launch-kind').disabled=false;updateLaunchForm();}
   }
   function renderTask40Job(job, logPanel) {
-    const forward=job.kind==='task40_forward';
+    const forward=job.kind==='task40_forward', fixedActions=job.phase==='renderer_probe';
     const policy=job.policy_identity||{};
     const endpoint=[job.policy_host||policy.host,job.policy_port??policy.port].filter(Boolean).join(':');
     const progress=job.progress||{};
     const stages={initializing:forward?'初始化':'初始化仿真',prepare_policy:'准备推理',restore_sim:'恢复仿真',closed_loop:'闭环执行',
-      loading_batch:'读取批次',frozen_forward:'冻结前向',complete:'已完成',completed:'已完成',failed:'异常退出'};
+      loading_batch:'读取批次',frozen_forward:'冻结前向',fixed_action_replay:'重放归档动作',complete:'已完成',completed:'已完成',failed:'异常退出'};
     const details=forward?[
       progress.total==null?'':`完成 ${progress.completed??0}/${progress.total}`,
       progress.stage==='frozen_forward'&&progress.index!=null?`当前 ${progress.index}/${progress.total}`:'',
       progress.stage==='frozen_forward'?progress.condition:'',
-    ]:[progress.trial,progress.decisions==null?'':`决策 ${progress.decisions}`];
+    ]:[progress.trial,progress.repeat==null?'':`第 ${progress.repeat} 次恢复`,progress.decisions==null?'':`决策 ${progress.decisions}`];
     const phase=[stages[progress.stage]||progress.stage,...details].filter(Boolean).join(' · ');
     const artifacts=(job.artifacts||[]).map(artifact=>{
       if(typeof artifact.url!=='string'||!artifact.url) return '';
@@ -1173,7 +1283,7 @@
     const configuration=forward?(job.batch?` · 批次 ${esc(job.batch)}`:''):` · 基础种子 ${esc(safe(job.seed))}`;
     const workerLog=forward?job.forward_log_tail||job.sim_log_tail:job.sim_log_tail;
     return `<div>作业 ${esc(job.id)}${configuration}</div>
-      <div>推理 ${esc(endpoint||'未记录')}${policy.gpu_index==null?'':' · A100 GPU '+esc(policy.gpu_index)} · ${esc(policy.version||job.version||'未记录版本')}</div>
+      <div>${fixedActions?'动作来源：父轨迹':`推理 ${esc(endpoint||'未记录')}${policy.gpu_index==null?'':' · A100 GPU '+esc(policy.gpu_index)} · ${esc(policy.version||job.version||'未记录版本')}`}</div>
       ${policy.checkpoint?`<div class="subtle">${esc(policy.checkpoint)}</div>`:''}
       ${phase?`<div>进度 ${esc(phase)}</div>`:''}
       <div class="launch-job-artifacts">${artifacts||'<span class="subtle">暂无可打开的产物</span>'}</div>
@@ -1188,7 +1298,9 @@
       $('launch-history').hidden=!jobs.length;
       list.innerHTML=jobs.map(job=>{
         const collect=job.kind==='task40_collect', restore=job.kind==='task40_restore', forward=job.kind==='task40_forward';
-        const title=forward?'Task40 冻结前向 · Exp09':collect?(job.phase==='controlled_reclosure'?'Task40 受控重关 · Exp09':job.phase==='directed_restore'?'Task40 定向恢复 · Exp09':'Task40 轨迹采集 · Exp09'):restore?'Task40 检查点恢复 · '+safe(job.seed):
+        const experiment=job.group==='experiment_10'?'Exp10':'Exp09';
+        const collectTitle={controlled_reclosure:'受控重关',directed_restore:'定向恢复',renderer_probe:'固定动作恢复'}[job.phase]||'轨迹采集';
+        const title=forward?'Task40 冻结前向 · '+experiment:collect?`Task40 ${collectTitle} · ${experiment}`:restore?'Task40 检查点恢复 · '+safe(job.seed):
           `${job.version||''} / ${job.group||''} · Task${job.task_id}`;
         const device=forward?'本地控制器':`${job.device==='a6000'?'RTX 6000 Ada · ':job.device==='local'?'4090 · ':''}GPU ${esc((job.gpus||[]).join(', '))}`;
         const logPanel=(kind,label,tail)=>{
@@ -1846,9 +1958,15 @@
   $('review-secondary-edit').onclick=()=>void mutateReviewOption('supplement','rename');
   $('review-secondary-delete').onclick=()=>{if($('review-secondary-specific').value&&confirm('仅从当前阶段删除所选补充原因？'))void mutateReviewOption('supplement','delete');};
   async function refresh(){
+    if(agentBoardPage && !window.agentExperimentBoard) return;
     if(refreshInFlight)return;
     refreshInFlight=true;
     void refreshServices();
+    if(agentBoardPage){
+      try { await window.agentExperimentBoard?.refresh(); }
+      finally { refreshInFlight=false; }
+      return;
+    }
     const benchmark=typeof window!=='undefined'?window.benchmarkWorkbench:null;
     try {
       if(benchmark && !benchmark.isNative()){await benchmark.refresh();return;}
@@ -1890,6 +2008,7 @@
   $('launch-template').onchange=copyLaunchTemplate;
   $('collect-gpu').onchange=updateCollectionSlots;
   $('collect-source').onchange=updateCollectionSource;
+  $('collect-experiment').onchange=()=>renderCollectionPolicies();
   $('collect-policy').onchange=()=>updateCollectionPolicyDetail();
   $('launch-check').onclick=()=>void submitLaunch(false);
   $('launch-form').onsubmit=event=>{event.preventDefault();void submitLaunch(true);};
@@ -1927,13 +2046,25 @@
   for(const event of ['ontimeupdate','onseeked','onplay','onpause']) $('video-player')[event]=drawReplayFrames;
   $('video-player').onerror=()=>{replayReady=false;$('preview-environments').hidden=true;if(replayEnabled) $('preview-status').textContent='本集录像加载失败，请检查录像文件。';};
   if(typeof window!=='undefined') window.addEventListener('pagehide',stopPreview);
+  if(agentBoardPage){
+    document.body.classList.add('agent-board');
+    $('agent-board').hidden=false;
+    $('page-tab-ai').setAttribute('aria-current','page');
+    $('page-tab-results').setAttribute('aria-selected','false');
+  }
   $("refresh").onclick=refresh; refresh(); setInterval(refresh,5000);
 </script>
 <script src="/benchmarks.js"></script>
 <script src="/training.js"></script>
+<script src="/agent_experiments.js"></script>
 <script>
-  if(workbenchPageFromURL()!=='results') selectPage(workbenchPageFromURL(),false);
-  window.addEventListener('popstate',()=>selectPage(workbenchPageFromURL(),false));
+  if(agentBoardPage){
+    $('service-overview').hidden=false;
+    refresh();
+  }else{
+    if(workbenchPageFromURL()!=='results') selectPage(workbenchPageFromURL(),false);
+    window.addEventListener('popstate',()=>selectPage(workbenchPageFromURL(),false));
+  }
   const installButton = document.getElementById('install-workbench');
   window.addEventListener('beforeinstallprompt', event => {
     event.preventDefault();

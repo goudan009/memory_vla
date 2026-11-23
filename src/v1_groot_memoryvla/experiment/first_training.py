@@ -128,14 +128,20 @@ def gradient_norms(model):
     return result
 
 
-def cache_sequence(model, processor, dataset, index, microbatch, augmentation_seed=None):
+def get_training_group(dataset, index, augmentation_seed=None):
     processor = dataset.processor
     if augmentation_seed is not None:
         seeded(augmentation_seed)
         transform = processor.train_image_transform
         if hasattr(transform, "set_random_seed"):
             transform.set_random_seed(augmentation_seed)
-    group = dataset[index]
+    return dataset[index]
+
+
+def cache_sequence(model, processor, dataset, index, microbatch, augmentation_seed=None, group=None):
+    processor = dataset.processor
+    if group is None:
+        group = get_training_group(dataset, index, augmentation_seed)
     if getattr(model, 'training', False) and any(p.requires_grad for p in model.backbone.parameters()):
         # Cache processed inputs, never detached Eagle outputs, when Eagle learns.
         # The backbone forward/backward must run inside the DDP microbatch graph.

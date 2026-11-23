@@ -19,6 +19,31 @@ from groot_task40_trace import read_state, save_policy_input, serializable
 from task40_replay_probe import write_json
 
 
+CAMERA_KEYS = tuple(f'video.observation.images.rgb.{name}_256_256'
+                    for name in ('left_wrist', 'right_wrist', 'head'))
+RENDER_AA_KEYS = ('/rtx/post/aa/op', '/rtx-defaults/post/aa/op')
+GI_HISTORY_KEY = '/rtx/indirectDiffuse/denoiser/temporal/maxHistory'
+INDIRECT_DIFFUSE_KEYS = ('/rtx/indirectDiffuse/enabled', '/rtx-defaults/indirectDiffuse/enabled')
+
+
+def configure_restore_aa(app, settings, requested):
+    if requested == 0:
+        # Replicator enables unrestricted modes before selecting non-DLSS AA.
+        settings.set_bool('/rtx-transient/post/aa/limitedOps', False)
+    # Both the active renderer and its stage defaults must agree.
+    app.config['anti_aliasing'] = requested
+    for key in RENDER_AA_KEYS:
+        settings.set_int(key, requested)
+    return read_restore_aa(settings, requested)
+
+
+def read_restore_aa(settings, requested):
+    values = [settings.get(key) for key in RENDER_AA_KEYS]
+    if requested is not None and values != [requested, requested]:
+        raise RuntimeError(f'Renderer AA request {requested} did not persist: {values}')
+    return values
+
+
 def read_json(path):
     return json.loads(path.read_text())
 
@@ -85,6 +110,14 @@ def set_controlled_reclosure(open_state, door_joint):
 def verify_reclosed_truth(before, after):
     return (after['step'] == before['step'] + 1 and after['Open'] is False
             and all(after[key] == before[key] for key in ('Inside', 'ToggledOn')))
+
+
+def align_sim_cuda_rng(states, device_count):
+    if len(states) == device_count:
+        return states
+    if states and device_count and all(states[0].equal(value) for value in states[1:]):
+        return [states[0]] * device_count
+    raise ValueError(f"Cannot map {len(states)} non-equivalent simulator CUDA RNG states to {device_count} devices")
 
 
 def load_targeted_restore(checkpoint, parent_trial):
@@ -156,6 +189,21 @@ def restore_targeted_policy(client, session, memory, rng, decision):
     return {**reply, 'clock': clock}
 
 
+def replay_policy_history(client, parent, session, decision):
+    client.reset()
+    inputs = sha256()
+    for index in range(decision):
+        entry = parent / f'{index:04d}'
+        record = read_json(entry / 'decision.json')
+        vision = entry / 'observation.npz'
+        inputs.update(sha256(vision.read_bytes()).digest())
+        inputs.update(json.dumps(record['language'], sort_keys=True).encode())
+        client.call_endpoint('get_action', {'observation': load_arrays(vision) | record['language'],
+                                             'options': session})
+    snapshot = client.call_endpoint('task40_memory_snapshot', {'session': session})
+    return snapshot['memory'], inputs.hexdigest()
+
+
 def verify_targeted_trace(trace, memory, rng):
     import torch
     from task40_memory_instrumentation import BANKS, _clock, unpack_memory
@@ -191,6 +239,17 @@ def observation_correspondence(restored, archived):
     return comparison
 
 
+def configure_restore_rendering(sim, *, targeted):
+    if not targeted:
+        return None
+    previous = sim.get_block_on_render()
+    # Physics snapshots do not flush the in-flight Hydra render products.
+    sim.set_block_on_render(True)
+    if not sim.get_block_on_render():
+        raise RuntimeError('Directed restore could not enable the Isaac Sim render barrier')
+    return previous
+
+
 def compare_targeted_repeats(left, right):
     """Compare both runs at shared absolute decision and physical steps."""
     import numpy as np
@@ -199,7 +258,15 @@ def compare_targeted_repeats(left, right):
     trials = [read_json(folder / 'trial.json') for folder in folders]
     initial = [read_json(folder / 'initial.json') for folder in folders]
     restore = [read_json(folder / 'restore.json') for folder in folders]
-    entries = [read_json(folder / 'policy_entry_check.json') for folder in folders]
+    entries = []
+    for folder, entry, trial in zip(folders, initial, trials, strict=True):
+        check = folder / 'policy_entry_check.json'
+        if check.is_file():
+            entries.append(read_json(check))
+        elif entry['policy']['policy_weights'] == 'GR00T-N1.6-BEHAVIOR1k':
+            entries.append({'rng_matches_archive': entry['policy']['rng_sha256'] == trial['lineage']['rng_sha256']})
+        else:
+            raise FileNotFoundError(check)
     traces = [{path.parent.name: path.parent for path in folder.glob('*/decision.json')} for folder in folders]
     action_differences = []
     for decision in sorted(traces[0].keys() & traces[1].keys(), key=int):
@@ -208,9 +275,14 @@ def compare_targeted_repeats(left, right):
         if records[0]['start_step'] != records[1]['start_step']:
             raise ValueError(f'Repeated decision {decision} has mismatched physical steps')
         executed = [load_arrays(path / 'executed.npz')['robot_r1'] for path in (a, b)]
+        with np.load(a / 'observation.npz', allow_pickle=False) as ra, \
+                np.load(b / 'observation.npz', allow_pickle=False) as rb:
+            rgb = observation_correspondence({key: ra[key] for key in CAMERA_KEYS},
+                                             {key: rb[key] for key in CAMERA_KEYS})
         count = min(map(len, executed))
         action_differences.append({
             'decision': int(decision), 'shared_executed_steps': count,
+            'policy_input_rgb': rgb,
             'proposed': observation_correspondence(load_arrays(a / 'proposed.npz'),
                                                    load_arrays(b / 'proposed.npz')),
             'executed': observation_correspondence({'robot_r1': executed[0][:count]},
@@ -229,10 +301,12 @@ def compare_targeted_repeats(left, right):
     return {
         'runs': [folder.name for folder in folders],
         'policy_entry_checks': entries,
-        'first_memory_clock_equal': initial[0]['policy']['clock'] == initial[1]['policy']['clock'],
+        'first_memory_clock_equal': (initial[0]['policy']['clock'] == initial[1]['policy']['clock']
+                                     if 'clock' in initial[0]['policy'] else None),
         'camera_poses_exact': initial[0]['camera_poses'] == initial[1]['camera_poses'],
         'controller_restore_checks': [item['controllers_equal'] for item in restore],
         'renderer_aa': [item['renderer_aa'] for item in restore],
+        'renderer_block_on_render': [item.get('renderer_block_on_render') for item in restore],
         'first_observation': observation_correspondence(
             load_arrays(left / 'first_raw_restored.npz'), load_arrays(right / 'first_raw_restored.npz')),
         'actions': action_differences,
@@ -293,12 +367,22 @@ def main(args):
             if actual_instance != start['instance']:
                 raise RuntimeError(f"Simulator selected instance {actual_instance}, expected {start['instance']}")
         env.reset(seed=start['seed'])
-    aa_key = '/rtx/post/aa/op'
+    block_on_render_before = configure_restore_rendering(og.sim, targeted=targeted)
     settings = carb.settings.get_settings()
-    aa_initial = settings.get(aa_key)
-    if args.renderer_aa is not None:
-        settings.set_int(aa_key, args.renderer_aa)
-    aa_after_request = settings.get(aa_key)
+    aa_initial = read_restore_aa(settings, None)
+    aa_after_request = (configure_restore_aa(og.app, settings, args.renderer_aa)
+                        if args.renderer_aa is not None else aa_initial)
+    gi_history_initial = settings.get(GI_HISTORY_KEY) if args.phase == 'renderer_probe' else None
+    indirect_diffuse_initial = [settings.get(key) for key in INDIRECT_DIFFUSE_KEYS] if args.phase == 'renderer_probe' else None
+    if args.renderer_gi_history is not None:
+        if settings.get('/rtx/indirectDiffuse/denoiser/method') != 0 or not settings.get(INDIRECT_DIFFUSE_KEYS[0]):
+            raise RuntimeError('GI history limit requires active indirect diffuse lighting and NVRTD denoiser')
+        settings.set_int(GI_HISTORY_KEY, args.renderer_gi_history)
+    if args.renderer_disable_indirect_diffuse:
+        if indirect_diffuse_initial[0] is not True:
+            raise RuntimeError(f'Expected indirect diffuse lighting at startup: {indirect_diffuse_initial}')
+        for key in INDIRECT_DIFFUSE_KEYS:
+            settings.set_bool(key, False)
     base = env.env
     while 'env' in vars(base):
         base = vars(base)['env']
@@ -312,12 +396,12 @@ def main(args):
     sensors = {name: sensor for name, sensor in robot.sensors.items()
                if 'zed_link' in name or 'realsense_link' in name}
     assert len(sensors) == 3
-    camera_keys = [f'video.observation.images.rgb.{name}_256_256' for name in ('left_wrist', 'right_wrist', 'head')]
+    camera_keys = CAMERA_KEYS
     client = None
     if args.phase != 'renderer_probe':
         client = PolicyClient(host=args.policy_host, port=args.port)
         client.socket.setsockopt(zmq.RCVTIMEO, 300000)
-        if args.collection_protocol and not args.trace_memory:
+        if args.collection_protocol and not args.trace_memory and not args.official_policy:
             # Older workbench servers omit capabilities from the recorded identity.
             # Ask the reserved endpoint before making the first stateful call.
             try:
@@ -356,7 +440,7 @@ def main(args):
             return torch.as_tensor(value)
         return value
 
-    def restore(saved, reference, folder):
+    def restore(saved, reference, folder, *, reset_accumulation=False):
         assert saved['session'] == session
         og.sim.load_state(saved['sim'], serialized=True)
         base._current_step = saved['step']
@@ -369,7 +453,11 @@ def main(args):
         random.setstate(saved['python_rng'])
         np.random.set_state(saved['numpy_rng'])
         torch.set_rng_state(saved['torch_rng'])
-        torch.cuda.set_rng_state_all(saved['cuda_rng'])
+        cuda_states = align_sim_cuda_rng(saved['cuda_rng'], torch.cuda.device_count())
+        torch.cuda.set_rng_state_all(cuda_states)
+        write_json(folder / 'sim_cuda_rng.json', {'saved_devices': len(saved['cuda_rng']),
+                   'restored_devices': len(cuda_states),
+                   'mapping': 'unchanged' if len(saved['cuda_rng']) == len(cuda_states) else 'identical_states_only'})
         robot.set_joint_positions(torch.as_tensor(reference['joints'][robot.name]))
         microwave.set_joint_positions(torch.as_tensor(reference['joints'][microwave.name]))
         for name, controller in robot.controllers.items():
@@ -393,8 +481,20 @@ def main(args):
         render_deltas = []
         previous_images = None
         render_settings = []
+        blocking_readbacks = []
+        render_controls = []
+        if reset_accumulation:
+            import omni.usd
+
+            omni.usd.get_context().reset_renderer_accumulation()
         for render_index in range(6):
+            if args.renderer_aa is not None:
+                read_restore_aa(settings, args.renderer_aa)
             og.sim.render()
+            if args.renderer_aa is not None:
+                render_settings.append(read_restore_aa(settings, args.renderer_aa))
+            if targeted:
+                blocking_readbacks.append(bool(og.sim.get_block_on_render()))
             observation = preprocess_obs(env, base.get_obs()[0])
             if args.renderer_audit:
                 images = {key: np.asarray(observation[key]).astype(np.int16) for key in camera_keys}
@@ -402,8 +502,19 @@ def main(args):
                     render_deltas.append({key: float(np.abs(images[key] - previous_images[key]).mean())
                                           for key in camera_keys})
                 previous_images = images
+            if args.phase == 'renderer_probe' and args.renderer_aa is None:
+                render_settings.append(read_restore_aa(settings, args.renderer_aa))
             if args.phase == 'renderer_probe':
-                render_settings.append(settings.get(aa_key))
+                render_controls.append({key: settings.get(key) for key in (
+                    '/rtx/rendermode', *INDIRECT_DIFFUSE_KEYS,
+                    '/rtx/indirectDiffuse/denoiser/method', GI_HISTORY_KEY, '/rtx/post/histogram/enabled',
+                    '/rtx/post/histogram/tau')})
+                if args.renderer_gi_history is not None and (
+                        render_controls[-1][GI_HISTORY_KEY] != args.renderer_gi_history):
+                    raise RuntimeError(f'Renderer GI history limit did not persist: {render_controls[-1]}')
+                if args.renderer_disable_indirect_diffuse and any(
+                        render_controls[-1][key] is not False for key in INDIRECT_DIFFUSE_KEYS):
+                    raise RuntimeError(f'Indirect diffuse disable did not persist: {render_controls[-1]}')
                 np.savez_compressed(folder / f'render_{render_index + 1:02d}.npz', **features(batch(observation)))
         cached = archived_observation if targeted else load_arrays(args.anchor / 'anchor_live_observation.npz')
         camera_rgb_mae = {key.split('.')[-1].removesuffix('_256_256'): float(np.mean(np.abs(
@@ -412,8 +523,9 @@ def main(args):
         assert sim_time == float(og.sim.current_time)
         audit = {'position': position, 'rotation': rotation, 'joints': joints,
                    'controllers_equal': controllers,
-                   'renderer_aa': settings.get(aa_key),
-                   'renderer_aa_readbacks': render_settings,
+                   'renderer_aa': settings.get(RENDER_AA_KEYS[0]),
+                   'renderer_aa_readbacks': [values[0] for values in render_settings],
+                   'renderer_aa_defaults_readbacks': [values[1] for values in render_settings],
                    'consecutive_render_rgb_mae': render_deltas,
                    'settle_physics_steps': 1,
                    'settle_sim_time_delta_s': sim_time - sim_time_before_settle,
@@ -422,9 +534,15 @@ def main(args):
                    'truth': read_state(base, states)}
         restored_input = features(batch(observation))
         if targeted:
+            audit['renderer_block_on_render'] = {
+                'before': block_on_render_before, 'after_each_render': blocking_readbacks}
             audit['observation_correspondence'] = observation_correspondence(restored_input, cached)
+        if args.phase == 'renderer_probe':
+            audit.update(reset_accumulation_called=reset_accumulation, render_controls=render_controls)
         write_json(folder / 'restore.json', audit)
         np.savez_compressed(folder / 'first_raw_restored.npz', **restored_input)
+        if targeted and not all(blocking_readbacks):
+            raise RuntimeError('Isaac Sim render barrier changed during directed restore')
         assert max((*position.values(), *rotation.values(), *joints.values())) < 1e-2 and controllers
         if not args.renderer_audit:
             assert max(camera_rgb_mae.values()) < 25.0, f'Camera RGB mismatch after restore: {camera_rgb_mae}'
@@ -522,7 +640,7 @@ def main(args):
 
     if args.phase == 'renderer_probe':
         output = args.output / 'metrics'
-        output.mkdir()
+        output.mkdir(exist_ok=True)
         blocks = []
         for index in range(anchor['decision'], anchor['decision'] + args.cycles):
             entry = args.renderer_probe_actions / f'{index:04d}'
@@ -534,13 +652,26 @@ def main(args):
                 preprocess_action(action)['robot_r1'].cpu().numpy() for action in block]))
             blocks.append(block)
         write_json(output / 'config.json', {'source_actions': str(args.renderer_probe_actions),
-                   'aa_initial': aa_initial, 'aa_requested': args.renderer_aa, 'aa_after_request': aa_after_request,
-                   'copies': args.restore_repeats, 'blocks': args.cycles})
+                   'aa_initial': aa_initial[0], 'aa_requested': args.renderer_aa,
+                   'aa_after_request': aa_after_request[0],
+                   'aa_defaults_initial': aa_initial[1], 'aa_defaults_after_request': aa_after_request[1],
+                   'copies': args.restore_repeats, 'blocks': args.cycles,
+                   'compare_accumulation_reset': args.compare_accumulation_reset,
+                   'gi_history_initial': gi_history_initial, 'gi_history_requested': args.renderer_gi_history,
+                   'indirect_diffuse_initial': indirect_diffuse_initial,
+                   'indirect_diffuse_disabled': args.renderer_disable_indirect_diffuse})
+        groups = {False: []}
+        if args.compare_accumulation_reset:
+            groups[True] = []
         try:
-            for i in range(1, args.restore_repeats + 1):
-                folder = output / f'repeat_{i:02d}'
+            for i, reset_history in enumerate(
+                    list(groups) * args.restore_repeats, start=1):
+                label = 'reset' if reset_history else 'control'
+                folder = output / f'{label}_repeat_{len(groups[reset_history]) + 1:02d}'
                 folder.mkdir()
-                restore(anchor, initial_physical, folder)
+                groups[reset_history].append(folder)
+                write_json(output / 'active_stage.json', {'stage': 'restore_sim', 'repeat': i, 'trial': label})
+                restore(anchor, initial_physical, folder, reset_accumulation=reset_history)
                 with (folder / 'truth.jsonl').open('x') as stream:
                     for offset, block in enumerate(blocks):
                         decision = anchor['decision'] + offset
@@ -550,7 +681,54 @@ def main(args):
                             if terminated or truncated or env._physx_crashed:
                                 raise RuntimeError('Fixed-action restore probe encountered a simulator stop')
                         np.savez_compressed(folder / f'observation_{decision:04d}.npz', **features(batch(observation)))
-                print(f'TASK40_RENDERER_PROBE_DONE repeat={i} steps={args.cycles * 8}', flush=True)
+                        write_json(output / 'active_stage.json', {'stage': 'fixed_action_replay',
+                                   'trial': label, 'repeat': i, 'decisions': offset + 1, 'steps': (offset + 1) * 8})
+                print(f'TASK40_RENDERER_PROBE_DONE repeat={i} reset={reset_history} steps={args.cycles * 8}', flush=True)
+            for reset_history, repeats in groups.items():
+                if len(repeats) != 2:
+                    continue
+                left, right = repeats
+                tracks = []
+                for folder in repeats:
+                    with (folder / 'truth.jsonl').open() as stream:
+                        tracks.append([json.loads(line) for line in stream])
+                rows = list(zip(*tracks, strict=True))
+                if any(a['step'] != b['step'] for a, b in rows):
+                    raise ValueError('Fixed-action repeats do not share the same physical time')
+                image_diff = {}
+                for name in sorted((*left.glob('render_*.npz'), *left.glob('observation_*.npz'))):
+                    image_diff[name.name] = observation_correspondence(
+                        load_arrays(name), load_arrays(right / name.name))
+                robot = [(a['robots']['robot_r1'], b['robots']['robot_r1']) for a, b in rows]
+                audit_name = 'accumulation_reset_audit.json' if reset_history else 'fixed_action_audit.json'
+                first_state = [read_json(folder / 'restore.json') for folder in repeats]
+                write_json(output / audit_name, {
+                    'shared_steps': len(rows), 'archived_actions_exactly_verified': True,
+                    'run_order': [folder.name for folder in repeats],
+                    'first_state': first_state,
+                    'camera_poses_exact': first_state[0]['camera_poses'] == first_state[1]['camera_poses'],
+                    'observations': image_diff,
+                    'physics_exact_excluding_absolute_sim_time': all(
+                        all(value == b[key] for key, value in a.items() if key != 'sim_time_s')
+                        for a, b in rows),
+                    'absolute_sim_time_offset_s': rows[0][1]['sim_time_s'] - rows[0][0]['sim_time_s'],
+                    'max_hinge_abs_rad': max(abs(a['hinge'] - b['hinge']) for a, b in rows),
+                    'max_robot_joint_abs': max(float(np.max(np.abs(np.subtract(
+                        a['joint_positions'], b['joint_positions'])))) for a, b in robot),
+                    'max_eef_position_distance_m': {
+                        arm: max(float(np.linalg.norm(np.subtract(a['end_effectors'][arm][0],
+                                  b['end_effectors'][arm][0]))) for a, b in robot)
+                        for arm in ('left', 'right')},
+                    'truth_mismatch_steps': {
+                        key: [a['step'] for a, b in rows if a[key] != b[key]]
+                        for key in ('Open', 'ToggledOn', 'Inside', 'interaction')},
+                    'door_contact_steps': [[row['step'] for row in track if any(
+                        contact['body'] == row['interaction']['door_body']
+                        for arm in row['interaction']['contacts'].values() for contact in arm)]
+                        for track in tracks],
+                })
+            write_json(output / 'active_stage.json', {'stage': 'complete', 'decisions': args.cycles,
+                       'steps': args.cycles * 8, 'repeats': sum(map(len, groups.values()))})
         finally:
             og.shutdown()
         return
@@ -587,7 +765,7 @@ def main(args):
     targeted_lineage = {}
 
     def run(label, mode, seed, origin=None, failure_name=None, fresh_instance=None):
-        nonlocal session, microwave, bag, toggle, door_joint, door
+        nonlocal session, microwave, bag, toggle, door_joint, door, policy_memory
         started = time.monotonic()
         name = f'{label}_{mode}'
         folder = args.output / 'metrics' / name
@@ -620,6 +798,9 @@ def main(args):
             write_json(folder / 'lineage.json', lineage)
             targeted_lineage[str(folder.resolve())] = lineage
             write_json(args.output / 'metrics' / 'lineage_metadata.json', targeted_lineage)
+        elif args.official_policy:
+            client.reset()
+            prepared = {'policy_weights': 'GR00T-N1.6-BEHAVIOR1k', 'seed': seed}
         else:
             prepared = client.call_endpoint('prepare_pair',
                                             {'mode': mode, 'seed': seed, 'origin': origin, 'fresh': fresh})
@@ -640,7 +821,20 @@ def main(args):
                     or correspondence['hinge_abs_rad'] > 1e-5):
                 raise RuntimeError('Restored initial truth or language disagrees with the verified parent boundary')
             write_json(args.output / 'metrics' / 'active_stage.json', {'trial': name, 'stage': 'prepare_policy'})
-            prepared = restore_targeted_policy(client, session, policy_memory, policy_rng, start_decision)
+            if args.official_policy:
+                client.reset()
+                prepared = {'policy_weights': 'GR00T-N1.6-BEHAVIOR1k', 'seed': seed,
+                            **client.call_endpoint('task40_restore_rng', {'rng': policy_rng})}
+            else:
+                if args.rebuild_policy_history:
+                    policy_memory, prefix_hash = replay_policy_history(client, args.parent_trial, session, start_decision)
+                    (folder / 'policy_rebuilt.pt').write_bytes(policy_memory)
+                    lineage.update(replay_decisions=start_decision, replay_input_sha256=prefix_hash,
+                                   rebuilt_memory_sha256=sha256(policy_memory).hexdigest())
+                    write_json(folder / 'lineage.json', lineage)
+                prepared = restore_targeted_policy(client, session, policy_memory, policy_rng, start_decision)
+                if args.rebuild_policy_history:
+                    prepared['anchor_source'] = 'checkpoint_native_observation_replay'
             prepared['seed'] = seed
         write_json(args.output / 'metrics' / 'active_stage.json', {'trial': name, 'stage': 'closed_loop'})
         assert not before['Open'] and not before['ToggledOn']
@@ -653,10 +847,12 @@ def main(args):
         closed_contact_peak = 0.0
         hinges = []
         candidate = None
+        approach_candidate = None
         first_error = None
         first_error_ordinal = None
         first_open_step = None
         first_open_ordinal = None
+        first_task_success_step = None
         post_event_chunks_completed = 0
         hard_stop = False
         pilot = getattr(args, 'controlled_reclosure', False)
@@ -669,7 +865,9 @@ def main(args):
         with (folder / 'truth.jsonl').open('x', buffering=1) as truth_stream, av.open(str(video_path), 'w') as container:
             video = container.add_stream('libx264', rate=30)
             video.width, video.height, video.pix_fmt = 768, 256, 'yuv420p'
-            max_cycles = args.cycles + args.post_event_action_chunks if args.collection_protocol else args.cycles
+            max_cycles = args.cycles
+            if args.collection_protocol and not args.full_task_eval:
+                max_cycles += args.post_event_action_chunks
             for ordinal in range(max_cycles):
                 if ordinal >= args.cycles and first_error_ordinal is None:
                     break
@@ -700,11 +898,14 @@ def main(args):
                     diagnostics = {'model_features': trace['model_features'], 'retrieval': trace['retrieval'],
                                    'memory_after': {'decision': decision + 1}, 'instrumentation': trace['trace'],
                                    'memory_artifacts': artifacts}
+                elif args.official_policy:
+                    proposed, _ = client.call_endpoint('get_action', {'observation': inputs, 'options': session})
+                    diagnostics = {'memory_after': {'decision': decision + 1}, 'memory_applicable': False}
                 else:
                     proposed, diagnostics = client.call_endpoint('infer_pair', {'observation': inputs,
                         'session': session, 'branch': name, 'decision': decision, 'first': ordinal == 0})
                 arrays = diagnostics.pop('model_features', None)
-                if args.remote_policy and arrays is None:
+                if args.remote_policy and arrays is None and not args.official_policy:
                     raise RuntimeError('Remote policy must run with diagnostic artifact transfer enabled')
                 if arrays is not None:
                     np.savez_compressed(entry / 'model_features.npz', **arrays)
@@ -736,6 +937,13 @@ def main(args):
                             applied_this_block = True
                     observation, _, terminated, truncated, info = env.step(action)
                     row = truth(decision)
+                    row['task_success'] = bool(info['success']) if 'success' in info else None
+                    if args.full_task_eval and row['task_success'] is None:
+                        raise RuntimeError('Full task evaluation requires the environment success field')
+                    if args.full_task_eval and 'task_progress' in info:
+                        row['task_progress'] = float(info['task_progress'])
+                    if row['task_success'] and first_task_success_step is None:
+                        first_task_success_step = row['step']
                     if applied_this_block:
                         row['controlled_reclosure'] = True
                         matched = verify_reclosed_truth(marker['before'], row)
@@ -801,18 +1009,28 @@ def main(args):
                     post_event_chunks_completed = ordinal - first_error_ordinal
                 if hard_stop:
                     break
-                if first_error is None and first_open_step is not None:
+                if not args.full_task_eval and first_error is None and first_open_step is not None:
                     reason = 'opened'
-                    if (not fresh and (not targeted or args.observe_open_chunks)
+                    if (not fresh and (not targeted or args.observe_open_chunks or args.stop_at_first_open)
                             and ordinal - first_open_ordinal >= args.observe_open_chunks):
                         break
-                if first_error is not None:
+                if not args.full_task_eval and first_error is not None:
                     if post_event_chunks_completed >= args.post_event_action_chunks:
                         reason = 'opened_after_premature_toggle' if first_open_step is not None else 'premature_toggle_observed'
                     else:
                         reason = 'post_event_observation'
                     if post_event_chunks_completed >= args.post_event_action_chunks:
                         break
+                if (args.capture_approach and fresh and approach_candidate is None
+                        and not contact_history and first_open_step is None and first_error is None
+                        and ordinal + 1 < args.cycles and abs(row['hinge'] - before['hinge']) <= .005):
+                    from groot_web_launch import task40_approach_distance
+                    distance = task40_approach_distance(row)
+                    if distance <= .12:
+                        approach_candidate = name.removesuffix('_A_normal') + '_approach'
+                        save_failure(approach_candidate, name, decision + 1, observation, {
+                            'capture_stage': 'approach', 'door_distance_m': distance, 'door_contact_steps': [],
+                            'final_open': False, 'final_toggled_on': False}, fresh=True)
                 if fresh and args.collection_protocol:
                     capture_attempt = (first_open_step is None and first_error is None
                                        and ordinal + 1 < args.cycles and closed_contact_peak >= 0.005)
@@ -834,7 +1052,8 @@ def main(args):
             executed_decisions = decision - start_decision + 1
             for packet in video.encode():
                 container.mux(packet)
-        if not hard_stop and first_error is not None and post_event_chunks_completed < args.post_event_action_chunks:
+        if (not args.full_task_eval and not hard_stop and first_error is not None
+                and post_event_chunks_completed < args.post_event_action_chunks):
             reason = 'decision_limit_after_event'
         assert steps == base._current_step - saved['step']
         if pilot:
@@ -843,7 +1062,7 @@ def main(args):
                               reason='no_open_policy_input' if open_input is None else 'no_eligible_boundary')
             write_json(marker_path, marker)
         online_prefix = None
-        if fresh and not env._physx_crashed:
+        if fresh and not env._physx_crashed and not args.official_policy:
             remote_name = remote_snapshot_name(args.output, name, args.collection_protocol)
             online_prefix = client.call_endpoint('save_online_prefix', {'branch': remote_name, 'decision': decision + 1})
             prefix_folder = args.output / 'checkpoints' / f'{name}_online_prefix'
@@ -857,7 +1076,10 @@ def main(args):
                    'instance': lineage['instance'] if targeted else fresh_instance,
                    'decisions': executed_decisions, 'steps': steps, 'stop_reason': reason, 'door_contact_steps': contact_history,
                    'max_hinge_excursion_rad': max(hinges), 'failure_candidate': candidate, 'start_step': saved['step'],
+                   **({'approach_candidate': approach_candidate} if args.capture_approach else {}),
                    'end_step': base._current_step, 'first_error': first_error, 'first_open_step': first_open_step,
+                   'first_task_success_step': first_task_success_step,
+                   **({'protocol': 'full_task_eval', 'cycle_limit': args.cycles} if args.full_task_eval else {}),
                    'metric_termination_step': (first_error['step'] if first_error else first_open_step),
                    'observation_end_step': base._current_step,
                    'online_prefix': online_prefix,
@@ -917,7 +1139,8 @@ def main(args):
             for index, seed in enumerate(seeds):
                 instance = args.instances[index % len(args.instances)]
                 name = f'episode_i{instance}_s{seed}'
-                run(name, 'A_normal', seed, failure_name=f'{name}_failure', fresh_instance=instance)
+                run(name, 'A_normal', seed,
+                    failure_name=None if args.official_policy else f'{name}_failure', fresh_instance=instance)
                 if env._physx_crashed:
                     raise RuntimeError('PhysX crashed; invalid episode preserved')
         else:
@@ -943,6 +1166,8 @@ def parse_args(argv=None):
     parser.add_argument('--trace-memory', action='store_true')
     parser.add_argument('--collection-protocol', action='store_true')
     parser.add_argument('--controlled-reclosure', action='store_true')
+    parser.add_argument('--full-task-eval', action='store_true')
+    parser.add_argument('--capture-approach', action='store_true')
     parser.add_argument('--cycles', type=int, default=60)
     parser.add_argument('--post-event-action-chunks', type=int, default=2)
     parser.add_argument('--phase', choices=('anchor', 'failure', 'capture', 'restore', 'collect', 'renderer_probe'), default='anchor')
@@ -951,10 +1176,14 @@ def parse_args(argv=None):
     parser.add_argument('--renderer-audit', action='store_true')
     parser.add_argument('--renderer-aa', type=int, choices=(0, 3))
     parser.add_argument('--renderer-probe-actions', type=Path)
+    parser.add_argument('--compare-accumulation-reset', action='store_true')
+    parser.add_argument('--renderer-gi-history', type=int, choices=(1,))
+    parser.add_argument('--renderer-disable-indirect-diffuse', action='store_true')
     parser.add_argument('--restore-checkpoint', type=Path)
     parser.add_argument('--parent-trial', type=Path)
     parser.add_argument('--capture-failed-attempt', action='store_true')
     parser.add_argument('--observe-open-chunks', type=int, default=0)
+    parser.add_argument('--stop-at-first-open', action='store_true')
     parser.add_argument('--memory-mode', choices=('A_normal', 'B_empty'), default='A_normal')
     parser.add_argument('--failures', nargs='*', default=[])
     parser.add_argument('--capture-specs', nargs='*', default=[
@@ -964,20 +1193,35 @@ def parse_args(argv=None):
         'failure_73007_d29:anchor_73007_A_normal:29',
         'failure_73012_d28:anchor_73012_A_normal:28'])
     parser.add_argument('--min-hinge-excursion', type=float, default=0.005)
+    parser.add_argument('--rebuild-policy-history', action='store_true')
+    parser.add_argument('--official-policy', action='store_true')
     args = parser.parse_args(argv)
     if args.post_event_action_chunks < 0:
         parser.error('--post-event-action-chunks must be non-negative')
     if args.controlled_reclosure and (args.phase != 'collect' or args.memory_mode != 'A_normal'
                                      or not (args.collection_protocol and args.trace_memory and args.remote_policy)):
         parser.error('Controlled reclosure requires fresh A_normal collection and remote memory tracing')
+    if args.full_task_eval and (args.phase != 'collect' or args.controlled_reclosure or args.memory_mode != 'A_normal'
+                               or not (args.collection_protocol and (args.trace_memory or args.official_policy) and args.remote_policy)):
+        parser.error('Full task evaluation requires fresh A_normal collection and remote memory tracing')
+    if args.capture_approach and (args.phase != 'collect' or args.full_task_eval or args.official_policy
+                                 or not (args.collection_protocol and args.trace_memory and args.remote_policy)):
+        parser.error('Approach capture requires fresh V1 collection with Task40 trace')
     if args.renderer_aa is not None and not args.renderer_audit:
         parser.error('--renderer-aa requires --renderer-audit')
     if args.phase == 'renderer_probe' and (not args.renderer_audit or not args.renderer_probe_actions):
         parser.error('renderer_probe requires --renderer-audit and --renderer-probe-actions')
+    if args.compare_accumulation_reset and (args.phase != 'renderer_probe' or args.restore_repeats != 2):
+        parser.error('Accumulation comparison requires a two-repeat renderer probe')
+    if args.renderer_gi_history is not None and args.phase != 'renderer_probe':
+        parser.error('GI history limit requires a renderer probe')
+    if args.renderer_disable_indirect_diffuse and args.phase != 'renderer_probe':
+        parser.error('Disabling indirect diffuse lighting requires a renderer probe')
     if args.restore_checkpoint is not None or args.parent_trial is not None:
-        if (not args.restore_checkpoint or not args.parent_trial or args.phase != 'restore'
+        if (not args.restore_checkpoint or not args.parent_trial or args.phase not in ('restore', 'renderer_probe')
                 or args.memory_mode != 'A_normal' or args.restore_repeats not in (1, 2)
-                or not args.collection_protocol or not args.trace_memory or not args.remote_policy
+                or (args.phase == 'restore' and not (
+                    args.collection_protocol and (args.trace_memory or args.official_policy) and args.remote_policy))
                 or args.post_event_action_chunks != 2):
             parser.error('Targeted restore requires both archived paths, A_normal, at most two repeats, '
                          'remote tracing, and two post-toggle chunks')

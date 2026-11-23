@@ -26,6 +26,7 @@ class InferenceManager:
         self.host = host
         self.device=device or {}
         paths=self.device.get('paths',{})
+        self.project=Path(paths.get('project', PROJECT))
         self.default_source=paths.get('project',PROJECT)+'/deployments/web_live' if paths else DEFAULT_SOURCE
         self.default_python=paths.get('python',DEFAULT_PYTHON)
         self.bind_host=host.split('@')[-1]
@@ -50,7 +51,7 @@ class InferenceManager:
         return dict(result, host=self.bind_host, source_dir=self.default_source, python_path=self.default_python)
 
     def argv(self, request):
-        if not isinstance(request, dict) or set(request) - {"checkpoint", "gpu_index", "port", "seed", "source_dir", "python_path", "history_mode", "task40_diagnostics"}:
+        if not isinstance(request, dict) or set(request) - {"checkpoint", "gpu_index", "port", "seed", "source_dir", "python_path", "history_mode", "task40_diagnostics", "experiment"}:
             raise ValueError("不支持的推理启动参数")
         history_mode=request.get('history_mode', 'normal')
         if history_mode not in ('normal', 'empty', 'other_episode'):
@@ -74,6 +75,10 @@ class InferenceManager:
                 raise ValueError('task40_diagnostics 必须是开关')
             if request['task40_diagnostics']:
                 argv += ['--task40-diagnostics']
+        if 'experiment' in request:
+            if request['experiment'] not in ('experiment_10', 'experiment_11', 'experiment_12') or request.get('task40_diagnostics') is not True:
+                raise ValueError('所选 experiment 需要启用 Task40 诊断服务')
+            argv += ['--log-dir', str(self.project / 'Output/test_01' / request['experiment'] / 'policy_services')]
         return argv + ["--host", self.bind_host, "--json"]
 
     def _run(self, request, check=False):

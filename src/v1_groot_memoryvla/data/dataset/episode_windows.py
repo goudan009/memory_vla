@@ -7,8 +7,8 @@ from .history_dataset import HistoryDataset
 
 
 class EpisodeWindows(HistoryDataset):
-    def __init__(self, dataset, processor, episode_ids, seed=42, episode_tasks=None):
-        super().__init__([dataset], processor, group_size=32, history_stride=8, seed=seed)
+    def __init__(self, dataset, processor, episode_ids, seed=42, episode_tasks=None, group_size=32):
+        super().__init__([dataset], processor, group_size=group_size, history_stride=8, seed=seed)
         selected = set(episode_ids)
         self.task_by_episode = {e: episode_tasks[e] for e in selected} if episode_tasks else {}
         self.is_multitask = len(set(self.task_by_episode.values())) > 1

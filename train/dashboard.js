@@ -83,6 +83,9 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
     ['complete','completed','cancelled','stopped'].includes(state) ? 'complete' : 'running') + '">' + esc(stateName(state)) + '</span>';
   let mounted = false, options = null, jobs = [], chosen = null, detail = null, busy = false, refreshing = false, view = 'new', lastOptionsAt = 0, recommendation = null, jobActionBusy = false;
   let trainingDevice = 'a100';
+  let deleteTarget = null;
+  let logSource = 'training';
+  const detailTabs = ['curve','controls','info','logs'];
   const deviceLabel = () => trainingDevice === 'a100' ? 'A100' : 'RTX 6000 Ada';
   const versionOpen = new Map(), taskOpen = new Map();
   const jobVersion = job => job?.version || (job?.name || job?.run || '').match(/^(V_\d+)(?:_|$)/)?.[1] || '未标版本';
@@ -98,10 +101,13 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
     renderJobs();
   }
   function selectDetailTab(tab) {
-    for (const name of ['curve','controls','info']) {
+    for (const name of detailTabs) {
       el('train-pane-' + name).hidden = name !== tab;
-      el('train-tab-' + name).setAttribute('aria-selected', String(name === tab));
+      const button = el('train-tab-' + name);
+      button.setAttribute('aria-selected', String(name === tab));
+      button.tabIndex = name === tab ? 0 : -1;
     }
+    if (tab === 'logs') renderRunLog();
   }
   async function api(path, payload) {
     const device=trainingDevice;
@@ -207,6 +213,11 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
   }
   function showDetailLoading() {
     const job = currentJob();
+    detail = null;
+    logSource = 'training';
+    el('train-log').textContent = '';
+    el('train-log-feedback').textContent = '';
+    el('train-pane-info').querySelectorAll('details[open]').forEach(panel => { panel.open = false; });
     el('train-detail-title').textContent = job?.name || chosen?.run || '训练详情';
     el('train-detail-subtitle').textContent = '';
     el('train-detail-gpu').textContent = '正在读取 '+deviceLabel()+' 记录…';
@@ -436,14 +447,16 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
     el('train-cancel-top').hidden = !job?.can_cancel;
     el('train-cancel-top').disabled = jobActionBusy;
     el('train-delete').disabled = jobActionBusy || !job?.can_delete;
-    el('train-delete').title = job?.can_delete ? '从训练列表移除，保留权重和日志' : job?.delete_block_reason || '请先结束训练和验证';
+    el('train-delete').title = job?.can_delete ? '删除训练记录，可选择是否保留输出目录' : job?.delete_block_reason || '请先结束训练和验证';
     el('train-action-hint').textContent = job?.can_stop ?
-      (job.stop_after_step ? '已设定第 ' + job.stop_after_step + ' 步保存后停止。' : '在下一个 1000 步保存点停止，权重与日志保留。') :
+      (job.stop_after_step ? '已设定第 ' + job.stop_after_step + ' 步保存后停止。' : '在下一个计划保存点停止，权重与日志保留。') :
       job?.can_cancel ? '取消尚未开始的本组排队。' :
       resume?.available ? '可从第 ' + resume.step + ' 步恢复；续跑沿用当前训练记录。' :
       job?.can_delete ? (resume?.reason || '删除记录仅从列表移除，保留权重与日志。') : job?.delete_block_reason || '当前任务暂不支持停止，请查看日志与配置。';
-    if (job?.can_stop && Number(el('train-stop-step').value) <= job.step)
-      el('train-stop-step').value = (Math.floor(job.step/1000)+1)*1000;
+    if (job?.can_stop && Number(el('train-stop-step').value) <= job.step) {
+      const interval = job.checkpoint_interval ?? 1000;
+      el('train-stop-step').value = Math.min((Math.floor(job.step / interval) + 1) * interval, job.max_steps);
+    }
   }
   function updateResumeBudget() {
     const resume = currentJob()?.resume, total = Number(el('train-resume-steps').value);
@@ -475,7 +488,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
     if (!job?.can_stop || jobActionBusy) return;
     const requested = {...chosen};
     if (nextCheckpoint && !window.confirm('保存权重后停止这次训练？\n' + (job.name || job.run) +
-      '\n将在下一个 1000 步保存点停止；已排队验证继续完成。')) return;
+      '\n将在下一个计划保存点停止，已排队验证继续完成。')) return;
     jobActionBusy = true; updateJobActions();
     try {
       const result = await api('stop',{...requested,...(nextCheckpoint ? {next_checkpoint:true} : {step:Number(el('train-stop-step').value)})});
@@ -485,18 +498,61 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
     } catch (error) { reportError(error); }
     finally { jobActionBusy = false; updateJobActions(); }
   }
-  async function deleteTrainingRecord() {
+  function updateDeleteDescription() {
+    const files = el('train-delete-files');
+    el('train-delete-confirm').textContent = files.checked ? '删除记录并回收目录' : '删除记录';
+    el('train-delete-description').textContent = files.checked ?
+      '权重和日志随目录移入设备的 .trash，原路径将失效。' :
+      files.disabled ? '此记录只能从列表移除，输出目录会保留。' : '仅从列表移除记录，保留权重和日志。';
+  }
+  function openDeleteDialog() {
     const job = currentJob();
     if (!job?.can_delete || jobActionBusy) return;
-    const requested = {...chosen};
-    if (!window.confirm('删除这条训练记录？\n' + (job.name || job.run) + '\n仅从列表移除，保留目标设备上的权重、日志和源码快照。')) return;
+    deleteTarget = {run:job.run, arm:job.arm, output:job.output, device:trainingDevice};
+    el('train-delete-name').textContent = job.name || job.run;
+    el('train-delete-device').textContent = deviceLabel() + ' · ' + methodLabel(jobMethod(job));
+    el('train-delete-path').textContent = job.output || '未记录输出路径';
+    el('train-delete-error').textContent = '';
+    el('train-delete-files').checked = false;
+    el('train-delete-files').disabled = job.can_delete_files !== true || !job.output;
+    updateDeleteDescription();
+    el('train-delete-dialog').showModal();
+  }
+  async function deleteTrainingRecord(event) {
+    event.preventDefault();
+    if (!deleteTarget || jobActionBusy || deleteTarget.device !== trainingDevice) return;
+    const {run, arm, output} = deleteTarget;
+    const files = el('train-delete-files');
+    const canSelectFiles = !files.disabled;
+    const requested = {run, arm};
+    if (canSelectFiles && files.checked) Object.assign(requested, {delete_files:true, expected_output:output});
     jobActionBusy = true; updateJobActions();
+    files.disabled = el('train-delete-confirm').disabled = el('train-delete-close').disabled = true;
+    el('train-delete-error').textContent = '';
     try {
-      await api('delete',requested);
-      message('已删除训练记录；权重、日志和源码快照保留。');
+      const result = await api('delete',requested);
+      el('train-delete-dialog').close();
+      deleteTarget = null;
+      jobs = jobs.filter(job => job.run !== run || job.arm !== arm);
+      chosen = null;
+      detail = null;
+      selectView('new');
+      el('train-new').focus();
+      message(result.files_preserved ? '已删除训练记录，输出目录保留。' :
+        '已删除训练记录。输出目录已移至 ' + result.trash_path);
+      if (!result.files_preserved) {
+        if (el('train-checkpoint').value.startsWith(output + '/')) el('train-checkpoint').value = '';
+        lastOptionsAt = 0;
+      }
       await refresh();
-    } catch (error) { reportError(error); }
-    finally { jobActionBusy = false; updateJobActions(); }
+    } catch (error) {
+      el('train-delete-error').textContent = error.message;
+    } finally {
+      files.disabled = !canSelectFiles;
+      el('train-delete-confirm').disabled = el('train-delete-close').disabled = false;
+      jobActionBusy = false;
+      updateJobActions();
+    }
   }
   function drawCurve() {
     if (!detail) return;
@@ -554,41 +610,107 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
     };
     chart.onpointerleave = () => { cursor.setAttribute('visibility','hidden'); el('train-curve-readout').textContent = readout(points.length-1) + ' · 平滑仅影响显示'; };
   }
-  function renderRecordedParameters() {
-    const p = detail.training_parameters?.values || {}, text = value => value == null ? '未记录' : String(value),
-      flag = value => value == null ? '未记录' : value ? '开启' : '关闭';
-    const groups = [
-      ['训练与 Batch', [
-        ['训练任务',p.tasks?.map(t=>'Task'+t).join(' / ')],['学习率',p.learning_rate],
+  function parameterList(rows) {
+    return '<dl class="train-param-list">' + rows.map(([label,value,path]) => {
+      const missing = value == null || value === '';
+      const classes = [path ? 'train-parameter-path' : '', missing ? 'train-missing' : ''].filter(Boolean).join(' ');
+      return '<div' + (path ? ' class="train-path-row"' : '') + '><dt>' + esc(label) +
+        '</dt><dd class="' + classes + '">' + esc(missing ? '未记录' : value) + '</dd></div>';
+    }).join('') + '</dl>';
+  }
+  function parameterGroups(groups) {
+    return groups.map(([title,rows]) =>
+      '<div class="train-param-group"><h3>' + esc(title) + '</h3>' + parameterList(rows) + '</div>').join('');
+  }
+  function renderRecordedParameters(job) {
+    const p = detail.training_parameters?.values || {};
+    const flag = value => value == null ? null : value ? '开启' : '关闭';
+    const steps = value => value == null ? null : value + ' 步';
+    const tuningModes = {action_full:'动作头 / 记忆全参数微调',full:'全模型微调',lora:'LoRA 微调',custom:'自定义组件冻结'};
+    el('train-recorded-params').innerHTML = parameterGroups([
+      ['训练设置', [
+        ['训练总步数',steps(p.steps)],['学习率',p.learning_rate],['训练 GPU',p.gpus],
         ['全局 Batch',p.global_windows_per_step == null ? null : p.global_windows_per_step + ' 窗口 / 优化步' +
           (p.global_decisions_max == null ? '' : '（最多 '+p.global_decisions_max+' 决策）')],
         ['Microbatch / GPU',p.microbatch == null ? null : p.microbatch + ' 决策 / 次前向'],
-        ['训练 GPU',p.gpus],['随机种子',p.seed],['训练总步数',p.steps],
-        ...(p.stop_after_step ? [['保存后停止点',p.stop_after_step]] : [])]],
+        ['微调方式',tuningModes[p.fine_tuning_mode] || p.fine_tuning_mode],['随机种子',p.seed],
+        ...(p.stop_after_step ? [['保存后停止点',steps(p.stop_after_step)]] : [])]],
       ['数据与验证', [
+        ['训练任务',p.tasks?.map(task => 'Task ' + task).join(' / ')],
         ['训练 Episode',p.train_episodes],['验证 Episode',p.validation_episodes],['独立验证',flag(p.validation_enabled)],
-        ...(p.validation_enabled ? [['验证 GPU',p.validation_gpu],['验证间隔',p.validation_interval]] : []),
-        ['保存间隔',p.checkpoint_interval == null ? null : p.checkpoint_interval+' 步'],
-        ['数据集',p.dataset]]],
-      ['模型与训练方式', [
-        ['微调方式',p.fine_tuning_mode],['Weight decay',p.weight_decay],['梯度裁剪',p.max_grad_norm],
-        ...['llm','vision','vision_projector','action_dit','action_projector','action_vlln','memory'].map(n=>['冻结 '+n,flag(p['freeze_'+n])]),
-        ...(p.fine_tuning_mode === 'lora' ? [['LoRA目标',p.lora_targets],['LoRA rank',p.lora_rank],['LoRA alpha',p.lora_alpha],['LoRA dropout',p.lora_dropout]] : []),
-        ['LLM末层数',p.llm_last_n_layers],['梯度检查点',flag(p.gradient_checkpointing)],
-        ['冻结 Eagle',flag(p.frozen_eagle)],['图像增强',flag(p.image_augmentation)],
-        ['自动早停',p.disable_early_stopping == null ? '未记录' : flag(!p.disable_early_stopping)],
-        ...(chosen.arm === 'memory_v1' ? [['记忆容量',p.memory_length],['记忆接入',p.memory_conditioning],
-          ['Residual readout',p.memory_residual_readout],['认知检索归一化',p.memory_cognitive_qk_norm],
-          ['认知矩阵投影',p.memory_cognitive_residual_projection],['认知残差范围',p.memory_cognitive_residual_scope]] : []),
-        ['AdamW epsilon',p.optimizer_eps],
-        ['训练协议',p.training_protocol]]]
-    ];
-    el('train-recorded-params').innerHTML = groups.map(([title,rows]) =>
-      '<section class="train-param-group"><h3>'+esc(title)+'</h3><dl>'+rows.map(([label,value])=>
-      '<dt>'+esc(label)+'</dt><dd>'+esc(text(value))+'</dd>').join('')+'</dl></section>').join('');
-    el('train-params-source').textContent = '读取当次保存的训练配置；缺失项显示“未记录”。' +
-      (detail.training_parameters?.sources?.length ? '\n来源：'+detail.training_parameters.sources.join('\n') : '');
-    el('train-raw-config').textContent = JSON.stringify(detail.config || {},null,2);
+        ...(p.validation_enabled ? [['验证 GPU',p.validation_gpu],['验证间隔',steps(p.validation_interval)]] : []),
+        ['保存间隔',steps(p.checkpoint_interval)],['数据集路径',p.dataset,true]]]
+    ]);
+    const components = {llm:'LLM',vision:'视觉编码器',vision_projector:'视觉投影',action_dit:'动作 DiT',
+      action_projector:'状态 / 动作投影',action_vlln:'动作输入 LayerNorm',memory:'记忆模块'};
+    el('train-advanced-recorded-params').innerHTML = parameterGroups([
+      ['优化器与训练策略', [
+        ['Weight decay',p.weight_decay],['AdamW epsilon',p.optimizer_eps],['梯度裁剪',p.max_grad_norm],
+        ['梯度检查点',flag(p.gradient_checkpointing)],['图像增强',flag(p.image_augmentation)],
+        ['自动早停',p.disable_early_stopping == null ? null : flag(!p.disable_early_stopping)],['训练协议',p.training_protocol]]],
+      ['组件冻结', [
+        ...Object.entries(components).filter(([key]) => key !== 'memory' || chosen.arm === 'memory_v1')
+          .map(([key,label]) => [label,p['freeze_'+key] == null ? null : p['freeze_'+key] ? '冻结' : '训练']),
+        ['冻结 Eagle',flag(p.frozen_eagle)],
+        ['LLM 最后 N 层',p.llm_last_n_layers === 0 ? '全部所选层' : p.llm_last_n_layers]]],
+      ...(p.fine_tuning_mode === 'lora' ? [['LoRA', [
+        ['目标组件',p.lora_targets],['Rank',p.lora_rank],['Alpha',p.lora_alpha],['Dropout',p.lora_dropout]]]] : []),
+      ...(chosen.arm === 'memory_v1' ? [['记忆模块', [
+        ['记忆容量',p.memory_length],['记忆接入',p.memory_conditioning],['Residual readout',p.memory_residual_readout],
+        ['认知检索归一化',p.memory_cognitive_qk_norm],['认知矩阵投影',flag(p.memory_cognitive_residual_projection)],
+        ['认知残差范围',p.memory_cognitive_residual_scope]]]] : [])
+    ]);
+    const origin = detail.initial_weights || {};
+    el('train-initial-weight-label').textContent = origin.label || '未记录';
+    el('train-initial-weight-path').textContent = origin.checkpoint || '未记录';
+    el('train-initial-weight-mode').textContent = origin.mode === 'resume' ?
+      '从第 ' + origin.resume_step + ' 步续训 · ' + (origin.optimizer_restored ? '已恢复优化器状态' : '等待确认优化器恢复') :
+      origin.mode === 'fresh' ? '从初始权重启动 · 新建优化器' : '未记录';
+    el('train-resume-weight-row').hidden = !origin.resume_checkpoint;
+    el('train-resume-weight-path').textContent = origin.resume_checkpoint || '';
+    const sources = [...new Set([...(detail.training_parameters?.sources || []),origin.source_file,origin.resume_record].filter(Boolean))];
+    el('train-params-source').textContent = sources.length ? '记录来源\n' + sources.join('\n') : '暂无配置来源记录';
+    const config = detail.config || {};
+    el('train-raw-config').textContent = Object.keys(config).length ? JSON.stringify(config,null,2) : '暂无原始训练配置';
+
+    const q = job?.queue;
+    el('train-detail-info').innerHTML = parameterList([
+      ['运行名',chosen.run],['训练 ID',job?.training_id || chosen.run],
+      ['每步耗时',job?.last?.seconds == null ? null : fmt(job.last.seconds) + ' 秒'],
+      ['梯度范数',job?.last?.gradient_norm == null ? null : fmt(job.last.gradient_norm)],
+      ['源码哈希',job?.source_digest],['输出目录',job?.output,true],['源码快照',job?.source,true],
+      ...(q ? [
+        ['队列',q.name + ' · ' + stateName(q.status)],
+        ...(q.dependencies?.length ? [['前序作业',q.dependencies.map(d => 'Task ' + d.task + ' · ' + d.arm +
+          ' · ' + d.step + ' 步 · ' + (d.complete ? '训练及验证完成' : '等待训练或最终验证')).join('\n')]] : []),
+        ...(q.waiting_for_runs?.length ? [['等待前序训练',q.waiting_for_runs.join('\n')]] : []),
+        ...(q.unexpected_pids?.length ? [['等待 GPU 进程退出',q.unexpected_pids.join('、')]] : []),
+        ...(q.error ? [['队列错误',q.error]] : []),['队列状态文件',q.path,true]] : [])
+    ]);
+  }
+  function runLogText() {
+    return (logSource === 'validation' ? detail?.validation_log_tail : detail?.log_tail) || '';
+  }
+  function renderRunLog(jumpToEnd = false) {
+    const validation = logSource === 'validation';
+    const log = el('train-log');
+    const content = runLogText();
+    const scrollTop = log.scrollTop;
+    const follow = jumpToEnd || !log.textContent || log.scrollHeight - log.clientHeight - scrollTop <= 24;
+    let empty = validation ? '暂无验证日志。' : '暂无训练日志。';
+    if (validation && currentJob()?.validation_enabled === false) empty = '本次训练未启用独立验证。';
+    const text = content || empty;
+    if (log.textContent !== text) log.textContent = text;
+    log.scrollTop = follow ? log.scrollHeight : scrollTop;
+    log.setAttribute('aria-label', validation ? '验证日志' : '训练日志');
+    for (const source of ['training','validation'])
+      el('train-log-source-' + source).setAttribute('aria-pressed', String(source === logSource));
+    el('train-log-copy').disabled = el('train-log-latest').disabled = !content;
+  }
+  function selectLogSource(source) {
+    logSource = source;
+    el('train-log-feedback').textContent = '';
+    renderRunLog(true);
   }
   async function loadDetail() {
     if (!chosen) return;
@@ -600,7 +722,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
     const notes = detail.notes || job?.notes || '';
     el('train-detail-notes').textContent = notes ? '备注：' + notes : '';
     el('train-detail-notes').hidden = !notes;
-    renderRecordedParameters();
+    renderRecordedParameters(job);
     el('train-detail-title').textContent = job?.name || chosen.run;
     el('train-detail-subtitle').textContent = 'Task' + (job?.task ?? job?.task_id ?? '—') + ' · ' + (job?.method || (chosen.arm === 'baseline' ? 'baseline' : 'memory'));
     el('train-detail-gpu').textContent = 'GPU ' + (job?.gpus ?? '—') + ' · 每 10 秒刷新';
@@ -609,8 +731,9 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
     el('train-runtime-text').textContent = job?.can_cancel ?
       (job.status === 'waiting_for_gpus' ? '等待所选设备 GPU 释放；可在任务控制中取消排队。' : '已加入训练队列，可在任务控制中查看或取消。') :
       job?.can_stop ? '训练中，可设置保存后停止点；已保存权重可直接用于推理评估。' :
-      job?.status === 'failed' ? '训练异常退出，请在「参数与日志」查看原因。' : '可选择已保存的权重，继续进行推理评估。';
-    el('train-runtime-controls').textContent = job?.can_cancel ? '管理排队 →' : job?.can_stop ? '权重 / 停止设置 →' : '查看权重 →';
+      job?.status === 'failed' ? '训练异常退出，可查看运行日志排查。' : '可选择已保存的权重，继续进行推理评估。';
+    el('train-runtime-controls').textContent = job?.can_cancel ? '管理排队 →' : job?.can_stop ? '权重 / 停止设置 →' :
+      job?.status === 'failed' ? '查看运行日志 →' : '查看权重 →';
     const metrics = [['训练步数', (job?.step ?? '—') + ' / ' + (job?.max_steps ?? '—'), '优化步'],
       ['最新 Loss', fmt(job?.last?.loss), '训练损失'],
       ['训练吞吐', fmt(job?.last?.decisions_per_second_end_to_end), '决策 / 秒'],
@@ -625,27 +748,6 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
     el('train-step-time').textContent = timing.recent_mean_step_seconds == null ? '—' : timing.recent_mean_step_seconds.toFixed(2) + ' s / 步';
     el('train-step-time-note').textContent = lastSeconds == null ? '等待计时记录' :
       '最近一步 ' + Number(lastSeconds).toFixed(2) + ' s' + (timing.mean_step_seconds == null ? '' : ' · 全程平均 ' + timing.mean_step_seconds.toFixed(2) + ' s');
-    const origin = detail.initial_weights || {};
-    el('train-initial-weight-label').textContent = origin.label || '未记录';
-    el('train-initial-weight-path').textContent = origin.checkpoint || '历史运行未记录权重起点';
-    el('train-initial-weight-mode').textContent = origin.mode === 'resume' ?
-      '断点续训 · 从第 ' + origin.resume_step + ' 步' + (origin.optimizer_restored ? '恢复优化器状态' : '恢复，等待训练确认') + (origin.resume_checkpoint ? ' · 恢复权重：' + origin.resume_checkpoint : '') :
-      origin.mode === 'fresh' ? '从所选权重微调 · 新建优化器，未恢复之前训练状态' : '历史记录不足，无法确认';
-    el('train-initial-weight-record').textContent = [origin.source_file,origin.resume_record].filter(Boolean).join('\n') || '未记录';
-    el('train-detail-info').textContent = '运行：' + chosen.run +
-      '\n每步耗时：' + fmt(job?.last?.seconds) + ' 秒 · 梯度范数：' + fmt(job?.last?.gradient_norm) +
-      '\n训练 ID：' + (job?.training_id || job?.run || '—') + '\n源码哈希：' + (job?.source_digest || '未记录') +
-      '\n输出：' + (job?.output ?? '') + '\n源码快照：' + (job?.source ?? '历史运行未记录网页快照');
-    if (job?.queue) {
-      const q = job.queue;
-      el('train-detail-info').textContent += '\n自动队列：' + q.name + ' · ' + stateName(q.status) +
-        '\n' + q.dependencies.map(d => 'Task' + d.task + ' ' + d.arm + '：' + d.step + '/3000 · ' + (d.complete ? '训练及验证完成' : '等待训练或最终验证')).join('\n') +
-        (q.unexpected_pids.length ? '\n等待GPU进程退出：' + q.unexpected_pids.join('、') : '') +
-        (q.waiting_for_runs?.length ? '\n等待前序训练：' + q.waiting_for_runs.join('、') : '') +
-        (q.error ? '\n队列错误：' + q.error : '') + '\n队列状态文件：' + q.path;
-    }
-    el('train-log').textContent = detail.log_tail || '等待训练日志…';
-    el('train-validation-log').textContent = detail.validation_log_tail || '暂无验证日志';
     const validation = job?.validation || {};
     el('train-validation-info').textContent = job?.validation_enabled===false?'本次未启用验证': '独立验证 · ' + stateName(validation.status) +
       (validation.checkpoint_step != null ? ' · step ' + validation.checkpoint_step : '') +
@@ -672,6 +774,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
     drawCurve();
     el('train-detail-loading').hidden = true;
     el('train-monitor-body').hidden = false;
+    if (!el('train-pane-logs').hidden) renderRunLog();
   }
   function updateCheckpointPath() { el('train-checkpoint-path').textContent = el('train-saved-checkpoint').value; }
   async function refresh() {
@@ -722,6 +825,12 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
       } catch(error) { reportError(error); }
     };
     el('train-new').onclick = () => selectView('new');
+    el('train-records-toggle').onclick = event => {
+      const toggle = event.currentTarget;
+      const expanded = toggle.getAttribute('aria-expanded') !== 'true';
+      toggle.setAttribute('aria-expanded', String(expanded));
+      toggle.textContent = expanded ? '收起记录' : '展开记录';
+    };
     el('train-job-search').oninput = renderJobs;
     el('train-job-filter').onchange = renderJobs;
     el('train-task-search').oninput = renderTaskChoices;
@@ -737,8 +846,36 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
     };
     el('train-select-ready').onclick = () => selectTasks(data=>data.ready);
     el('train-clear-tasks').onclick = () => selectTasks(()=>false);
-    el('train-runtime-controls').onclick = () => selectDetailTab('controls');
-    for (const name of ['curve','controls','info']) el('train-tab-' + name).onclick = () => selectDetailTab(name);
+    el('train-runtime-controls').onclick = () => {
+      const tab = currentJob()?.status === 'failed' ? 'logs' : 'controls';
+      selectDetailTab(tab);
+      if (tab === 'logs') selectLogSource('training');
+      el('train-tab-' + tab).focus();
+    };
+    for (const name of detailTabs) el('train-tab-' + name).onclick = () => selectDetailTab(name);
+    el('train-detail-tabs').onkeydown = event => {
+      const current = detailTabs.findIndex(name => event.target === el('train-tab-' + name));
+      if (current < 0) return;
+      const last = detailTabs.length - 1;
+      const next = {Home:0,End:last,ArrowLeft:current === 0 ? last : current - 1,
+        ArrowRight:current === last ? 0 : current + 1}[event.key];
+      if (next == null) return;
+      event.preventDefault();
+      selectDetailTab(detailTabs[next]);
+      el('train-tab-' + detailTabs[next]).focus();
+    };
+    for (const source of ['training','validation'])
+      el('train-log-source-' + source).onclick = () => selectLogSource(source);
+    el('train-log-latest').onclick = () => renderRunLog(true);
+    el('train-log-copy').onclick = async () => {
+      const feedback = el('train-log-feedback');
+      try {
+        await navigator.clipboard.writeText(runLogText());
+        feedback.textContent = '已复制当前日志片段';
+      } catch {
+        feedback.textContent = '无法访问剪贴板，可选中文字手动复制';
+      }
+    };
     el('train-form').onsubmit = event => { event.preventDefault(); void submit(true); };
     el('train-check').onclick = () => void submit(false);
     el('train-form').oninput = event => {
@@ -750,7 +887,8 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
       updateBatch();
     };
     el('train-form').addEventListener('invalid', event => {
-      if (el('train-advanced').contains(event.target)) el('train-advanced').open = true;
+      const section = event.target.closest('details');
+      if (section) section.open = true;
     }, true);
     el('train-dataset').onchange = datasetHint;
     el('train-validation-enabled').onchange=datasetHint;
@@ -773,7 +911,11 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
     el('train-resume-close').onclick = () => { el('train-resume-panel').hidden = true; };
     el('train-resume-steps').oninput = updateResumeBudget;
     el('train-resume-panel').onsubmit = event => void resumeTraining(event);
-    el('train-delete').onclick = () => void deleteTrainingRecord();
+    el('train-delete').onclick = openDeleteDialog;
+    el('train-delete-files').onchange = updateDeleteDescription;
+    el('train-delete-form').onsubmit = event => void deleteTrainingRecord(event);
+    el('train-delete-close').onclick = () => el('train-delete-dialog').close();
+    el('train-delete-dialog').oncancel = event => { if (jobActionBusy) event.preventDefault(); };
     el('train-cancel-top').onclick = () => {
       if (window.confirm('取消本组排队？\n' + (currentJob()?.queue?.affected_runs || []).join('\n')))
         el('train-cancel').click();

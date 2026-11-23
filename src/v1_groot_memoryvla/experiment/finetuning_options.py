@@ -41,7 +41,10 @@ def resolve_finetuning(values):
     scopes = [t for t in targets if not freeze[t]] if mode == 'lora' else []
     if mode == 'lora' and not scopes:
         raise ValueError('LoRA目标已全部冻结，请至少解冻一个LoRA目标组件')
-    if all(freeze.values()) or (values.get('arm') == 'baseline' and all(freeze[n] for n in COMPONENTS[:-1])):
+    fusion = values.get('fusion_variant')
+    if fusion and (mode != 'custom' or not all(freeze.values())):
+        raise ValueError('Exp10 requires custom mode with all base components frozen')
+    if (all(freeze.values()) and not fusion) or (values.get('arm') == 'baseline' and all(freeze[n] for n in COMPONENTS[:-1])):
         raise ValueError('没有可训练组件')
     return dict(fine_tuning_mode=mode, **{'freeze_' + k: v for k, v in freeze.items()},
                 lora_targets=','.join(targets), lora_rank=rank, lora_alpha=float(alpha),

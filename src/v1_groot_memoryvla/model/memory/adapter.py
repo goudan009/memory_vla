@@ -2,19 +2,22 @@
 
 import torch
 from torch import nn
+from torch.nn import functional as F
 from transformers.feature_extraction_utils import BatchFeature
 
 from .bank import BottleneckSE, MemoryBank
+from .fusion import CognitiveGatedResidual
 
 
 class MemoryAdapter(nn.Module):
     def __init__(self, vlm_dim=2048, perceptual_dim=256, capacity=16,
                  retrieval_layers=2, group_size=16, eos_token_id=151645, conditioning="residual",
                  cognitive_qk_norm="none", residual_identity_init=False, cognitive_residual_projection=False,
-                 cognitive_residual_scope="eos", residual_readout="delta"):
+                 cognitive_residual_scope="eos", residual_readout="delta", fusion_mode="legacy",
+                 visual_dim=None):
         super().__init__()
-        if conditioning not in ("direct", "residual") or capacity < 1:
-            raise ValueError("Memory requires direct/residual conditioning and positive capacity")
+        if conditioning not in ("direct", "residual", "openvla") or capacity < 1:
+            raise ValueError("Invalid memory conditioning or capacity")
         if cognitive_residual_projection and not (conditioning == "residual" and residual_identity_init):
             raise ValueError("Cognitive projection requires identity-initialized residual conditioning")
         if cognitive_residual_scope not in ("eos", "text"):
@@ -27,14 +30,17 @@ class MemoryAdapter(nn.Module):
         self.cognitive_residual_scope = cognitive_residual_scope
         self.group_size = group_size
         self.eos_token_id = eos_token_id
-        self.perceptual_encoder = BottleneckSE(vlm_dim, 512, perceptual_dim)
-        self.perceptual = MemoryBank(perceptual_dim, capacity, retrieval_layers)
-        self.cognitive = MemoryBank(vlm_dim, capacity, retrieval_layers, qk_norm=cognitive_qk_norm)
+        openvla = conditioning == "openvla"
+        self.perceptual_encoder = BottleneckSE(visual_dim or vlm_dim, 512, perceptual_dim)
+        self.perceptual = MemoryBank(perceptual_dim, capacity, retrieval_layers, update_fused=not openvla)
+        self.cognitive = MemoryBank(vlm_dim, capacity, retrieval_layers, qk_norm=cognitive_qk_norm,
+                                    update_fused=not openvla)
+        self.expose_cognitive_history = fusion_mode == "route_b"
         # Adapt the perceptual width to the existing GR00T action head.
         # Retain the original delta projection only for legacy checkpoints.
         if conditioning == "direct":
             self.perceptual_projection = nn.Linear(perceptual_dim, vlm_dim, bias=False)
-        else:
+        elif conditioning == "residual":
             self.perceptual_residual = nn.Linear(perceptual_dim, vlm_dim, bias=False)
             if residual_identity_init:
                 self.perceptual_residual._memory_zero_output = True
@@ -45,6 +51,8 @@ class MemoryAdapter(nn.Module):
                     nn.init.zeros_(self.cognitive_residual.weight)
                 else:
                     self.cognitive_residual_scale = nn.Parameter(torch.zeros(()))
+        if fusion_mode == "route_a":
+            self.cognitive_fusion = CognitiveGatedResidual(vlm_dim)
         for module in self.modules():
             module._memory_v1 = True
 
@@ -116,7 +124,8 @@ class MemoryAdapter(nn.Module):
         eos_indices = positions.masked_fill(~eos, -1).max(dim=1).values
         if (eos_indices < 0).any() or not torch.all(image_mask.sum(1) == cameras * n):
             raise ValueError("Missing user EOS or visual token/position mismatch")
-        updated = []
+        updated, perceptual_tokens, cognitive_tokens = [], [], []
+        history_slots, history_masks = [], []
         for i, (key, timestep) in enumerate(zip(context["episode_keys"], context["timesteps"])):
             key = tuple(key) if isinstance(key, list) else key
             if group_mode and i in group_starts:
@@ -134,13 +143,28 @@ class MemoryAdapter(nn.Module):
             if capture:
                 per_options['capture_diagnostics'] = True
                 cog_options.update(capture_diagnostics=True,capture_attention=True)
+            if self.expose_cognitive_history and not empty_mode:
+                cog_options['return_history'] = True
             if self.residual_readout == "value" and not empty_mode:
                 fused_per, perceptual_delta = self.perceptual.read_fuse_write(current_per, key, int(timestep), return_value_message=True, **per_options)
-                fused_cog, cognitive_delta = self.cognitive.read_fuse_write(current_cog, key, int(timestep), return_value_message=True, **cog_options)
+                cognitive = self.cognitive.read_fuse_write(current_cog, key, int(timestep), return_value_message=True, **cog_options)
             else:
                 fused_per = current_per if empty_mode else self.perceptual.read_fuse_write(current_per, key, int(timestep), **per_options)
-                fused_cog = current_cog if empty_mode else self.cognitive.read_fuse_write(current_cog, key, int(timestep), **cog_options)
+                cognitive = current_cog if empty_mode else self.cognitive.read_fuse_write(current_cog, key, int(timestep), **cog_options)
                 perceptual_delta = fused_per - current_per
+            if self.expose_cognitive_history:
+                if empty_mode:
+                    slots = current_cog[:, :0].detach()
+                else:
+                    cognitive, slots = cognitive
+                valid = slots.shape[1]
+                capacity = self.cognitive.capacity
+                history_slots.append(F.pad(slots.squeeze(0), (0, 0, 0, capacity - valid)))
+                history_masks.append(torch.arange(capacity, device=h.device) < valid)
+            if self.residual_readout == "value" and not empty_mode:
+                fused_cog, cognitive_delta = cognitive
+            else:
+                fused_cog = cognitive
                 cognitive_delta = fused_cog - current_cog
             diagnostic = None
             if capture:
@@ -150,6 +174,13 @@ class MemoryAdapter(nn.Module):
                         dict(history_timesteps=[],history_slots=0,write_enabled=False),
                     cognitive=self.cognitive.last_diagnostics if not empty_mode else
                         dict(history_timesteps=[],history_slots=0,write_enabled=False))
+            if self.conditioning == "openvla":
+                perceptual_tokens.append(fused_per.squeeze(0))
+                cognitive_tokens.append(fused_cog.squeeze(0))
+                if diagnostic is not None:
+                    diagnostic["conditioning"] = "openvla"
+                    self.last_diagnostics["observations"].append(diagnostic)
+                continue
             if self.conditioning == "direct":
                 # Existing AlternateVLDiT image attention reads fused perception;
                 # its text attention reads only the fused contextual EOS.
@@ -162,6 +193,8 @@ class MemoryAdapter(nn.Module):
             delta = torch.zeros_like(h[i])
             delta[image_mask[i]] = self.perceptual_residual(perceptual_delta).squeeze(0)
             cognitive_delta = cognitive_delta.squeeze(0).squeeze(0)
+            if hasattr(self, "cognitive_fusion"):
+                correction = self.cognitive_fusion(current_cog[0, 0], cognitive_delta)
             if self.residual_identity_init:
                 cognitive_delta = (self.cognitive_residual(cognitive_delta) if hasattr(self, "cognitive_residual")
                                    else self.cognitive_residual_scale * cognitive_delta)
@@ -169,6 +202,8 @@ class MemoryAdapter(nn.Module):
                 delta[attention[i] & ~image_mask[i]] = cognitive_delta
             else:
                 delta[eos_indices[i]] = cognitive_delta
+            if hasattr(self, "cognitive_fusion"):
+                delta[eos_indices[i]] = delta[eos_indices[i]] + correction
             updated.append(h[i] + delta)
             if diagnostic is not None:
                 diagnostic.update(conditioning='residual',
@@ -184,5 +219,12 @@ class MemoryAdapter(nn.Module):
             attention = torch.ones((b, cameras * n + 1), dtype=torch.bool, device=h.device)
             image_mask = attention.clone()
             image_mask[:, -1] = False
-        return BatchFeature(data={"backbone_features": torch.stack(updated),
-                                  "backbone_attention_mask": attention, "image_mask": image_mask})
+        features = {"backbone_features": h if self.conditioning == "openvla" else torch.stack(updated),
+                    "backbone_attention_mask": attention, "image_mask": image_mask}
+        if self.conditioning == "openvla":
+            features.update(memory_perceptual_tokens=torch.stack(perceptual_tokens),
+                            memory_cognitive_token=torch.stack(cognitive_tokens))
+        if self.expose_cognitive_history:
+            features.update(cognitive_history_slots=torch.stack(history_slots),
+                            cognitive_history_mask=torch.stack(history_masks))
+        return BatchFeature(data=features)

@@ -28,6 +28,44 @@ def launcher(**kwargs):
     return module.LaunchManager(ROOT, **kwargs)
 
 
+def test_exp11_appdata_reuses_only_idle_cache_slots(tmp_path):
+    worker = load("task40_cache_test", ROOT / "evaluation/scripts/task40_restore_worker.py")
+    runs = tmp_path / "experiment_11" / "runs"
+    first, second, third = (runs / name / "appdata" for name in ("first", "second", "third"))
+    lease0 = worker.lease_sim_cache(first, gpu=0, slots=1)
+    try:
+        with pytest.raises(RuntimeError, match="cache slot"):
+            worker.lease_sim_cache(second, gpu=0, slots=1)
+        with worker.lease_sim_cache(second, gpu=0, slots=2):
+            assert (second / "global/cache").resolve() != (first / "global/cache").resolve()
+            assert (second / "local/cache").resolve() != (first / "local/cache").resolve()
+            with pytest.raises(RuntimeError, match="cache slot"):
+                worker.lease_sim_cache(third, gpu=0, slots=2)
+    finally:
+        lease0.close()
+    with worker.lease_sim_cache(third, gpu=0, slots=1):
+        assert (third / "global/cache").resolve() == (first / "global/cache").resolve()
+        assert (third / "local/cache").resolve() == (first / "local/cache").resolve()
+        assert not (third / "global/data").is_symlink()
+        assert not (third / "local/logs").is_symlink()
+
+
+def test_restore_aa_updates_both_keys_and_rejects_renderer_reset():
+    sim = load("task40_paired_sim_test", ROOT / "evaluation/scripts/task40_paired_sim.py")
+    app = SimpleNamespace(config={"anti_aliasing": 3})
+    settings = dict.fromkeys(sim.RENDER_AA_KEYS, 3)
+    settings["/rtx-transient/post/aa/limitedOps"] = True
+    settings["/rtx/rendermode"] = "RaytracedLighting"
+    carb = SimpleNamespace(get=settings.get, set_int=settings.__setitem__, set_bool=settings.__setitem__)
+    assert sim.configure_restore_aa(app, carb, 0) == [0, 0]
+    assert settings["/rtx-transient/post/aa/limitedOps"] is False
+    assert app.config["anti_aliasing"] == 0
+    assert settings["/rtx/rendermode"] == "RaytracedLighting"
+    settings[sim.RENDER_AA_KEYS[1]] = 3
+    with pytest.raises(RuntimeError, match="did not persist"):
+        sim.read_restore_aa(carb, 0)
+
+
 def test_preview_uses_real_cli_defaults_without_creating_result_folder():
     manager = launcher()
     plan = manager.prepare({"version": "web_preview_test", "group": "baseline",
@@ -201,8 +239,54 @@ def test_task40_directed_restore_prepares_existing_worker_plan(task40_failure_ar
     repeated = manager.prepare(dict(payload, restore_repeats=2))
     assert repeated['plan']['restore_repeats'] == 2
     assert repeated['argv'][-5:-2] == ['--restore-repeats', '2', '--renderer-audit']
+    aa = manager.prepare(dict(payload, restore_repeats=2, renderer_aa=0))
+    assert aa['plan']['renderer_aa'] == 0
+    assert aa['argv'][-4:-2] == ['--renderer-aa', '0']
+    with pytest.raises(ValueError, match='渲染 AA'):
+        manager.prepare(dict(payload, renderer_aa=0))
+    with pytest.raises(ValueError, match='渲染 AA'):
+        manager.prepare(dict(payload, restore_repeats=2, renderer_aa=False))
     with pytest.raises(ValueError, match='重复次数'):
         manager.prepare(dict(payload, restore_repeats=3))
+
+
+def test_exp11_can_schedule_real_approach_capture_separately(task40_failure_archive):
+    manager, _, _, directed, identity = task40_failure_archive
+    request = dict(task40_collect=True, experiment="experiment_11", seed=77001, instances=[4],
+                   cycles=300, policy_port=5586, capture_approach=True)
+    plan = manager.prepare(request)["plan"]
+    assert plan["phase"] == "approach_capture" and plan["capture_approach"] is True
+    with pytest.raises(ValueError):
+        manager.prepare(dict(request, full_task_eval=True))
+    with pytest.raises(ValueError):
+        manager.prepare(dict(directed, capture_approach=True))
+    identity.update(method="official", task40_trace=False)
+    with pytest.raises(ValueError):
+        manager.prepare(request)
+
+
+def test_task40_fixed_action_probe_uses_archived_trajectory_without_policy(task40_failure_archive):
+    manager, checkpoint, parent, payload, identity = task40_failure_archive
+    manager.policy_resolver = None
+    request = dict(payload, restore_repeats=2, renderer_probe=True, cycles=2)
+    del request['policy_port']
+    plan = manager.prepare(request)['plan']
+    assert plan['phase'] == 'renderer_probe'
+    assert plan['policy_port'] is None
+    assert plan['policy_identity']['checkpoint'] == identity['checkpoint']
+    assert Path(plan['restore_checkpoint']) == checkpoint
+    assert Path(plan['lineage']['prefix']) == parent
+    no_diffuse = manager.prepare(dict(request, renderer_disable_indirect_diffuse=True))
+    assert no_diffuse['plan']['renderer_disable_indirect_diffuse'] is True
+    assert 'renderer_disable_indirect_diffuse' not in plan
+    with pytest.raises(ValueError, match='间接漫反射'):
+        manager.prepare(dict(request, renderer_disable_indirect_diffuse='true'))
+    with pytest.raises(ValueError, match='间接漫反射'):
+        manager.prepare(dict(payload, renderer_disable_indirect_diffuse=True))
+    with pytest.raises(ValueError, match='固定动作诊断'):
+        manager.prepare(dict(request, policy_port=5586))
+    with pytest.raises(ValueError, match='固定动作诊断'):
+        manager.prepare(dict(request, restore_repeats=1))
 
 
 def test_task40_directed_restore_rejects_mismatched_parent(task40_failure_archive):
@@ -216,6 +300,54 @@ def test_task40_directed_restore_rejects_mismatched_parent(task40_failure_archiv
     (checkpoint / 'observation.npz').write_bytes(b'different observation')
     with pytest.raises(ValueError, match='锚点观测'):
         manager.prepare(payload)
+
+
+def test_task40_exp10_routes_to_separate_archive(task40_failure_archive):
+    manager, _, _, _, identity = task40_failure_archive
+    collect = dict(task40_collect=True, experiment='experiment_10', seed=76500, instances=[2, 4],
+                   policy_port=5692)
+    exp10 = manager.task40_experiment.with_name('experiment_10')
+    plan = manager.prepare(collect)['plan']
+    assert plan['group'] == 'experiment_10'
+    assert Path(plan['output']).parent == exp10 / 'runs'
+    exp10.mkdir(parents=True)
+    batch = exp10 / 'batch.json'
+    batch.write_text('{}')
+    forward = dict(task40_forward=True, experiment='experiment_10', batch=str(batch), policy_port=5698)
+    assert Path(manager.prepare(forward)['plan']['output']).parent == exp10 / 'runs'
+    with pytest.raises(ValueError, match='所选实验'):
+        manager.prepare(dict(forward, experiment='experiment_09'))
+    with pytest.raises(ValueError, match='不支持'):
+        manager.prepare(dict(collect, experiment='../experiment_08'))
+    identity['task40_trace'] = False
+    with pytest.raises(ValueError, match='增强诊断'):
+        manager.prepare(collect)
+
+
+def test_exp12_initial_official_collection_uses_registered_remote_weights(task40_failure_archive, monkeypatch):
+    manager, _, _, _, identity = task40_failure_archive
+    identity.update(method='official', checkpoint='/ada/models/GR00T-N1.6-BEHAVIOR1k')
+    monkeypatch.setenv('GROOT_TASK40_WEIGHTS', str(manager.root / 'missing-legacy-weights'))
+    prepared = manager.prepare(dict(task40_collect=True, experiment='experiment_12',
+                                    seed=77001, instances=[4], policy_host='ada', policy_port=5812))
+    assert prepared['plan']['official_policy']
+    argv = prepared['argv']
+    assert argv[argv.index('--weights') + 1] == identity['checkpoint']
+    assert '--collect-instances' in argv
+
+
+def test_task40_full_task_protocol_is_opt_in_and_initial_only(task40_failure_archive):
+    manager, _, _, directed, _ = task40_failure_archive
+    collect = dict(task40_collect=True, experiment='experiment_10', seed=76500,
+                   instances=[2, 4], policy_port=5692, cycles=300)
+    assert 'full_task_eval' not in manager.prepare(collect)['plan']
+    plan = manager.prepare(dict(collect, full_task_eval=True))['plan']
+    assert plan['full_task_eval'] is True and plan['phase'] == 'full_task_eval'
+    assert plan['cycles'] == 300
+    for invalid in (dict(collect, experiment='experiment_09'),
+                    dict(collect, controlled_reclosure=True), dict(directed, experiment='experiment_10')):
+        with pytest.raises(ValueError, match='完整任务评估'):
+            manager.prepare(dict(invalid, full_task_eval=True))
 
 
 def test_task40_directed_restore_requires_exclusive_enhanced_port(task40_failure_archive):
@@ -236,6 +368,28 @@ def test_task40_directed_restore_requires_exclusive_enhanced_port(task40_failure
         manager.prepare = lambda request: {'plan': incoming}
         with pytest.raises(ValueError, match='端口已绑定'):
             manager.start(payload)
+
+
+def test_task40_directed_restore_first_decision_admits_neighbor(task40_failure_archive, monkeypatch):
+    manager, _, _, payload, _ = task40_failure_archive
+    directed = manager.prepare(payload)['plan']
+    folder = Path(directed['output']) / 'metrics' / 'restore_78123_A_normal' / '0001'
+    folder.mkdir(parents=True)
+    manager.jobs = [dict(plan=directed, process=SimpleNamespace(poll=lambda: None), gpus={'0'})]
+    incoming = dict(payload, policy_port=5587, sim_slots=2)
+    with pytest.raises(ValueError, match='首个 worker'):
+        manager.start(incoming)
+    (folder / 'decision.json').write_text('{}')
+
+    class LaunchReached(Exception):
+        pass
+
+    def mark_launch(*args, **kwargs):
+        raise LaunchReached
+
+    monkeypatch.setattr(subprocess, 'Popen', mark_launch)
+    with pytest.raises(LaunchReached):
+        manager.start(incoming)
 
 
 def test_web_plan_binds_observed_policy_to_training_without_changing_protocol():

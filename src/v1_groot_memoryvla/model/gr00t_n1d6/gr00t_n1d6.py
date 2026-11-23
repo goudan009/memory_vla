@@ -1,6 +1,8 @@
+from functools import partial
 from typing import Tuple
 
 from v1_groot_memoryvla.configs.model.gr00t_n1d6 import Gr00tN1d6Config
+from v1_groot_memoryvla.model.memory.fusion import CognitiveActionAttention
 from v1_groot_memoryvla.model.modules.dit import AlternateVLDiT, DiT
 from v1_groot_memoryvla.model.modules.eagle_backbone import EagleBackbone
 from v1_groot_memoryvla.model.modules.embodiment_conditioned_mlp import (
@@ -26,18 +28,35 @@ class Gr00tN1d6ActionHead(nn.Module):
         self.config = config
         self.hidden_size = config.hidden_size
         self.input_embedding_dim = config.input_embedding_dim
+        self.openvla_memory = config.memory_enabled and config.memory_conditioning == "openvla"
 
-        # Initialize components directly from config
+        # Experimental keys live in the existing serialized diffusion config,
+        # but are action-head settings, not Diffusers constructor arguments.
+        diffusion_cfg = dict(config.diffusion_model_cfg)
+        self.memory_fusion_mode = diffusion_cfg.pop("memory_fusion_mode", "legacy")
+        fusion_position = diffusion_cfg.pop("memory_fusion_position", "late")
+        fusion_block = diffusion_cfg.pop("memory_fusion_block", None)
+        if self.memory_fusion_mode not in ("legacy", "route_a", "route_b"):
+            raise ValueError("memory_fusion_mode must be legacy, route_a or route_b")
+        if self.memory_fusion_mode != "legacy" and not config.memory_enabled:
+            raise ValueError("Experiment 10 fusion requires memory_enabled")
+        if self.memory_fusion_mode == "route_a" and config.memory_conditioning != "residual":
+            raise ValueError("Route A requires residual memory conditioning")
+        if fusion_position not in ("middle", "late"):
+            raise ValueError("memory_fusion_position must be middle or late")
+        if fusion_block is not None and self.memory_fusion_mode != "route_b":
+            raise ValueError("memory_fusion_block requires route_b")
+
         if config.use_alternate_vl_dit:
             self.model = AlternateVLDiT(
-                **config.diffusion_model_cfg,
+                **diffusion_cfg,
                 cross_attention_dim=config.backbone_embedding_dim,
                 attend_text_every_n_blocks=config.attend_text_every_n_blocks,
             )
             print("Using AlternateVLDiT for diffusion model")
         else:
             self.model = DiT(
-                **config.diffusion_model_cfg, cross_attention_dim=config.backbone_embedding_dim
+                **diffusion_cfg, cross_attention_dim=config.backbone_embedding_dim
             )
             print("Using DiT for diffusion model")
         self.action_dim = config.max_action_dim
@@ -65,6 +84,17 @@ class Gr00tN1d6ActionHead(nn.Module):
         self.vlln = (
             nn.LayerNorm(config.backbone_embedding_dim) if config.use_vlln else nn.Identity()
         )
+        if self.openvla_memory:
+            if not config.use_alternate_vl_dit or not self.model.config.interleave_self_attention:
+                raise ValueError("OpenVLA memory requires the native alternating B1K action expert")
+            self.memory_perception_projection = nn.Linear(config.memory_perceptual_dim, config.backbone_embedding_dim)
+            self.memory_cognition_projection = nn.Linear(config.backbone_embedding_dim, self.model.inner_dim)
+            self.memory_unconditional_cognition = nn.Embedding(1, config.backbone_embedding_dim)
+            for module in (self.memory_perception_projection, self.memory_cognition_projection,
+                           self.memory_unconditional_cognition):
+                module._memory_v1 = True
+                module._openvla_condition_embedding = True
+                self._initialize_memory_condition(module)
 
         if config.add_pos_embed:
             self.position_embedding = nn.Embedding(config.max_seq_len, self.input_embedding_dim)
@@ -86,9 +116,27 @@ class Gr00tN1d6ActionHead(nn.Module):
         self.beta_dist = Beta(torch.tensor(config.noise_beta_alpha, dtype=torch.float32),
                               torch.tensor(config.noise_beta_beta, dtype=torch.float32))
         self.num_timestep_buckets = config.num_timestep_buckets
+        if self.memory_fusion_mode == "route_b":
+            num_blocks = len(self.model.transformer_blocks)
+            if fusion_block is None:
+                if num_blocks < 2:
+                    raise ValueError("Route B requires distinct middle and late DiT blocks")
+                fusion_block = num_blocks - 1 if fusion_position == "late" else (num_blocks - 1) // 2
+            elif type(fusion_block) is not int or not 0 <= fusion_block < num_blocks:
+                raise ValueError(f"memory_fusion_block must be a zero-based integer in [0, {num_blocks})")
+            self.memory_fusion_block = fusion_block
+            # Owned by the action head so freezing the legacy DiT leaves the
+            # new parameters trainable (and keeps old DiT state dicts exact).
+            self.cognitive_fusion = CognitiveActionAttention(self.model.inner_dim, config.backbone_embedding_dim)
         self.set_trainable_parameters(
             config.tune_projector, config.tune_diffusion_model, config.tune_vlln
         )
+
+    @staticmethod
+    def _initialize_memory_condition(module):
+        nn.init.normal_(module.weight, std=0.02)
+        if isinstance(module, nn.Linear):
+            nn.init.zeros_(module.bias)
 
     def set_trainable_parameters(
         self, tune_projector: bool, tune_diffusion_model: bool, tune_vlln: bool
@@ -145,8 +193,31 @@ class Gr00tN1d6ActionHead(nn.Module):
     def process_backbone_output(self, backbone_output: BatchFeature) -> BatchFeature:
         # Loss evaluation and action prediction may reuse the same fused
         # features. Keep the caller's pre-vlln representation intact.
-        return BatchFeature(data={**backbone_output,
-            "backbone_features": self.vlln(backbone_output["backbone_features"])})
+        features = backbone_output["backbone_features"]
+        return BatchFeature(data={**backbone_output, "backbone_features": self.vlln(features)})
+
+    def _perceptual_condition(self, backbone_output):
+        return self.vlln(self.memory_perception_projection(backbone_output["memory_perceptual_tokens"]))
+
+    def _fusion_kwargs(self, backbone_output, action_tokens, unconditional=False):
+        if self.openvla_memory:
+            condition = backbone_output["memory_cognitive_token"]
+            null = self.memory_unconditional_cognition.weight.to(condition.dtype)
+            if unconditional:
+                condition = null.expand_as(condition)
+            elif self.training:
+                # Upstream LabelEmbedder drops only the cognitive condition.
+                drop = torch.rand(condition.shape[0], device=condition.device) < 0.1
+                condition = torch.where(drop[:, None, None], null, condition)
+            return {"cognitive_condition": self.memory_cognition_projection(condition)}
+        if self.memory_fusion_mode != "route_b":
+            return {}
+        return {"block_fusion": (self.memory_fusion_block, partial(
+            self.cognitive_fusion,
+            slots=backbone_output["cognitive_history_slots"],
+            mask=backbone_output["cognitive_history_mask"],
+            action_tokens=action_tokens,
+        ))}
 
     def forward(self, backbone_output: BatchFeature, action_input: BatchFeature) -> BatchFeature:
         """
@@ -220,6 +291,9 @@ class Gr00tN1d6ActionHead(nn.Module):
         # Join vision, language, state and action embedding along sequence dimension.
         sa_embs = torch.cat((state_features, action_features), dim=1)
         vl_attn_mask = backbone_output.backbone_attention_mask
+        fusion_kwargs = self._fusion_kwargs(backbone_output, action_features.shape[1])
+        if self.openvla_memory:
+            fusion_kwargs["perceptual_condition"] = self._perceptual_condition(backbone_output)
 
         if self.config.use_alternate_vl_dit:
             image_mask = backbone_output.image_mask
@@ -232,6 +306,7 @@ class Gr00tN1d6ActionHead(nn.Module):
                 return_all_hidden_states=True,
                 image_mask=image_mask,
                 backbone_attention_mask=backbone_attention_mask,
+                **fusion_kwargs,
             )
         else:
             model_output, _ = self.model(
@@ -240,6 +315,7 @@ class Gr00tN1d6ActionHead(nn.Module):
                 encoder_attention_mask=vl_attn_mask,
                 timestep=t_discretized,
                 return_all_hidden_states=True,
+                **fusion_kwargs,
             )
 
         pred = self.action_decoder(model_output, embodiment_id)
@@ -250,13 +326,17 @@ class Gr00tN1d6ActionHead(nn.Module):
         action_loss = F.mse_loss(pred_actions, velocity, reduction="none") * action_mask
         loss = action_loss.sum() / (action_mask.sum() + 1e-6)
 
-        return {
+        outputs = {
             "loss": loss,
             "action_loss": action_loss,
             "action_mask": action_mask,
             "backbone_features": vl_embeds,
             "state_features": state_features,
         }
+        if self.memory_fusion_mode != "legacy":
+            # Live, post-fusion DiT action features for optional state supervision.
+            outputs["fusion_action_features"] = model_output[:, -actions.shape[1]:]
+        return outputs
 
     def _encode_features(
         self, backbone_output: BatchFeature, action_input: BatchFeature
@@ -317,6 +397,15 @@ class Gr00tN1d6ActionHead(nn.Module):
         )
 
         dt = 1.0 / self.num_inference_timesteps
+        fusion_kwargs = self._fusion_kwargs(backbone_output, self.action_horizon)
+        # The upstream LIBERO runner uses cognition-only CFG at 1.5. Apply the
+        # same guidance to GR00T velocity before its original Euler update.
+        unconditional_kwargs = (self._fusion_kwargs(backbone_output, self.action_horizon, unconditional=True)
+                                if self.openvla_memory else None)
+        if unconditional_kwargs is not None:
+            perception = self._perceptual_condition(backbone_output)
+            fusion_kwargs["perceptual_condition"] = perception
+            unconditional_kwargs["perceptual_condition"] = perception
 
         # Run denoising steps.
         for t in range(self.num_inference_timesteps):
@@ -345,26 +434,41 @@ class Gr00tN1d6ActionHead(nn.Module):
                     timestep=timesteps_tensor,
                     image_mask=backbone_output.image_mask,
                     backbone_attention_mask=backbone_output.backbone_attention_mask,
+                    **fusion_kwargs,
                 )
+                if unconditional_kwargs is not None:
+                    unconditioned = self.model(
+                        hidden_states=sa_embs,
+                        encoder_hidden_states=vl_embeds,
+                        timestep=timesteps_tensor,
+                        image_mask=backbone_output.image_mask,
+                        backbone_attention_mask=backbone_output.backbone_attention_mask,
+                        **unconditional_kwargs,
+                    )
             else:
                 model_output = self.model(
                     hidden_states=sa_embs,
                     encoder_hidden_states=vl_embeds,
                     timestep=timesteps_tensor,
+                    **fusion_kwargs,
                 )
             pred = self.action_decoder(model_output, embodiment_id)
 
             pred_velocity = pred[:, -self.action_horizon :]
+            if unconditional_kwargs is not None:
+                unconditioned_velocity = self.action_decoder(unconditioned, embodiment_id)[:, -self.action_horizon:]
+                pred_velocity = unconditioned_velocity + 1.5 * (pred_velocity - unconditioned_velocity)
 
             # Update actions using euler integration.
             actions = actions + dt * pred_velocity
-        return BatchFeature(
-            data={
-                "action_pred": actions,
-                "backbone_features": vl_embeds,
-                "state_features": state_features,
-            }
-        )
+        outputs = {
+            "action_pred": actions,
+            "backbone_features": vl_embeds,
+            "state_features": state_features,
+        }
+        if self.memory_fusion_mode != "legacy":
+            outputs["fusion_action_features"] = model_output[:, -self.action_horizon:]
+        return BatchFeature(data=outputs)
 
     @torch.no_grad()
     def get_action(self, backbone_output: BatchFeature, action_input: BatchFeature) -> BatchFeature:
@@ -452,18 +556,24 @@ class Gr00tN1d6(PreTrainedModel):
             tune_top_llm_layers=config.tune_top_llm_layers,
             trainable_params_fp32=config.backbone_trainable_params_fp32,
             transformers_loading_kwargs=transformers_loading_kwargs,
+            preserve_checkpoint_dtype=config.memory_enabled and config.memory_conditioning == "openvla",
         )
 
         # Initialize action head
         self.action_head = Gr00tN1d6ActionHead(config)
         self.memory = None
         if config.memory_enabled:
+            openvla = config.memory_conditioning == "openvla"
             if (config.memory_perceptual_dim, config.memory_retrieval_layers,
                 config.memory_use_timestep_pe,
                 config.memory_group_size, config.memory_history_stride, config.memory_fusion_type,
                 config.memory_consolidate_type, config.memory_update_fused) != (
-                    256, 2, True, 16, 8, "gate", "tome", True):
+                    256, 2, True, 16, 8, "gate", "tome", not openvla):
                 raise ValueError("v1 requires the fixed 256-D MemoryVLA configuration")
+            if openvla and (config.memory_length != 16 or config.memory_cognitive_qk_norm != "none"
+                            or config.memory_residual_identity_init or config.memory_residual_readout != "delta"
+                            or self.action_head.memory_fusion_mode != "legacy"):
+                raise ValueError("OpenVLA port requires the upstream 16-slot conditioning contract")
             if config.memory_length < 1:
                 raise ValueError("memory_length must be positive")
             from v1_groot_memoryvla.model.memory import MemoryAdapter
@@ -472,8 +582,10 @@ class Gr00tN1d6(PreTrainedModel):
                 config.memory_group_size, config.memory_eos_token_id, config.memory_conditioning,
                 config.memory_cognitive_qk_norm, config.memory_residual_identity_init,
                 config.memory_cognitive_residual_projection, config.memory_cognitive_residual_scope,
-                config.memory_residual_readout)
+                config.memory_residual_readout, fusion_mode=self.action_head.memory_fusion_mode,
+                visual_dim=self.backbone.model.mlp1[0].normalized_shape[0] if openvla else None)
             self.backbone.return_visual_features = True
+            self.backbone.return_preprojected_vision = openvla
         if getattr(config, "finetuning_lora", None):
             from v1_groot_memoryvla.model.modules.lora import install_lora
             install_lora(self, config.finetuning_lora)
@@ -488,7 +600,9 @@ class Gr00tN1d6(PreTrainedModel):
     def _init_weights(self, module):
         # HF suppresses normal initialization while loading a checkpoint. Only
         # new memory parameters are missing from an official baseline checkpoint.
-        if getattr(module, "_memory_v1", False):
+        if getattr(module, "_openvla_condition_embedding", False):
+            Gr00tN1d6ActionHead._initialize_memory_condition(module)
+        elif getattr(module, "_memory_v1", False):
             if isinstance(module, (nn.Linear, nn.Conv2d, nn.LayerNorm)):
                 module.reset_parameters()
                 if getattr(module, "_memory_zero_output", False):

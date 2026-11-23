@@ -48,6 +48,9 @@ if $show_help; then
     echo "Source: $source_dir"
     echo "Python: $python_path"
     echo "--dry-run prints the launch plan without starting training."
+    echo "Exp10: --experiment experiment_10 --fusion-variant gated_eos|dit_attention --fusion-state-lambda FLOAT"
+    echo "With dit_attention use --fusion-dit-layers 8 or --fusion-dit-layers 24 (one zero-based block index per run)."
+    echo "Use an explicit Task40 split, bounded --steps, and custom fine-tuning with all base components frozen."
 fi
 
 export PYTHONPATH="$source_dir/src${PYTHONPATH:+:$PYTHONPATH}"

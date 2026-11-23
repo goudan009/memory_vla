@@ -50,33 +50,48 @@ log = log_dir / f'policy_{checkpoint_label}_port{args.port}.log'
 environment = dict(os.environ, CUDA_VISIBLE_DEVICES=str(args.gpu_index), PYTHONNOUSERSITE='1',
                    PYTHONDONTWRITEBYTECODE='1', NO_ALBUMENTATIONS_UPDATE='1',
                    HF_HUB_OFFLINE='1', TRANSFORMERS_OFFLINE='1', PYTHONPATH=str(source / 'src'))
+official_restore = (args.task40_diagnostics and args.log_dir is not None
+                    and args.log_dir.parent.name in ('experiment_11', 'experiment_12')
+                    and checkpoint.name == 'GR00T-N1.6-BEHAVIOR1k')
+native_trace = (args.task40_diagnostics and args.log_dir is not None
+                and args.log_dir.parent.name == 'experiment_12')
 command = [str(python), '-u', '-m', 'v1_groot_memoryvla.serve',
            '--model-path', str(checkpoint), '--embodiment-tag', 'BEHAVIOR_R1_PRO',
            '--device', 'cuda', '--host', args.host, '--port', str(args.port),
            '--use-sim-policy-wrapper', '--seed', str(args.seed)]
 if args.history_mode != 'normal':
     command += ['--history-mode', args.history_mode]
-diagnostic_script = source / 'Output/test_01/experiment_07/scripts/policy_server_diagnostic.py'
 if args.task40_diagnostics:
     if args.history_mode != 'normal':
         parser.error('Task40 采集的记忆模式由评估作业控制')
     log_dir = (args.log_dir or PROJECT / 'Output/test_01/experiment_09/policy_services').expanduser().resolve()
     log = log_dir / f'policy_{checkpoint_label}_port{args.port}.log'
     output = log_dir / f'port{args.port}'
+    archive_entry = Path('Output/test_01/experiment_07/scripts/policy_server_diagnostic.py')
+    anchor_entry = Path('Output/test_01/experiment_01/checkpoints')
+    archive_root = source if (source / archive_entry).is_file() else PROJECT
+    diagnostic_script = archive_root / archive_entry
     instrumentation_dir = source / 'evaluation/scripts'
     if not (instrumentation_dir / 'task40_memory_instrumentation.py').is_file():
         instrumentation_dir = PROJECT / 'evaluation/scripts'
-    bootstrap = ('import sys; sys.path.insert(0, sys.argv.pop(1)); '
-                 'from task40_memory_instrumentation import run_legacy_server; run_legacy_server()')
-    # Keep the archived script in argv for process discovery on the workbench.
-    command = [str(python), '-u', '-c', bootstrap, str(instrumentation_dir), str(diagnostic_script), '--task40-trace',
-               '--weights', str(checkpoint), '--output', str(output),
-               '--anchor', str(source / 'Output/test_01/experiment_01/checkpoints'),
-               '--host', args.host, '--port', str(args.port), '--remote-policy']
+    bootstrap = 'import sys; sys.path.insert(0, sys.argv.pop(1)); '
+    if official_restore:
+        bootstrap += 'from task40_memory_instrumentation import run_stateless_server; run_stateless_server()'
+        command = [*command[:2], '-c', bootstrap, str(instrumentation_dir), *command[4:]]
+    elif native_trace:
+        bootstrap += 'from task40_memory_instrumentation import run_native_memory_server; run_native_memory_server()'
+        command = [*command[:2], '-c', bootstrap, str(instrumentation_dir), *command[4:]]
+    else:
+        bootstrap += 'from task40_memory_instrumentation import run_legacy_server; run_legacy_server()'
+        # Keep the archived script in argv for process discovery on the workbench.
+        command = [str(python), '-u', '-c', bootstrap, str(instrumentation_dir), str(diagnostic_script), '--task40-trace',
+                   '--weights', str(checkpoint), '--output', str(output),
+                   '--anchor', str(archive_root / anchor_entry),
+                   '--host', args.host, '--port', str(args.port), '--remote-policy']
 result = dict(gpu_index=args.gpu_index, host=args.host, port=args.port, checkpoint=str(checkpoint),
               source_dir=str(source), python_path=str(python), seed=args.seed, history_mode=args.history_mode,
               log=str(log), command=shlex.join(command), task40_diagnostics=args.task40_diagnostics,
-              task40_trace=args.task40_diagnostics)
+              task40_trace=args.task40_diagnostics and not official_restore)
 if not args.json:
     print(f'GPU: {args.gpu_index} | 地址: {args.host}:{args.port}')
     print(f'权重: {checkpoint}')
@@ -89,7 +104,7 @@ if args.dry_run:
 for path in (python, source / 'src/v1_groot_memoryvla/serve.py', checkpoint / 'config.json'):
     if not path.is_file():
         parser.error(f'文件不存在：{path}；请在A100执行或通过参数指定路径')
-if args.task40_diagnostics and not diagnostic_script.is_file():
+if args.task40_diagnostics and not (official_restore or native_trace) and not diagnostic_script.is_file():
     parser.error(f'Task40 诊断入口缺失：{diagnostic_script}')
 if args.task40_diagnostics and not (instrumentation_dir / 'task40_memory_instrumentation.py').is_file():
     parser.error(f'Task40 诊断模块缺失：{instrumentation_dir / "task40_memory_instrumentation.py"}')
@@ -117,7 +132,9 @@ for proc in Path('/proc').iterdir():
         argv = (proc / 'cmdline').read_bytes().decode(errors='replace').rstrip('\0').split('\0')
         if ((('-m' in argv and argv[argv.index('-m') + 1] in
                 ('v1_groot_memoryvla.serve', 'gr00t.eval.run_gr00t_server', 'baselines.groot_n1d6.serve'))
-                or any(value.endswith('/policy_server_diagnostic.py') for value in argv))
+                or any(value.endswith('/policy_server_diagnostic.py') or 'run_native_memory_server()' in value
+                       or 'run_stateless_server()' in value
+                       for value in argv))
                 and '--port' in argv and argv[argv.index('--port') + 1] == str(args.port)):
             parser.error(f'端口{args.port}已有推理进程PID={proc.name}（可能正在加载），未启动新服务')
     except (OSError, IndexError):

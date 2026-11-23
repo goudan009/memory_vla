@@ -4,6 +4,7 @@ import argparse
 
 
 TRAINING_PROTOCOL = "memoryvla_direct_tail_qknorm_v3"
+OPENVLA_PROTOCOL = "memoryvla_openvla_b1k_v1"
 
 
 def add_memory_training_options(parser):
@@ -15,7 +16,7 @@ def add_memory_training_options(parser):
                         help="Apply cognitive residual to EOS or all valid text tokens")
     parser.add_argument("--memory-cognitive-qk-norm", choices=("none", "layernorm"), default="layernorm",
                         help="Normalize cognitive query/key inputs to prevent GR00T EOS retrieval saturation")
-    parser.add_argument("--memory-conditioning", choices=("direct", "residual"), default="residual",
+    parser.add_argument("--memory-conditioning", choices=("direct", "residual", "openvla"), default="residual",
                         help="Residual preserves GR00T features; direct replaces its perception/text conditions")
     parser.add_argument("--memory-residual-readout", choices=("delta", "value"), default="delta",
                         help="Residual source: fused-current delta or historical attention values only")

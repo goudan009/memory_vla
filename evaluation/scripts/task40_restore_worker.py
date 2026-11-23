@@ -3,6 +3,7 @@
 
 import argparse
 import csv
+import fcntl
 import json
 import os
 from pathlib import Path
@@ -14,6 +15,32 @@ import time
 
 
 children = []
+
+
+def lease_sim_cache(appdata, gpu, slots):
+    """Reuse derived Isaac caches, keeping Kit preferences and logs job-local."""
+    cache_root = appdata.parents[2] / 'cache'
+    cache_root.mkdir(parents=True, exist_ok=True)
+    for index in range(slots):
+        slot = cache_root / f'isaac-gpu{gpu}-slot{index}'
+        lease = slot.with_suffix('.lock').open('a')
+        try:
+            fcntl.flock(lease, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError:
+            lease.close()
+            continue
+        try:
+            for name in ('global', 'local'):
+                target = slot / name
+                target.mkdir(parents=True, exist_ok=True)
+                link = appdata / name / 'cache'
+                link.parent.mkdir(parents=True, exist_ok=True)
+                link.symlink_to(target, target_is_directory=True)
+            return lease
+        except BaseException:
+            lease.close()
+            raise
+    raise RuntimeError(f'No idle Isaac cache slot for GPU {gpu}')
 
 
 def stop_children(signum, frame):
@@ -36,8 +63,15 @@ def main(args):
     anchor = args.anchor.resolve()
     weights = args.weights.resolve()
     experiment = json.loads(args.experiment_plan) if args.experiment_plan else {}
-    targeted = experiment.get('phase') == 'directed_restore'
+    renderer_probe = experiment.get('phase') == 'renderer_probe'
+    targeted = experiment.get('phase') in ('directed_restore', 'renderer_probe')
     controlled_reclosure = experiment.get('controlled_reclosure', False)
+    full_task_eval = experiment.get('full_task_eval', False)
+    if type(full_task_eval) is not bool or (full_task_eval and (
+            targeted or controlled_reclosure or not args.collect_instances or args.restore_seeds
+            or args.memory_mode != 'A_normal' or not (
+                experiment.get('official_policy') or experiment.get('policy_identity', {}).get('task40_trace')))):
+        raise ValueError('Full task evaluation requires fresh A_normal collection with Task40 trace')
     if type(controlled_reclosure) is not bool:
         raise ValueError('controlled_reclosure must be a boolean')
     if controlled_reclosure and (
@@ -69,7 +103,7 @@ def main(args):
         trials = [{'trial': 1, 'policy_seed': parent['seed'], 'instance': parent['instance'],
                    'label_seed': args.seed}]
     seeds.write_text(json.dumps({'trials': trials}, indent=2) + '\n')
-    phase = 'collect' if args.collect_instances else 'restore'
+    phase = 'renderer_probe' if renderer_probe else 'collect' if args.collect_instances else 'restore'
     plan = {'kind': 'task40_restore', 'task_id': 40, 'version': 'Task40',
             'group': 'checkpoint_restore', 'output': str(output),
             'instances': {str(args.sim_gpu): [0]},
@@ -106,16 +140,18 @@ def main(args):
         raise FileNotFoundError('Task40 restore runtime or diagnostic scripts are missing')
 
     sim_log = None
+    cache_lease = None
     try:
-        deadline = time.monotonic() + args.startup_timeout
-        while time.monotonic() < deadline:
-            try:
-                with socket.create_connection((args.policy_host, args.port), timeout=2):
-                    break
-            except OSError:
-                time.sleep(1)
-        else:
-            raise TimeoutError(f'Remote policy {args.policy_host}:{args.port} is unavailable')
+        if not renderer_probe:
+            deadline = time.monotonic() + args.startup_timeout
+            while time.monotonic() < deadline:
+                try:
+                    with socket.create_connection((args.policy_host, args.port), timeout=2):
+                        break
+                except OSError:
+                    time.sleep(1)
+            else:
+                raise TimeoutError(f'Remote policy {args.policy_host}:{args.port} is unavailable')
 
         sim_env = os.environ.copy()
         sim_env.pop('CUDA_VISIBLE_DEVICES', None)
@@ -128,24 +164,47 @@ def main(args):
                         'BDDL_ROOT': str(bddl)})
         if args.experiment_plan:
             sim_env.update(GROOT_EVAL_TRACE='1', GROOT_EVAL_PROCESS_STARTED_AT=str(time.perf_counter()))
-        if targeted or args.restore_repeats > 1 or args.restore_seeds or args.collect_instances:
+        if plan.get('group') in ('experiment_11', 'experiment_12') and plan.get('kind') == 'task40_collect':
+            appdata = output / 'appdata'
+            cache_lease = lease_sim_cache(appdata, args.sim_gpu, plan.get('sim_slots', 1))
+            sim_env['OMNIGIBSON_APPDATA_PATH'] = str(appdata)
+            print('ISAAC_CACHE_LEASE', cache_lease.name, flush=True)
+        elif targeted or args.restore_repeats > 1 or args.restore_seeds or args.collect_instances:
             sim_env.setdefault('OMNIGIBSON_APPDATA_PATH', str(output / 'appdata'))
         sim_log = (output / 'logs' / 'simulator.log').open('ab', buffering=0)
         sim_command = ['bash', str(root / 'scripts' / 'b1k_python.sh'), '-u', str(sim_script),
             '--output', str(output), '--anchor', str(anchor), '--seeds', str(seeds),
             '--behavior', str(omnigibson.parent), '--groot', str(groot), '--port', str(args.port),
             '--cycles', str(args.cycles), '--phase', phase, '--memory-mode', args.memory_mode,
-            '--policy-host', args.policy_host, '--remote-policy']
+            '--policy-host', args.policy_host]
+        if not renderer_probe:
+            sim_command.append('--remote-policy')
         if args.collect_instances:
             sim_command += ['--instances', *map(str, instances)]
         if args.experiment_plan:
             sim_command.append('--collection-protocol')
-            if targeted or plan.get('policy_identity', {}).get('task40_trace'):
+            if not plan.get('official_policy') and (targeted or plan.get('policy_identity', {}).get('task40_trace')):
                 sim_command.append('--trace-memory')
+            if plan.get('rebuild_policy_history'):
+                sim_command.append('--rebuild-policy-history')
+            if plan.get('official_policy'):
+                sim_command.append('--official-policy')
+            if plan.get('stop_at_first_open'):
+                sim_command.append('--stop-at-first-open')
         if controlled_reclosure:
             sim_command.append('--controlled-reclosure')
+        if full_task_eval:
+            sim_command.append('--full-task-eval')
+        if plan.get('capture_approach'):
+            sim_command.append('--capture-approach')
         if targeted:
             sim_command += ['--restore-checkpoint', str(checkpoint), '--parent-trial', str(parent_trial)]
+        if renderer_probe:
+            sim_command += ['--renderer-probe-actions', str(parent_trial), '--compare-accumulation-reset']
+            if 'renderer_gi_history' in plan:
+                sim_command += ['--renderer-gi-history', str(plan['renderer_gi_history'])]
+            if plan.get('renderer_disable_indirect_diffuse'):
+                sim_command.append('--renderer-disable-indirect-diffuse')
         if args.restore_repeats > 1:
             sim_command += ['--restore-repeats', str(args.restore_repeats)]
         if args.renderer_audit:
@@ -165,7 +224,8 @@ def main(args):
         started = time.monotonic()
         simulator = subprocess.Popen(sim_command,
             cwd=root, env=sim_env, stdin=subprocess.DEVNULL, stdout=sim_log,
-            stderr=subprocess.STDOUT, start_new_session=True)
+            stderr=subprocess.STDOUT, start_new_session=True,
+            pass_fds=(cache_lease.fileno(),) if cache_lease is not None else ())
         children.append(simulator)
         if args.experiment_plan:
             with (output / 'metrics' / 'gpu.csv').open('x', newline='', buffering=1) as stream:
@@ -187,6 +247,17 @@ def main(args):
         if failure.exists():
             raise RuntimeError('Simulator reported a failed restore or trial:\n' +
                                failure.read_text(errors='replace')[-6000:])
+        if renderer_probe:
+            audits = ('metrics/fixed_action_audit.json', 'metrics/accumulation_reset_audit.json')
+            for audit in audits:
+                comparison = json.loads((output / audit).read_text())
+                if comparison['shared_steps'] != args.cycles * 8:
+                    raise RuntimeError(f'Fixed-action comparison did not complete all planned steps: {audit}')
+            (output / 'results.json').write_text(json.dumps({
+                'status': 'completed', 'configuration': plan, 'fixed_action_audits': audits,
+                'finished_at': time.strftime('%Y-%m-%d %H:%M:%S'),
+                'elapsed_seconds': time.monotonic() - started}, ensure_ascii=False, indent=2) + '\n')
+            return
         names = ([f"episode_i{row['instance']}_s{row['policy_seed']}_A_normal" for row in trials]
                  if args.collect_instances else [
                      f"restore_{row.get('label_seed', row['policy_seed'])}_{args.memory_mode}" for row in trials])
@@ -236,6 +307,8 @@ def main(args):
                     child.wait()
         if sim_log is not None:
             sim_log.close()
+        if cache_lease is not None:
+            cache_lease.close()
 
 
 if __name__ == '__main__':

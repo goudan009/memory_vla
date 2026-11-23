@@ -1,6 +1,6 @@
 from contextlib import nullcontext
 import os
-from typing import Optional
+from typing import Callable, Optional
 
 from diffusers import ConfigMixin, ModelMixin
 from diffusers.configuration_utils import register_to_config
@@ -281,6 +281,7 @@ class DiT(ModelMixin, ConfigMixin):
         timestep: Optional[torch.LongTensor] = None,
         encoder_attention_mask: Optional[torch.Tensor] = None,
         return_all_hidden_states: bool = False,
+        block_fusion: Optional[tuple[int, Callable[[torch.Tensor], torch.Tensor]]] = None,
     ):
         # Encode timesteps
         temb = self.timestep_encoder(timestep)
@@ -309,6 +310,8 @@ class DiT(ModelMixin, ConfigMixin):
                     encoder_attention_mask=None,
                     temb=temb,
                 )
+            if block_fusion is not None and idx == block_fusion[0]:
+                hidden_states = block_fusion[1](hidden_states)
             all_hidden_states.append(hidden_states)
 
         # Output processing
@@ -340,11 +343,19 @@ class AlternateVLDiT(DiT):
         return_all_hidden_states: bool = False,
         image_mask: Optional[torch.Tensor] = None,
         backbone_attention_mask: Optional[torch.Tensor] = None,
+        block_fusion: Optional[tuple[int, Callable[[torch.Tensor], torch.Tensor]]] = None,
+        cognitive_condition: Optional[torch.Tensor] = None,
+        perceptual_condition: Optional[torch.Tensor] = None,
     ):
         assert image_mask is not None, "Image mask is required"
 
         # Encode timesteps
         temb = self.timestep_encoder(timestep)
+        if cognitive_condition is not None:
+            # Match upstream z+t prepend. Native self-attention blocks see
+            # [cognition, state, actions] without shifting action positions.
+            cognition = cognitive_condition + temb[:, None]
+            hidden_states = torch.cat((cognition.to(hidden_states.dtype), hidden_states), dim=1)
 
         # Process through transformer blocks - single pass through the blocks
         hidden_states = hidden_states.contiguous()
@@ -373,9 +384,14 @@ class AlternateVLDiT(DiT):
                 )
             else:
                 # Cross-attention blocks - alternate between non-image and image tokens
+                context = encoder_hidden_states
                 if idx % (2 * self.attend_text_every_n_blocks) == 0:
-                    # Attend to non-image tokens
+                    # Keep native Eagle language context and its token mask.
                     curr_encoder_attention_mask = non_image_attention_mask
+                elif perceptual_condition is not None:
+                    # Packed real perception tokens need no padding mask.
+                    context = perceptual_condition
+                    curr_encoder_attention_mask = None
                 else:
                     # Attend to image tokens
                     curr_encoder_attention_mask = image_attention_mask
@@ -383,16 +399,20 @@ class AlternateVLDiT(DiT):
                 hidden_states = block(
                     hidden_states,
                     attention_mask=None,
-                    encoder_hidden_states=encoder_hidden_states,
+                    encoder_hidden_states=context,
                     encoder_attention_mask=curr_encoder_attention_mask,
                     temb=temb,
                 )
+            if block_fusion is not None and idx == block_fusion[0]:
+                hidden_states = block_fusion[1](hidden_states)
             all_hidden_states.append(hidden_states)
 
         # Output processing
         conditioning = temb
         shift, scale = self.proj_out_1(F.silu(conditioning)).chunk(2, dim=1)
         hidden_states = self.norm_out(hidden_states) * (1 + scale[:, None]) + shift[:, None]
+        if cognitive_condition is not None:
+            hidden_states = hidden_states[:, 1:]
         if return_all_hidden_states:
             return self.proj_out_2(hidden_states), all_hidden_states
         else:

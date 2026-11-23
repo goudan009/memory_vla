@@ -18,7 +18,7 @@ import webbrowser
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from groot_live_preview import read_preview, subscribe
-from groot_web_launch import LaunchManager, task40_artifacts
+from groot_web_launch import LaunchManager, TASK40_DEFAULT_EXPERIMENT, TASK40_NEXT_EXPERIMENT, task40_artifacts
 from groot_inference_launch import InferenceManager
 import vlm_diagnosis
 import experiment_registry
@@ -26,6 +26,7 @@ import b1k_metrics
 import task_stage_diagnostics
 import vlm_stage_diagnosis
 import human_review
+from agent_experiments import experiment_catalog, experiment_record
 
 
 EVALUATION_ROOT = Path(__file__).resolve().parents[1]
@@ -252,6 +253,7 @@ class Handler(BaseHTTPRequestHandler):
     inference_devices = None
     benchmark_manager = None
     evaluation_record = None
+    agent_experiment_root = EVALUATION_ROOT.parent / 'Output'
     task40_launch_lock = threading.Lock()
 
     def _evaluation_for(self, device='local', run=None):
@@ -281,6 +283,28 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header("Cache-Control", "no-store")
         self.end_headers()
         self.wfile.write(body)
+
+    def _agent_live_jobs(self, directory):
+        jobs = []
+        unavailable = self.launch_manager is None
+        if self.launch_manager is not None:
+            try:
+                jobs.extend(self.launch_manager.snapshot(running_only=True))
+            except (OSError, ValueError) as error:
+                self.log_error('agent experiment jobs: %s', error)
+                unavailable = True
+        for manager in (self.evaluation_devices or {}).values():
+            if manager.error:
+                unavailable = True
+            else:
+                jobs.extend(manager.snapshot())
+        runs_dir = (directory / 'runs').resolve()
+        return {
+            'partial': unavailable,
+            'jobs': [{key: job.get(key) for key in ('id', 'state', 'device', 'gpus', 'kind', 'phase', 'progress')}
+                     for job in jobs if job.get('state') in ('running', 'queued', 'starting')
+                     and job.get('output') and Path(job['output']).parent == runs_dir],
+        }
 
     def _save_registry_annotation(self):
         origin = self.headers.get("Origin")
@@ -702,6 +726,40 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_GET(self):
         route = urlparse(self.path).path
+        if route == '/api/agent-experiments':
+            query = parse_qs(urlparse(self.path).query)
+            selected = query.get('experiment', [None])[0]
+            try:
+                catalog = experiment_catalog(self.agent_experiment_root)
+                names = list(catalog)
+                if selected is not None and selected not in catalog:
+                    self._json({'error': '找不到该实验目录'}, 404)
+                else:
+                    default = next((key for key in reversed(names) if '/' not in key),
+                                   names[-1] if names else None)
+                    key = selected or default
+                    detail = live = None
+                    if key:
+                        root, name = catalog[key]
+                        detail = experiment_record(root, name)
+                    if selected is None and detail:
+                        siblings = {n: k for k, (r, n) in catalog.items() if r == root}
+                        waiting_on = next((upstream for upstream, value in detail['gates'].items()
+                                           if value != 'true' and upstream in siblings), None)
+                        if waiting_on:
+                            name = waiting_on
+                            key = siblings[name]
+                            detail = experiment_record(root, name)
+                    if detail:
+                        detail['id'] = key
+                        live = self._agent_live_jobs(root / name)
+                    self._json({'experiments': names,
+                                'detail': detail,
+                                'live': live})
+            except (OSError, UnicodeError) as error:
+                self.log_error('agent experiment records: %s', error)
+                self._json({'error': '无法读取实验记录'}, 500)
+            return
         if route in WORKBENCH_APP_FILES:
             body = PAGE.with_name(route[1:]).read_bytes()
             self.send_response(200)
@@ -717,12 +775,16 @@ class Handler(BaseHTTPRequestHandler):
             if not re.fullmatch(r'[a-f0-9]{12}', run):
                 self.send_error(404)
                 return
-            root = self.launch_manager.task40_experiment.resolve() / 'runs'
-            output = (root / run).resolve()
-            if output.parent != root or path not in {item['path'] for item in task40_artifacts(output)}:
+            outputs = []
+            for group in (TASK40_DEFAULT_EXPERIMENT, TASK40_NEXT_EXPERIMENT):
+                root = self.launch_manager.task40_root(group).resolve() / 'runs'
+                output = (root / run).resolve()
+                if output.parent == root and path in {item['path'] for item in task40_artifacts(output)}:
+                    outputs.append(output)
+            if len(outputs) != 1:
                 self.send_error(404)
                 return
-            artifact = output / path
+            artifact = outputs[0] / path
             if artifact.suffix == '.mp4':
                 self._serve_video(artifact)
             else:
@@ -805,8 +867,9 @@ class Handler(BaseHTTPRequestHandler):
             self.wfile.write(body)
             return
         ai_assets = {
-            '/ai': ('ai_workbench.html', 'text/html'),
-            '/ai/': ('ai_workbench.html', 'text/html'),
+            '/agent_experiments.js': ('agent_experiments.js', 'application/javascript'),
+            '/ai/preview': ('ai_workbench.html', 'text/html'),
+            '/ai/preview/': ('ai_workbench.html', 'text/html'),
             '/ai_workbench.html': ('ai_workbench.html', 'text/html'),
             '/ai_workbench.css': ('ai_workbench.css', 'text/css'),
             '/ai_workbench.js': ('ai_workbench.js', 'application/javascript'),
@@ -1011,7 +1074,7 @@ class Handler(BaseHTTPRequestHandler):
         elif route == "/video":
             self._serve_video()
             return
-        elif route in ("/", "/index.html"):
+        elif route in ("/", "/index.html", "/ai", "/ai/"):
             try:
                 body = PAGE.read_bytes()
             except OSError as error:
@@ -1051,7 +1114,7 @@ class Handler(BaseHTTPRequestHandler):
                 return
             self._serve_video(vp)
             return
-        elif route not in ('/api/results', '/api/services', '/api/preview', '/', '/index.html'):
+        elif route not in ('/api/results', '/api/services', '/api/preview', '/', '/index.html', '/ai', '/ai/'):
             self.send_error(404)
             return
         self.send_header("Content-Length", str(len(body)))

@@ -4,6 +4,15 @@ from pathlib import Path
 import re
 
 NAMING_SCHEMA = 'groot-runs-v2'
+EXPERIMENT_12_RUN = re.compile(r'v1__test01__exp12__run(?!000)[0-9]{3}')
+
+
+def checkpoint_step(name, run):
+    if EXPERIMENT_12_RUN.fullmatch(run):
+        match = re.fullmatch(re.escape(run) + r'__step([0-9]{6})', name)
+    else:
+        match = re.fullmatch(r'step-([0-9]+)', name)
+    return int(match[1]) if match else None
 
 
 def method_name(arm, method=None):
@@ -43,6 +52,8 @@ def training_identity(root, arm, task=None):
     parsed = re.search(r'_train([0-9]+)$', root.name)
     legacy = re.search(r'_r([0-9]+)$', root.name)
     number = launch.get('train_number') or (int(parsed[1]) if parsed else int(legacy[1]) if legacy else 1)
+    if EXPERIMENT_12_RUN.fullmatch(root.name):
+        version, number = 'V_1', int(root.name[-3:])
     manifest = read_identity_json(root/'config/source_manifest.json') or launch.get('source_manifest') or {}
     process = read_identity_json(root/'config/web_process.json')
     extension = read_identity_json(root/'config/extension_5000.json')
@@ -62,8 +73,12 @@ def reserve_training(training_root, deployments, version, task, method):
     training_root.mkdir(parents=True, exist_ok=True)
     base = training_base(version, task, method)
     used = []
-    for path in training_root.iterdir():
-        if path.is_dir() and not path.is_symlink():
+    run_dirs = list(training_root.iterdir())
+    trash = training_root/'.trash'
+    if trash.is_dir() and not trash.is_symlink():
+        run_dirs.extend(trash.iterdir())
+    for path in run_dirs:
+        if path.is_dir() and not path.is_symlink() and not EXPERIMENT_12_RUN.fullmatch(path.name):
             for arm in ('baseline', 'memory_v1'):
                 if not (path/arm).is_dir() and not (path/'config/web_launch.json').is_file():
                     continue
@@ -73,7 +88,7 @@ def reserve_training(training_root, deployments, version, task, method):
     number = max(used, default=0) + 1
     while True:
         name = f'{base}_train{number:02d}'
-        if not (deployments/name).exists():
+        if not (deployments/name).exists() and not (trash/name).exists():
             try:
                 (training_root/name).mkdir()
                 return name, number

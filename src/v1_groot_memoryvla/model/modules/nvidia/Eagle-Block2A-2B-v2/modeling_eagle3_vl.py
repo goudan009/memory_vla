@@ -224,6 +224,7 @@ class Eagle3_VLForConditionalGeneration(Eagle3_VLPreTrainedModel, GenerationMixi
         output_hidden_states: Optional[bool] = None,
         return_dict: Optional[bool] = None,
         return_visual_features: bool = False,
+        return_preprojected_vision: bool = False,
     ) -> Union[Tuple, CausalLMOutputWithPast]:
         return_dict = (
             return_dict if return_dict is not None else self.config.use_return_dict
@@ -236,7 +237,11 @@ class Eagle3_VLForConditionalGeneration(Eagle3_VLPreTrainedModel, GenerationMixi
         if image_flags is not None:
             image_flags = image_flags.view(-1)
 
-        vit_embeds = self.extract_feature(pixel_values, image_flags)
+        vision = self.extract_feature(pixel_values, image_flags, return_preprojected_vision)
+        if return_preprojected_vision:
+            vit_embeds, preprojected_vision = vision
+        else:
+            vit_embeds = vision
 
         B, N, C = input_embeds.shape
         input_embeds = input_embeds.reshape(B * N, C)
@@ -291,7 +296,7 @@ class Eagle3_VLForConditionalGeneration(Eagle3_VLPreTrainedModel, GenerationMixi
             attentions=outputs.attentions,
         )
         if return_visual_features:
-            result["visual_features"] = vit_embeds
+            result["visual_features"] = preprojected_vision if return_preprojected_vision else vit_embeds
         return result
 
     def pixel_shuffle_back(self, vit_embeds, spatial_shapes):
@@ -352,7 +357,7 @@ class Eagle3_VLForConditionalGeneration(Eagle3_VLPreTrainedModel, GenerationMixi
 
         return valid_tokens
 
-    def extract_feature(self, pixel_values, image_flags=None):
+    def extract_feature(self, pixel_values, image_flags=None, return_preprojected_vision=False):
 
         if self.select_layer == -1:
             vision_model_output = self.vision_model(
@@ -368,6 +373,7 @@ class Eagle3_VLForConditionalGeneration(Eagle3_VLPreTrainedModel, GenerationMixi
             ).hidden_states[self.select_layer]
 
         vit_embeds, spatial_shapes = self.pixel_shuffle_back(vit_embeds, spatial_shapes)
+        preprojected_vision = vit_embeds.flatten(0, 1) if return_preprojected_vision else None
 
         if self.mlp_checkpoint and vit_embeds.requires_grad:
             vit_embeds = cp.checkpoint(self.mlp1, vit_embeds)
@@ -379,7 +385,11 @@ class Eagle3_VLForConditionalGeneration(Eagle3_VLPreTrainedModel, GenerationMixi
 
         if image_flags is not None and any(image_flags == 0):
             vit_embeds = self.mask_valid_tokens(vit_embeds, spatial_shapes, image_flags)
+            if return_preprojected_vision:
+                preprojected_vision = self.mask_valid_tokens(preprojected_vision, spatial_shapes, image_flags)
 
+        if return_preprojected_vision:
+            return vit_embeds, preprojected_vision
         return vit_embeds
 
     @torch.no_grad()
