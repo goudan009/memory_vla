@@ -1,0 +1,14 @@
+{
+  "goal": "在实验 12 验收后，开展同一 V1 方法的 B1K-2025 全 50 任务基线训练。",
+  "created_at": "2026-11-23",
+  "author": "Codex",
+  "reason": "按 Experiment 13 任务书在开跑前建立计划，保留实验 12 的启动门槛。",
+  "mainline": ["exp12", "setup", "training", "report"],
+  "nodes": [
+    {"id": "exp12", "title": "实验 12 验收", "after": [], "review_experiment": "experiment_12", "acceptance": "核对实验 12 报告中的 EXPERIMENT_12_ACCEPTED=true，以及对齐、训练和评估证据。"},
+    {"id": "setup", "title": "锁定全 50 任务配置", "after": ["exp12"], "acceptance": "锁定示教清单与方法、4 张 A100 和有效 Batch 128，经原工作台预检。"},
+    {"id": "training", "title": "启动四卡训练与首个存档", "after": ["setup"], "acceptance": "启动正式训练，每 2000 optimizer steps 存档，核实首个完整 checkpoint。"},
+    {"id": "resume", "title": "暂停与严格续训验收", "after": ["training"], "acceptance": "通过工作台暂停、释放资源并恢复同一作业，核对优化器和步数连续。"},
+    {"id": "report", "title": "训练监控与归档", "after": ["training", "resume"], "acceptance": "汇集训练日志、完整存档索引、资源和续训证据，并提供报告。"}
+  ]
+}

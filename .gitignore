@@ -44,7 +44,14 @@ references/upstream/
 /env/.uv-cache/
 
 # Evaluation artifacts and temporary data
-/Output/
+/Output/*
+!/Output/test_01/
+/Output/test_01/*
+!/Output/test_01/experiment_*/
+/Output/test_01/experiment_*/*
+!/Output/test_01/experiment_*/workflow/
+/Output/test_01/experiment_*/workflow/*
+!/Output/test_01/experiment_*/workflow/plan-v[0-9][0-9][0-9].json
 /agent_runs/
 /evaluation/.trash/
 /evaluation/V_0/
