@@ -14,6 +14,7 @@
 
 ## 继续阅读
 
+- [实验文档索引](../Output/README.md)汇总 Test 01 与 Test 02 的任务书和已封存报告。
 - 研究计划和验收条件见 [实验 12 工作流](../Output/test_01/experiment_12/workflow/plan-v002.json)和[实验 13 工作流](../Output/test_01/experiment_13/workflow/plan-v001.json)。
 - 方法和训练代码见[记忆融合](../src/v1_groot_memoryvla/model/memory/fusion.py)、[上游对齐预检](../src/v1_groot_memoryvla/experiment/openvla_preflight.py)及[分布式训练](../src/v1_groot_memoryvla/experiment/task21_ddp.py)。
 - 评估入口见 [Task 40 仿真](../evaluation/scripts/task40_paired_sim.py)、[前向干预](../evaluation/scripts/task40_forward_worker.py)和[正式评估协议](../evaluation/evaluation.md)。

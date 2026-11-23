@@ -43,15 +43,22 @@ references/upstream/
 /env/libero-smoke/
 /env/.uv-cache/
 
-# Evaluation artifacts and temporary data
+# Public experiment entry points; reports are staged explicitly after final review.
 /Output/*
-!/Output/test_01/
-/Output/test_01/*
-!/Output/test_01/experiment_*/
-/Output/test_01/experiment_*/*
-!/Output/test_01/experiment_*/workflow/
-/Output/test_01/experiment_*/workflow/*
-!/Output/test_01/experiment_*/workflow/plan-v[0-9][0-9][0-9].json
+!/Output/README.md
+!/Output/test_[0-9][0-9]/
+/Output/test_[0-9][0-9]/*
+!/Output/test_[0-9][0-9]/experiment_[0-9][0-9]/
+/Output/test_[0-9][0-9]/experiment_[0-9][0-9]/*
+!/Output/test_[0-9][0-9]/experiment_[0-9][0-9]/README.md
+!/Output/test_[0-9][0-9]/experiment_[0-9][0-9]/task.md
+
+# Versioned plans are required by AGENTS.md.
+!/Output/test_[0-9][0-9]/experiment_[0-9][0-9]/workflow/
+/Output/test_[0-9][0-9]/experiment_[0-9][0-9]/workflow/*
+!/Output/test_[0-9][0-9]/experiment_[0-9][0-9]/workflow/plan-v[0-9][0-9][0-9].json
+
+# Evaluation artifacts and temporary data
 /agent_runs/
 /evaluation/.trash/
 /evaluation/V_0/
