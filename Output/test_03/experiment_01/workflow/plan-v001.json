@@ -1,0 +1,15 @@
+{
+  "goal": "仅修订并发布V3任务书：按用户明确的V2侧重记忆、V3侧重检索划分研究边界，不启动实验",
+  "created_at": "2026-11-24",
+  "author": "Codex / 01a2094e-e92c-71d2-a6a6-2bce4d4f5f25",
+  "reason": "用户要求先由多个Agent比较V2/V3，再修改V3任务书并上传GitHub。此计划仅覆盖文档修订；模型研发和实验执行须另立后续计划。",
+  "mainline": ["review", "revise", "verify", "publish"],
+  "nodes": [
+    {"id": "review", "title": "多Agent核对V2与V3研究边界", "after": [], "parallel_with": ["retrieval_review", "evaluation_review"], "acceptance": "汇总三个只读评审：研究重合、检索实现、评估归因；如实承认既有V2也含状态条件检索"},
+    {"id": "retrieval_review", "title": "角色检索实现审阅", "after": [], "parallel_with": ["review", "evaluation_review"], "acceptance": "明确逐层Query、共享库与读后写、纯历史读出和角色映射，不增加训练轮数"},
+    {"id": "evaluation_review", "title": "检索机制评估审阅", "after": [], "parallel_with": ["review", "retrieval_review"], "acceptance": "固定V1主路径的角色历史干预、共享查询与梯度门禁足以支持有限的检索作用判断"},
+    {"id": "revise", "title": "修订V3检索任务书", "after": ["review", "retrieval_review", "evaluation_review"], "parallel_with": [], "acceptance": "保持一轮训练和一次集中评估，明确V2记忆管理与V3角色检索的差异及不能作出的结论"},
+    {"id": "verify", "title": "文档一致性与发布范围核对", "after": ["revise"], "parallel_with": [], "acceptance": "核对任务书无内部冲突，JSON计划和diff检查通过，发布仅含V3文档，不包含本地其他未推送提交或修改"},
+    {"id": "publish", "title": "发布到GitHub", "after": ["verify"], "parallel_with": [], "acceptance": "以非强制推送发布到main，并从远端核对提交SHA与V3任务书内容"}
+  ]
+}
