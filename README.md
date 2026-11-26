@@ -8,10 +8,10 @@
 
 | 要做什么 | 从这里开始 |
 | --- | --- |
-| 启动或查询训练、推理、评估 | [工作台执行手册](docs/workbench_agent.md)、[CLI](workbench-cli/README.md)、[设备说明](train/DEVICES.md) |
+| 启动或查询训练、推理、评估 | [工作台执行手册](docs/workbench/agent.md)、[CLI](workbench-cli/README.md)、[设备说明](train/DEVICES.md) |
 | 配环境、跑评估、看结果 | [运行环境](env/README.md)、[评估使用说明](evaluation/README.md)、[正式评估协议](evaluation/evaluation.md) |
 | 查基线和当前实现 | [GR00T 基线](baselines/groot_n1d6/README.md)、[V1](src/v1_groot_memoryvla/README.md)、[记忆融合源码](src/v1_groot_memoryvla/model/memory/fusion.py) |
-| 看架构和设计依据 | [V1 架构与设计依据](docs/memoryv1_architecture/README.md)、[MemoryVLA 源码分析](docs/memoryvla/README.md)、[工作台设计](docs/workbench/README.md) |
+| 看架构和设计依据 | [文档索引](docs/README.md)、[V1 架构与设计依据](docs/v1/README.md)、[V2.1 方案](docs/v2/2.1.html)、[工作台设计](docs/workbench/README.md) |
 | 查论文稿、旧诊断和命令 | [论文与研究笔记](paper/README.md)、[历史归档](docs/archive/README.md) |
 
 版本专用说明随源码放在 `src/<版本>/`；当前协作规则见 [AGENTS.md](AGENTS.md)。实时作业和设备状态以工作台为准。

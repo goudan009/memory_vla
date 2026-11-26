@@ -1,10 +1,10 @@
 # 训练、推理与评估的工作台执行手册
 
-在 4090 仓库所在主机使用 `http://127.0.0.1:8765`。设备的训练、推理与仿真能力见 [设备说明](../train/DEVICES.md)。实际在线状态、支持任务、GPU 和路径以当前 API 响应为准。
+在 4090 仓库所在主机使用 `http://127.0.0.1:8765`。设备的训练、推理与仿真能力见 [设备说明](../../train/DEVICES.md)。实际在线状态、支持任务、GPU 和路径以当前 API 响应为准。
 
-设备用途和训练分级见 [robot-vla-experiment-ops](../.agents/skills/robot-vla-experiment-ops/robot-vla-experiment-ops/SKILL.md)。当前推理接口支持 A100 和 RTX 6000 Ada，4090 的 `local` 入口目前用于仿真评估。
+设备用途和训练分级见 [robot-vla-experiment-ops](../../.agents/skills/robot-vla-experiment-ops/robot-vla-experiment-ops/SKILL.md)。当前推理接口支持 A100 和 RTX 6000 Ada，4090 的 `local` 入口目前用于仿真评估。
 
-新部署时，将 [设备模板](../configs/workbench_devices.example.json) 和 [外部源码模板](../configs/workbench_sources.example.json) 分别复制为 `configs/workbench_devices.json` 和 `configs/workbench_sources.json`，填写实际 SSH 地址和绝对路径。这两个本机配置受 Git 忽略规则保护。
+新部署时，将 [设备模板](../../configs/workbench_devices.example.json) 和 [外部源码模板](../../configs/workbench_sources.example.json) 分别复制为 `configs/workbench_devices.json` 和 `configs/workbench_sources.json`，填写实际 SSH 地址和绝对路径。这两个本机配置受 Git 忽略规则保护。
 
 Task 40 的采集和检查点恢复还需要实验存储中的仿真检查点、历史决策前缀和策略权重。仿真入口随源码提供。采集默认从 `Output/test_01/experiment_01/checkpoints` 读取锚点，从 `Output/task40_memory_overnight/replay/original_step4000` 读取权重元数据，并使用 `Output/test_01/experiment_09` 作为实验目录。
 
@@ -29,7 +29,7 @@ V2集中评估使用同一管理器`kind=v2_evaluate`，指定已完成的`train
 
 资源接口为 `GET /api/registry/storage`（`action=hosts|disks|browse|size`，`host=4090|A100|A6000`，浏览时传绝对 `path`，可附 `query`、`offset`、`limit`），以及同路径的 POST（`action=register|mkdir|trash|restore`）。远端使用既有 `configs/workbench_devices.json` 的 SSH 配置，浏览和预览限制在已登记资源与数据存储目录中。
 
-已安装 `memory-workbench` 时，可直接使用 `status`、`train|infer|eval options/jobs` 和 `train|infer|eval preview/start -f <配置.json>`。CLI 的 `start` 会先预检，再通过同一工作台 API 提交。安装和用法见 [工作台 CLI](../workbench-cli/README.md)。
+已安装 `memory-workbench` 时，可直接使用 `status`、`train|infer|eval options/jobs` 和 `train|infer|eval preview/start -f <配置.json>`。CLI 的 `start` 会先预检，再通过同一工作台 API 提交。安装和用法见 [工作台 CLI](../../workbench-cli/README.md)。
 
 | 任务 | 接口前缀 | 设备和参数来源 |
 | --- | --- | --- |

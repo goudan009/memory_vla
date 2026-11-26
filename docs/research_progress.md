@@ -20,4 +20,4 @@
 - 评估入口见 [Task 40 仿真](../evaluation/scripts/task40_paired_sim.py)、[前向干预](../evaluation/scripts/task40_forward_worker.py)和[正式评估协议](../evaluation/evaluation.md)。
 - 历史 V2 和 V3 实现可在提交 `5b55528` 查看。
 
-进展页是带时间戳的快照。仓库提供代码、文档和版本化计划，训练数据、权重、原始日志及录像保存在实验存储。实时进展见[工作台执行手册](workbench_agent.md)。
+进展页是带时间戳的快照。仓库提供代码、文档和版本化计划，训练数据、权重、原始日志及录像保存在实验存储。实时进展见[工作台执行手册](workbench/agent.md)。

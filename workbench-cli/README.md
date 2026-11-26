@@ -25,4 +25,4 @@ memory-workbench eval start -f eval.json
 memory-workbench eval jobs
 ```
 
-在部署了 MemoryVLA 项目的主机上，可以从仓库根目录执行 `memory-workbench serve` 启动服务，也可用 `--repo` 指定仓库。当前已有工作台服务时，直接使用查询和提交命令。任务配置、资源规则和 API 字段见 [工作台执行手册](../docs/workbench_agent.md)。
+在部署了 MemoryVLA 项目的主机上，可以从仓库根目录执行 `memory-workbench serve` 启动服务，也可用 `--repo` 指定仓库。当前已有工作台服务时，直接使用查询和提交命令。任务配置、资源规则和 API 字段见 [工作台执行手册](../docs/workbench/agent.md)。

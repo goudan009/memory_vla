@@ -268,8 +268,8 @@ Memory 每次新观测只读写一次；同一观测下四次 Euler 更新复用
 在仓库根目录重绘：
 
 ```sh
-dot -Tsvg docs/memoryv1_architecture/architecture.dot -o docs/memoryv1_architecture/architecture.svg
-dot -Tpng -Gdpi=140 docs/memoryv1_architecture/architecture.dot -o docs/memoryv1_architecture/architecture.png
-dot -Tsvg docs/memoryv1_architecture/comparison.dot -o docs/memoryv1_architecture/comparison.svg
-dot -Tpng -Gdpi=140 docs/memoryv1_architecture/comparison.dot -o docs/memoryv1_architecture/comparison.png
+dot -Tsvg docs/v1/architecture.dot -o docs/v1/architecture.svg
+dot -Tpng -Gdpi=140 docs/v1/architecture.dot -o docs/v1/architecture.png
+dot -Tsvg docs/v1/comparison.dot -o docs/v1/comparison.svg
+dot -Tpng -Gdpi=140 docs/v1/comparison.dot -o docs/v1/comparison.png
 ```
