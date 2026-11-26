@@ -73,7 +73,7 @@ class Policy(Gr00tPolicy):
         raw_q = torch.from_numpy(np.stack([raw_from_states(s) for s in states]))
         model_inputs = dict(collated_inputs['inputs'])
         model_inputs.pop('memory_context', None)
-        with torch.inference_mode(), torch.autocast('cuda', dtype=torch.bfloat16, enabled=self.device_type=='cuda'):
+        with torch.inference_mode(), torch.autocast(self.device_type, dtype=torch.bfloat16, enabled=self.device_type in ('cuda','cpu')):
             model_pred = self.model.get_action(model_inputs, raw_q, context)
         if self.memory_state is not None:
             self.memory_state.advance(context)
