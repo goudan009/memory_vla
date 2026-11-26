@@ -27,7 +27,7 @@ def hash_file(p):
 def base_hash(base):
     h=hashlib.sha256()
     for name,p in base.named_parameters():
-        h.update(name.encode());h.update(p.detach().cpu().contiguous().view(torch.uint8).numpy().tobytes())
+        h.update(name.encode());h.update(p.detach().cpu().contiguous().reshape(-1).view(torch.uint8).numpy().tobytes())
     return h.hexdigest()
 def load_base(path,stage):
     saved=json.loads((Path(path)/"config.json").read_text())
@@ -202,10 +202,14 @@ def save(args,base,model,processor,split,lo,hi,step,initial_hash):
         # Keep the exact immutable Stage1 checkpoint files, no dtype conversion on save.
         import os,shutil
         for p in args.checkpoint.iterdir():
-            if not p.is_file():continue
-            try:os.link(p,dest/p.name)
-            except OSError:shutil.copy2(p,dest/p.name)
+            if not p.is_file() or p.name in ('v2_1_run.json','v2_1.json','v2_1.pt','training_state.pt'):continue
+            if p.suffix in ('.safetensors','.bin'):
+                try:os.link(p,dest/p.name)
+                except OSError:shutil.copy2(p,dest/p.name)
+            else:shutil.copy2(p,dest/p.name)
         # Avoid overwriting linked files; Stage2 processor is identical to Stage1.
+        from dataclasses import replace
+        model.cfg=replace(model.cfg,state_weight=args.state_weight)
         model.save_sidecar(dest)
     if args.stage=="stage1":
         jsonwrite(dest/"v2_1_stage1.json",dict(step=step,split=split,raw_lo=np.asarray(lo).tolist(),raw_hi=np.asarray(hi).tolist(),
@@ -217,7 +221,7 @@ def main():
     p.add_argument("--stage",choices=["stage1","memory","continued"],required=True)
     p.add_argument("--dataset",type=Path,required=True);p.add_argument("--checkpoint",type=Path,required=True)
     p.add_argument("--labels",type=Path,required=True);p.add_argument("--output",type=Path,required=True)
-    p.add_argument("--split",type=Path);p.add_argument("--prior",choices=["topology","fk","none"],default="topology")
+    p.add_argument("--split",type=Path);p.add_argument("--calibration-reference",type=Path,help="A calibration.json for B/C/D");p.add_argument("--prior",choices=["topology","fk","none"],default="topology")
     p.add_argument("--fusion-layers",type=int,default=0);p.add_argument("--states",nargs="+",default=list(CORE_STATES))
     p.add_argument("--steps",type=int);p.add_argument("--lr",type=float,default=1e-5)
     p.add_argument("--seed",type=int,default=42);p.add_argument("--microbatch",type=int,choices=[1,2],default=2)
@@ -225,14 +229,17 @@ def main():
     p.add_argument("--execute",action="store_true");p.add_argument("--preflight-only",action="store_true")
     p.add_argument("--accept-preflight",type=Path,help="Required signed-off local preflight evidence for formal run")
     args=p.parse_args()
-    args.steps=args.steps or (6000 if args.stage=="stage1" else 3000)
+    args.steps=(6000 if args.stage=="stage1" else 3000) if args.steps is None else args.steps
+    if args.steps<1 or not np.isfinite(args.lr) or args.lr<=0:raise ValueError('invalid training budget')
+    Config(prior=args.prior,fusion_layers=args.fusion_layers,states=tuple(args.states),weak_weight=args.weak_weight,state_weight=args.state_weight)
     spec={k:str(v) if isinstance(v,Path) else v for k,v in vars(args).items()}
     print(json.dumps(spec,indent=2))
     if not args.execute:return
+    if args.stage=="stage1" and (args.checkpoint/"v2_1_stage1.json").exists():raise ValueError("Stage1 must start from generic GR00T, not an existing Stage1 result")
     if not args.preflight_only:
         if args.accept_preflight is None or not args.accept_preflight.exists():raise SystemExit("formal run requires local preflight evidence")
         gate=json.loads(args.accept_preflight.read_text())
-        if not gate.get("passed") or gate.get("stage")!=args.stage or gate.get("prior")!=args.prior:
+        if not gate.get("passed") or gate.get("stage")!=args.stage or gate.get("prior")!=args.prior or gate.get("label_sha256")!=hash_file(args.labels) or gate.get("checkpoint")!=str(args.checkpoint.resolve()) or gate.get("states")!=args.states or gate.get("microbatch")!=args.microbatch or gate.get("fusion_layers")!=args.fusion_layers:
             raise SystemExit("preflight evidence mismatch")
     if not torch.cuda.is_available() or torch.cuda.device_count()!=1:raise SystemExit("select one GPU explicitly")
     args.output.mkdir(parents=True,exist_ok=False)
@@ -240,7 +247,16 @@ def main():
     jsonwrite(args.output/"config.json",spec);jsonwrite(args.output/"data_split.json",split)
     initial_hash=base_hash(base) if model is not None else None
     if model is not None:
-        result=calibration(tr,base,model,labels,pos,args)
+        if args.prior!='topology':
+            if args.calibration_reference is None:raise ValueError('B/C/D require A calibration reference')
+            ref=json.loads(args.calibration_reference.read_text())
+            if ref.get('prior')!='topology' or ref.get('label_sha256')!=hash_file(args.labels) or ref.get('states')!=args.states or ref.get('split')!=split:
+                raise ValueError('A calibration reference is incompatible')
+            args.state_weight=float(ref['lambda_s'])
+            if not .001<=args.state_weight<=.1:raise ValueError('invalid reference lambda_s')
+            result=dict(lambda_s=args.state_weight,reference=str(args.calibration_reference),ratio=ref['ratio'])
+        else:result=calibration(tr,base,model,labels,pos,args)
+        result.update(prior=args.prior,label_sha256=hash_file(args.labels),states=args.states,split=split)
         jsonwrite(args.output/"calibration.json",result)
     if args.preflight_only:
         # Disposable actual optimization; separate run, never promoted to checkpoint.
@@ -250,7 +266,9 @@ def main():
             _,pair=next(seq);rows.append(run_update(tr,pair,args.seed+i*100000,base,model,labels,pos,args,opt))
         unchanged=(base_hash(base)==initial_hash) if model is not None else None
         jsonwrite(args.output/"preflight.json",dict(passed=all(np.isfinite(r["grad_norm"]) and r["grad_norm"]>0 for r in rows) and unchanged is not False,
-                   stage=args.stage,prior=args.prior,rows=rows,base_unchanged=unchanged))
+                   stage=args.stage,prior=args.prior,rows=rows,base_unchanged=unchanged,
+                   label_sha256=hash_file(args.labels),checkpoint=str(args.checkpoint.resolve()),states=args.states,
+                   microbatch=args.microbatch,fusion_layers=args.fusion_layers))
         return
     opt=optimizer_for(base,model,args);seq=stream(tr,args.seed)
     save(args,base,model,proc,split,lo,hi,0,initial_hash)
