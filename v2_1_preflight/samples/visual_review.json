@@ -1,0 +1,10 @@
+{
+  "review": "Manual visual inspection of original-head-camera panels, 2026-11-26",
+  "panels": [
+    "certified_transition_panel_400010.png",
+    "certified_transition_panel_400020.png"
+  ],
+  "observations": "Door changes agree with q and Open. Button red-to-green agrees with current ToggledOn. Cooked particles appear in aperture after particle count changes.",
+  "limitation": "No visual certification of Inside or grasp. Keyframes +/-16 around raw transitions do not prove exact subframe rendering latency.",
+  "historical_provisional": "label_alignment_400010.png and corresponding JSON contain provisional Inside labels, labels_certified=false; excluded from task40_labels.parquet"
+}

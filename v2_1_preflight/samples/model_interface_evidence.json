@@ -1,0 +1,5203 @@
+{
+  "method": "Read-only CPU load of an existing real replay feature artifact; no new forward or ablation performed",
+  "cache": "/nvme3/projects/memory_vla/outputs/diagnostics/v1_real_replay_features.pt",
+  "cache_sha256": "4e670e5165f9b18dc4f945e6523780c6a97cc3ec23e06e4f9966ef4bf23bf87f",
+  "sample_count": 40,
+  "samples": [
+    {
+      "episode": 10,
+      "task": 0,
+      "timestep": 0,
+      "features": {
+        "backbone_features": {
+          "shape": [
+            1,
+            284,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "backbone_attention_mask": {
+          "shape": [
+            1,
+            284
+          ],
+          "dtype": "torch.bool"
+        },
+        "image_mask": {
+          "shape": [
+            1,
+            284
+          ],
+          "dtype": "torch.bool"
+        },
+        "visual_features": {
+          "shape": [
+            1,
+            3,
+            81,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        }
+      },
+      "actions": {
+        "state": {
+          "shape": [
+            1,
+            1,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action_mask": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "embodiment_id": {
+          "shape": [
+            1
+          ],
+          "dtype": "torch.int64"
+        }
+      },
+      "predictions": {
+        "normal": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "perceptual_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_first_only": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_drop_oldest": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        }
+      }
+    },
+    {
+      "episode": 10,
+      "task": 0,
+      "timestep": 1,
+      "features": {
+        "backbone_features": {
+          "shape": [
+            1,
+            284,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "backbone_attention_mask": {
+          "shape": [
+            1,
+            284
+          ],
+          "dtype": "torch.bool"
+        },
+        "image_mask": {
+          "shape": [
+            1,
+            284
+          ],
+          "dtype": "torch.bool"
+        },
+        "visual_features": {
+          "shape": [
+            1,
+            3,
+            81,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        }
+      },
+      "actions": {
+        "state": {
+          "shape": [
+            1,
+            1,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action_mask": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "embodiment_id": {
+          "shape": [
+            1
+          ],
+          "dtype": "torch.int64"
+        }
+      },
+      "predictions": {
+        "normal": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "perceptual_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_first_only": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_drop_oldest": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        }
+      }
+    },
+    {
+      "episode": 10,
+      "task": 0,
+      "timestep": 8,
+      "features": {
+        "backbone_features": {
+          "shape": [
+            1,
+            284,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "backbone_attention_mask": {
+          "shape": [
+            1,
+            284
+          ],
+          "dtype": "torch.bool"
+        },
+        "image_mask": {
+          "shape": [
+            1,
+            284
+          ],
+          "dtype": "torch.bool"
+        },
+        "visual_features": {
+          "shape": [
+            1,
+            3,
+            81,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        }
+      },
+      "actions": {
+        "state": {
+          "shape": [
+            1,
+            1,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action_mask": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "embodiment_id": {
+          "shape": [
+            1
+          ],
+          "dtype": "torch.int64"
+        }
+      },
+      "predictions": {
+        "normal": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "perceptual_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_first_only": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_drop_oldest": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        }
+      }
+    },
+    {
+      "episode": 10,
+      "task": 0,
+      "timestep": 16,
+      "features": {
+        "backbone_features": {
+          "shape": [
+            1,
+            284,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "backbone_attention_mask": {
+          "shape": [
+            1,
+            284
+          ],
+          "dtype": "torch.bool"
+        },
+        "image_mask": {
+          "shape": [
+            1,
+            284
+          ],
+          "dtype": "torch.bool"
+        },
+        "visual_features": {
+          "shape": [
+            1,
+            3,
+            81,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        }
+      },
+      "actions": {
+        "state": {
+          "shape": [
+            1,
+            1,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action_mask": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "embodiment_id": {
+          "shape": [
+            1
+          ],
+          "dtype": "torch.int64"
+        }
+      },
+      "predictions": {
+        "normal": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "perceptual_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_first_only": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_drop_oldest": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        }
+      }
+    },
+    {
+      "episode": 10,
+      "task": 0,
+      "timestep": 31,
+      "features": {
+        "backbone_features": {
+          "shape": [
+            1,
+            284,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "backbone_attention_mask": {
+          "shape": [
+            1,
+            284
+          ],
+          "dtype": "torch.bool"
+        },
+        "image_mask": {
+          "shape": [
+            1,
+            284
+          ],
+          "dtype": "torch.bool"
+        },
+        "visual_features": {
+          "shape": [
+            1,
+            3,
+            81,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        }
+      },
+      "actions": {
+        "state": {
+          "shape": [
+            1,
+            1,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action_mask": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "embodiment_id": {
+          "shape": [
+            1
+          ],
+          "dtype": "torch.int64"
+        }
+      },
+      "predictions": {
+        "normal": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "perceptual_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_first_only": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_drop_oldest": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        }
+      }
+    },
+    {
+      "episode": 10,
+      "task": 0,
+      "timestep": 32,
+      "features": {
+        "backbone_features": {
+          "shape": [
+            1,
+            284,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "backbone_attention_mask": {
+          "shape": [
+            1,
+            284
+          ],
+          "dtype": "torch.bool"
+        },
+        "image_mask": {
+          "shape": [
+            1,
+            284
+          ],
+          "dtype": "torch.bool"
+        },
+        "visual_features": {
+          "shape": [
+            1,
+            3,
+            81,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        }
+      },
+      "actions": {
+        "state": {
+          "shape": [
+            1,
+            1,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action_mask": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "embodiment_id": {
+          "shape": [
+            1
+          ],
+          "dtype": "torch.int64"
+        }
+      },
+      "predictions": {
+        "normal": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "perceptual_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_first_only": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_drop_oldest": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        }
+      }
+    },
+    {
+      "episode": 10,
+      "task": 0,
+      "timestep": 63,
+      "features": {
+        "backbone_features": {
+          "shape": [
+            1,
+            284,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "backbone_attention_mask": {
+          "shape": [
+            1,
+            284
+          ],
+          "dtype": "torch.bool"
+        },
+        "image_mask": {
+          "shape": [
+            1,
+            284
+          ],
+          "dtype": "torch.bool"
+        },
+        "visual_features": {
+          "shape": [
+            1,
+            3,
+            81,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        }
+      },
+      "actions": {
+        "state": {
+          "shape": [
+            1,
+            1,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action_mask": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "embodiment_id": {
+          "shape": [
+            1
+          ],
+          "dtype": "torch.int64"
+        }
+      },
+      "predictions": {
+        "normal": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "perceptual_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_first_only": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_drop_oldest": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        }
+      }
+    },
+    {
+      "episode": 10,
+      "task": 0,
+      "timestep": 64,
+      "features": {
+        "backbone_features": {
+          "shape": [
+            1,
+            284,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "backbone_attention_mask": {
+          "shape": [
+            1,
+            284
+          ],
+          "dtype": "torch.bool"
+        },
+        "image_mask": {
+          "shape": [
+            1,
+            284
+          ],
+          "dtype": "torch.bool"
+        },
+        "visual_features": {
+          "shape": [
+            1,
+            3,
+            81,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        }
+      },
+      "actions": {
+        "state": {
+          "shape": [
+            1,
+            1,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action_mask": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "embodiment_id": {
+          "shape": [
+            1
+          ],
+          "dtype": "torch.int64"
+        }
+      },
+      "predictions": {
+        "normal": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "perceptual_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_first_only": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_drop_oldest": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        }
+      }
+    },
+    {
+      "episode": 10,
+      "task": 0,
+      "timestep": 95,
+      "features": {
+        "backbone_features": {
+          "shape": [
+            1,
+            284,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "backbone_attention_mask": {
+          "shape": [
+            1,
+            284
+          ],
+          "dtype": "torch.bool"
+        },
+        "image_mask": {
+          "shape": [
+            1,
+            284
+          ],
+          "dtype": "torch.bool"
+        },
+        "visual_features": {
+          "shape": [
+            1,
+            3,
+            81,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        }
+      },
+      "actions": {
+        "state": {
+          "shape": [
+            1,
+            1,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action_mask": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "embodiment_id": {
+          "shape": [
+            1
+          ],
+          "dtype": "torch.int64"
+        }
+      },
+      "predictions": {
+        "normal": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "perceptual_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_first_only": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_drop_oldest": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        }
+      }
+    },
+    {
+      "episode": 10,
+      "task": 0,
+      "timestep": 127,
+      "features": {
+        "backbone_features": {
+          "shape": [
+            1,
+            284,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "backbone_attention_mask": {
+          "shape": [
+            1,
+            284
+          ],
+          "dtype": "torch.bool"
+        },
+        "image_mask": {
+          "shape": [
+            1,
+            284
+          ],
+          "dtype": "torch.bool"
+        },
+        "visual_features": {
+          "shape": [
+            1,
+            3,
+            81,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        }
+      },
+      "actions": {
+        "state": {
+          "shape": [
+            1,
+            1,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action_mask": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "embodiment_id": {
+          "shape": [
+            1
+          ],
+          "dtype": "torch.int64"
+        }
+      },
+      "predictions": {
+        "normal": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "perceptual_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_first_only": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_drop_oldest": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        }
+      }
+    },
+    {
+      "episode": 340020,
+      "task": 34,
+      "timestep": 0,
+      "features": {
+        "backbone_features": {
+          "shape": [
+            1,
+            283,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "backbone_attention_mask": {
+          "shape": [
+            1,
+            283
+          ],
+          "dtype": "torch.bool"
+        },
+        "image_mask": {
+          "shape": [
+            1,
+            283
+          ],
+          "dtype": "torch.bool"
+        },
+        "visual_features": {
+          "shape": [
+            1,
+            3,
+            81,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        }
+      },
+      "actions": {
+        "state": {
+          "shape": [
+            1,
+            1,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action_mask": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "embodiment_id": {
+          "shape": [
+            1
+          ],
+          "dtype": "torch.int64"
+        }
+      },
+      "predictions": {
+        "normal": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "perceptual_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_first_only": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_drop_oldest": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        }
+      }
+    },
+    {
+      "episode": 340020,
+      "task": 34,
+      "timestep": 1,
+      "features": {
+        "backbone_features": {
+          "shape": [
+            1,
+            283,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "backbone_attention_mask": {
+          "shape": [
+            1,
+            283
+          ],
+          "dtype": "torch.bool"
+        },
+        "image_mask": {
+          "shape": [
+            1,
+            283
+          ],
+          "dtype": "torch.bool"
+        },
+        "visual_features": {
+          "shape": [
+            1,
+            3,
+            81,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        }
+      },
+      "actions": {
+        "state": {
+          "shape": [
+            1,
+            1,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action_mask": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "embodiment_id": {
+          "shape": [
+            1
+          ],
+          "dtype": "torch.int64"
+        }
+      },
+      "predictions": {
+        "normal": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "perceptual_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_first_only": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_drop_oldest": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        }
+      }
+    },
+    {
+      "episode": 340020,
+      "task": 34,
+      "timestep": 8,
+      "features": {
+        "backbone_features": {
+          "shape": [
+            1,
+            283,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "backbone_attention_mask": {
+          "shape": [
+            1,
+            283
+          ],
+          "dtype": "torch.bool"
+        },
+        "image_mask": {
+          "shape": [
+            1,
+            283
+          ],
+          "dtype": "torch.bool"
+        },
+        "visual_features": {
+          "shape": [
+            1,
+            3,
+            81,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        }
+      },
+      "actions": {
+        "state": {
+          "shape": [
+            1,
+            1,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action_mask": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "embodiment_id": {
+          "shape": [
+            1
+          ],
+          "dtype": "torch.int64"
+        }
+      },
+      "predictions": {
+        "normal": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "perceptual_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_first_only": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_drop_oldest": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        }
+      }
+    },
+    {
+      "episode": 340020,
+      "task": 34,
+      "timestep": 16,
+      "features": {
+        "backbone_features": {
+          "shape": [
+            1,
+            283,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "backbone_attention_mask": {
+          "shape": [
+            1,
+            283
+          ],
+          "dtype": "torch.bool"
+        },
+        "image_mask": {
+          "shape": [
+            1,
+            283
+          ],
+          "dtype": "torch.bool"
+        },
+        "visual_features": {
+          "shape": [
+            1,
+            3,
+            81,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        }
+      },
+      "actions": {
+        "state": {
+          "shape": [
+            1,
+            1,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action_mask": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "embodiment_id": {
+          "shape": [
+            1
+          ],
+          "dtype": "torch.int64"
+        }
+      },
+      "predictions": {
+        "normal": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "perceptual_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_first_only": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_drop_oldest": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        }
+      }
+    },
+    {
+      "episode": 340020,
+      "task": 34,
+      "timestep": 31,
+      "features": {
+        "backbone_features": {
+          "shape": [
+            1,
+            283,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "backbone_attention_mask": {
+          "shape": [
+            1,
+            283
+          ],
+          "dtype": "torch.bool"
+        },
+        "image_mask": {
+          "shape": [
+            1,
+            283
+          ],
+          "dtype": "torch.bool"
+        },
+        "visual_features": {
+          "shape": [
+            1,
+            3,
+            81,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        }
+      },
+      "actions": {
+        "state": {
+          "shape": [
+            1,
+            1,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action_mask": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "embodiment_id": {
+          "shape": [
+            1
+          ],
+          "dtype": "torch.int64"
+        }
+      },
+      "predictions": {
+        "normal": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "perceptual_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_first_only": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_drop_oldest": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        }
+      }
+    },
+    {
+      "episode": 340020,
+      "task": 34,
+      "timestep": 32,
+      "features": {
+        "backbone_features": {
+          "shape": [
+            1,
+            283,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "backbone_attention_mask": {
+          "shape": [
+            1,
+            283
+          ],
+          "dtype": "torch.bool"
+        },
+        "image_mask": {
+          "shape": [
+            1,
+            283
+          ],
+          "dtype": "torch.bool"
+        },
+        "visual_features": {
+          "shape": [
+            1,
+            3,
+            81,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        }
+      },
+      "actions": {
+        "state": {
+          "shape": [
+            1,
+            1,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action_mask": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "embodiment_id": {
+          "shape": [
+            1
+          ],
+          "dtype": "torch.int64"
+        }
+      },
+      "predictions": {
+        "normal": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "perceptual_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_first_only": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_drop_oldest": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        }
+      }
+    },
+    {
+      "episode": 340020,
+      "task": 34,
+      "timestep": 63,
+      "features": {
+        "backbone_features": {
+          "shape": [
+            1,
+            283,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "backbone_attention_mask": {
+          "shape": [
+            1,
+            283
+          ],
+          "dtype": "torch.bool"
+        },
+        "image_mask": {
+          "shape": [
+            1,
+            283
+          ],
+          "dtype": "torch.bool"
+        },
+        "visual_features": {
+          "shape": [
+            1,
+            3,
+            81,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        }
+      },
+      "actions": {
+        "state": {
+          "shape": [
+            1,
+            1,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action_mask": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "embodiment_id": {
+          "shape": [
+            1
+          ],
+          "dtype": "torch.int64"
+        }
+      },
+      "predictions": {
+        "normal": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "perceptual_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_first_only": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_drop_oldest": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        }
+      }
+    },
+    {
+      "episode": 340020,
+      "task": 34,
+      "timestep": 64,
+      "features": {
+        "backbone_features": {
+          "shape": [
+            1,
+            283,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "backbone_attention_mask": {
+          "shape": [
+            1,
+            283
+          ],
+          "dtype": "torch.bool"
+        },
+        "image_mask": {
+          "shape": [
+            1,
+            283
+          ],
+          "dtype": "torch.bool"
+        },
+        "visual_features": {
+          "shape": [
+            1,
+            3,
+            81,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        }
+      },
+      "actions": {
+        "state": {
+          "shape": [
+            1,
+            1,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action_mask": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "embodiment_id": {
+          "shape": [
+            1
+          ],
+          "dtype": "torch.int64"
+        }
+      },
+      "predictions": {
+        "normal": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "perceptual_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_first_only": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_drop_oldest": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        }
+      }
+    },
+    {
+      "episode": 340020,
+      "task": 34,
+      "timestep": 95,
+      "features": {
+        "backbone_features": {
+          "shape": [
+            1,
+            283,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "backbone_attention_mask": {
+          "shape": [
+            1,
+            283
+          ],
+          "dtype": "torch.bool"
+        },
+        "image_mask": {
+          "shape": [
+            1,
+            283
+          ],
+          "dtype": "torch.bool"
+        },
+        "visual_features": {
+          "shape": [
+            1,
+            3,
+            81,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        }
+      },
+      "actions": {
+        "state": {
+          "shape": [
+            1,
+            1,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action_mask": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "embodiment_id": {
+          "shape": [
+            1
+          ],
+          "dtype": "torch.int64"
+        }
+      },
+      "predictions": {
+        "normal": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "perceptual_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_first_only": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_drop_oldest": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        }
+      }
+    },
+    {
+      "episode": 340020,
+      "task": 34,
+      "timestep": 127,
+      "features": {
+        "backbone_features": {
+          "shape": [
+            1,
+            283,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "backbone_attention_mask": {
+          "shape": [
+            1,
+            283
+          ],
+          "dtype": "torch.bool"
+        },
+        "image_mask": {
+          "shape": [
+            1,
+            283
+          ],
+          "dtype": "torch.bool"
+        },
+        "visual_features": {
+          "shape": [
+            1,
+            3,
+            81,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        }
+      },
+      "actions": {
+        "state": {
+          "shape": [
+            1,
+            1,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action_mask": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "embodiment_id": {
+          "shape": [
+            1
+          ],
+          "dtype": "torch.int64"
+        }
+      },
+      "predictions": {
+        "normal": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "perceptual_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_first_only": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_drop_oldest": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        }
+      }
+    },
+    {
+      "episode": 400010,
+      "task": 40,
+      "timestep": 0,
+      "features": {
+        "backbone_features": {
+          "shape": [
+            1,
+            283,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "backbone_attention_mask": {
+          "shape": [
+            1,
+            283
+          ],
+          "dtype": "torch.bool"
+        },
+        "image_mask": {
+          "shape": [
+            1,
+            283
+          ],
+          "dtype": "torch.bool"
+        },
+        "visual_features": {
+          "shape": [
+            1,
+            3,
+            81,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        }
+      },
+      "actions": {
+        "state": {
+          "shape": [
+            1,
+            1,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action_mask": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "embodiment_id": {
+          "shape": [
+            1
+          ],
+          "dtype": "torch.int64"
+        }
+      },
+      "predictions": {
+        "normal": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "perceptual_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_first_only": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_drop_oldest": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        }
+      }
+    },
+    {
+      "episode": 400010,
+      "task": 40,
+      "timestep": 1,
+      "features": {
+        "backbone_features": {
+          "shape": [
+            1,
+            283,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "backbone_attention_mask": {
+          "shape": [
+            1,
+            283
+          ],
+          "dtype": "torch.bool"
+        },
+        "image_mask": {
+          "shape": [
+            1,
+            283
+          ],
+          "dtype": "torch.bool"
+        },
+        "visual_features": {
+          "shape": [
+            1,
+            3,
+            81,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        }
+      },
+      "actions": {
+        "state": {
+          "shape": [
+            1,
+            1,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action_mask": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "embodiment_id": {
+          "shape": [
+            1
+          ],
+          "dtype": "torch.int64"
+        }
+      },
+      "predictions": {
+        "normal": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "perceptual_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_first_only": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_drop_oldest": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        }
+      }
+    },
+    {
+      "episode": 400010,
+      "task": 40,
+      "timestep": 8,
+      "features": {
+        "backbone_features": {
+          "shape": [
+            1,
+            283,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "backbone_attention_mask": {
+          "shape": [
+            1,
+            283
+          ],
+          "dtype": "torch.bool"
+        },
+        "image_mask": {
+          "shape": [
+            1,
+            283
+          ],
+          "dtype": "torch.bool"
+        },
+        "visual_features": {
+          "shape": [
+            1,
+            3,
+            81,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        }
+      },
+      "actions": {
+        "state": {
+          "shape": [
+            1,
+            1,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action_mask": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "embodiment_id": {
+          "shape": [
+            1
+          ],
+          "dtype": "torch.int64"
+        }
+      },
+      "predictions": {
+        "normal": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "perceptual_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_first_only": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_drop_oldest": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        }
+      }
+    },
+    {
+      "episode": 400010,
+      "task": 40,
+      "timestep": 16,
+      "features": {
+        "backbone_features": {
+          "shape": [
+            1,
+            283,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "backbone_attention_mask": {
+          "shape": [
+            1,
+            283
+          ],
+          "dtype": "torch.bool"
+        },
+        "image_mask": {
+          "shape": [
+            1,
+            283
+          ],
+          "dtype": "torch.bool"
+        },
+        "visual_features": {
+          "shape": [
+            1,
+            3,
+            81,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        }
+      },
+      "actions": {
+        "state": {
+          "shape": [
+            1,
+            1,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action_mask": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "embodiment_id": {
+          "shape": [
+            1
+          ],
+          "dtype": "torch.int64"
+        }
+      },
+      "predictions": {
+        "normal": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "perceptual_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_first_only": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_drop_oldest": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        }
+      }
+    },
+    {
+      "episode": 400010,
+      "task": 40,
+      "timestep": 31,
+      "features": {
+        "backbone_features": {
+          "shape": [
+            1,
+            283,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "backbone_attention_mask": {
+          "shape": [
+            1,
+            283
+          ],
+          "dtype": "torch.bool"
+        },
+        "image_mask": {
+          "shape": [
+            1,
+            283
+          ],
+          "dtype": "torch.bool"
+        },
+        "visual_features": {
+          "shape": [
+            1,
+            3,
+            81,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        }
+      },
+      "actions": {
+        "state": {
+          "shape": [
+            1,
+            1,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action_mask": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "embodiment_id": {
+          "shape": [
+            1
+          ],
+          "dtype": "torch.int64"
+        }
+      },
+      "predictions": {
+        "normal": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "perceptual_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_first_only": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_drop_oldest": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        }
+      }
+    },
+    {
+      "episode": 400010,
+      "task": 40,
+      "timestep": 32,
+      "features": {
+        "backbone_features": {
+          "shape": [
+            1,
+            283,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "backbone_attention_mask": {
+          "shape": [
+            1,
+            283
+          ],
+          "dtype": "torch.bool"
+        },
+        "image_mask": {
+          "shape": [
+            1,
+            283
+          ],
+          "dtype": "torch.bool"
+        },
+        "visual_features": {
+          "shape": [
+            1,
+            3,
+            81,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        }
+      },
+      "actions": {
+        "state": {
+          "shape": [
+            1,
+            1,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action_mask": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "embodiment_id": {
+          "shape": [
+            1
+          ],
+          "dtype": "torch.int64"
+        }
+      },
+      "predictions": {
+        "normal": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "perceptual_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_first_only": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_drop_oldest": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        }
+      }
+    },
+    {
+      "episode": 400010,
+      "task": 40,
+      "timestep": 63,
+      "features": {
+        "backbone_features": {
+          "shape": [
+            1,
+            283,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "backbone_attention_mask": {
+          "shape": [
+            1,
+            283
+          ],
+          "dtype": "torch.bool"
+        },
+        "image_mask": {
+          "shape": [
+            1,
+            283
+          ],
+          "dtype": "torch.bool"
+        },
+        "visual_features": {
+          "shape": [
+            1,
+            3,
+            81,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        }
+      },
+      "actions": {
+        "state": {
+          "shape": [
+            1,
+            1,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action_mask": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "embodiment_id": {
+          "shape": [
+            1
+          ],
+          "dtype": "torch.int64"
+        }
+      },
+      "predictions": {
+        "normal": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "perceptual_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_first_only": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_drop_oldest": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        }
+      }
+    },
+    {
+      "episode": 400010,
+      "task": 40,
+      "timestep": 64,
+      "features": {
+        "backbone_features": {
+          "shape": [
+            1,
+            283,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "backbone_attention_mask": {
+          "shape": [
+            1,
+            283
+          ],
+          "dtype": "torch.bool"
+        },
+        "image_mask": {
+          "shape": [
+            1,
+            283
+          ],
+          "dtype": "torch.bool"
+        },
+        "visual_features": {
+          "shape": [
+            1,
+            3,
+            81,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        }
+      },
+      "actions": {
+        "state": {
+          "shape": [
+            1,
+            1,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action_mask": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "embodiment_id": {
+          "shape": [
+            1
+          ],
+          "dtype": "torch.int64"
+        }
+      },
+      "predictions": {
+        "normal": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "perceptual_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_first_only": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_drop_oldest": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        }
+      }
+    },
+    {
+      "episode": 400010,
+      "task": 40,
+      "timestep": 95,
+      "features": {
+        "backbone_features": {
+          "shape": [
+            1,
+            283,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "backbone_attention_mask": {
+          "shape": [
+            1,
+            283
+          ],
+          "dtype": "torch.bool"
+        },
+        "image_mask": {
+          "shape": [
+            1,
+            283
+          ],
+          "dtype": "torch.bool"
+        },
+        "visual_features": {
+          "shape": [
+            1,
+            3,
+            81,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        }
+      },
+      "actions": {
+        "state": {
+          "shape": [
+            1,
+            1,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action_mask": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "embodiment_id": {
+          "shape": [
+            1
+          ],
+          "dtype": "torch.int64"
+        }
+      },
+      "predictions": {
+        "normal": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "perceptual_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_first_only": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_drop_oldest": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        }
+      }
+    },
+    {
+      "episode": 400010,
+      "task": 40,
+      "timestep": 127,
+      "features": {
+        "backbone_features": {
+          "shape": [
+            1,
+            283,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "backbone_attention_mask": {
+          "shape": [
+            1,
+            283
+          ],
+          "dtype": "torch.bool"
+        },
+        "image_mask": {
+          "shape": [
+            1,
+            283
+          ],
+          "dtype": "torch.bool"
+        },
+        "visual_features": {
+          "shape": [
+            1,
+            3,
+            81,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        }
+      },
+      "actions": {
+        "state": {
+          "shape": [
+            1,
+            1,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action_mask": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "embodiment_id": {
+          "shape": [
+            1
+          ],
+          "dtype": "torch.int64"
+        }
+      },
+      "predictions": {
+        "normal": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "perceptual_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_first_only": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_drop_oldest": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        }
+      }
+    },
+    {
+      "episode": 400020,
+      "task": 40,
+      "timestep": 0,
+      "features": {
+        "backbone_features": {
+          "shape": [
+            1,
+            283,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "backbone_attention_mask": {
+          "shape": [
+            1,
+            283
+          ],
+          "dtype": "torch.bool"
+        },
+        "image_mask": {
+          "shape": [
+            1,
+            283
+          ],
+          "dtype": "torch.bool"
+        },
+        "visual_features": {
+          "shape": [
+            1,
+            3,
+            81,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        }
+      },
+      "actions": {
+        "state": {
+          "shape": [
+            1,
+            1,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action_mask": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "embodiment_id": {
+          "shape": [
+            1
+          ],
+          "dtype": "torch.int64"
+        }
+      },
+      "predictions": {
+        "normal": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "perceptual_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_first_only": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_drop_oldest": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        }
+      }
+    },
+    {
+      "episode": 400020,
+      "task": 40,
+      "timestep": 1,
+      "features": {
+        "backbone_features": {
+          "shape": [
+            1,
+            283,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "backbone_attention_mask": {
+          "shape": [
+            1,
+            283
+          ],
+          "dtype": "torch.bool"
+        },
+        "image_mask": {
+          "shape": [
+            1,
+            283
+          ],
+          "dtype": "torch.bool"
+        },
+        "visual_features": {
+          "shape": [
+            1,
+            3,
+            81,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        }
+      },
+      "actions": {
+        "state": {
+          "shape": [
+            1,
+            1,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action_mask": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "embodiment_id": {
+          "shape": [
+            1
+          ],
+          "dtype": "torch.int64"
+        }
+      },
+      "predictions": {
+        "normal": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "perceptual_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_first_only": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_drop_oldest": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        }
+      }
+    },
+    {
+      "episode": 400020,
+      "task": 40,
+      "timestep": 8,
+      "features": {
+        "backbone_features": {
+          "shape": [
+            1,
+            283,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "backbone_attention_mask": {
+          "shape": [
+            1,
+            283
+          ],
+          "dtype": "torch.bool"
+        },
+        "image_mask": {
+          "shape": [
+            1,
+            283
+          ],
+          "dtype": "torch.bool"
+        },
+        "visual_features": {
+          "shape": [
+            1,
+            3,
+            81,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        }
+      },
+      "actions": {
+        "state": {
+          "shape": [
+            1,
+            1,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action_mask": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "embodiment_id": {
+          "shape": [
+            1
+          ],
+          "dtype": "torch.int64"
+        }
+      },
+      "predictions": {
+        "normal": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "perceptual_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_first_only": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_drop_oldest": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        }
+      }
+    },
+    {
+      "episode": 400020,
+      "task": 40,
+      "timestep": 16,
+      "features": {
+        "backbone_features": {
+          "shape": [
+            1,
+            283,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "backbone_attention_mask": {
+          "shape": [
+            1,
+            283
+          ],
+          "dtype": "torch.bool"
+        },
+        "image_mask": {
+          "shape": [
+            1,
+            283
+          ],
+          "dtype": "torch.bool"
+        },
+        "visual_features": {
+          "shape": [
+            1,
+            3,
+            81,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        }
+      },
+      "actions": {
+        "state": {
+          "shape": [
+            1,
+            1,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action_mask": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "embodiment_id": {
+          "shape": [
+            1
+          ],
+          "dtype": "torch.int64"
+        }
+      },
+      "predictions": {
+        "normal": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "perceptual_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_first_only": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_drop_oldest": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        }
+      }
+    },
+    {
+      "episode": 400020,
+      "task": 40,
+      "timestep": 31,
+      "features": {
+        "backbone_features": {
+          "shape": [
+            1,
+            283,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "backbone_attention_mask": {
+          "shape": [
+            1,
+            283
+          ],
+          "dtype": "torch.bool"
+        },
+        "image_mask": {
+          "shape": [
+            1,
+            283
+          ],
+          "dtype": "torch.bool"
+        },
+        "visual_features": {
+          "shape": [
+            1,
+            3,
+            81,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        }
+      },
+      "actions": {
+        "state": {
+          "shape": [
+            1,
+            1,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action_mask": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "embodiment_id": {
+          "shape": [
+            1
+          ],
+          "dtype": "torch.int64"
+        }
+      },
+      "predictions": {
+        "normal": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "perceptual_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_first_only": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_drop_oldest": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        }
+      }
+    },
+    {
+      "episode": 400020,
+      "task": 40,
+      "timestep": 32,
+      "features": {
+        "backbone_features": {
+          "shape": [
+            1,
+            283,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "backbone_attention_mask": {
+          "shape": [
+            1,
+            283
+          ],
+          "dtype": "torch.bool"
+        },
+        "image_mask": {
+          "shape": [
+            1,
+            283
+          ],
+          "dtype": "torch.bool"
+        },
+        "visual_features": {
+          "shape": [
+            1,
+            3,
+            81,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        }
+      },
+      "actions": {
+        "state": {
+          "shape": [
+            1,
+            1,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action_mask": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "embodiment_id": {
+          "shape": [
+            1
+          ],
+          "dtype": "torch.int64"
+        }
+      },
+      "predictions": {
+        "normal": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "perceptual_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_first_only": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_drop_oldest": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        }
+      }
+    },
+    {
+      "episode": 400020,
+      "task": 40,
+      "timestep": 63,
+      "features": {
+        "backbone_features": {
+          "shape": [
+            1,
+            283,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "backbone_attention_mask": {
+          "shape": [
+            1,
+            283
+          ],
+          "dtype": "torch.bool"
+        },
+        "image_mask": {
+          "shape": [
+            1,
+            283
+          ],
+          "dtype": "torch.bool"
+        },
+        "visual_features": {
+          "shape": [
+            1,
+            3,
+            81,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        }
+      },
+      "actions": {
+        "state": {
+          "shape": [
+            1,
+            1,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action_mask": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "embodiment_id": {
+          "shape": [
+            1
+          ],
+          "dtype": "torch.int64"
+        }
+      },
+      "predictions": {
+        "normal": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "perceptual_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_first_only": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_drop_oldest": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        }
+      }
+    },
+    {
+      "episode": 400020,
+      "task": 40,
+      "timestep": 64,
+      "features": {
+        "backbone_features": {
+          "shape": [
+            1,
+            283,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "backbone_attention_mask": {
+          "shape": [
+            1,
+            283
+          ],
+          "dtype": "torch.bool"
+        },
+        "image_mask": {
+          "shape": [
+            1,
+            283
+          ],
+          "dtype": "torch.bool"
+        },
+        "visual_features": {
+          "shape": [
+            1,
+            3,
+            81,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        }
+      },
+      "actions": {
+        "state": {
+          "shape": [
+            1,
+            1,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action_mask": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "embodiment_id": {
+          "shape": [
+            1
+          ],
+          "dtype": "torch.int64"
+        }
+      },
+      "predictions": {
+        "normal": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "perceptual_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_first_only": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_drop_oldest": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        }
+      }
+    },
+    {
+      "episode": 400020,
+      "task": 40,
+      "timestep": 95,
+      "features": {
+        "backbone_features": {
+          "shape": [
+            1,
+            283,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "backbone_attention_mask": {
+          "shape": [
+            1,
+            283
+          ],
+          "dtype": "torch.bool"
+        },
+        "image_mask": {
+          "shape": [
+            1,
+            283
+          ],
+          "dtype": "torch.bool"
+        },
+        "visual_features": {
+          "shape": [
+            1,
+            3,
+            81,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        }
+      },
+      "actions": {
+        "state": {
+          "shape": [
+            1,
+            1,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action_mask": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "embodiment_id": {
+          "shape": [
+            1
+          ],
+          "dtype": "torch.int64"
+        }
+      },
+      "predictions": {
+        "normal": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "perceptual_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_first_only": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_drop_oldest": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        }
+      }
+    },
+    {
+      "episode": 400020,
+      "task": 40,
+      "timestep": 127,
+      "features": {
+        "backbone_features": {
+          "shape": [
+            1,
+            283,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "backbone_attention_mask": {
+          "shape": [
+            1,
+            283
+          ],
+          "dtype": "torch.bool"
+        },
+        "image_mask": {
+          "shape": [
+            1,
+            283
+          ],
+          "dtype": "torch.bool"
+        },
+        "visual_features": {
+          "shape": [
+            1,
+            3,
+            81,
+            2048
+          ],
+          "dtype": "torch.bfloat16"
+        }
+      },
+      "actions": {
+        "state": {
+          "shape": [
+            1,
+            1,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "action_mask": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.bfloat16"
+        },
+        "embodiment_id": {
+          "shape": [
+            1
+          ],
+          "dtype": "torch.int64"
+        }
+      },
+      "predictions": {
+        "normal": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "perceptual_empty": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_first_only": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        },
+        "cognitive_drop_oldest": {
+          "shape": [
+            1,
+            50,
+            128
+          ],
+          "dtype": "torch.float32"
+        }
+      }
+    }
+  ],
+  "first_features": {
+    "backbone_features": {
+      "shape": [
+        1,
+        284,
+        2048
+      ],
+      "dtype": "torch.bfloat16"
+    },
+    "backbone_attention_mask": {
+      "shape": [
+        1,
+        284
+      ],
+      "dtype": "torch.bool"
+    },
+    "image_mask": {
+      "shape": [
+        1,
+        284
+      ],
+      "dtype": "torch.bool"
+    },
+    "visual_features": {
+      "shape": [
+        1,
+        3,
+        81,
+        2048
+      ],
+      "dtype": "torch.bfloat16"
+    }
+  },
+  "first_action_inputs": {
+    "state": {
+      "shape": [
+        1,
+        1,
+        128
+      ],
+      "dtype": "torch.bfloat16"
+    },
+    "action": {
+      "shape": [
+        1,
+        50,
+        128
+      ],
+      "dtype": "torch.bfloat16"
+    },
+    "action_mask": {
+      "shape": [
+        1,
+        50,
+        128
+      ],
+      "dtype": "torch.bfloat16"
+    },
+    "embodiment_id": {
+      "shape": [
+        1
+      ],
+      "dtype": "torch.int64"
+    }
+  },
+  "eos_shape": [
+    1,
+    2048
+  ],
+  "eos_index": [
+    282
+  ],
+  "eos_equals_existing_capture": true,
+  "image_token_count": [
+    243
+  ],
+  "effective_mask_count": 736.0,
+  "caution": "Cache metadata task=0/episode=10 retained verbatim; this proves real three-camera Eagle and action tensor interfaces, not freshness or full source revision identity of historical cache",
+  "sources": [
+    {
+      "source": "/nvme3/projects/memory_vla/src/v1_groot_memoryvla/model/modules/eagle_backbone.py",
+      "bundle": "samples/source_evidence/current_v1/src/v1_groot_memoryvla/model/modules/eagle_backbone.py",
+      "sha256": "b3524f93239093d5dbff1d202510f879d43689c664a055474433c88130234404",
+      "git_commit": "0d28bc506c3def15b2f76bdbdc0a3ccb1b4567a8",
+      "compared_git_commit": "0d28bc506c3def15b2f76bdbdc0a3ccb1b4567a8",
+      "byte_equal_git_blob": true,
+      "git_error": null
+    },
+    {
+      "source": "/nvme3/projects/memory_vla/src/v1_groot_memoryvla/model/modules/nvidia/Eagle-Block2A-2B-v2/modeling_eagle3_vl.py",
+      "bundle": "samples/source_evidence/current_v1/src/v1_groot_memoryvla/model/modules/nvidia/Eagle-Block2A-2B-v2/modeling_eagle3_vl.py",
+      "sha256": "9480ff1101c79e9ab62c109aa9947d4091356488930ef95682c76236b40c07f5",
+      "git_commit": "0d28bc506c3def15b2f76bdbdc0a3ccb1b4567a8",
+      "compared_git_commit": "0d28bc506c3def15b2f76bdbdc0a3ccb1b4567a8",
+      "byte_equal_git_blob": true,
+      "git_error": null
+    },
+    {
+      "source": "/nvme3/projects/memory_vla/src/v1_groot_memoryvla/model/memory/adapter.py",
+      "bundle": "samples/source_evidence/current_v1/src/v1_groot_memoryvla/model/memory/adapter.py",
+      "sha256": "28a2a6925aa7d43b2b5700b816105f0509f3384b0efc8a483f9b2452de6fbbc0",
+      "git_commit": "0d28bc506c3def15b2f76bdbdc0a3ccb1b4567a8",
+      "compared_git_commit": "0d28bc506c3def15b2f76bdbdc0a3ccb1b4567a8",
+      "byte_equal_git_blob": true,
+      "git_error": null
+    },
+    {
+      "source": "/nvme3/projects/memory_vla/src/v1_groot_memoryvla/model/memory/bank.py",
+      "bundle": "samples/source_evidence/current_v1/src/v1_groot_memoryvla/model/memory/bank.py",
+      "sha256": "e1807e7534524be0d3d7d43ded29271df524642852fb94df32d1e266b9defbd7",
+      "git_commit": "0d28bc506c3def15b2f76bdbdc0a3ccb1b4567a8",
+      "compared_git_commit": "0d28bc506c3def15b2f76bdbdc0a3ccb1b4567a8",
+      "byte_equal_git_blob": true,
+      "git_error": null
+    },
+    {
+      "source": "/nvme3/projects/memory_vla/src/v1_groot_memoryvla/model/gr00t_n1d6/gr00t_n1d6.py",
+      "bundle": "samples/source_evidence/current_v1/src/v1_groot_memoryvla/model/gr00t_n1d6/gr00t_n1d6.py",
+      "sha256": "51417f25c4c30709552345811ddc7fcc00aff1314870f91c0befc14880b869ae",
+      "git_commit": "0d28bc506c3def15b2f76bdbdc0a3ccb1b4567a8",
+      "compared_git_commit": "0d28bc506c3def15b2f76bdbdc0a3ccb1b4567a8",
+      "byte_equal_git_blob": true,
+      "git_error": null
+    },
+    {
+      "source": "/nvme3/projects/memory_vla/src/v1_groot_memoryvla/model/gr00t_n1d6/processing_gr00t_n1d6.py",
+      "bundle": "samples/source_evidence/current_v1/src/v1_groot_memoryvla/model/gr00t_n1d6/processing_gr00t_n1d6.py",
+      "sha256": "e6255fec60ce9e44d282110e77f03a414a2a5f367db7ca42f565b16b096e46a3",
+      "git_commit": "0d28bc506c3def15b2f76bdbdc0a3ccb1b4567a8",
+      "compared_git_commit": "0d28bc506c3def15b2f76bdbdc0a3ccb1b4567a8",
+      "byte_equal_git_blob": true,
+      "git_error": null
+    },
+    {
+      "source": "/nvme3/projects/memory_vla/src/v1_groot_memoryvla/data/convert_b1k.py",
+      "bundle": "samples/source_evidence/current_v1/src/v1_groot_memoryvla/data/convert_b1k.py",
+      "sha256": "dcf215ff88ac4f2be0691c67b92107c6256ebb52c063b7b16bfa8765fbdccd6d",
+      "git_commit": "0d28bc506c3def15b2f76bdbdc0a3ccb1b4567a8",
+      "compared_git_commit": "0d28bc506c3def15b2f76bdbdc0a3ccb1b4567a8",
+      "byte_equal_git_blob": true,
+      "git_error": null
+    },
+    {
+      "source": "/nvme3/projects/memory_vla/src/v1_groot_memoryvla/data/dataset/episode_windows.py",
+      "bundle": "samples/source_evidence/current_v1/src/v1_groot_memoryvla/data/dataset/episode_windows.py",
+      "sha256": "437a46c325c0fcc210a7a0a5fca4b2edbaf0183c85067578d76473de05bec1ec",
+      "git_commit": "0d28bc506c3def15b2f76bdbdc0a3ccb1b4567a8",
+      "compared_git_commit": "0d28bc506c3def15b2f76bdbdc0a3ccb1b4567a8",
+      "byte_equal_git_blob": true,
+      "git_error": null
+    },
+    {
+      "source": "/nvme3/projects/memory_vla/src/v1_groot_memoryvla/data/dataset/history_dataset.py",
+      "bundle": "samples/source_evidence/current_v1/src/v1_groot_memoryvla/data/dataset/history_dataset.py",
+      "sha256": "ac7f82cf82435f033f16f5088c6d4112ec55ad680b1d2b285eae49ef63b87d5c",
+      "git_commit": "0d28bc506c3def15b2f76bdbdc0a3ccb1b4567a8",
+      "compared_git_commit": "0d28bc506c3def15b2f76bdbdc0a3ccb1b4567a8",
+      "byte_equal_git_blob": true,
+      "git_error": null
+    },
+    {
+      "source": "/nvme3/projects/memory_vla/src/v1_groot_memoryvla/experiment/task21_formal.py",
+      "bundle": "samples/source_evidence/current_v1/src/v1_groot_memoryvla/experiment/task21_formal.py",
+      "sha256": "7c26cee218b6f8b69e6cf2e7da333bab09f3a7d98b557c28ceccf845160f9123",
+      "git_commit": "0d28bc506c3def15b2f76bdbdc0a3ccb1b4567a8",
+      "compared_git_commit": "0d28bc506c3def15b2f76bdbdc0a3ccb1b4567a8",
+      "byte_equal_git_blob": true,
+      "git_error": null
+    },
+    {
+      "source": "/nvme3/projects/memory_vla/src/v1_groot_memoryvla/data/utils.py",
+      "bundle": "samples/source_evidence/current_v1/src/v1_groot_memoryvla/data/utils.py",
+      "sha256": "8f4caed97a56517684ef0d68416eabc71efc45c7c45bd906842f264215025785",
+      "git_commit": "0d28bc506c3def15b2f76bdbdc0a3ccb1b4567a8",
+      "compared_git_commit": "0d28bc506c3def15b2f76bdbdc0a3ccb1b4567a8",
+      "byte_equal_git_blob": true,
+      "git_error": null
+    },
+    {
+      "source": "/nvme3/projects/memory_vla/src/v1_groot_memoryvla/data/state_action/state_action_processor.py",
+      "bundle": "samples/source_evidence/current_v1/src/v1_groot_memoryvla/data/state_action/state_action_processor.py",
+      "sha256": "dce7c730fa98d353c6621e981576307d6c50499b785e1917edb142494567f045",
+      "git_commit": "0d28bc506c3def15b2f76bdbdc0a3ccb1b4567a8",
+      "compared_git_commit": "0d28bc506c3def15b2f76bdbdc0a3ccb1b4567a8",
+      "byte_equal_git_blob": true,
+      "git_error": null
+    },
+    {
+      "source": "/nvme3/projects/memory_vla/src/v1_groot_memoryvla/data/state_action/action_chunking.py",
+      "bundle": "samples/source_evidence/current_v1/src/v1_groot_memoryvla/data/state_action/action_chunking.py",
+      "sha256": "b1afab3369351b4316a838f86f0e61003f138427c3c5a615644b87368469cc8f",
+      "git_commit": "0d28bc506c3def15b2f76bdbdc0a3ccb1b4567a8",
+      "compared_git_commit": "0d28bc506c3def15b2f76bdbdc0a3ccb1b4567a8",
+      "byte_equal_git_blob": true,
+      "git_error": null
+    },
+    {
+      "source": "/nvme3/projects/memory_vla/src/v1_groot_memoryvla/data/state_action/pose.py",
+      "bundle": "samples/source_evidence/current_v1/src/v1_groot_memoryvla/data/state_action/pose.py",
+      "sha256": "e9040458163417f1a00a3a44da3a1ef34776609bac162e2303dab1e937b94589",
+      "git_commit": "0d28bc506c3def15b2f76bdbdc0a3ccb1b4567a8",
+      "compared_git_commit": "0d28bc506c3def15b2f76bdbdc0a3ccb1b4567a8",
+      "byte_equal_git_blob": true,
+      "git_error": null
+    },
+    {
+      "source": "/nvme3/projects/memory_vla/src/v1_groot_memoryvla/configs/data/embodiment_configs.py",
+      "bundle": "samples/source_evidence/current_v1/src/v1_groot_memoryvla/configs/data/embodiment_configs.py",
+      "sha256": "b9a8b47fd3c331d67f7128205b15cee6d436019a821e8a7daf893b50d107713e",
+      "git_commit": "0d28bc506c3def15b2f76bdbdc0a3ccb1b4567a8",
+      "compared_git_commit": "0d28bc506c3def15b2f76bdbdc0a3ccb1b4567a8",
+      "byte_equal_git_blob": true,
+      "git_error": null
+    },
+    {
+      "source": "/nvme3/projects/memory_vla/evaluation/scripts/v2_recording_alignment.py",
+      "bundle": "samples/source_evidence/current_v1/evaluation/scripts/v2_recording_alignment.py",
+      "sha256": "9537ce63b1e8cbccbfa1036c565625685d201561c46471e6ad0100e8ed7ca522",
+      "git_commit": "0d28bc506c3def15b2f76bdbdc0a3ccb1b4567a8",
+      "compared_git_commit": "0d28bc506c3def15b2f76bdbdc0a3ccb1b4567a8",
+      "byte_equal_git_blob": true,
+      "git_error": null
+    },
+    {
+      "source": "/nvme3/projects/memory_vla/evaluation/scripts/v2_label_audit.py",
+      "bundle": "samples/source_evidence/current_v1/evaluation/scripts/v2_label_audit.py",
+      "sha256": "ecac1171a1e8c805589853375cc9fa896a7e96c3caa13e2b015d3427c1a36470",
+      "git_commit": "0d28bc506c3def15b2f76bdbdc0a3ccb1b4567a8",
+      "compared_git_commit": "0d28bc506c3def15b2f76bdbdc0a3ccb1b4567a8",
+      "byte_equal_git_blob": true,
+      "git_error": null
+    },
+    {
+      "source": "/nvme3/projects/memory_vla/evaluation/scripts/v2_certify_started.py",
+      "bundle": "samples/source_evidence/current_v1/evaluation/scripts/v2_certify_started.py",
+      "sha256": "888346d75dfaa9fbb222a97b655f746f2406ef2776ec4a7990cfa61d1dbed9ab",
+      "git_commit": "0d28bc506c3def15b2f76bdbdc0a3ccb1b4567a8",
+      "compared_git_commit": "0d28bc506c3def15b2f76bdbdc0a3ccb1b4567a8",
+      "byte_equal_git_blob": true,
+      "git_error": null
+    },
+    {
+      "source": "/nvme3/projects/memory_vla-v2-v3-backup-oEWaKh/src/v2_groot_memoryvla/config.py",
+      "bundle": "samples/source_evidence/historical_v2/src/v2_groot_memoryvla/config.py",
+      "sha256": "b4b75a98acc9fc78f4536b20c4b005287eff16c5291d112e79aba46c8cf3a726",
+      "git_commit": "b710fc4df586216b4b6a1a3776f09c725300cd98",
+      "compared_git_commit": "b710fc4df586216b4b6a1a3776f09c725300cd98",
+      "byte_equal_git_blob": true,
+      "git_error": null
+    },
+    {
+      "source": "/nvme3/projects/memory_vla-v2-v3-backup-oEWaKh/src/v2_groot_memoryvla/training.py",
+      "bundle": "samples/source_evidence/historical_v2/src/v2_groot_memoryvla/training.py",
+      "sha256": "2c7999cdf910a9364d5e53772481562a310e69140d710ef76d4d53e88b3bdabc",
+      "git_commit": "b710fc4df586216b4b6a1a3776f09c725300cd98",
+      "compared_git_commit": "b710fc4df586216b4b6a1a3776f09c725300cd98",
+      "byte_equal_git_blob": true,
+      "git_error": null
+    },
+    {
+      "source": "/nvme3/projects/memory_vla-v2-v3-backup-oEWaKh/src/v2_groot_memoryvla/task40_evaluation.py",
+      "bundle": "samples/source_evidence/historical_v2/src/v2_groot_memoryvla/task40_evaluation.py",
+      "sha256": "fd738167e397052567ad290c5c583e9cf71cd04e7bf1b1e6f4f1582d155a1b2a",
+      "git_commit": "b710fc4df586216b4b6a1a3776f09c725300cd98",
+      "compared_git_commit": "b710fc4df586216b4b6a1a3776f09c725300cd98",
+      "byte_equal_git_blob": true,
+      "git_error": null
+    },
+    {
+      "source": "/nvme3/projects/memory_vla-v2-v3-backup-oEWaKh/src/v2_groot_memoryvla/task40_training.py",
+      "bundle": "samples/source_evidence/historical_v2/src/v2_groot_memoryvla/task40_training.py",
+      "sha256": "307489cf8811879124c7a04015cfa0f37d26b192de4d8024452090f20184977e",
+      "git_commit": "b710fc4df586216b4b6a1a3776f09c725300cd98",
+      "compared_git_commit": "b710fc4df586216b4b6a1a3776f09c725300cd98",
+      "byte_equal_git_blob": true,
+      "git_error": null
+    },
+    {
+      "source": "/nvme3/projects/memory_vla-v2-v3-backup-oEWaKh/src/v2_groot_memoryvla/__init__.py",
+      "bundle": "samples/source_evidence/historical_v2/src/v2_groot_memoryvla/__init__.py",
+      "sha256": "d2738b7dacfde79261a020b06d3c7dcff977ed8a148173e39e7ac69803d68787",
+      "git_commit": "b710fc4df586216b4b6a1a3776f09c725300cd98",
+      "compared_git_commit": "b710fc4df586216b4b6a1a3776f09c725300cd98",
+      "byte_equal_git_blob": true,
+      "git_error": null
+    },
+    {
+      "source": "/nvme3/projects/memory_vla-v2-v3-backup-oEWaKh/src/v2_groot_memoryvla/training_smoke.py",
+      "bundle": "samples/source_evidence/historical_v2/src/v2_groot_memoryvla/training_smoke.py",
+      "sha256": "9e726f85a04f2df11b2a42253a823d31006d934f3df62157a1c6b7d4b6f117de",
+      "git_commit": "b710fc4df586216b4b6a1a3776f09c725300cd98",
+      "compared_git_commit": "b710fc4df586216b4b6a1a3776f09c725300cd98",
+      "byte_equal_git_blob": true,
+      "git_error": null
+    },
+    {
+      "source": "/nvme3/projects/memory_vla-v2-v3-backup-oEWaKh/src/v2_groot_memoryvla/model/gr00t_n1d6.py",
+      "bundle": "samples/source_evidence/historical_v2/src/v2_groot_memoryvla/model/gr00t_n1d6.py",
+      "sha256": "494c20fdd3abc24b5c25c533e96eee0ebaa902b78f7de6f16f8071bbdbebda24",
+      "git_commit": "b710fc4df586216b4b6a1a3776f09c725300cd98",
+      "compared_git_commit": "b710fc4df586216b4b6a1a3776f09c725300cd98",
+      "byte_equal_git_blob": true,
+      "git_error": null
+    },
+    {
+      "source": "/nvme3/projects/memory_vla-v2-v3-backup-oEWaKh/src/v2_groot_memoryvla/model/bank.py",
+      "bundle": "samples/source_evidence/historical_v2/src/v2_groot_memoryvla/model/bank.py",
+      "sha256": "a175a32a006c127ce8ae2a74ba63513499496e1655f62bc74677253b9d1d9a83",
+      "git_commit": "b710fc4df586216b4b6a1a3776f09c725300cd98",
+      "compared_git_commit": "b710fc4df586216b4b6a1a3776f09c725300cd98",
+      "byte_equal_git_blob": true,
+      "git_error": null
+    },
+    {
+      "source": "/nvme3/projects/memory_vla-v2-v3-backup-oEWaKh/src/v2_groot_memoryvla/model/state.py",
+      "bundle": "samples/source_evidence/historical_v2/src/v2_groot_memoryvla/model/state.py",
+      "sha256": "0d3f3e378730df8a5095ecb40073bec7aa51f50dc400f85ff37835dec8c25582",
+      "git_commit": "b710fc4df586216b4b6a1a3776f09c725300cd98",
+      "compared_git_commit": "b710fc4df586216b4b6a1a3776f09c725300cd98",
+      "byte_equal_git_blob": true,
+      "git_error": null
+    },
+    {
+      "source": "/nvme3/projects/memory_vla-v2-v3-backup-oEWaKh/src/v2_groot_memoryvla/model/__init__.py",
+      "bundle": "samples/source_evidence/historical_v2/src/v2_groot_memoryvla/model/__init__.py",
+      "sha256": "571c94e1c60bf0379d10d27749c8f23fa4b2326e97cb495973bdf74699be8dc0",
+      "git_commit": "b710fc4df586216b4b6a1a3776f09c725300cd98",
+      "compared_git_commit": "b710fc4df586216b4b6a1a3776f09c725300cd98",
+      "byte_equal_git_blob": true,
+      "git_error": null
+    },
+    {
+      "source": "/nvme3/projects/memory_vla-v2-v3-backup-oEWaKh/src/v2_groot_memoryvla/model/adapter.py",
+      "bundle": "samples/source_evidence/historical_v2/src/v2_groot_memoryvla/model/adapter.py",
+      "sha256": "88e3dce402a42825c51bdfe2ed4d077d5ce2d224288ce1511cd6051c33e8d753",
+      "git_commit": "b710fc4df586216b4b6a1a3776f09c725300cd98",
+      "compared_git_commit": "b710fc4df586216b4b6a1a3776f09c725300cd98",
+      "byte_equal_git_blob": true,
+      "git_error": null
+    },
+    {
+      "source": "/nvme3/projects/memory_vla-v2-v3-backup-oEWaKh/src/v2_groot_memoryvla/tests/test_training_smoke.py",
+      "bundle": "samples/source_evidence/historical_v2/src/v2_groot_memoryvla/tests/test_training_smoke.py",
+      "sha256": "fe92fbc1336300f38ea9f20b6760e5b5e4a0b9d20e65f09c0313e48b5405d751",
+      "git_commit": "b710fc4df586216b4b6a1a3776f09c725300cd98",
+      "compared_git_commit": "b710fc4df586216b4b6a1a3776f09c725300cd98",
+      "byte_equal_git_blob": true,
+      "git_error": null
+    },
+    {
+      "source": "/nvme3/projects/memory_vla-v2-v3-backup-oEWaKh/src/v2_groot_memoryvla/tests/test_task40_training.py",
+      "bundle": "samples/source_evidence/historical_v2/src/v2_groot_memoryvla/tests/test_task40_training.py",
+      "sha256": "ba63e6a02400f62669759610e95746637128b57a6ba647804b6a0dac8ee50544",
+      "git_commit": "b710fc4df586216b4b6a1a3776f09c725300cd98",
+      "compared_git_commit": "b710fc4df586216b4b6a1a3776f09c725300cd98",
+      "byte_equal_git_blob": true,
+      "git_error": null
+    },
+    {
+      "source": "/nvme3/projects/memory_vla-v2-v3-backup-oEWaKh/src/v2_groot_memoryvla/tests/test_task40_evaluation.py",
+      "bundle": "samples/source_evidence/historical_v2/src/v2_groot_memoryvla/tests/test_task40_evaluation.py",
+      "sha256": "bdff6c3c1fd9a3337901f681ae087c229e509d21ba0af4baab46e6bbdcaec2bd",
+      "git_commit": "b710fc4df586216b4b6a1a3776f09c725300cd98",
+      "compared_git_commit": "b710fc4df586216b4b6a1a3776f09c725300cd98",
+      "byte_equal_git_blob": true,
+      "git_error": null
+    },
+    {
+      "source": "/nvme3/projects/memory_vla-v2-v3-backup-oEWaKh/src/v2_groot_memoryvla/tests/__init__.py",
+      "bundle": "samples/source_evidence/historical_v2/src/v2_groot_memoryvla/tests/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "git_commit": "b710fc4df586216b4b6a1a3776f09c725300cd98",
+      "compared_git_commit": "b710fc4df586216b4b6a1a3776f09c725300cd98",
+      "byte_equal_git_blob": true,
+      "git_error": null
+    },
+    {
+      "source": "/nvme3/projects/memory_vla-v2-v3-backup-oEWaKh/src/v2_groot_memoryvla/tests/test_state_memory.py",
+      "bundle": "samples/source_evidence/historical_v2/src/v2_groot_memoryvla/tests/test_state_memory.py",
+      "sha256": "62214e2b466e2d32af16ccea2b587cdf58a87ec86731c1d37b2943c165c87789",
+      "git_commit": "b710fc4df586216b4b6a1a3776f09c725300cd98",
+      "compared_git_commit": "b710fc4df586216b4b6a1a3776f09c725300cd98",
+      "byte_equal_git_blob": true,
+      "git_error": null
+    },
+    {
+      "source": "/nvme3/projects/memory_vla-v2-v3-backup-oEWaKh/src/v2_groot_memoryvla/tests/test_review_regressions.py",
+      "bundle": "samples/source_evidence/historical_v2/src/v2_groot_memoryvla/tests/test_review_regressions.py",
+      "sha256": "779033caceb1d4ce41327bbd4ea149cc072c4fce5c5e5b6d2c81a0a28fd95dff",
+      "git_commit": "b710fc4df586216b4b6a1a3776f09c725300cd98",
+      "compared_git_commit": "b710fc4df586216b4b6a1a3776f09c725300cd98",
+      "byte_equal_git_blob": true,
+      "git_error": null
+    }
+  ]
+}

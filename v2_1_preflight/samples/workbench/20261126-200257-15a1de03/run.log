@@ -1,0 +1,1124 @@
+
+V2.1 official state extraction / 200 demos
+[0m[00:00:07.389] [INFO] [omnigibson.simulator] ----- Starting OmniGibson. This will take 10-30 seconds... -----[0m
+Starting kit application with the following args:  ['/nvme3/envs/b1k2025-sim/lib/python3.10/site-packages/isaacsim/exts/isaacsim.simulation_app/isaacsim/simulation_app/simulation_app.py', '/nvme3/envs/b1k2025-sim/lib/python3.10/site-packages/isaacsim/apps/omnigibson_4_5_0.kit', '--/app/tokens/exe-path=/nvme3/envs/b1k2025-sim/lib/python3.10/site-packages/omni', '--/persistent/app/viewport/displayOptions=3094', '--/rtx/materialDb/syncLoads=True', '--/rtx/hydra/materialSyncLoads=True', '--/omni.kit.plugin/syncUsdLoads=True', '--/app/renderer/resolution/width=1280', '--/app/renderer/resolution/height=720', '--/app/window/width=1440', '--/app/window/height=900', '--/renderer/multiGpu/enabled=False', '--/app/fastShutdown=True', '--/app/installSignalHandlers=0', '--ext-folder', '/nvme3/envs/b1k2025-sim/lib/python3.10/site-packages/isaacsim/exts', '--ext-folder', '/nvme3/envs/b1k2025-sim/lib/python3.10/site-packages/isaacsim/apps', '--/renderer/activeGpu=0', '--/physics/cudaDevice=0', '--no-window', '--/app/window/hideUi=1']
+Passing the following args to the base kit application:  ['--output', '/nvme3/projects/memory_vla/outputs/benchmarks/web/20261126-200257-15a1de03/preflight_extract.json', '--portable-root', '/nvme3/projects/memory_vla/outputs/benchmarks/web/20261126-200257-15a1de03/isaac_appdata/local', '--/app/tokens/omni_global_cache=/nvme3/projects/memory_vla/outputs/benchmarks/web/20261126-200257-15a1de03/isaac_appdata/global/cache', '--/app/tokens/omni_global_data=/nvme3/projects/memory_vla/outputs/benchmarks/web/20261126-200257-15a1de03/isaac_appdata/global/data']
+[Info] [carb] Logging to file: /nvme3/projects/memory_vla/outputs/benchmarks/web/20261126-200257-15a1de03/isaac_appdata/local/logs/Kit/OmniGibson/3.7/kit_20261126_200305.log
+2026-11-26 12:03:05 [0ms] [Warning] [omni.kit.app.plugin] No crash reporter present, dumps uploading isn't available.
+[0.095s] [ext: omni.kit.async_engine-0.0.1] startup
+[32m[00:00:07.758] [DEBUG] [asyncio] Using selector: EpollSelector[0m
+[0.361s] [ext: omni.metrics.core-0.0.1] startup
+[0.361s] [ext: omni.client.lib-1.0.0] startup
+[0.399s] [ext: omni.blobkey-1.1.2] startup
+[0.400s] [ext: omni.stats-1.0.1] startup
+[0.401s] [ext: omni.datastore-0.0.0] startup
+[0.410s] [ext: omni.client-1.2.2] startup
+[0.418s] [ext: omni.ujitso.default-1.0.0] startup
+[0.422s] [ext: omni.hsscclient-1.1.1] startup
+2026-11-26 12:03:05 [377ms] [Warning] [omni.datastore] OmniHub is inaccessible
+[0.441s] [ext: omni.gpu_foundation.shadercache.vulkan-1.0.0] startup
+[0.444s] [ext: omni.assets.plugins-0.0.0] startup
+[0.446s] [ext: omni.gpu_foundation-0.0.0] startup
+[0.456s] [ext: carb.windowing.plugins-1.0.0] startup
+2026-11-26 12:03:05 [411ms] [Warning] [carb.windowing-glfw.plugin] GLFW initialization failed.
+2026-11-26 12:03:05 [411ms] [Warning] [carb] Failed to startup plugin carb.windowing-glfw.plugin (interfaces: [carb::windowing::IGLContext v1.0],[carb::windowing::IWindowing v1.5]) (impl: carb.windowing-glfw.plugin)
+[0.459s] [ext: omni.kit.renderer.init-0.0.0] startup
+2026-11-26 12:03:05 [468ms] [Warning] [omni.platforminfo.plugin] failed to open the default display.  Can't verify X Server version.
+2026-11-26 12:03:05 [831ms] [Warning] [carb.cudainterop.plugin] CUDA_VISIBLE_DEVICES environment variable is set.
+2026-11-26 12:03:05 [831ms] [Warning] [carb.cudainterop.plugin] Note CUDA device enumeration and Omniverse device enumeration are different.
+2026-11-26 12:03:05 [831ms] [Warning] [carb.cudainterop.plugin] Setting CUDA_VISIBLE_DEVICES can lead to undesired behavior or crashes.
+2026-11-26 12:03:06 [1,067ms] [Warning] [gpu.foundation.plugin] Skipping NVIDIA GPU due CUDA being in bad state: NVIDIA GeForce RTX 4090
+2026-11-26 12:03:06 [1,067ms] [Warning] [gpu.foundation.plugin] Please restart your system if CUDA is known to work in your system.
+2026-11-26 12:03:06 [1,068ms] [Warning] [gpu.foundation.plugin] Skipping NVIDIA GPU due CUDA being in bad state: NVIDIA GeForce RTX 4090
+2026-11-26 12:03:06 [1,068ms] [Warning] [gpu.foundation.plugin] Please restart your system if CUDA is known to work in your system.
+
+|---------------------------------------------------------------------------------------------|
+| Driver Version: 580.178.04    | Graphics API: Vulkan
+|=============================================================================================|
+| GPU | Name                             | Active | LDA | GPU Memory | Vendor-ID | LUID       |
+|     |                                  |        |     |            | Device-ID | UUID       |
+|     |                                  |        |     |            | Bus-ID    |            |
+|---------------------------------------------------------------------------------------------|
+| 0   | NVIDIA GeForce RTX 4090          | Yes: 0 |     | 49386   MB | 10de      | 0          |
+|     |                                  |        |     |            | 2684      | 49fbbb98.. |
+|     |                                  |        |     |            | 8a        |            |
+|---------------------------------------------------------------------------------------------|
+| 1   | NVIDIA GeForce RTX 4090          |        |     | 49386   MB | 10de      | 0          |
+|     |                                  |        |     |            | 2684      | 5c0dd939.. |
+|     |                                  |        |     |            | c3        |            |
+|=============================================================================================|
+| OS: 22.04.5 LTS (Jammy Jellyfish) ubuntu, Version: 22.04.5, Kernel: 6.8.0-138-generic
+| Processor: Intel(R) Xeon(R) Gold 6330 CPU @ 2.00GHz
+| Cores: 28 | Logical Cores: 56
+|---------------------------------------------------------------------------------------------|
+| Total Memory (MB): 128404 | Free Memory: 81391
+| Total Page/Swap (MB): 0 | Free Page/Swap: 0
+|---------------------------------------------------------------------------------------------|
+2026-11-26 12:03:06 [1,531ms] [Warning] [gpu.foundation.plugin] IOMMU is enabled.
+2026-11-26 12:03:06 [1,531ms] [Warning] [gpu.foundation.plugin] Detected IOMMU is enabled. Running CUDA peer-to-peer bandwidth and latency validation.
+Unidirectional P2P=Enabled Bandwidth (P2P Writes) Matrix (GB/s)
+   D\D     0 
+     0 938.74 
+P2P=Enabled Latency (P2P Writes) Matrix (us)
+   GPU     0 
+     0   1.43 
+
+   CPU     0 
+     0   2.85 
+[1.761s] [ext: omni.kit.pipapi-0.0.0] startup
+[1.763s] [ext: omni.kit.pip_archive-0.0.0] startup
+[1.763s] [ext: omni.kit.telemetry-0.5.1] startup
+[1.805s] [ext: omni.materialx.libs-1.0.6] startup
+[1.820s] [ext: omni.services.pip_archive-0.13.6] startup
+[1.821s] [ext: omni.kit.loop-isaac-1.2.1] startup
+[1.822s] [ext: omni.kit.test-1.1.2] startup
+[1.876s] [ext: omni.usd.config-1.0.5] startup
+[1.881s] [ext: omni.gpucompute.plugins-0.0.0] startup
+[1.881s] [ext: omni.usd.libs-1.0.1] startup
+[2.100s] [ext: omni.mdl-55.0.1] startup
+[2.130s] [ext: omni.iray.libs-0.0.0] startup
+[2.137s] [ext: omni.mdl.neuraylib-0.2.10] startup
+[2.139s] [ext: omni.kit.usd.mdl-1.0.7] startup
+[2.337s] [ext: omni.appwindow-1.1.9] startup
+2026-11-26 12:03:07 [2,291ms] [Warning] [carb.windowing-glfw.plugin] GLFW initialization failed.
+2026-11-26 12:03:07 [2,291ms] [Warning] [carb] Failed to startup plugin carb.windowing-glfw.plugin (interfaces: [carb::windowing::IGLContext v1.0],[carb::windowing::IWindowing v1.5]) (impl: carb.windowing-glfw.plugin)
+[2.341s] [ext: omni.kit.renderer.core-1.0.2] startup
+2026-11-26 12:03:07 [2,415ms] [Warning] [carb.windowing-glfw.plugin] GLFW initialization failed.
+2026-11-26 12:03:07 [2,415ms] [Warning] [carb] Failed to startup plugin carb.windowing-glfw.plugin (interfaces: [carb::windowing::IGLContext v1.0],[carb::windowing::IWindowing v1.5]) (impl: carb.windowing-glfw.plugin)
+2026-11-26 12:03:07 [2,427ms] [Warning] [carb.windowing-glfw.plugin] GLFW initialization failed.
+2026-11-26 12:03:07 [2,427ms] [Warning] [carb] Failed to startup plugin carb.windowing-glfw.plugin (interfaces: [carb::windowing::IGLContext v1.0],[carb::windowing::IWindowing v1.5]) (impl: carb.windowing-glfw.plugin)
+[2.478s] [ext: omni.kit.renderer.capture-0.0.0] startup
+[2.483s] [ext: omni.kit.renderer.imgui-1.0.2] startup
+2026-11-26 12:03:07 [2,445ms] [Warning] [carb.windowing-glfw.plugin] GLFW initialization failed.
+2026-11-26 12:03:07 [2,445ms] [Warning] [carb] Failed to startup plugin carb.windowing-glfw.plugin (interfaces: [carb::windowing::IGLContext v1.0],[carb::windowing::IWindowing v1.5]) (impl: carb.windowing-glfw.plugin)
+2026-11-26 12:03:07 [2,448ms] [Warning] [carb.windowing-glfw.plugin] GLFW initialization failed.
+2026-11-26 12:03:07 [2,448ms] [Warning] [carb] Failed to startup plugin carb.windowing-glfw.plugin (interfaces: [carb::windowing::IGLContext v1.0],[carb::windowing::IWindowing v1.5]) (impl: carb.windowing-glfw.plugin)
+2026-11-26 12:03:07 [2,451ms] [Warning] [carb.windowing-glfw.plugin] GLFW initialization failed.
+2026-11-26 12:03:07 [2,451ms] [Warning] [carb] Failed to startup plugin carb.windowing-glfw.plugin (interfaces: [carb::windowing::IGLContext v1.0],[carb::windowing::IWindowing v1.5]) (impl: carb.windowing-glfw.plugin)
+[2.603s] [ext: omni.ui-2.26.5] startup
+[2.622s] [ext: omni.kit.mainwindow-1.0.3] startup
+[2.624s] [ext: carb.audio-0.1.0] startup
+[2.635s] [ext: omni.uiaudio-1.0.0] startup
+[2.637s] [ext: omni.kit.uiapp-0.0.0] startup
+[2.637s] [ext: omni.usd.schema.metrics.assembler-106.5.0] startup
+[2.673s] [ext: omni.usd.schema.physx-106.5.7] startup
+[2.740s] [ext: omni.usd.schema.audio-0.0.0] startup
+[2.750s] [ext: omni.usd.schema.geospatial-0.0.0] startup
+[2.759s] [ext: omni.usd.schema.semantics-0.0.0] startup
+[2.767s] [ext: omni.usd.schema.forcefield-106.5.7] startup
+[2.783s] [ext: omni.usd.schema.omnigraph-1.0.0] startup
+[2.803s] [ext: isaacsim.robot.schema-3.1.2] startup
+[2.833s] [ext: omni.usd.schema.omniscripting-1.0.0] startup
+[2.855s] [ext: omni.usd.schema.isaac-3.0.2] startup
+[2.855s] [ext: omni.usd.schema.anim-0.0.0] startup
+[2.938s] [ext: omni.usd.schema.flow-107.0.0] startup
+[2.939s] [ext: omni.graph.exec-0.9.4] startup
+[2.940s] [ext: omni.kit.usd_undo-0.1.8] startup
+[2.940s] [ext: omni.kit.actions.core-1.0.0] startup
+[2.945s] [ext: omni.kit.exec.core-0.13.4] startup
+[2.951s] [ext: omni.usd_resolver-1.0.0] startup
+[2.963s] [ext: omni.kit.commands-1.4.9] startup
+[2.969s] [ext: omni.activity.core-1.0.1] startup
+[2.971s] [ext: omni.usd.core-1.4.2] startup
+[2.981s] [ext: omni.resourcemonitor-107.0.0] startup
+[2.985s] [ext: omni.kit.window.popup_dialog-2.0.24] startup
+[2.992s] [ext: omni.timeline-1.0.11] startup
+[2.995s] [ext: omni.kit.widget.nucleus_connector-1.1.10] startup
+[2.998s] [ext: usdrt.scenegraph-7.5.1] startup
+[3.080s] [ext: omni.kit.audiodeviceenum-1.0.1] startup
+[3.083s] [ext: omni.hydra.usdrt_delegate-7.5.1] startup
+[3.118s] [ext: omni.hydra.scene_delegate-0.3.3] startup
+[3.137s] [ext: omni.usd-1.12.4] startup
+[3.408s] [ext: omni.inspect-1.0.1] startup
+[3.410s] [ext: omni.kit.notification_manager-1.0.9] startup
+[3.413s] [ext: omni.graph.core-2.181.8] startup
+[3.419s] [ext: isaacsim.core.deprecation_manager-0.2.2] startup
+[3.421s] [ext: omni.kit.asset_converter-2.8.3] startup
+[3.444s] [ext: omni.kit.widget.path_field-2.0.11] startup
+[3.445s] [ext: omni.kit.helper.file_utils-0.1.9] startup
+[3.447s] [ext: omni.kit.menu.core-1.1.2] startup
+[3.448s] [ext: omni.kit.widget.browser_bar-2.0.10] startup
+[3.449s] [ext: omni.kit.widget.filebrowser-2.10.52] startup
+[3.455s] [ext: omni.kit.widget.context_menu-1.2.4] startup
+[3.457s] [ext: omni.kit.clipboard-1.0.5] startup
+[3.458s] [ext: omni.kit.widget.options_menu-1.1.6] startup
+[3.462s] [ext: omni.graph.tools-1.79.1] startup
+[32m[00:00:10.887] [DEBUG] [AutoNode] Defining data type 'any' as 'Any'[0m
+[32m[00:00:10.887] [DEBUG] [AutoNode] Defining data type 'bool' as 'Bool' and array 'BoolArray[0m
+[32m[00:00:10.887] [DEBUG] [AutoNode] Defining data type 'bundle' as 'Bundle'[0m
+[32m[00:00:10.888] [DEBUG] [AutoNode] Defining data type 'colord[3]' as 'Color3d' and array 'Color3dArray[0m
+[32m[00:00:10.888] [DEBUG] [AutoNode] Defining data type 'colorf[3]' as 'Color3f' and array 'Color3fArray[0m
+[32m[00:00:10.888] [DEBUG] [AutoNode] Defining data type 'colorh[3]' as 'Color3h' and array 'Color3hArray[0m
+[32m[00:00:10.888] [DEBUG] [AutoNode] Defining data type 'colord[4]' as 'Color4d' and array 'Color4dArray[0m
+[32m[00:00:10.888] [DEBUG] [AutoNode] Defining data type 'colorf[4]' as 'Color4f' and array 'Color4fArray[0m
+[32m[00:00:10.888] [DEBUG] [AutoNode] Defining data type 'colorh[4]' as 'Color4h' and array 'Color4hArray[0m
+[32m[00:00:10.888] [DEBUG] [AutoNode] Defining data type 'double' as 'Double' and array 'DoubleArray[0m
+[32m[00:00:10.888] [DEBUG] [AutoNode] Defining data type 'double[2]' as 'Double2' and array 'Double2Array[0m
+[32m[00:00:10.888] [DEBUG] [AutoNode] Defining data type 'double[3]' as 'Double3' and array 'Double3Array[0m
+[32m[00:00:10.888] [DEBUG] [AutoNode] Defining data type 'double[4]' as 'Double4' and array 'Double4Array[0m
+[32m[00:00:10.888] [DEBUG] [AutoNode] Defining data type 'execution' as 'Execution'[0m
+[32m[00:00:10.888] [DEBUG] [AutoNode] Defining data type 'float' as 'Float' and array 'FloatArray[0m
+[32m[00:00:10.888] [DEBUG] [AutoNode] Defining data type 'float[2]' as 'Float2' and array 'Float2Array[0m
+[32m[00:00:10.888] [DEBUG] [AutoNode] Defining data type 'float[3]' as 'Float3' and array 'Float3Array[0m
+[32m[00:00:10.888] [DEBUG] [AutoNode] Defining data type 'float[4]' as 'Float4' and array 'Float4Array[0m
+[32m[00:00:10.888] [DEBUG] [AutoNode] Defining data type 'frame[4]' as 'Frame' and array 'FrameArray[0m
+[32m[00:00:10.888] [DEBUG] [AutoNode] Defining data type 'half' as 'Half' and array 'HalfArray[0m
+[32m[00:00:10.888] [DEBUG] [AutoNode] Defining data type 'half[2]' as 'Half2' and array 'Half2Array[0m
+[32m[00:00:10.888] [DEBUG] [AutoNode] Defining data type 'half[3]' as 'Half3' and array 'Half3Array[0m
+[32m[00:00:10.888] [DEBUG] [AutoNode] Defining data type 'half[4]' as 'Half4' and array 'Half4Array[0m
+[32m[00:00:10.888] [DEBUG] [AutoNode] Defining data type 'int' as 'Int' and array 'IntArray[0m
+[32m[00:00:10.888] [DEBUG] [AutoNode] Defining data type 'int[2]' as 'Int2' and array 'Int2Array[0m
+[32m[00:00:10.889] [DEBUG] [AutoNode] Defining data type 'int[3]' as 'Int3' and array 'Int3Array[0m
+[32m[00:00:10.889] [DEBUG] [AutoNode] Defining data type 'int[4]' as 'Int4' and array 'Int4Array[0m
+[32m[00:00:10.889] [DEBUG] [AutoNode] Defining data type 'int64' as 'Int64' and array 'Int64Array[0m
+[32m[00:00:10.889] [DEBUG] [AutoNode] Defining data type 'matrixd[2]' as 'Matrix2d' and array 'Matrix2dArray[0m
+[32m[00:00:10.889] [DEBUG] [AutoNode] Defining data type 'matrixd[3]' as 'Matrix3d' and array 'Matrix3dArray[0m
+[32m[00:00:10.889] [DEBUG] [AutoNode] Defining data type 'matrixd[4]' as 'Matrix4d' and array 'Matrix4dArray[0m
+[32m[00:00:10.889] [DEBUG] [AutoNode] Defining data type 'normald[3]' as 'Normal3d' and array 'Normal3dArray[0m
+[32m[00:00:10.889] [DEBUG] [AutoNode] Defining data type 'normalf[3]' as 'Normal3f' and array 'Normal3fArray[0m
+[32m[00:00:10.889] [DEBUG] [AutoNode] Defining data type 'normalh[3]' as 'Normal3h' and array 'Normal3hArray[0m
+[32m[00:00:10.889] [DEBUG] [AutoNode] Defining data type 'objectId' as 'ObjectId' and array 'ObjectIdArray[0m
+[32m[00:00:10.889] [DEBUG] [AutoNode] Defining data type 'path' as 'Path'[0m
+[32m[00:00:10.889] [DEBUG] [AutoNode] Defining data type 'pointd[3]' as 'Point3d' and array 'Point3dArray[0m
+[32m[00:00:10.889] [DEBUG] [AutoNode] Defining data type 'pointf[3]' as 'Point3f' and array 'Point3fArray[0m
+[32m[00:00:10.889] [DEBUG] [AutoNode] Defining data type 'pointh[3]' as 'Point3h' and array 'Point3hArray[0m
+[32m[00:00:10.889] [DEBUG] [AutoNode] Defining data type 'quatd[4]' as 'Quatd' and array 'QuatdArray[0m
+[32m[00:00:10.889] [DEBUG] [AutoNode] Defining data type 'quatf[4]' as 'Quatf' and array 'QuatfArray[0m
+[32m[00:00:10.889] [DEBUG] [AutoNode] Defining data type 'quath[4]' as 'Quath' and array 'QuathArray[0m
+[32m[00:00:10.889] [DEBUG] [AutoNode] Defining data type 'string' as 'String'[0m
+[32m[00:00:10.889] [DEBUG] [AutoNode] Defining data type 'target' as 'Target'[0m
+[32m[00:00:10.889] [DEBUG] [AutoNode] Defining data type 'texcoordd[2]' as 'TexCoord2d' and array 'TexCoord2dArray[0m
+[32m[00:00:10.889] [DEBUG] [AutoNode] Defining data type 'texcoordf[2]' as 'TexCoord2f' and array 'TexCoord2fArray[0m
+[32m[00:00:10.889] [DEBUG] [AutoNode] Defining data type 'texcoordh[2]' as 'TexCoord2h' and array 'TexCoord2hArray[0m
+[32m[00:00:10.889] [DEBUG] [AutoNode] Defining data type 'texcoordd[3]' as 'TexCoord3d' and array 'TexCoord3dArray[0m
+[32m[00:00:10.889] [DEBUG] [AutoNode] Defining data type 'texcoordf[3]' as 'TexCoord3f' and array 'TexCoord3fArray[0m
+[32m[00:00:10.889] [DEBUG] [AutoNode] Defining data type 'texcoordh[3]' as 'TexCoord3h' and array 'TexCoord3hArray[0m
+[32m[00:00:10.889] [DEBUG] [AutoNode] Defining data type 'timecode' as 'Timecode' and array 'TimecodeArray[0m
+[32m[00:00:10.890] [DEBUG] [AutoNode] Defining data type 'token' as 'Token' and array 'TokenArray[0m
+[32m[00:00:10.890] [DEBUG] [AutoNode] Defining data type 'uchar' as 'UChar' and array 'UCharArray[0m
+[32m[00:00:10.890] [DEBUG] [AutoNode] Defining data type 'uint' as 'UInt' and array 'UIntArray[0m
+[32m[00:00:10.890] [DEBUG] [AutoNode] Defining data type 'uint64' as 'UInt64' and array 'UInt64Array[0m
+[32m[00:00:10.890] [DEBUG] [AutoNode] Defining data type 'vectord[3]' as 'Vector3d' and array 'Vector3dArray[0m
+[32m[00:00:10.890] [DEBUG] [AutoNode] Defining data type 'vectorf[3]' as 'Vector3f' and array 'Vector3fArray[0m
+[32m[00:00:10.890] [DEBUG] [AutoNode] Defining data type 'vectorh[3]' as 'Vector3h' and array 'Vector3hArray[0m
+[3.496s] [ext: omni.ui.scene-1.11.2] startup
+[3.504s] [ext: omni.kit.widget.options_button-1.0.3] startup
+[3.505s] [ext: omni.kit.property.adapter.core-1.0.2] startup
+[3.508s] [ext: omni.graph-1.140.2] startup
+[3.576s] [ext: omni.kit.window.filepicker-2.11.7] startup
+[3.587s] [ext: omni.kit.property.adapter.usd-1.0.2] startup
+[3.589s] [ext: omni.kit.property.adapter.fabric-1.0.3] startup
+[3.592s] [ext: omni.kit.widget.text_editor-1.0.2] startup
+[3.594s] [ext: omni.kit.hotkeys.core-1.3.10] startup
+[3.600s] [ext: omni.kit.window.content_browser_registry-0.0.6] startup
+[3.602s] [ext: omni.kit.widget.filter-1.1.4] startup
+[3.603s] [ext: omni.kit.widget.searchfield-1.1.8] startup
+[3.606s] [ext: omni.kit.widget.highlight_label-1.0.3] startup
+[3.607s] [ext: omni.ujitso.processor.texture-1.0.0] startup
+[3.609s] [ext: omni.index.libs-380600.1777.0] startup
+[3.610s] [ext: omni.volume-0.5.0] startup
+[3.620s] [ext: omni.ujitso.client-0.0.0] startup
+[3.620s] [ext: omni.index-1.0.1] startup
+[3.623s] [ext: omni.hydra.rtx.shadercache.vulkan-1.0.0] startup
+[3.625s] [ext: omni.kit.usd.layers-2.2.0] startup
+[3.642s] [ext: omni.hydra.rtx-1.0.0] startup
+2026-11-26 12:03:08 [3,626ms] [Warning] [omni.log] Source: omni.hydra was already registered.
+[3.720s] [ext: omni.kit.context_menu-1.8.3] startup
+[3.723s] [ext: omni.kit.viewport.scene_camera_model-1.0.5] startup
+[3.738s] [ext: omni.kit.hydra_texture-1.4.0] startup
+[3.748s] [ext: omni.kit.window.file_importer-1.1.14] startup
+[3.753s] [ext: omni.kit.menu.utils-1.7.7] startup
+[3.761s] [ext: omni.kit.viewport.legacy_gizmos-1.0.16] startup
+[3.770s] [ext: omni.kit.raycast.query-1.0.5] startup
+[3.786s] [ext: omni.kit.material.library-1.5.15] startup
+[3.793s] [ext: omni.kit.widget.viewport-107.0.7] startup
+[3.801s] [ext: omni.kit.window.file_exporter-1.0.31] startup
+[3.804s] [ext: omni.kit.stage_template.core-1.1.22] startup
+[3.806s] [ext: omni.kit.window.drop_support-1.0.4] startup
+[3.807s] [ext: omni.kit.viewport.registry-104.0.6] startup
+[3.808s] [ext: omni.hydra.engine.stats-1.0.3] startup
+[3.817s] [ext: omni.kit.window.file-1.3.57] startup
+[3.822s] [ext: omni.kit.viewport.window-107.0.8] startup
+[3.851s] [ext: omni.kit.window.content_browser-2.10.3] startup
+[3.871s] [ext: omni.kit.window.property-1.11.5] startup
+[3.874s] [ext: omni.kit.widget.stage-2.11.6] startup
+[3.890s] [ext: omni.kit.viewport.utility-1.0.18] startup
+[3.892s] [ext: omni.kit.manipulator.viewport-107.0.1] startup
+[3.895s] [ext: omni.kit.property.usd-4.2.16] startup
+[3.908s] [ext: omni.kit.xr.telemetry-106.5.13] startup
+[3.912s] [ext: omni.kit.window.extensions-1.4.25] startup
+[3.920s] [ext: omni.graph.visualization.nodes-2.1.1] startup
+[3.930s] [ext: omni.kit.widget.stage_icons-1.0.6] startup
+[3.936s] [ext: omni.kit.widget.zoombar-1.0.5] startup
+[3.942s] [ext: omni.kit.widget.searchable_combobox-1.0.6] startup
+[3.945s] [ext: omni.kit.window.stage-2.5.11] startup
+[3.962s] [ext: omni.kit.browser.core-2.3.11] startup
+[3.970s] [ext: omni.kit.widget.settings-1.2.2] startup
+[3.974s] [ext: omni.kit.menu.stage-1.2.5] startup
+[3.976s] [ext: omni.kit.browser.folder.core-1.10.1] startup
+[3.986s] [ext: omni.kit.widget.prompt-1.0.7] startup
+[3.988s] [ext: omni.kit.window.preferences-1.7.0] startup
+[3.999s] [ext: omni.kit.xr.configurations-106.5.13] startup
+[3.999s] [ext: omni.convexdecomposition-106.5.7] startup
+[4.019s] [ext: omni.kit.usd.collect-2.2.22] startup
+[4.025s] [ext: omni.rtx.window.settings-0.6.17] startup
+[4.032s] [ext: omni.kit.manipulator.camera-106.0.3] startup
+[4.040s] [ext: omni.kit.xr.core-106.5.13] startup
+[4.119s] [ext: omni.kvdb-106.5.7] startup
+[4.126s] [ext: omni.services.facilities.base-1.0.4] startup
+[4.127s] [ext: omni.usdphysics-106.5.7] startup
+[4.140s] [ext: omni.physx.foundation-106.5.7] startup
+[4.143s] [ext: omni.localcache-106.5.7] startup
+[4.145s] [ext: omni.services.core-1.9.0] startup
+[4.623s] [ext: omni.physx.cooking-106.5.7] startup
+[4.652s] [ext: omni.kit.tool.collect-2.2.16] startup
+[4.655s] [ext: omni.kit.xr.ui.window.viewport-106.5.13] startup
+[4.666s] [ext: omni.services.transport.server.base-1.1.1] startup
+[4.670s] [ext: omni.physx-106.5.7] startup
+[4.707s] [ext: isaacsim.examples.browser-0.1.8] startup
+[4.711s] [ext: omni.graph.action_core-1.1.7] startup
+[4.719s] [ext: omni.ui_query-1.1.7] startup
+[4.721s] [ext: omni.services.transport.server.zeroconf-1.0.9] startup
+[4.744s] [ext: omni.graph.action_nodes-1.40.1] startup
+[4.754s] [ext: omni.kit.ui_test-1.3.3] startup
+[4.758s] [ext: omni.kit.xr.advertise-106.5.13] startup
+[4.761s] [ext: omni.graph.action-1.120.0] startup
+[4.765s] [ext: omni.kit.xr.ui.window.profile-106.5.13] startup
+[5.151s] [ext: omni.kit.xr.system.cloudxr-106.5.13] startup
+[5.158s] [ext: omni.kit.tool.asset_importer-2.12.2] startup
+[5.167s] [ext: isaacsim.gui.components-1.0.9] startup
+[5.173s] [ext: omni.kit.xr.profile.common-106.5.13] startup
+[5.182s] [ext: isaacsim.asset.importer.urdf-2.3.10] startup
+[5.380s] [ext: omni.graph.image.core-0.6.0] startup
+[5.384s] [ext: isaacsim.core.version-2.0.2] startup
+[5.389s] [ext: omni.graph.image.nodes-1.3.0] startup
+[5.397s] [ext: isaacsim.storage.native-1.0.6] startup
+[5.399s] [ext: omni.kit.data2ui.core-1.0.27] startup
+[5.406s] [ext: omni.graph.nodes-1.162.1] startup
+[5.440s] [ext: omni.physx.stageupdate-106.5.7] startup
+[5.446s] [ext: omni.kit.numpy.common-0.1.2] startup
+[5.451s] [ext: omni.kit.data2ui.usd-1.0.27] startup
+[5.465s] [ext: omni.warp.core-1.5.0] startup
+[5.469s] [ext: omni.isaac.dynamic_control-1.3.15] startup
+2026-11-26 12:03:10 [5,435ms] [Warning] [omni.isaac.dynamic_control] omni.isaac.dynamic_control is deprecated as of Isaac Sim 4.5. No action is needed from end-users.
+[5.483s] [ext: omni.no_code_ui.bundle-1.0.27] startup
+[5.486s] [ext: omni.kit.xr.scene_view.core-106.5.13] startup
+[5.518s] [ext: isaacsim.core.utils-2.2.8] startup
+[5.526s] [ext: omni.kit.xr.scene_view.utils-106.5.13] startup
+[6.951s] [ext: omni.kit.xr.system.steamvr-106.5.13] startup
+[6.955s] [ext: isaacsim.asset.browser-1.3.4] startup
+[6.962s] [ext: omni.kit.xr.ui.stage-106.5.13] startup
+[6.980s] [ext: omni.kit.xr.system.openxr-106.5.13] startup
+[6.998s] [ext: omni.isaac.asset_browser-1.0.2] startup
+2026-11-26 12:03:12 [6,952ms] [Warning] [omni.isaac.asset_browser] omni.isaac.asset_browser has been deprecated in favor of isaacsim.asset.browser. Please update your code accordingly.
+[7.000s] [ext: omni.kit.xr.profile.vr-106.5.13] startup
+[7.005s] [ext: omni.physics.tensors-106.5.7] startup
+[7.028s] [ext: omni.graph.ui_nodes-1.40.1] startup
+[7.040s] [ext: omni.physx.tensors-106.5.7] startup
+[7.058s] [ext: omni.kit.primitive.mesh-1.0.17] startup
+[7.068s] [ext: isaacsim.core.simulation_manager-0.3.3] startup
+[7.371s] [ext: omni.kit.stage_templates-1.2.6] startup
+[7.381s] [ext: isaacsim.core.prims-0.3.7] startup
+[7.413s] [ext: omni.kit.widget.graph-1.12.17] startup
+[7.422s] [ext: isaacsim.core.api-4.2.16] startup
+[7.442s] [ext: omni.kit.graph.delegate.default-1.2.2] startup
+[7.445s] [ext: omni.graph.scriptnode-1.40.1] startup
+[7.447s] [ext: omni.kit.graph.editor.core-1.5.3] startup
+[7.458s] [ext: isaacsim.core.cloner-1.3.4] startup
+[7.464s] [ext: omni.kit.graph.usd.commands-1.3.1] startup
+[7.467s] [ext: omni.isaac.assets_check-0.3.9] startup
+2026-11-26 12:03:12 [7,420ms] [Warning] [omni.isaac.assets_check] omni.isaac.assets_check has been deprecated in favor of isaacsim.asset.browser. Please update your code accordingly.
+[7.468s] [ext: omni.kit.widget.material_preview-1.0.16] startup
+[7.473s] [ext: omni.kit.viewport.menubar.core-107.1.2] startup
+[7.497s] [ext: omni.isaac.cloner-1.0.2] startup
+2026-11-26 12:03:12 [7,451ms] [Warning] [omni.isaac.cloner] omni.isaac.cloner has been deprecated in favor of isaacsim.core.cloner. Please update your code accordingly.
+[7.498s] [ext: isaacsim.core.throttling-2.0.2] startup
+[7.501s] [ext: omni.flowusd-106.5.2] startup
+2026-11-26 12:03:12 [7,471ms] [Warning] [omni.stageupdate.plugin] Deprecated: direct use of IStageUpdate callbacks is deprecated. Use IStageUpdate::getStageUpdate instead.
+[7.523s] [ext: omni.kit.window.material_graph-1.8.19] startup
+[7.544s] [ext: omni.syntheticdata-0.6.10] startup
+[7.582s] [ext: omni.warp-1.5.0] startup
+[7.593s] [ext: isaacsim.simulation_app-2.4.2] startup
+[7.596s] [ext: isaacsim.robot_motion.lula-4.0.4] startup
+[7.614s] [ext: omni.replicator.core-1.11.35] startup
+Warp 1.5.0 initialized:
+   CUDA Toolkit 11.8, Driver 13.0
+   Devices:
+     "cpu"      : "x86_64"
+     "cuda:0"   : "NVIDIA GeForce RTX 4090" (47 GiB, sm_89, mempool enabled)
+   Kernel cache:
+     /home/1024201092WYH/.cache/warp/1.5.0
+2026-11-26 12:03:12 [7,845ms] [Warning] [omni.replicator.core.scripts.extension] No material configuration file, adding configuration to material settings directly.
+[7.917s] [ext: omni.isaac.kit-2.0.3] startup
+2026-11-26 12:03:12 [7,874ms] [Warning] [omni.isaac.kit] omni.isaac.kit has been deprecated in favor of isaacsim.simulation_app. Please update your code accordingly.
+[7.922s] [ext: omni.isaac.lula-4.0.2] startup
+2026-11-26 12:03:12 [7,876ms] [Warning] [omni.isaac.lula] omni.isaac.lula has been deprecated in favor of isaacsim.robot_motion.lula. Please update your code accordingly.
+[7.923s] [ext: isaacsim.core.nodes-2.1.4] startup
+[7.943s] [ext: isaacsim.robot_motion.motion_generation-8.0.6] startup
+[7.993s] [ext: isaacsim.robot.surface_gripper-2.0.6] startup
+[8.017s] [ext: omni.kit.selection-0.1.5] startup
+[8.036s] [ext: isaacsim.robot_motion.lula_test_widget-1.0.5] startup
+[8.050s] [ext: isaacsim.robot.manipulators-3.0.4] startup
+[8.074s] [ext: isaacsim.gui.menu-2.0.9] startup
+[8.139s] [ext: omni.isaac.lula_test_widget-1.0.2] startup
+2026-11-26 12:03:13 [8,098ms] [Warning] [omni.isaac.lula_test_widget] omni.isaac.lula_test_widget has been deprecated in favor of isaacsim.robot_motion.lula_test_widget. Please update your code accordingly.
+[8.146s] [ext: omni.isaac.manipulators-3.0.3] startup
+2026-11-26 12:03:13 [8,103ms] [Warning] [omni.isaac.manipulators] omni.isaac.manipulators has been deprecated in favor of isaacsim.robot.manipulators. Please update your code accordingly.
+2026-11-26 12:03:13 [8,106ms] [Warning] [omni.isaac.manipulators.controllers] omni.isaac.manipulators has been deprecated in favor of isaacsim.robot.manipulators. Please update your code accordingly.
+2026-11-26 12:03:13 [8,108ms] [Warning] [omni.isaac.manipulators.controllers.pick_place_controller] omni.isaac.manipulators has been deprecated in favor of isaacsim.robot.manipulators. Please update your code accordingly.
+2026-11-26 12:03:13 [8,114ms] [Warning] [omni.isaac.manipulators.controllers.stacking_controller] omni.isaac.manipulators has been deprecated in favor of isaacsim.robot.manipulators. Please update your code accordingly.
+2026-11-26 12:03:13 [8,114ms] [Warning] [omni.isaac.manipulators.grippers] omni.isaac.manipulators has been deprecated in favor of isaacsim.robot.manipulators. Please update your code accordingly.
+2026-11-26 12:03:13 [8,115ms] [Warning] [omni.isaac.manipulators.grippers.gripper] omni.isaac.manipulators has been deprecated in favor of isaacsim.robot.manipulators. Please update your code accordingly.
+2026-11-26 12:03:13 [8,116ms] [Warning] [omni.isaac.manipulators.grippers.parallel_gripper] omni.isaac.manipulators has been deprecated in favor of isaacsim.robot.manipulators. Please update your code accordingly.
+2026-11-26 12:03:13 [8,116ms] [Warning] [omni.isaac.manipulators.grippers.surface_gripper] omni.isaac.manipulators has been deprecated in favor of isaacsim.robot.manipulators. Please update your code accordingly.
+2026-11-26 12:03:13 [8,117ms] [Warning] [omni.isaac.manipulators.manipulators] omni.isaac.manipulators has been deprecated in favor of isaacsim.robot.manipulators. Please update your code accordingly.
+2026-11-26 12:03:13 [8,117ms] [Warning] [omni.isaac.manipulators.manipulators.single_manipulator] omni.isaac.manipulators has been deprecated in favor of isaacsim.robot.manipulators. Please update your code accordingly.
+[8.165s] [ext: omni.isaac.menu-1.0.2] startup
+2026-11-26 12:03:13 [8,122ms] [Warning] [omni.isaac.menu] omni.isaac.menu has been deprecated in favor of isaacsim.gui.menu. Please update your code accordingly.
+[8.170s] [ext: isaacsim.util.debug_draw-2.0.2] startup
+[8.194s] [ext: omni.isaac.motion_generation-8.0.2] startup
+2026-11-26 12:03:13 [8,149ms] [Warning] [omni.isaac.motion_generation] omni.isaac.motion_generation has been deprecated in favor of isaacsim.robot_motion.motion_generation. Please update your code accordingly.
+2026-11-26 12:03:13 [8,150ms] [Warning] [omni.isaac.motion_generation.articulation_kinematics_solver] omni.isaac.motion_generation has been deprecated in favor of isaacsim.robot_motion.motion_generation. Please update your code accordingly.
+2026-11-26 12:03:13 [8,155ms] [Warning] [omni.isaac.motion_generation.articulation_motion_policy] omni.isaac.motion_generation has been deprecated in favor of isaacsim.robot_motion.motion_generation. Please update your code accordingly.
+2026-11-26 12:03:13 [8,155ms] [Warning] [omni.isaac.motion_generation.articulation_trajectory] omni.isaac.motion_generation has been deprecated in favor of isaacsim.robot_motion.motion_generation. Please update your code accordingly.
+2026-11-26 12:03:13 [8,156ms] [Warning] [omni.isaac.motion_generation.kinematics_interface] omni.isaac.motion_generation has been deprecated in favor of isaacsim.robot_motion.motion_generation. Please update your code accordingly.
+2026-11-26 12:03:13 [8,157ms] [Warning] [omni.isaac.motion_generation.lula] omni.isaac.motion_generation has been deprecated in favor of isaacsim.robot_motion.motion_generation. Please update your code accordingly.
+2026-11-26 12:03:13 [8,159ms] [Warning] [omni.isaac.motion_generation.lula.kinematics] omni.isaac.motion_generation has been deprecated in favor of isaacsim.robot_motion.motion_generation. Please update your code accordingly.
+2026-11-26 12:03:13 [8,160ms] [Warning] [omni.isaac.motion_generation.lula.motion_policies] omni.isaac.motion_generation has been deprecated in favor of isaacsim.robot_motion.motion_generation. Please update your code accordingly.
+2026-11-26 12:03:13 [8,161ms] [Warning] [omni.isaac.motion_generation.lula.path_planners] omni.isaac.motion_generation has been deprecated in favor of isaacsim.robot_motion.motion_generation. Please update your code accordingly.
+2026-11-26 12:03:13 [8,161ms] [Warning] [omni.isaac.motion_generation.lula.trajectory_generator] omni.isaac.motion_generation has been deprecated in favor of isaacsim.robot_motion.motion_generation. Please update your code accordingly.
+2026-11-26 12:03:13 [8,166ms] [Warning] [omni.isaac.motion_generation.motion_policy_controller] omni.isaac.motion_generation has been deprecated in favor of isaacsim.robot_motion.motion_generation. Please update your code accordingly.
+2026-11-26 12:03:13 [8,167ms] [Warning] [omni.isaac.motion_generation.motion_policy_interface] omni.isaac.motion_generation has been deprecated in favor of isaacsim.robot_motion.motion_generation. Please update your code accordingly.
+2026-11-26 12:03:13 [8,167ms] [Warning] [omni.isaac.motion_generation.path_planner_visualizer] omni.isaac.motion_generation has been deprecated in favor of isaacsim.robot_motion.motion_generation. Please update your code accordingly.
+2026-11-26 12:03:13 [8,168ms] [Warning] [omni.isaac.motion_generation.path_planning_interface] omni.isaac.motion_generation has been deprecated in favor of isaacsim.robot_motion.motion_generation. Please update your code accordingly.
+2026-11-26 12:03:13 [8,168ms] [Warning] [omni.isaac.motion_generation.trajectory] omni.isaac.motion_generation has been deprecated in favor of isaacsim.robot_motion.motion_generation. Please update your code accordingly.
+2026-11-26 12:03:13 [8,168ms] [Warning] [omni.isaac.motion_generation.world_interface] omni.isaac.motion_generation has been deprecated in favor of isaacsim.robot_motion.motion_generation. Please update your code accordingly.
+[8.216s] [ext: isaacsim.sensors.physics-0.3.5] startup
+[8.232s] [ext: omni.sensors.nv.common-2.5.0-coreapi] startup
+[8.273s] [ext: isaacsim.sensors.physx-2.2.4] startup
+[8.300s] [ext: omni.isaac.nucleus-1.0.3] startup
+2026-11-26 12:03:13 [8,256ms] [Warning] [omni.isaac.nucleus] omni.isaac.nucleus has been deprecated in favor of isaacsim.storage.native. Please update your code accordingly.
+2026-11-26 12:03:13 [8,257ms] [Warning] [omni.isaac.nucleus.nucleus] omni.isaac.nucleus.nucleus has been deprecated in favor of isaacsim.storage.native. Please update your code accordingly.
+[8.304s] [ext: isaacsim.robot.policy.examples-4.0.3] startup
+[8.319s] [ext: omni.sensors.nv.materials-1.4.0-coreapi] startup
+[8.336s] [ext: omni.isaac.range_sensor-4.0.2] startup
+[8.342s] [ext: isaacsim.sensors.camera-0.2.9] startup
+[8.356s] [ext: omni.isaac.quadruped-3.0.2] startup
+2026-11-26 12:03:13 [8,312ms] [Warning] [omni.isaac.quadruped] omni.isaac.quadruped has been deprecated in favor of isaacsim.robot.policy.examples. Please update your code accordingly.
+[8.359s] [ext: omni.sensors.nv.ids-1.4.0-coreapi] startup
+[8.375s] [ext: omni.kit.menu.create-1.0.17] startup
+[8.379s] [ext: omni.sensors.nv.wpm-2.4.0-coreapi] startup
+[8.383s] [ext: omni.kit.manipulator.transform-106.0.1] startup
+[8.388s] [ext: omni.kit.widget.toolbar-1.7.3] startup
+[8.399s] [ext: omni.sensors.nv.radar-2.6.1-coreapi] startup
+[8.420s] [ext: omni.sensors.tiled-0.0.6] startup
+[8.427s] [ext: omni.sensors.nv.lidar-2.6.3-coreapi] startup
+[8.446s] [ext: omni.kit.manipulator.tool.snap-1.5.12] startup
+[8.453s] [ext: omni.kit.manipulator.selector-1.1.1] startup
+[8.457s] [ext: isaacsim.sensors.rtx-13.6.3] startup
+[8.473s] [ext: omni.isaac.core-4.0.3] startup
+2026-11-26 12:03:13 [8,429ms] [Warning] [omni.isaac.core.physics_context.physics_context] omni.isaac.core.physics_context.physics_context has been deprecated in favor of isaacsim.core.api.physics_context.physics_context. Please update your code accordingly.
+2026-11-26 12:03:13 [8,430ms] [Warning] [omni.isaac.core.simulation_context.simulation_context] omni.isaac.core.simulation_context.simulation_context has been deprecated in favor of isaacsim.core.api.simulation_context.simulation_context. Please update your code accordingly.
+2026-11-26 12:03:13 [8,430ms] [Warning] [omni.isaac.core.world.world] omni.isaac.core.world.world has been deprecated in favor of isaacsim.core.api.world.world. Please update your code accordingly.
+2026-11-26 12:03:13 [8,431ms] [Warning] [omni.isaac.core] omni.isaac.core has been deprecated in favor of isaacsim.core.api. Please update your code accordingly.
+[8.478s] [ext: omni.kit.scripting-106.5.2] startup
+[8.493s] [ext: omni.kit.viewport.manipulator.transform-107.0.4] startup
+[8.503s] [ext: omni.isaac.sensor-13.0.3] startup
+2026-11-26 12:03:13 [8,457ms] [Warning] [omni.isaac.sensor] omni.isaac.sensor has been deprecated in favor of isaacsim.sensors.camera, isaacsim.sensors.physics, isaacsim.sensors.physx, and isaacsim.sensors.rtx. Please update your code accordingly.
+2026-11-26 12:03:13 [8,457ms] [Warning] [omni.isaac.sensor.camera] omni.isaac.sensor.camera has been deprecated in favor of isaacsim.sensors.camera.camera. Please update your code accordingly.
+2026-11-26 12:03:13 [8,457ms] [Warning] [omni.isaac.sensor.camera_view] omni.isaac.sensor.camera_view has been deprecated in favor of isaacsim.sensors.camera.camera_view. Please update your code accordingly.
+2026-11-26 12:03:13 [8,457ms] [Warning] [omni.isaac.sensor.commands] omni.isaac.sensor.commands has been deprecated in favor of isaacsim.sensors.physics.commands, isaacsim.sensors.physx.commands, and isaacsim.sensors.rtx.commands. Please update your code accordingly.
+2026-11-26 12:03:13 [8,458ms] [Warning] [omni.isaac.sensor.contact_sensor] omni.isaac.sensor.contact_sensor has been deprecated in favor of isaacsim.sensors.physics.contact_sensor. Please update your code accordingly.
+2026-11-26 12:03:13 [8,458ms] [Warning] [omni.isaac.sensor.imu_sensor] omni.isaac.sensor.imu_sensor has been deprecated in favor of isaacsim.sensors.physics.imu_sensor. Please update your code accordingly.
+2026-11-26 12:03:13 [8,458ms] [Warning] [omni.isaac.sensor.lidar_rtx] omni.isaac.sensor.lidar_rtx has been deprecated in favor of isaacsim.sensors.rtx.lidar_rtx. Please update your code accordingly.
+2026-11-26 12:03:13 [8,458ms] [Warning] [omni.isaac.sensor.rotating_lidar_physX] omni.isaac.sensor.imu_sensor has been deprecated in favor of isaacsim.sensors.physix.rotating_lidar_physX. Please update your code accordingly.
+2026-11-26 12:03:13 [8,458ms] [Warning] [omni.isaac.sensor.scripts.samples.contact_sensor] omni.isaac.sensor.scripts.samples.contact_sensor has been deprecated in favor of isaacsim.sensors.physics.scripts.samples.contact_sensor. Please update your code accordingly.
+2026-11-26 12:03:13 [8,459ms] [Warning] [omni.isaac.sensor.scripts.samples.imu_sensor] omni.isaac.sensor.scripts.samples.imu_sensor has been deprecated in favor of isaacsim.sensors.physics.scripts.samples.imu_sensor. Please update your code accordingly.
+2026-11-26 12:03:13 [8,459ms] [Warning] [omni.isaac.sensor.scripts.samples.lightbeam_sensor] omni.isaac.sensor.scripts.samples.lightbeam_sensor has been deprecated in favor of isaacsim.sensors.physx.scripts.samples.lightbeam_sensor. Please update your code accordingly.
+[8.506s] [ext: omni.isaac.surface_gripper-2.0.2] startup
+2026-11-26 12:03:13 [8,463ms] [Warning] [omni.isaac.surface_gripper] omni.isaac.surface_gripper has been deprecated in favor of isaacsim.robot.surface_gripper. Please update your code accordingly.
+[8.511s] [ext: omni.isaac.core_nodes-2.0.2] startup
+2026-11-26 12:03:13 [8,469ms] [Warning] [omni.isaac.core_nodes] omni.isaac.core_nodes has been deprecated in favor of isaacsim.core.nodes. Please update your code accordingly.
+[8.516s] [ext: isaacsim.replicator.behavior-1.0.8] startup
+[8.530s] [ext: omni.kit.manipulator.prim.core-107.0.7] startup
+[8.541s] [ext: omni.fabric.commands-1.1.5] startup
+[8.547s] [ext: omni.kit.viewport.actions-107.0.0] startup
+[8.556s] [ext: omni.kit.manipulator.prim.usd-107.0.3] startup
+[8.559s] [ext: omni.kit.manipulator.prim.fabric-107.0.4] startup
+[8.563s] [ext: isaacsim.app.about-2.0.7] startup
+[8.565s] [ext: omni.kit.manipulator.selection-106.0.1] startup
+[8.569s] [ext: omni.kit.viewport.menubar.display-107.0.3] startup
+[8.571s] [ext: omni.kit.widget.layers-1.8.2] startup
+[8.588s] [ext: omni.kit.manipulator.prim-107.0.0] startup
+[8.589s] [ext: omni.debugdraw-0.1.3] startup
+[8.600s] [ext: omni.isaac.window.about-2.0.2] startup
+2026-11-26 12:03:13 [8,555ms] [Warning] [omni.isaac.window.about] omni.isaac.window.about has been deprecated in favor of isaacsim.app.about. Please update your code accordingly.
+2026-11-26 12:03:13 [8,555ms] [Warning] [omni.isaac.window.about.about] omni.isaac.window.about.about has been deprecated in favor of isaacsim.app.about.about. Please update your code accordingly.
+[8.603s] [ext: omni.kit.property.audio-1.0.16] startup
+[8.605s] [ext: omni.physx.commands-106.5.7] startup
+[8.611s] [ext: omni.usdphysics.ui-106.5.7] startup
+[8.701s] [ext: omni.kit.property.camera-1.0.9] startup
+[8.705s] [ext: omni.kit.property.geometry-1.3.3] startup
+[8.711s] [ext: omni.kit.property.light-1.0.11] startup
+[8.714s] [ext: omni.hydra.scene_api-0.1.2] startup
+[8.733s] [ext: omni.physx.ui-106.5.7] startup
+[8.813s] [ext: omni.kit.property.material-1.10.17] startup
+[8.827s] [ext: omni.kit.property.render-1.1.3] startup
+[8.830s] [ext: isaacsim.robot.manipulators.examples-1.0.3] startup
+[8.832s] [ext: omni.kit.property.transform-1.5.10] startup
+[8.842s] [ext: omni.physx.demos-106.5.7] startup
+[8.874s] [ext: omni.kit.property.physx-106.5.7] startup
+[8.970s] [ext: isaacsim.gui.property-1.0.4] startup
+[8.975s] [ext: omni.isaac.franka-1.0.2] startup
+2026-11-26 12:03:14 [8,930ms] [Warning] [omni.isaac.franka] omni.isaac.franka has been deprecated in favor of isaacsim.robot.manipulators.examples.franka. Please update your code accordingly.
+2026-11-26 12:03:14 [8,930ms] [Warning] [omni.isaac.franka.franka] omni.isaac.franka has been deprecated in favor of isaacsim.robot.manipulators.examples.franka. Please update your code accordingly.
+2026-11-26 12:03:14 [8,931ms] [Warning] [omni.isaac.franka.kinematics_solver] omni.isaac.franka has been deprecated in favor of isaacsim.robot.manipulators.examples.franka. Please update your code accordingly.
+[8.978s] [ext: omni.kit.property.bundle-1.3.2] startup
+[8.983s] [ext: omni.physx.vehicle-106.5.7] startup
+[9.032s] [ext: omni.kit.property.isaac-1.0.2] startup
+2026-11-26 12:03:14 [8,988ms] [Warning] [omni.kit.property.isaac] omni.kit.property.isaac has been deprecated in favor of isaacsim.gui.property. Please update your code accordingly.
+2026-11-26 12:03:14 [8,989ms] [Warning] [omni.kit.property.isaac.widgets] omni.kit.property.isaac.widgets has been deprecated in favor of isaacsim.gui.property.widgets. Please update your code accordingly.
+[9.037s] [ext: omni.kit.viewport.menubar.camera-107.0.2] startup
+[9.047s] [ext: omni.kit.viewport.menubar.lighting-106.0.2] startup
+[9.053s] [ext: omni.kit.viewport.menubar.render-107.0.8] startup
+[9.058s] [ext: isaacsim.replicator.domain_randomization-1.0.2] startup
+[9.063s] [ext: omni.physx.camera-106.5.7] startup
+[9.112s] [ext: omni.kit.window.toolbar-1.6.2] startup
+[9.120s] [ext: omni.physx.cct-106.5.7] startup
+[9.153s] [ext: isaacsim.cortex.framework-1.0.2] startup
+[9.159s] [ext: omni.isaac.universal_robots-1.0.2] startup
+2026-11-26 12:03:14 [9,118ms] [Warning] [omni.isaac.universal_robots] omni.isaac.universal_robots has been deprecated in favor of isaacsim.robot.manipulators.examples.universal_robots. Please update your code accordingly.
+2026-11-26 12:03:14 [9,119ms] [Warning] [omni.isaac.universal_robots.kinematics_solver] omni.isaac.franka has been deprecated in favor of isaacsim.robot.manipulators.examples.universal_robots. Please update your code accordingly.
+2026-11-26 12:03:14 [9,120ms] [Warning] [omni.isaac.universal_robots.ur10] omni.isaac.franka has been deprecated in favor of isaacsim.robot.manipulators.examples.universal_robots. Please update your code accordingly.
+[9.168s] [ext: isaacsim.replicator.writers-1.0.1] startup
+[9.247s] [ext: omni.physx.graph-106.5.7] startup
+[9.313s] [ext: omni.physx.supportui-106.5.7] startup
+[9.374s] [ext: omni.isaac.utils-2.0.2] startup
+[9.378s] [ext: omni.isaac.cortex-1.0.2] startup
+2026-11-26 12:03:14 [9,333ms] [Warning] [omni.isaac.cortex] omni.isaac.cortex has been deprecated in favor of isaacsim.cortex.framework. Please update your code accordingly.
+[9.380s] [ext: omni.physx.telemetry-106.5.7] startup
+[9.390s] [ext: isaacsim.replicator.examples-1.1.2] startup
+[9.394s] [ext: omni.kit.viewport.menubar.settings-107.0.3] startup
+[9.409s] [ext: omni.kit.window.console-0.2.14] startup
+[9.434s] [ext: omni.usd.metrics.assembler-106.5.0] startup
+[9.462s] [ext: omni.kit.window.status_bar-0.1.7] startup
+[9.472s] [ext: omni.physx.bundle-106.5.7] startup
+[9.473s] [ext: omni.replicator.isaac-2.0.3] startup
+2026-11-26 12:03:14 [9,426ms] [Warning] [omni.replicator.isaac] omni.replicator.isaac has been deprecated in favor of isaacsim.replicator.domain_randomization, isaacsim.replicator.examples, isaacsim.replicator.writers. Please update your code accordingly.
+[9.474s] [ext: omni.replicator.replicator_yaml-2.0.10] startup
+[9.480s] [ext: omni.rtx.settings.core-0.6.3] startup
+[9.489s] [ext: omni.usd.metrics.assembler.ui-106.5.0] startup
+[9.504s] [ext: isaacsim.robot.wheeled_robots-4.0.3] startup
+[9.514s] [ext: isaacsim.cortex.behaviors-2.0.3] startup
+[9.518s] [ext: omni.isaac.version-2.0.2] startup
+2026-11-26 12:03:14 [9,474ms] [Warning] [omni.isaac.version] omni.isaac.version has been deprecated in favor of isaacsim.core.version. Please update your code accordingly.
+[9.521s] [ext: semantics.schema.editor-0.3.10] startup
+[9.534s] [ext: omni.kit.ui.actions-1.0.2] startup
+[9.537s] [ext: semantics.schema.property-1.0.5] startup
+[9.540s] [ext: omni.isaac.wheeled_robots-3.0.3] startup
+2026-11-26 12:03:14 [9,494ms] [Warning] [omni.isaac.wheeled_robots] omni.isaac.wheeled_robots has been deprecated in favor of isaacsim.robot.wheeled_robots. Please update your code accordingly.
+2026-11-26 12:03:14 [9,495ms] [Warning] [omni.isaac.wheeled_robots.controllers] omni.isaac.wheeled_robots has been deprecated in favor of isaacsim.robot.wheeled_robots. Please update your code accordingly.
+2026-11-26 12:03:14 [9,495ms] [Warning] [omni.isaac.wheeled_robots.controllers.ackermann_controller] omni.isaac.wheeled_robots has been deprecated in favor of isaacsim.robot.wheeled_robots. Please update your code accordingly.
+2026-11-26 12:03:14 [9,496ms] [Warning] [omni.isaac.wheeled_robots.controllers.differential_controller] omni.isaac.wheeled_robots has been deprecated in favor of isaacsim.robot.wheeled_robots. Please update your code accordingly.
+2026-11-26 12:03:14 [9,498ms] [Warning] [omni.isaac.wheeled_robots.controllers.holonomic_controller] omni.isaac.wheeled_robots has been deprecated in favor of isaacsim.robot.wheeled_robots. Please update your code accordingly.
+2026-11-26 12:03:14 [9,500ms] [Warning] [omni.isaac.wheeled_robots.controllers.quintic_path_planner] omni.isaac.wheeled_robots has been deprecated in favor of isaacsim.robot.wheeled_robots. Please update your code accordingly.
+2026-11-26 12:03:14 [9,500ms] [Warning] [omni.isaac.wheeled_robots.controllers.stanley_control] omni.isaac.wheeled_robots has been deprecated in favor of isaacsim.robot.wheeled_robots. Please update your code accordingly.
+2026-11-26 12:03:14 [9,501ms] [Warning] [omni.isaac.wheeled_robots.controllers.wheel_base_pose_controller] omni.isaac.wheeled_robots has been deprecated in favor of isaacsim.robot.wheeled_robots. Please update your code accordingly.
+2026-11-26 12:03:14 [9,501ms] [Warning] [omni.isaac.wheeled_robots.impl] omni.isaac.wheeled_robots has been deprecated in favor of isaacsim.robot.wheeled_robots. Please update your code accordingly.
+2026-11-26 12:03:14 [9,502ms] [Warning] [omni.isaac.wheeled_robots.robots] omni.isaac.wheeled_robots has been deprecated in favor of isaacsim.robot.wheeled_robots. Please update your code accordingly.
+2026-11-26 12:03:14 [9,503ms] [Warning] [omni.isaac.wheeled_robots.robots.holonomic_robot_usd_setup] omni.isaac.wheeled_robots has been deprecated in favor of isaacsim.robot.wheeled_robots. Please update your code accordingly.
+2026-11-26 12:03:14 [9,505ms] [Warning] [omni.isaac.wheeled_robots.robots.wheeled_robot] omni.isaac.wheeled_robots has been deprecated in favor of isaacsim.robot.wheeled_robots. Please update your code accordingly.
+[9.553s] [ext: omni.isaac.cortex.sample_behaviors-2.0.2] startup
+2026-11-26 12:03:14 [9,510ms] [Warning] [omni.isaac.cortex.sample_behaviors] omni.isaac.cortex.sample_behaviors has been deprecated in favor of isaacsim.cortex.behaviors. Please update your code accordingly.
+[9.557s] [ext: omni.anim.curve.core-1.2.0] startup
+[9.588s] [ext: isaacsim.asset.importer.mjcf-2.3.3] startup
+[9.602s] [ext: omni.kit.menu.common-1.1.9] startup
+[9.607s] [ext: isaacsim.exp.base-4.5.0] startup
+[9.608s] [ext: omnigibson_4_5_0-1.5.0] startup
+[9.610s] Simulation App Starting
+[9.809s] app ready
+2026-11-26 12:03:14 [9,903ms] [Warning] [rtx.scenedb.plugin] SceneDbContext : TLAS limit buffer size 7508933632
+2026-11-26 12:03:14 [9,903ms] [Warning] [rtx.scenedb.plugin] SceneDbContext : TLAS limit : valid false, within: false
+2026-11-26 12:03:14 [9,903ms] [Warning] [rtx.scenedb.plugin] SceneDbContext : TLAS limit : decrement: 167690, decrement size: 7433845248
+2026-11-26 12:03:14 [9,903ms] [Warning] [rtx.scenedb.plugin] SceneDbContext : New limit 9574251 (slope: 447, intercept: 13179904)
+2026-11-26 12:03:14 [9,903ms] [Warning] [rtx.scenedb.plugin] SceneDbContext : TLAS limit buffer size 4287216384
+2026-11-26 12:03:14 [9,903ms] [Warning] [rtx.scenedb.plugin] SceneDbContext : TLAS limit : valid true, within: true
+2026-11-26 12:03:15 [10,113ms] [Warning] [omni.usd-abi.plugin] No setting was found for '/rtx-defaults-transient/meshlights/forceDisable'
+2026-11-26 12:03:15 [10,184ms] [Warning] [omni.usd-abi.plugin] No setting was found for '/rtx-defaults/post/dlss/execMode'
+[15.331s] Simulation App Startup Complete
+2026-11-26 12:03:20 [15,639ms] [Warning] [carb] Failed to startup plugin carb.windowing-glfw.plugin (interfaces: [carb::windowing::IGLContext v1.0],[carb::windowing::IWindowing v1.5]) (impl: carb.windowing-glfw.plugin)
+
+                   ____________
+                  /          / \
+                 /          / /__
+                /          / /  /\
+               /__________/ /__/  \
+               \   _____  \ \__\  /
+                \  \  / \  \ \_/ /
+                 \  \/___\  \   /
+                  \__________\_/  
+       ___                  _  ____ _ _                     
+      / _ \ _ __ ___  _ __ (_)/ ___(_) |__  ___  ___  _ __  
+     | | | | '_ ` _ \| '_ \| | |  _| | '_ \/ __|/ _ \| '_ \ 
+     | |_| | | | | | | | | | | |_| | | |_) \__ \ (_) | | | |
+      \___/|_| |_| |_|_| |_|_|\____|_|_.__/|___/\___/|_| |_|
+
+[0m[00:00:23.094] [INFO] [omnigibson.simulator] ---------- Welcome to OmniGibson! ----------[0m
+[33m[00:00:33.191] [WARNING] [omnigibson.objects.usd_object] Object bush_cwsigt_0 was expected to have USD file hash c0add8dd9dccc3f4ccd9ea80bf2e59b3 but loaded with 43d3d11e621b4af7afdc0816c4f1e069. The saved state might be incompatible.[0m
+2026-11-26 12:03:30 [25,745ms] [Warning] [omnigibson.objects.usd_object] Object bush_cwsigt_0 was expected to have USD file hash c0add8dd9dccc3f4ccd9ea80bf2e59b3 but loaded with 43d3d11e621b4af7afdc0816c4f1e069. The saved state might be incompatible.
+[33m[00:00:33.205] [WARNING] [omnigibson.objects.usd_object] Object bush_cwsigt_1 was expected to have USD file hash c0add8dd9dccc3f4ccd9ea80bf2e59b3 but loaded with 43d3d11e621b4af7afdc0816c4f1e069. The saved state might be incompatible.[0m
+2026-11-26 12:03:30 [25,760ms] [Warning] [omnigibson.objects.usd_object] Object bush_cwsigt_1 was expected to have USD file hash c0add8dd9dccc3f4ccd9ea80bf2e59b3 but loaded with 43d3d11e621b4af7afdc0816c4f1e069. The saved state might be incompatible.
+[33m[00:00:33.215] [WARNING] [omnigibson.objects.usd_object] Object bush_cwsigt_10 was expected to have USD file hash c0add8dd9dccc3f4ccd9ea80bf2e59b3 but loaded with 43d3d11e621b4af7afdc0816c4f1e069. The saved state might be incompatible.[0m
+2026-11-26 12:03:30 [25,769ms] [Warning] [omnigibson.objects.usd_object] Object bush_cwsigt_10 was expected to have USD file hash c0add8dd9dccc3f4ccd9ea80bf2e59b3 but loaded with 43d3d11e621b4af7afdc0816c4f1e069. The saved state might be incompatible.
+[33m[00:00:33.224] [WARNING] [omnigibson.objects.usd_object] Object bush_cwsigt_2 was expected to have USD file hash c0add8dd9dccc3f4ccd9ea80bf2e59b3 but loaded with 43d3d11e621b4af7afdc0816c4f1e069. The saved state might be incompatible.[0m
+2026-11-26 12:03:30 [25,779ms] [Warning] [omnigibson.objects.usd_object] Object bush_cwsigt_2 was expected to have USD file hash c0add8dd9dccc3f4ccd9ea80bf2e59b3 but loaded with 43d3d11e621b4af7afdc0816c4f1e069. The saved state might be incompatible.
+[33m[00:00:33.233] [WARNING] [omnigibson.objects.usd_object] Object bush_cwsigt_3 was expected to have USD file hash c0add8dd9dccc3f4ccd9ea80bf2e59b3 but loaded with 43d3d11e621b4af7afdc0816c4f1e069. The saved state might be incompatible.[0m
+2026-11-26 12:03:30 [25,788ms] [Warning] [omnigibson.objects.usd_object] Object bush_cwsigt_3 was expected to have USD file hash c0add8dd9dccc3f4ccd9ea80bf2e59b3 but loaded with 43d3d11e621b4af7afdc0816c4f1e069. The saved state might be incompatible.
+[33m[00:00:33.242] [WARNING] [omnigibson.objects.usd_object] Object bush_cwsigt_4 was expected to have USD file hash c0add8dd9dccc3f4ccd9ea80bf2e59b3 but loaded with 43d3d11e621b4af7afdc0816c4f1e069. The saved state might be incompatible.[0m
+2026-11-26 12:03:30 [25,797ms] [Warning] [omnigibson.objects.usd_object] Object bush_cwsigt_4 was expected to have USD file hash c0add8dd9dccc3f4ccd9ea80bf2e59b3 but loaded with 43d3d11e621b4af7afdc0816c4f1e069. The saved state might be incompatible.
+[33m[00:00:33.251] [WARNING] [omnigibson.objects.usd_object] Object bush_cwsigt_5 was expected to have USD file hash c0add8dd9dccc3f4ccd9ea80bf2e59b3 but loaded with 43d3d11e621b4af7afdc0816c4f1e069. The saved state might be incompatible.[0m
+2026-11-26 12:03:30 [25,806ms] [Warning] [omnigibson.objects.usd_object] Object bush_cwsigt_5 was expected to have USD file hash c0add8dd9dccc3f4ccd9ea80bf2e59b3 but loaded with 43d3d11e621b4af7afdc0816c4f1e069. The saved state might be incompatible.
+[33m[00:00:33.260] [WARNING] [omnigibson.objects.usd_object] Object bush_cwsigt_6 was expected to have USD file hash c0add8dd9dccc3f4ccd9ea80bf2e59b3 but loaded with 43d3d11e621b4af7afdc0816c4f1e069. The saved state might be incompatible.[0m
+2026-11-26 12:03:30 [25,815ms] [Warning] [omnigibson.objects.usd_object] Object bush_cwsigt_6 was expected to have USD file hash c0add8dd9dccc3f4ccd9ea80bf2e59b3 but loaded with 43d3d11e621b4af7afdc0816c4f1e069. The saved state might be incompatible.
+[33m[00:00:33.268] [WARNING] [omnigibson.objects.usd_object] Object bush_cwsigt_7 was expected to have USD file hash c0add8dd9dccc3f4ccd9ea80bf2e59b3 but loaded with 43d3d11e621b4af7afdc0816c4f1e069. The saved state might be incompatible.[0m
+2026-11-26 12:03:30 [25,823ms] [Warning] [omnigibson.objects.usd_object] Object bush_cwsigt_7 was expected to have USD file hash c0add8dd9dccc3f4ccd9ea80bf2e59b3 but loaded with 43d3d11e621b4af7afdc0816c4f1e069. The saved state might be incompatible.
+[33m[00:00:33.276] [WARNING] [omnigibson.objects.usd_object] Object bush_cwsigt_8 was expected to have USD file hash c0add8dd9dccc3f4ccd9ea80bf2e59b3 but loaded with 43d3d11e621b4af7afdc0816c4f1e069. The saved state might be incompatible.[0m
+2026-11-26 12:03:30 [25,831ms] [Warning] [omnigibson.objects.usd_object] Object bush_cwsigt_8 was expected to have USD file hash c0add8dd9dccc3f4ccd9ea80bf2e59b3 but loaded with 43d3d11e621b4af7afdc0816c4f1e069. The saved state might be incompatible.
+[33m[00:00:33.286] [WARNING] [omnigibson.objects.usd_object] Object bush_cwsigt_9 was expected to have USD file hash c0add8dd9dccc3f4ccd9ea80bf2e59b3 but loaded with 43d3d11e621b4af7afdc0816c4f1e069. The saved state might be incompatible.[0m
+2026-11-26 12:03:30 [25,840ms] [Warning] [omnigibson.objects.usd_object] Object bush_cwsigt_9 was expected to have USD file hash c0add8dd9dccc3f4ccd9ea80bf2e59b3 but loaded with 43d3d11e621b4af7afdc0816c4f1e069. The saved state might be incompatible.
+[33m[00:00:33.295] [WARNING] [omnigibson.objects.usd_object] Object bush_frqici_0 was expected to have USD file hash 0827d6854be7240a09c869caeddf5027 but loaded with 65be04b03c60ab6220423e300ab4f1a7. The saved state might be incompatible.[0m
+2026-11-26 12:03:30 [25,850ms] [Warning] [omnigibson.objects.usd_object] Object bush_frqici_0 was expected to have USD file hash 0827d6854be7240a09c869caeddf5027 but loaded with 65be04b03c60ab6220423e300ab4f1a7. The saved state might be incompatible.
+[33m[00:00:33.308] [WARNING] [omnigibson.objects.usd_object] Object bush_frqici_1 was expected to have USD file hash 0827d6854be7240a09c869caeddf5027 but loaded with 65be04b03c60ab6220423e300ab4f1a7. The saved state might be incompatible.[0m
+2026-11-26 12:03:30 [25,862ms] [Warning] [omnigibson.objects.usd_object] Object bush_frqici_1 was expected to have USD file hash 0827d6854be7240a09c869caeddf5027 but loaded with 65be04b03c60ab6220423e300ab4f1a7. The saved state might be incompatible.
+[33m[00:00:33.316] [WARNING] [omnigibson.objects.usd_object] Object bush_frqici_2 was expected to have USD file hash 0827d6854be7240a09c869caeddf5027 but loaded with 65be04b03c60ab6220423e300ab4f1a7. The saved state might be incompatible.[0m
+2026-11-26 12:03:30 [25,871ms] [Warning] [omnigibson.objects.usd_object] Object bush_frqici_2 was expected to have USD file hash 0827d6854be7240a09c869caeddf5027 but loaded with 65be04b03c60ab6220423e300ab4f1a7. The saved state might be incompatible.
+[33m[00:00:33.326] [WARNING] [omnigibson.objects.usd_object] Object bush_frqici_3 was expected to have USD file hash 0827d6854be7240a09c869caeddf5027 but loaded with 65be04b03c60ab6220423e300ab4f1a7. The saved state might be incompatible.[0m
+2026-11-26 12:03:30 [25,881ms] [Warning] [omnigibson.objects.usd_object] Object bush_frqici_3 was expected to have USD file hash 0827d6854be7240a09c869caeddf5027 but loaded with 65be04b03c60ab6220423e300ab4f1a7. The saved state might be incompatible.
+[33m[00:00:33.335] [WARNING] [omnigibson.objects.usd_object] Object bush_frqici_4 was expected to have USD file hash 0827d6854be7240a09c869caeddf5027 but loaded with 65be04b03c60ab6220423e300ab4f1a7. The saved state might be incompatible.[0m
+2026-11-26 12:03:30 [25,890ms] [Warning] [omnigibson.objects.usd_object] Object bush_frqici_4 was expected to have USD file hash 0827d6854be7240a09c869caeddf5027 but loaded with 65be04b03c60ab6220423e300ab4f1a7. The saved state might be incompatible.
+[33m[00:00:33.347] [WARNING] [omnigibson.objects.usd_object] Object bush_kjakgd_0 was expected to have USD file hash ddfa92527f28ec6aadeaa23d663178aa but loaded with 33a869e68f8433f9f8ad81397a6ed31d. The saved state might be incompatible.[0m
+2026-11-26 12:03:30 [25,902ms] [Warning] [omnigibson.objects.usd_object] Object bush_kjakgd_0 was expected to have USD file hash ddfa92527f28ec6aadeaa23d663178aa but loaded with 33a869e68f8433f9f8ad81397a6ed31d. The saved state might be incompatible.
+[33m[00:00:33.354] [WARNING] [omnigibson.objects.usd_object] Object bush_kjakgd_1 was expected to have USD file hash ddfa92527f28ec6aadeaa23d663178aa but loaded with 33a869e68f8433f9f8ad81397a6ed31d. The saved state might be incompatible.[0m
+2026-11-26 12:03:30 [25,909ms] [Warning] [omnigibson.objects.usd_object] Object bush_kjakgd_1 was expected to have USD file hash ddfa92527f28ec6aadeaa23d663178aa but loaded with 33a869e68f8433f9f8ad81397a6ed31d. The saved state might be incompatible.
+[33m[00:00:33.361] [WARNING] [omnigibson.objects.usd_object] Object bush_knspbi_0 was expected to have USD file hash bc0ed32a17da0958b11fe0f3c51b9f6d but loaded with f03890f4978291313b5773dd55e2ad6d. The saved state might be incompatible.[0m
+2026-11-26 12:03:30 [25,915ms] [Warning] [omnigibson.objects.usd_object] Object bush_knspbi_0 was expected to have USD file hash bc0ed32a17da0958b11fe0f3c51b9f6d but loaded with f03890f4978291313b5773dd55e2ad6d. The saved state might be incompatible.
+[33m[00:00:33.366] [WARNING] [omnigibson.objects.usd_object] Object bush_knspbi_1 was expected to have USD file hash bc0ed32a17da0958b11fe0f3c51b9f6d but loaded with f03890f4978291313b5773dd55e2ad6d. The saved state might be incompatible.[0m
+2026-11-26 12:03:30 [25,921ms] [Warning] [omnigibson.objects.usd_object] Object bush_knspbi_1 was expected to have USD file hash bc0ed32a17da0958b11fe0f3c51b9f6d but loaded with f03890f4978291313b5773dd55e2ad6d. The saved state might be incompatible.
+[33m[00:00:33.372] [WARNING] [omnigibson.objects.usd_object] Object bush_knspbi_2 was expected to have USD file hash bc0ed32a17da0958b11fe0f3c51b9f6d but loaded with f03890f4978291313b5773dd55e2ad6d. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [25,927ms] [Warning] [omnigibson.objects.usd_object] Object bush_knspbi_2 was expected to have USD file hash bc0ed32a17da0958b11fe0f3c51b9f6d but loaded with f03890f4978291313b5773dd55e2ad6d. The saved state might be incompatible.
+[33m[00:00:33.377] [WARNING] [omnigibson.objects.usd_object] Object bush_knspbi_3 was expected to have USD file hash bc0ed32a17da0958b11fe0f3c51b9f6d but loaded with f03890f4978291313b5773dd55e2ad6d. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [25,932ms] [Warning] [omnigibson.objects.usd_object] Object bush_knspbi_3 was expected to have USD file hash bc0ed32a17da0958b11fe0f3c51b9f6d but loaded with f03890f4978291313b5773dd55e2ad6d. The saved state might be incompatible.
+[33m[00:00:33.385] [WARNING] [omnigibson.objects.usd_object] Object bush_knspbi_4 was expected to have USD file hash bc0ed32a17da0958b11fe0f3c51b9f6d but loaded with f03890f4978291313b5773dd55e2ad6d. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [25,939ms] [Warning] [omnigibson.objects.usd_object] Object bush_knspbi_4 was expected to have USD file hash bc0ed32a17da0958b11fe0f3c51b9f6d but loaded with f03890f4978291313b5773dd55e2ad6d. The saved state might be incompatible.
+[33m[00:00:33.390] [WARNING] [omnigibson.objects.usd_object] Object bush_knspbi_5 was expected to have USD file hash bc0ed32a17da0958b11fe0f3c51b9f6d but loaded with f03890f4978291313b5773dd55e2ad6d. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [25,945ms] [Warning] [omnigibson.objects.usd_object] Object bush_knspbi_5 was expected to have USD file hash bc0ed32a17da0958b11fe0f3c51b9f6d but loaded with f03890f4978291313b5773dd55e2ad6d. The saved state might be incompatible.
+[33m[00:00:33.397] [WARNING] [omnigibson.objects.usd_object] Object bush_kyghri_0 was expected to have USD file hash 11b517c3bfca9a656242c5a4639ef9b5 but loaded with 8fa09b11b5002ac67144632ac50c49c5. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [25,951ms] [Warning] [omnigibson.objects.usd_object] Object bush_kyghri_0 was expected to have USD file hash 11b517c3bfca9a656242c5a4639ef9b5 but loaded with 8fa09b11b5002ac67144632ac50c49c5. The saved state might be incompatible.
+[33m[00:00:33.405] [WARNING] [omnigibson.objects.usd_object] Object bush_kyghri_1 was expected to have USD file hash 11b517c3bfca9a656242c5a4639ef9b5 but loaded with 8fa09b11b5002ac67144632ac50c49c5. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [25,959ms] [Warning] [omnigibson.objects.usd_object] Object bush_kyghri_1 was expected to have USD file hash 11b517c3bfca9a656242c5a4639ef9b5 but loaded with 8fa09b11b5002ac67144632ac50c49c5. The saved state might be incompatible.
+[33m[00:00:33.411] [WARNING] [omnigibson.objects.usd_object] Object bush_kyghri_2 was expected to have USD file hash 11b517c3bfca9a656242c5a4639ef9b5 but loaded with 8fa09b11b5002ac67144632ac50c49c5. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [25,965ms] [Warning] [omnigibson.objects.usd_object] Object bush_kyghri_2 was expected to have USD file hash 11b517c3bfca9a656242c5a4639ef9b5 but loaded with 8fa09b11b5002ac67144632ac50c49c5. The saved state might be incompatible.
+[33m[00:00:33.417] [WARNING] [omnigibson.objects.usd_object] Object bush_kyghri_3 was expected to have USD file hash 11b517c3bfca9a656242c5a4639ef9b5 but loaded with 8fa09b11b5002ac67144632ac50c49c5. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [25,971ms] [Warning] [omnigibson.objects.usd_object] Object bush_kyghri_3 was expected to have USD file hash 11b517c3bfca9a656242c5a4639ef9b5 but loaded with 8fa09b11b5002ac67144632ac50c49c5. The saved state might be incompatible.
+[33m[00:00:33.424] [WARNING] [omnigibson.objects.usd_object] Object bush_kyghri_4 was expected to have USD file hash 11b517c3bfca9a656242c5a4639ef9b5 but loaded with 8fa09b11b5002ac67144632ac50c49c5. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [25,978ms] [Warning] [omnigibson.objects.usd_object] Object bush_kyghri_4 was expected to have USD file hash 11b517c3bfca9a656242c5a4639ef9b5 but loaded with 8fa09b11b5002ac67144632ac50c49c5. The saved state might be incompatible.
+[33m[00:00:33.432] [WARNING] [omnigibson.objects.usd_object] Object bush_kyghri_5 was expected to have USD file hash 11b517c3bfca9a656242c5a4639ef9b5 but loaded with 8fa09b11b5002ac67144632ac50c49c5. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [25,986ms] [Warning] [omnigibson.objects.usd_object] Object bush_kyghri_5 was expected to have USD file hash 11b517c3bfca9a656242c5a4639ef9b5 but loaded with 8fa09b11b5002ac67144632ac50c49c5. The saved state might be incompatible.
+[33m[00:00:33.438] [WARNING] [omnigibson.objects.usd_object] Object bush_kyghri_6 was expected to have USD file hash 11b517c3bfca9a656242c5a4639ef9b5 but loaded with 8fa09b11b5002ac67144632ac50c49c5. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [25,993ms] [Warning] [omnigibson.objects.usd_object] Object bush_kyghri_6 was expected to have USD file hash 11b517c3bfca9a656242c5a4639ef9b5 but loaded with 8fa09b11b5002ac67144632ac50c49c5. The saved state might be incompatible.
+[33m[00:00:33.445] [WARNING] [omnigibson.objects.usd_object] Object bush_kyghri_7 was expected to have USD file hash 11b517c3bfca9a656242c5a4639ef9b5 but loaded with 8fa09b11b5002ac67144632ac50c49c5. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [26,000ms] [Warning] [omnigibson.objects.usd_object] Object bush_kyghri_7 was expected to have USD file hash 11b517c3bfca9a656242c5a4639ef9b5 but loaded with 8fa09b11b5002ac67144632ac50c49c5. The saved state might be incompatible.
+[33m[00:00:33.453] [WARNING] [omnigibson.objects.usd_object] Object bush_kyghri_8 was expected to have USD file hash 11b517c3bfca9a656242c5a4639ef9b5 but loaded with 8fa09b11b5002ac67144632ac50c49c5. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [26,008ms] [Warning] [omnigibson.objects.usd_object] Object bush_kyghri_8 was expected to have USD file hash 11b517c3bfca9a656242c5a4639ef9b5 but loaded with 8fa09b11b5002ac67144632ac50c49c5. The saved state might be incompatible.
+[33m[00:00:33.460] [WARNING] [omnigibson.objects.usd_object] Object bush_lfyqkj_0 was expected to have USD file hash 7b34166d6f969fb1895d1fe3a2c1d560 but loaded with 99fac5fbe6206ef28bf1512ec9bfa9b9. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [26,014ms] [Warning] [omnigibson.objects.usd_object] Object bush_lfyqkj_0 was expected to have USD file hash 7b34166d6f969fb1895d1fe3a2c1d560 but loaded with 99fac5fbe6206ef28bf1512ec9bfa9b9. The saved state might be incompatible.
+[33m[00:00:33.466] [WARNING] [omnigibson.objects.usd_object] Object bush_lfyqkj_1 was expected to have USD file hash 7b34166d6f969fb1895d1fe3a2c1d560 but loaded with 99fac5fbe6206ef28bf1512ec9bfa9b9. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [26,021ms] [Warning] [omnigibson.objects.usd_object] Object bush_lfyqkj_1 was expected to have USD file hash 7b34166d6f969fb1895d1fe3a2c1d560 but loaded with 99fac5fbe6206ef28bf1512ec9bfa9b9. The saved state might be incompatible.
+[33m[00:00:33.472] [WARNING] [omnigibson.objects.usd_object] Object bush_lfyqkj_2 was expected to have USD file hash 7b34166d6f969fb1895d1fe3a2c1d560 but loaded with 99fac5fbe6206ef28bf1512ec9bfa9b9. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [26,027ms] [Warning] [omnigibson.objects.usd_object] Object bush_lfyqkj_2 was expected to have USD file hash 7b34166d6f969fb1895d1fe3a2c1d560 but loaded with 99fac5fbe6206ef28bf1512ec9bfa9b9. The saved state might be incompatible.
+[33m[00:00:33.479] [WARNING] [omnigibson.objects.usd_object] Object bush_lfyqkj_3 was expected to have USD file hash 7b34166d6f969fb1895d1fe3a2c1d560 but loaded with 99fac5fbe6206ef28bf1512ec9bfa9b9. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [26,033ms] [Warning] [omnigibson.objects.usd_object] Object bush_lfyqkj_3 was expected to have USD file hash 7b34166d6f969fb1895d1fe3a2c1d560 but loaded with 99fac5fbe6206ef28bf1512ec9bfa9b9. The saved state might be incompatible.
+[33m[00:00:33.485] [WARNING] [omnigibson.objects.usd_object] Object bush_lfyqkj_4 was expected to have USD file hash 7b34166d6f969fb1895d1fe3a2c1d560 but loaded with 99fac5fbe6206ef28bf1512ec9bfa9b9. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [26,039ms] [Warning] [omnigibson.objects.usd_object] Object bush_lfyqkj_4 was expected to have USD file hash 7b34166d6f969fb1895d1fe3a2c1d560 but loaded with 99fac5fbe6206ef28bf1512ec9bfa9b9. The saved state might be incompatible.
+[33m[00:00:33.491] [WARNING] [omnigibson.objects.usd_object] Object bush_lfyqkj_5 was expected to have USD file hash 7b34166d6f969fb1895d1fe3a2c1d560 but loaded with 99fac5fbe6206ef28bf1512ec9bfa9b9. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [26,045ms] [Warning] [omnigibson.objects.usd_object] Object bush_lfyqkj_5 was expected to have USD file hash 7b34166d6f969fb1895d1fe3a2c1d560 but loaded with 99fac5fbe6206ef28bf1512ec9bfa9b9. The saved state might be incompatible.
+[33m[00:00:33.497] [WARNING] [omnigibson.objects.usd_object] Object bush_lfyqkj_6 was expected to have USD file hash 7b34166d6f969fb1895d1fe3a2c1d560 but loaded with 99fac5fbe6206ef28bf1512ec9bfa9b9. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [26,052ms] [Warning] [omnigibson.objects.usd_object] Object bush_lfyqkj_6 was expected to have USD file hash 7b34166d6f969fb1895d1fe3a2c1d560 but loaded with 99fac5fbe6206ef28bf1512ec9bfa9b9. The saved state might be incompatible.
+[33m[00:00:33.507] [WARNING] [omnigibson.objects.usd_object] Object bush_oedeqi_0 was expected to have USD file hash a82a770d6190d760516639e5b0aece2f but loaded with bccc28b7a68c14a604e017bdbb8358e8. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [26,062ms] [Warning] [omnigibson.objects.usd_object] Object bush_oedeqi_0 was expected to have USD file hash a82a770d6190d760516639e5b0aece2f but loaded with bccc28b7a68c14a604e017bdbb8358e8. The saved state might be incompatible.
+[33m[00:00:33.518] [WARNING] [omnigibson.objects.usd_object] Object bush_oedeqi_1 was expected to have USD file hash a82a770d6190d760516639e5b0aece2f but loaded with bccc28b7a68c14a604e017bdbb8358e8. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [26,073ms] [Warning] [omnigibson.objects.usd_object] Object bush_oedeqi_1 was expected to have USD file hash a82a770d6190d760516639e5b0aece2f but loaded with bccc28b7a68c14a604e017bdbb8358e8. The saved state might be incompatible.
+[33m[00:00:33.529] [WARNING] [omnigibson.objects.usd_object] Object bush_oedeqi_2 was expected to have USD file hash a82a770d6190d760516639e5b0aece2f but loaded with bccc28b7a68c14a604e017bdbb8358e8. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [26,084ms] [Warning] [omnigibson.objects.usd_object] Object bush_oedeqi_2 was expected to have USD file hash a82a770d6190d760516639e5b0aece2f but loaded with bccc28b7a68c14a604e017bdbb8358e8. The saved state might be incompatible.
+[33m[00:00:33.539] [WARNING] [omnigibson.objects.usd_object] Object bush_pjhpwk_0 was expected to have USD file hash 5bd0269bbebe6f74f669cf89d2b24340 but loaded with 7b40d9ae66d06ba384f51c59ce1b05e3. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [26,094ms] [Warning] [omnigibson.objects.usd_object] Object bush_pjhpwk_0 was expected to have USD file hash 5bd0269bbebe6f74f669cf89d2b24340 but loaded with 7b40d9ae66d06ba384f51c59ce1b05e3. The saved state might be incompatible.
+[33m[00:00:33.550] [WARNING] [omnigibson.objects.usd_object] Object bush_pjhpwk_1 was expected to have USD file hash 5bd0269bbebe6f74f669cf89d2b24340 but loaded with 7b40d9ae66d06ba384f51c59ce1b05e3. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [26,105ms] [Warning] [omnigibson.objects.usd_object] Object bush_pjhpwk_1 was expected to have USD file hash 5bd0269bbebe6f74f669cf89d2b24340 but loaded with 7b40d9ae66d06ba384f51c59ce1b05e3. The saved state might be incompatible.
+[33m[00:00:33.561] [WARNING] [omnigibson.objects.usd_object] Object bush_pjhpwk_2 was expected to have USD file hash 5bd0269bbebe6f74f669cf89d2b24340 but loaded with 7b40d9ae66d06ba384f51c59ce1b05e3. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [26,115ms] [Warning] [omnigibson.objects.usd_object] Object bush_pjhpwk_2 was expected to have USD file hash 5bd0269bbebe6f74f669cf89d2b24340 but loaded with 7b40d9ae66d06ba384f51c59ce1b05e3. The saved state might be incompatible.
+[33m[00:00:33.569] [WARNING] [omnigibson.objects.usd_object] Object bush_pjhpwk_3 was expected to have USD file hash 5bd0269bbebe6f74f669cf89d2b24340 but loaded with 7b40d9ae66d06ba384f51c59ce1b05e3. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [26,124ms] [Warning] [omnigibson.objects.usd_object] Object bush_pjhpwk_3 was expected to have USD file hash 5bd0269bbebe6f74f669cf89d2b24340 but loaded with 7b40d9ae66d06ba384f51c59ce1b05e3. The saved state might be incompatible.
+[33m[00:00:33.578] [WARNING] [omnigibson.objects.usd_object] Object bush_pjhpwk_4 was expected to have USD file hash 5bd0269bbebe6f74f669cf89d2b24340 but loaded with 7b40d9ae66d06ba384f51c59ce1b05e3. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [26,133ms] [Warning] [omnigibson.objects.usd_object] Object bush_pjhpwk_4 was expected to have USD file hash 5bd0269bbebe6f74f669cf89d2b24340 but loaded with 7b40d9ae66d06ba384f51c59ce1b05e3. The saved state might be incompatible.
+[33m[00:00:33.588] [WARNING] [omnigibson.objects.usd_object] Object bush_yhjhta_0 was expected to have USD file hash 941005ad0c8f4c879e196420ba3000b0 but loaded with 8fdc9eeb879e1e7cbb41e5be570e9aa6. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [26,143ms] [Warning] [omnigibson.objects.usd_object] Object bush_yhjhta_0 was expected to have USD file hash 941005ad0c8f4c879e196420ba3000b0 but loaded with 8fdc9eeb879e1e7cbb41e5be570e9aa6. The saved state might be incompatible.
+[33m[00:00:33.597] [WARNING] [omnigibson.objects.usd_object] Object bush_yhjhta_1 was expected to have USD file hash 941005ad0c8f4c879e196420ba3000b0 but loaded with 8fdc9eeb879e1e7cbb41e5be570e9aa6. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [26,151ms] [Warning] [omnigibson.objects.usd_object] Object bush_yhjhta_1 was expected to have USD file hash 941005ad0c8f4c879e196420ba3000b0 but loaded with 8fdc9eeb879e1e7cbb41e5be570e9aa6. The saved state might be incompatible.
+[33m[00:00:33.606] [WARNING] [omnigibson.objects.usd_object] Object bush_yhjhta_2 was expected to have USD file hash 941005ad0c8f4c879e196420ba3000b0 but loaded with 8fdc9eeb879e1e7cbb41e5be570e9aa6. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [26,160ms] [Warning] [omnigibson.objects.usd_object] Object bush_yhjhta_2 was expected to have USD file hash 941005ad0c8f4c879e196420ba3000b0 but loaded with 8fdc9eeb879e1e7cbb41e5be570e9aa6. The saved state might be incompatible.
+[33m[00:00:33.614] [WARNING] [omnigibson.objects.usd_object] Object bush_yhjhta_3 was expected to have USD file hash 941005ad0c8f4c879e196420ba3000b0 but loaded with 8fdc9eeb879e1e7cbb41e5be570e9aa6. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [26,168ms] [Warning] [omnigibson.objects.usd_object] Object bush_yhjhta_3 was expected to have USD file hash 941005ad0c8f4c879e196420ba3000b0 but loaded with 8fdc9eeb879e1e7cbb41e5be570e9aa6. The saved state might be incompatible.
+[33m[00:00:33.622] [WARNING] [omnigibson.objects.usd_object] Object bush_yhjhta_4 was expected to have USD file hash 941005ad0c8f4c879e196420ba3000b0 but loaded with 8fdc9eeb879e1e7cbb41e5be570e9aa6. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [26,177ms] [Warning] [omnigibson.objects.usd_object] Object bush_yhjhta_4 was expected to have USD file hash 941005ad0c8f4c879e196420ba3000b0 but loaded with 8fdc9eeb879e1e7cbb41e5be570e9aa6. The saved state might be incompatible.
+[33m[00:00:33.630] [WARNING] [omnigibson.objects.usd_object] Object bush_yhjhta_5 was expected to have USD file hash 941005ad0c8f4c879e196420ba3000b0 but loaded with 8fdc9eeb879e1e7cbb41e5be570e9aa6. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [26,185ms] [Warning] [omnigibson.objects.usd_object] Object bush_yhjhta_5 was expected to have USD file hash 941005ad0c8f4c879e196420ba3000b0 but loaded with 8fdc9eeb879e1e7cbb41e5be570e9aa6. The saved state might be incompatible.
+[33m[00:00:33.639] [WARNING] [omnigibson.objects.usd_object] Object bush_yhjhta_6 was expected to have USD file hash 941005ad0c8f4c879e196420ba3000b0 but loaded with 8fdc9eeb879e1e7cbb41e5be570e9aa6. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [26,194ms] [Warning] [omnigibson.objects.usd_object] Object bush_yhjhta_6 was expected to have USD file hash 941005ad0c8f4c879e196420ba3000b0 but loaded with 8fdc9eeb879e1e7cbb41e5be570e9aa6. The saved state might be incompatible.
+[33m[00:00:33.653] [WARNING] [omnigibson.objects.usd_object] Object car_xxsgpq_0 was expected to have USD file hash 0cd993eadd563bb4d7566d6aa2f67e05 but loaded with b21d975d126db866ca932800a5e04d43. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [26,208ms] [Warning] [omnigibson.objects.usd_object] Object car_xxsgpq_0 was expected to have USD file hash 0cd993eadd563bb4d7566d6aa2f67e05 but loaded with b21d975d126db866ca932800a5e04d43. The saved state might be incompatible.
+[33m[00:00:33.699] [WARNING] [omnigibson.objects.usd_object] Object charcoal_grill_crdaeu_0 was expected to have USD file hash 12597746435ceb178b5cc46ca59f16a3 but loaded with 43d584ad5f5d4a23a4989cdc9b7d6cc6. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [26,254ms] [Warning] [omnigibson.objects.usd_object] Object charcoal_grill_crdaeu_0 was expected to have USD file hash 12597746435ceb178b5cc46ca59f16a3 but loaded with 43d584ad5f5d4a23a4989cdc9b7d6cc6. The saved state might be incompatible.
+[33m[00:00:33.757] [WARNING] [omnigibson.objects.usd_object] Object countertop_tpuwys_0 was expected to have USD file hash da4aba690baf7dfca8d81c1bc1b6de83 but loaded with fa88a279198d5582a9c8ffab6450e6ed. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [26,311ms] [Warning] [omnigibson.objects.usd_object] Object countertop_tpuwys_0 was expected to have USD file hash da4aba690baf7dfca8d81c1bc1b6de83 but loaded with fa88a279198d5582a9c8ffab6450e6ed. The saved state might be incompatible.
+[33m[00:00:33.768] [WARNING] [omnigibson.objects.usd_object] Object dishwasher_ynrhuk_0 was expected to have USD file hash bf8ebfa4f2eddcbf9df621f5aa74f752 but loaded with de386a22748fc38f68836f49d9006129. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [26,323ms] [Warning] [omnigibson.objects.usd_object] Object dishwasher_ynrhuk_0 was expected to have USD file hash bf8ebfa4f2eddcbf9df621f5aa74f752 but loaded with de386a22748fc38f68836f49d9006129. The saved state might be incompatible.
+[33m[00:00:33.800] [WARNING] [omnigibson.objects.usd_object] Object fridge_petcxr_0 was expected to have USD file hash d83d5bc62bc0e59923984dd17680385c but loaded with 5e1cd8d29a9aa4fbcad48c7ca50f7156. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [26,355ms] [Warning] [omnigibson.objects.usd_object] Object fridge_petcxr_0 was expected to have USD file hash d83d5bc62bc0e59923984dd17680385c but loaded with 5e1cd8d29a9aa4fbcad48c7ca50f7156. The saved state might be incompatible.
+[33m[00:00:33.838] [WARNING] [omnigibson.objects.usd_object] Object microwave_hjjxmi_0 was expected to have USD file hash d4f14541ccd2e3716e66022ef7a71ae6 but loaded with 5c2589635156d13380562f613e84785f. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [26,393ms] [Warning] [omnigibson.objects.usd_object] Object microwave_hjjxmi_0 was expected to have USD file hash d4f14541ccd2e3716e66022ef7a71ae6 but loaded with 5c2589635156d13380562f613e84785f. The saved state might be incompatible.
+[33m[00:00:33.865] [WARNING] [omnigibson.objects.usd_object] Object oven_ffitak_0 was expected to have USD file hash 97058ea0b9027ae350a298f453ed87e8 but loaded with 7a5642ca116c65bd3f3742f0ae704c4f. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [26,420ms] [Warning] [omnigibson.objects.usd_object] Object oven_ffitak_0 was expected to have USD file hash 97058ea0b9027ae350a298f453ed87e8 but loaded with 7a5642ca116c65bd3f3742f0ae704c4f. The saved state might be incompatible.
+[33m[00:00:33.899] [WARNING] [omnigibson.objects.usd_object] Object tree_dyymaq_0 was expected to have USD file hash c7cec21fbed88a8afd1e4e62bb7dc741 but loaded with 78e1d7bfe4704d4c6969714e988cafdd. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [26,454ms] [Warning] [omnigibson.objects.usd_object] Object tree_dyymaq_0 was expected to have USD file hash c7cec21fbed88a8afd1e4e62bb7dc741 but loaded with 78e1d7bfe4704d4c6969714e988cafdd. The saved state might be incompatible.
+[33m[00:00:33.914] [WARNING] [omnigibson.objects.usd_object] Object tree_dyymaq_1 was expected to have USD file hash c7cec21fbed88a8afd1e4e62bb7dc741 but loaded with 78e1d7bfe4704d4c6969714e988cafdd. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [26,468ms] [Warning] [omnigibson.objects.usd_object] Object tree_dyymaq_1 was expected to have USD file hash c7cec21fbed88a8afd1e4e62bb7dc741 but loaded with 78e1d7bfe4704d4c6969714e988cafdd. The saved state might be incompatible.
+[33m[00:00:33.927] [WARNING] [omnigibson.objects.usd_object] Object tree_dyymaq_2 was expected to have USD file hash c7cec21fbed88a8afd1e4e62bb7dc741 but loaded with 78e1d7bfe4704d4c6969714e988cafdd. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [26,482ms] [Warning] [omnigibson.objects.usd_object] Object tree_dyymaq_2 was expected to have USD file hash c7cec21fbed88a8afd1e4e62bb7dc741 but loaded with 78e1d7bfe4704d4c6969714e988cafdd. The saved state might be incompatible.
+[33m[00:00:33.939] [WARNING] [omnigibson.objects.usd_object] Object tree_flkzbo_0 was expected to have USD file hash 650416c499a34f8b011c305ddc24f886 but loaded with 979c65c7e0bc0b79b5199f09e64fbd50. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [26,494ms] [Warning] [omnigibson.objects.usd_object] Object tree_flkzbo_0 was expected to have USD file hash 650416c499a34f8b011c305ddc24f886 but loaded with 979c65c7e0bc0b79b5199f09e64fbd50. The saved state might be incompatible.
+[33m[00:00:33.947] [WARNING] [omnigibson.objects.usd_object] Object tree_flkzbo_1 was expected to have USD file hash 650416c499a34f8b011c305ddc24f886 but loaded with 979c65c7e0bc0b79b5199f09e64fbd50. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [26,502ms] [Warning] [omnigibson.objects.usd_object] Object tree_flkzbo_1 was expected to have USD file hash 650416c499a34f8b011c305ddc24f886 but loaded with 979c65c7e0bc0b79b5199f09e64fbd50. The saved state might be incompatible.
+[33m[00:00:33.955] [WARNING] [omnigibson.objects.usd_object] Object tree_flkzbo_2 was expected to have USD file hash 650416c499a34f8b011c305ddc24f886 but loaded with 979c65c7e0bc0b79b5199f09e64fbd50. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [26,510ms] [Warning] [omnigibson.objects.usd_object] Object tree_flkzbo_2 was expected to have USD file hash 650416c499a34f8b011c305ddc24f886 but loaded with 979c65c7e0bc0b79b5199f09e64fbd50. The saved state might be incompatible.
+[33m[00:00:33.967] [WARNING] [omnigibson.objects.usd_object] Object tree_gmzozb_0 was expected to have USD file hash 749113048d1c2fd5b0a941d239ed92cf but loaded with f83439015a0a26c7639448abb38ff24c. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [26,521ms] [Warning] [omnigibson.objects.usd_object] Object tree_gmzozb_0 was expected to have USD file hash 749113048d1c2fd5b0a941d239ed92cf but loaded with f83439015a0a26c7639448abb38ff24c. The saved state might be incompatible.
+[33m[00:00:33.975] [WARNING] [omnigibson.objects.usd_object] Object tree_gmzozb_1 was expected to have USD file hash 749113048d1c2fd5b0a941d239ed92cf but loaded with f83439015a0a26c7639448abb38ff24c. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [26,530ms] [Warning] [omnigibson.objects.usd_object] Object tree_gmzozb_1 was expected to have USD file hash 749113048d1c2fd5b0a941d239ed92cf but loaded with f83439015a0a26c7639448abb38ff24c. The saved state might be incompatible.
+[33m[00:00:33.984] [WARNING] [omnigibson.objects.usd_object] Object tree_gmzozb_2 was expected to have USD file hash 749113048d1c2fd5b0a941d239ed92cf but loaded with f83439015a0a26c7639448abb38ff24c. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [26,538ms] [Warning] [omnigibson.objects.usd_object] Object tree_gmzozb_2 was expected to have USD file hash 749113048d1c2fd5b0a941d239ed92cf but loaded with f83439015a0a26c7639448abb38ff24c. The saved state might be incompatible.
+[33m[00:00:33.993] [WARNING] [omnigibson.objects.usd_object] Object tree_gmzozb_3 was expected to have USD file hash 749113048d1c2fd5b0a941d239ed92cf but loaded with f83439015a0a26c7639448abb38ff24c. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [26,548ms] [Warning] [omnigibson.objects.usd_object] Object tree_gmzozb_3 was expected to have USD file hash 749113048d1c2fd5b0a941d239ed92cf but loaded with f83439015a0a26c7639448abb38ff24c. The saved state might be incompatible.
+[33m[00:00:34.002] [WARNING] [omnigibson.objects.usd_object] Object tree_gmzozb_4 was expected to have USD file hash 749113048d1c2fd5b0a941d239ed92cf but loaded with f83439015a0a26c7639448abb38ff24c. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [26,557ms] [Warning] [omnigibson.objects.usd_object] Object tree_gmzozb_4 was expected to have USD file hash 749113048d1c2fd5b0a941d239ed92cf but loaded with f83439015a0a26c7639448abb38ff24c. The saved state might be incompatible.
+[33m[00:00:34.011] [WARNING] [omnigibson.objects.usd_object] Object tree_rrhqpw_0 was expected to have USD file hash 20bdea452dc69903e10b86b35e9acd82 but loaded with 373e4aa421026c609eebed728dc5b0d9. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [26,566ms] [Warning] [omnigibson.objects.usd_object] Object tree_rrhqpw_0 was expected to have USD file hash 20bdea452dc69903e10b86b35e9acd82 but loaded with 373e4aa421026c609eebed728dc5b0d9. The saved state might be incompatible.
+[33m[00:00:34.018] [WARNING] [omnigibson.objects.usd_object] Object tree_rrhqpw_1 was expected to have USD file hash 20bdea452dc69903e10b86b35e9acd82 but loaded with 373e4aa421026c609eebed728dc5b0d9. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [26,573ms] [Warning] [omnigibson.objects.usd_object] Object tree_rrhqpw_1 was expected to have USD file hash 20bdea452dc69903e10b86b35e9acd82 but loaded with 373e4aa421026c609eebed728dc5b0d9. The saved state might be incompatible.
+[33m[00:00:34.026] [WARNING] [omnigibson.objects.usd_object] Object tree_rrhqpw_2 was expected to have USD file hash 20bdea452dc69903e10b86b35e9acd82 but loaded with 373e4aa421026c609eebed728dc5b0d9. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [26,580ms] [Warning] [omnigibson.objects.usd_object] Object tree_rrhqpw_2 was expected to have USD file hash 20bdea452dc69903e10b86b35e9acd82 but loaded with 373e4aa421026c609eebed728dc5b0d9. The saved state might be incompatible.
+[33m[00:00:34.035] [WARNING] [omnigibson.objects.usd_object] Object tree_rrhqpw_3 was expected to have USD file hash 20bdea452dc69903e10b86b35e9acd82 but loaded with 373e4aa421026c609eebed728dc5b0d9. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [26,589ms] [Warning] [omnigibson.objects.usd_object] Object tree_rrhqpw_3 was expected to have USD file hash 20bdea452dc69903e10b86b35e9acd82 but loaded with 373e4aa421026c609eebed728dc5b0d9. The saved state might be incompatible.
+[33m[00:00:34.043] [WARNING] [omnigibson.objects.usd_object] Object tree_rrhqpw_4 was expected to have USD file hash 20bdea452dc69903e10b86b35e9acd82 but loaded with 373e4aa421026c609eebed728dc5b0d9. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [26,597ms] [Warning] [omnigibson.objects.usd_object] Object tree_rrhqpw_4 was expected to have USD file hash 20bdea452dc69903e10b86b35e9acd82 but loaded with 373e4aa421026c609eebed728dc5b0d9. The saved state might be incompatible.
+[33m[00:00:34.050] [WARNING] [omnigibson.objects.usd_object] Object tree_rrhqpw_5 was expected to have USD file hash 20bdea452dc69903e10b86b35e9acd82 but loaded with 373e4aa421026c609eebed728dc5b0d9. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [26,605ms] [Warning] [omnigibson.objects.usd_object] Object tree_rrhqpw_5 was expected to have USD file hash 20bdea452dc69903e10b86b35e9acd82 but loaded with 373e4aa421026c609eebed728dc5b0d9. The saved state might be incompatible.
+[33m[00:00:34.060] [WARNING] [omnigibson.objects.usd_object] Object tree_wtyipq_0 was expected to have USD file hash 5868d78ff6cb31ec3d9e08f27765c95c but loaded with ce3d91dc2e28c852028e0aa021b77373. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [26,614ms] [Warning] [omnigibson.objects.usd_object] Object tree_wtyipq_0 was expected to have USD file hash 5868d78ff6cb31ec3d9e08f27765c95c but loaded with ce3d91dc2e28c852028e0aa021b77373. The saved state might be incompatible.
+[33m[00:00:34.068] [WARNING] [omnigibson.objects.usd_object] Object tree_wtyipq_1 was expected to have USD file hash 5868d78ff6cb31ec3d9e08f27765c95c but loaded with ce3d91dc2e28c852028e0aa021b77373. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [26,622ms] [Warning] [omnigibson.objects.usd_object] Object tree_wtyipq_1 was expected to have USD file hash 5868d78ff6cb31ec3d9e08f27765c95c but loaded with ce3d91dc2e28c852028e0aa021b77373. The saved state might be incompatible.
+[33m[00:00:34.075] [WARNING] [omnigibson.objects.usd_object] Object tree_wtyipq_2 was expected to have USD file hash 5868d78ff6cb31ec3d9e08f27765c95c but loaded with ce3d91dc2e28c852028e0aa021b77373. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [26,630ms] [Warning] [omnigibson.objects.usd_object] Object tree_wtyipq_2 was expected to have USD file hash 5868d78ff6cb31ec3d9e08f27765c95c but loaded with ce3d91dc2e28c852028e0aa021b77373. The saved state might be incompatible.
+[33m[00:00:34.084] [WARNING] [omnigibson.objects.usd_object] Object tree_wtyipq_3 was expected to have USD file hash 5868d78ff6cb31ec3d9e08f27765c95c but loaded with ce3d91dc2e28c852028e0aa021b77373. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [26,638ms] [Warning] [omnigibson.objects.usd_object] Object tree_wtyipq_3 was expected to have USD file hash 5868d78ff6cb31ec3d9e08f27765c95c but loaded with ce3d91dc2e28c852028e0aa021b77373. The saved state might be incompatible.
+[33m[00:00:34.091] [WARNING] [omnigibson.objects.usd_object] Object tree_wtyipq_4 was expected to have USD file hash 5868d78ff6cb31ec3d9e08f27765c95c but loaded with ce3d91dc2e28c852028e0aa021b77373. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [26,645ms] [Warning] [omnigibson.objects.usd_object] Object tree_wtyipq_4 was expected to have USD file hash 5868d78ff6cb31ec3d9e08f27765c95c but loaded with ce3d91dc2e28c852028e0aa021b77373. The saved state might be incompatible.
+[33m[00:00:34.099] [WARNING] [omnigibson.objects.usd_object] Object tree_wtyipq_5 was expected to have USD file hash 5868d78ff6cb31ec3d9e08f27765c95c but loaded with ce3d91dc2e28c852028e0aa021b77373. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [26,654ms] [Warning] [omnigibson.objects.usd_object] Object tree_wtyipq_5 was expected to have USD file hash 5868d78ff6cb31ec3d9e08f27765c95c but loaded with ce3d91dc2e28c852028e0aa021b77373. The saved state might be incompatible.
+[33m[00:00:34.107] [WARNING] [omnigibson.objects.usd_object] Object tree_wtyipq_6 was expected to have USD file hash 5868d78ff6cb31ec3d9e08f27765c95c but loaded with ce3d91dc2e28c852028e0aa021b77373. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [26,661ms] [Warning] [omnigibson.objects.usd_object] Object tree_wtyipq_6 was expected to have USD file hash 5868d78ff6cb31ec3d9e08f27765c95c but loaded with ce3d91dc2e28c852028e0aa021b77373. The saved state might be incompatible.
+[33m[00:00:34.115] [WARNING] [omnigibson.objects.usd_object] Object tree_wtyipq_7 was expected to have USD file hash 5868d78ff6cb31ec3d9e08f27765c95c but loaded with ce3d91dc2e28c852028e0aa021b77373. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [26,669ms] [Warning] [omnigibson.objects.usd_object] Object tree_wtyipq_7 was expected to have USD file hash 5868d78ff6cb31ec3d9e08f27765c95c but loaded with ce3d91dc2e28c852028e0aa021b77373. The saved state might be incompatible.
+[33m[00:00:34.123] [WARNING] [omnigibson.objects.usd_object] Object tree_wtyipq_8 was expected to have USD file hash 5868d78ff6cb31ec3d9e08f27765c95c but loaded with ce3d91dc2e28c852028e0aa021b77373. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [26,678ms] [Warning] [omnigibson.objects.usd_object] Object tree_wtyipq_8 was expected to have USD file hash 5868d78ff6cb31ec3d9e08f27765c95c but loaded with ce3d91dc2e28c852028e0aa021b77373. The saved state might be incompatible.
+[33m[00:00:34.130] [WARNING] [omnigibson.objects.usd_object] Object wall_nail_wlnail_1 was expected to have USD file hash b13640ddca0b3570656c5e120a6da059 but loaded with 2fc20581821c1d47fff04bddf4ccf1c5. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [26,685ms] [Warning] [omnigibson.objects.usd_object] Object wall_nail_wlnail_1 was expected to have USD file hash b13640ddca0b3570656c5e120a6da059 but loaded with 2fc20581821c1d47fff04bddf4ccf1c5. The saved state might be incompatible.
+[33m[00:00:34.143] [WARNING] [omnigibson.objects.usd_object] Object wood_fireplace_gpnsij_0 was expected to have USD file hash d797382fdee0780cf9e7cf822d7bc824 but loaded with 4156726f54ba2c5cf87e3b232bd831fc. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [26,698ms] [Warning] [omnigibson.objects.usd_object] Object wood_fireplace_gpnsij_0 was expected to have USD file hash d797382fdee0780cf9e7cf822d7bc824 but loaded with 4156726f54ba2c5cf87e3b232bd831fc. The saved state might be incompatible.
+[33m[00:00:34.170] [WARNING] [omnigibson.objects.usd_object] Object bar_byvbuc_0 was expected to have USD file hash 095d92fea41b6b33cbb3070538a28b5a but loaded with 7cb62dd68d912efebd29c51a0b099a65. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [26,724ms] [Warning] [omnigibson.objects.usd_object] Object bar_byvbuc_0 was expected to have USD file hash 095d92fea41b6b33cbb3070538a28b5a but loaded with 7cb62dd68d912efebd29c51a0b099a65. The saved state might be incompatible.
+[33m[00:00:34.183] [WARNING] [omnigibson.objects.usd_object] Object burner_mdanhg_0 was expected to have USD file hash f85e9a7f5de5b91e25341137a775c302 but loaded with 9671ae5bb4fdfc8bc2f4bd5d3adc5036. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [26,737ms] [Warning] [omnigibson.objects.usd_object] Object burner_mdanhg_0 was expected to have USD file hash f85e9a7f5de5b91e25341137a775c302 but loaded with 9671ae5bb4fdfc8bc2f4bd5d3adc5036. The saved state might be incompatible.
+[33m[00:00:34.209] [WARNING] [omnigibson.objects.usd_object] Object shelf_vanltx_0 was expected to have USD file hash 647e7dbd099d323784d0490abfae4eac but loaded with 7b58181a20ab3b3d2ab22950429afe06. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [26,763ms] [Warning] [omnigibson.objects.usd_object] Object shelf_vanltx_0 was expected to have USD file hash 647e7dbd099d323784d0490abfae4eac but loaded with 7b58181a20ab3b3d2ab22950429afe06. The saved state might be incompatible.
+[33m[00:00:34.224] [WARNING] [omnigibson.objects.usd_object] Object breakfast_table_xftrki_0 was expected to have USD file hash 3c6a214cdeb686e70120fa3115c65c97 but loaded with 1cfc68e55ef1ae14a2205da4fc6314cc. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [26,778ms] [Warning] [omnigibson.objects.usd_object] Object breakfast_table_xftrki_0 was expected to have USD file hash 3c6a214cdeb686e70120fa3115c65c97 but loaded with 1cfc68e55ef1ae14a2205da4fc6314cc. The saved state might be incompatible.
+[33m[00:00:34.232] [WARNING] [omnigibson.objects.usd_object] Object coffee_table_koagbh_0 was expected to have USD file hash e461f59150bdc5b675a3b025c7b4e7ee but loaded with f8de284489882c2c6467cb39f543909f. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [26,787ms] [Warning] [omnigibson.objects.usd_object] Object coffee_table_koagbh_0 was expected to have USD file hash e461f59150bdc5b675a3b025c7b4e7ee but loaded with f8de284489882c2c6467cb39f543909f. The saved state might be incompatible.
+[33m[00:00:34.252] [WARNING] [omnigibson.objects.usd_object] Object garden_chair_cottya_0 was expected to have USD file hash 361863b2b7c149379ec4d07cebc720b4 but loaded with e64c147161c9dc653136c4dc0900d4c6. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [26,806ms] [Warning] [omnigibson.objects.usd_object] Object garden_chair_cottya_0 was expected to have USD file hash 361863b2b7c149379ec4d07cebc720b4 but loaded with e64c147161c9dc653136c4dc0900d4c6. The saved state might be incompatible.
+[33m[00:00:34.282] [WARNING] [omnigibson.objects.usd_object] Object garden_chair_cottya_1 was expected to have USD file hash 361863b2b7c149379ec4d07cebc720b4 but loaded with e64c147161c9dc653136c4dc0900d4c6. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [26,837ms] [Warning] [omnigibson.objects.usd_object] Object garden_chair_cottya_1 was expected to have USD file hash 361863b2b7c149379ec4d07cebc720b4 but loaded with e64c147161c9dc653136c4dc0900d4c6. The saved state might be incompatible.
+[33m[00:00:34.314] [WARNING] [omnigibson.objects.usd_object] Object garden_chair_cottya_2 was expected to have USD file hash 361863b2b7c149379ec4d07cebc720b4 but loaded with e64c147161c9dc653136c4dc0900d4c6. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [26,868ms] [Warning] [omnigibson.objects.usd_object] Object garden_chair_cottya_2 was expected to have USD file hash 361863b2b7c149379ec4d07cebc720b4 but loaded with e64c147161c9dc653136c4dc0900d4c6. The saved state might be incompatible.
+[33m[00:00:34.344] [WARNING] [omnigibson.objects.usd_object] Object garden_chair_lraplz_0 was expected to have USD file hash ec121342bf420f1a13524bde771dda15 but loaded with 34ee14edc2bb5f2c2b201a258f55461f. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [26,898ms] [Warning] [omnigibson.objects.usd_object] Object garden_chair_lraplz_0 was expected to have USD file hash ec121342bf420f1a13524bde771dda15 but loaded with 34ee14edc2bb5f2c2b201a258f55461f. The saved state might be incompatible.
+[33m[00:00:34.367] [WARNING] [omnigibson.objects.usd_object] Object standing_mirror_wwkuuf_0 was expected to have USD file hash f42a7d4cdb6c160f77faafaed7e6c12d but loaded with df3ee0c460b572663831d6b0378ffcd4. The saved state might be incompatible.[0m
+2026-11-26 12:03:31 [26,921ms] [Warning] [omnigibson.objects.usd_object] Object standing_mirror_wwkuuf_0 was expected to have USD file hash f42a7d4cdb6c160f77faafaed7e6c12d but loaded with df3ee0c460b572663831d6b0378ffcd4. The saved state might be incompatible.
+[33m[00:00:34.381] [WARNING] [omnigibson.objects.usd_object] Object straight_chair_hgunnf_0 was expected to have USD file hash 7b7ec63d953cba350c0d1727bba2421e but loaded with 3e01644654ea4f9ebb2bf6351a6e9b84. The saved state might be incompatible.[0m
+2026-11-26 12:03:32 [26,935ms] [Warning] [omnigibson.objects.usd_object] Object straight_chair_hgunnf_0 was expected to have USD file hash 7b7ec63d953cba350c0d1727bba2421e but loaded with 3e01644654ea4f9ebb2bf6351a6e9b84. The saved state might be incompatible.
+[33m[00:00:34.405] [WARNING] [omnigibson.objects.usd_object] Object straight_chair_uofiqj_0 was expected to have USD file hash 1142004608ed16c041c0c264e6eb74a5 but loaded with aa7e0e526a4ea938c2c0ef621050d531. The saved state might be incompatible.[0m
+2026-11-26 12:03:32 [26,959ms] [Warning] [omnigibson.objects.usd_object] Object straight_chair_uofiqj_0 was expected to have USD file hash 1142004608ed16c041c0c264e6eb74a5 but loaded with aa7e0e526a4ea938c2c0ef621050d531. The saved state might be incompatible.
+[33m[00:00:34.425] [WARNING] [omnigibson.objects.usd_object] Object straight_chair_uofiqj_1 was expected to have USD file hash 1142004608ed16c041c0c264e6eb74a5 but loaded with aa7e0e526a4ea938c2c0ef621050d531. The saved state might be incompatible.[0m
+2026-11-26 12:03:32 [26,979ms] [Warning] [omnigibson.objects.usd_object] Object straight_chair_uofiqj_1 was expected to have USD file hash 1142004608ed16c041c0c264e6eb74a5 but loaded with aa7e0e526a4ea938c2c0ef621050d531. The saved state might be incompatible.
+[33m[00:00:34.446] [WARNING] [omnigibson.objects.usd_object] Object straight_chair_zdhnyg_0 was expected to have USD file hash a1e17c47ea4dd146449fbe05d7bc095a but loaded with 2b3d9436e1ef56a22ac075724db4025f. The saved state might be incompatible.[0m
+2026-11-26 12:03:32 [27,000ms] [Warning] [omnigibson.objects.usd_object] Object straight_chair_zdhnyg_0 was expected to have USD file hash a1e17c47ea4dd146449fbe05d7bc095a but loaded with 2b3d9436e1ef56a22ac075724db4025f. The saved state might be incompatible.
+[33m[00:00:34.463] [WARNING] [omnigibson.objects.usd_object] Object bar_egwapq_0 was expected to have USD file hash fa31d04ec2beb2ccd5b8f4813360d422 but loaded with 09151c26c9bc573844927022579227ff. The saved state might be incompatible.[0m
+2026-11-26 12:03:32 [27,018ms] [Warning] [omnigibson.objects.usd_object] Object bar_egwapq_0 was expected to have USD file hash fa31d04ec2beb2ccd5b8f4813360d422 but loaded with 09151c26c9bc573844927022579227ff. The saved state might be incompatible.
+[33m[00:00:34.474] [WARNING] [omnigibson.objects.usd_object] Object bottom_cabinet_rhdbzv_0 was expected to have USD file hash 895d45486bbe4484676204b9e2da9f9b but loaded with b9e6a1bd26653b9bc401dccf0ee98d28. The saved state might be incompatible.[0m
+2026-11-26 12:03:32 [27,029ms] [Warning] [omnigibson.objects.usd_object] Object bottom_cabinet_rhdbzv_0 was expected to have USD file hash 895d45486bbe4484676204b9e2da9f9b but loaded with b9e6a1bd26653b9bc401dccf0ee98d28. The saved state might be incompatible.
+[33m[00:00:34.491] [WARNING] [omnigibson.objects.usd_object] Object ceilings_alydei_0 was expected to have USD file hash 86e365b8fb102d702c6505cd28459c6b but loaded with 56e7e62cff18ad6b8e77246499872ea4. The saved state might be incompatible.[0m
+2026-11-26 12:03:32 [27,045ms] [Warning] [omnigibson.objects.usd_object] Object ceilings_alydei_0 was expected to have USD file hash 86e365b8fb102d702c6505cd28459c6b but loaded with 56e7e62cff18ad6b8e77246499872ea4. The saved state might be incompatible.
+[33m[00:00:34.496] [WARNING] [omnigibson.objects.usd_object] Object ceilings_aoekre_0 was expected to have USD file hash fed445c055bd7da4df963a2455755786 but loaded with 615f1b8cea8223aa4e0d302afd7b01b9. The saved state might be incompatible.[0m
+2026-11-26 12:03:32 [27,050ms] [Warning] [omnigibson.objects.usd_object] Object ceilings_aoekre_0 was expected to have USD file hash fed445c055bd7da4df963a2455755786 but loaded with 615f1b8cea8223aa4e0d302afd7b01b9. The saved state might be incompatible.
+[33m[00:00:34.501] [WARNING] [omnigibson.objects.usd_object] Object ceilings_feolie_0 was expected to have USD file hash 0c8c59ac8c8af78b9d8eec93e762df12 but loaded with 68e69fbff7f9efa4daa1de44fa21c0ef. The saved state might be incompatible.[0m
+2026-11-26 12:03:32 [27,055ms] [Warning] [omnigibson.objects.usd_object] Object ceilings_feolie_0 was expected to have USD file hash 0c8c59ac8c8af78b9d8eec93e762df12 but loaded with 68e69fbff7f9efa4daa1de44fa21c0ef. The saved state might be incompatible.
+[33m[00:00:34.506] [WARNING] [omnigibson.objects.usd_object] Object ceilings_isizwh_0 was expected to have USD file hash d94c0f06b0244d1f69d59096d0a0ead6 but loaded with a39080e481a83b8c6b5a327eb10a8986. The saved state might be incompatible.[0m
+2026-11-26 12:03:32 [27,061ms] [Warning] [omnigibson.objects.usd_object] Object ceilings_isizwh_0 was expected to have USD file hash d94c0f06b0244d1f69d59096d0a0ead6 but loaded with a39080e481a83b8c6b5a327eb10a8986. The saved state might be incompatible.
+[33m[00:00:34.513] [WARNING] [omnigibson.objects.usd_object] Object ceilings_kbxtoc_0 was expected to have USD file hash 308be41b758fc0ca3f8ac8e31ce37d86 but loaded with 8f8887b45a7032f0fb8643e83d21619f. The saved state might be incompatible.[0m
+2026-11-26 12:03:32 [27,067ms] [Warning] [omnigibson.objects.usd_object] Object ceilings_kbxtoc_0 was expected to have USD file hash 308be41b758fc0ca3f8ac8e31ce37d86 but loaded with 8f8887b45a7032f0fb8643e83d21619f. The saved state might be incompatible.
+[33m[00:00:34.519] [WARNING] [omnigibson.objects.usd_object] Object ceilings_sbkyof_0 was expected to have USD file hash 46c82d22b374f34f5b527f708c1c355b but loaded with be0d3ca589fd7db95aca7a0dc7c10e54. The saved state might be incompatible.[0m
+2026-11-26 12:03:32 [27,074ms] [Warning] [omnigibson.objects.usd_object] Object ceilings_sbkyof_0 was expected to have USD file hash 46c82d22b374f34f5b527f708c1c355b but loaded with be0d3ca589fd7db95aca7a0dc7c10e54. The saved state might be incompatible.
+[33m[00:00:34.525] [WARNING] [omnigibson.objects.usd_object] Object ceilings_vkfllw_0 was expected to have USD file hash 9a9b27c732cc2d0cee5ece6550efee5b but loaded with b84b5d46b6bfea5e8493c497a71df639. The saved state might be incompatible.[0m
+2026-11-26 12:03:32 [27,080ms] [Warning] [omnigibson.objects.usd_object] Object ceilings_vkfllw_0 was expected to have USD file hash 9a9b27c732cc2d0cee5ece6550efee5b but loaded with b84b5d46b6bfea5e8493c497a71df639. The saved state might be incompatible.
+[33m[00:00:34.533] [WARNING] [omnigibson.objects.usd_object] Object decorative_sign_hgonwj_0 was expected to have USD file hash 97e453ea122521909d3b30c306a76c63 but loaded with b3173bb379725a4e879e71cc29125f1b. The saved state might be incompatible.[0m
+2026-11-26 12:03:32 [27,087ms] [Warning] [omnigibson.objects.usd_object] Object decorative_sign_hgonwj_0 was expected to have USD file hash 97e453ea122521909d3b30c306a76c63 but loaded with b3173bb379725a4e879e71cc29125f1b. The saved state might be incompatible.
+[33m[00:00:34.539] [WARNING] [omnigibson.objects.usd_object] Object decorative_sign_rypeha_0 was expected to have USD file hash 42d69583e4b4152650d990287368132f but loaded with 5514b23d603035a028fcfcfc9e1721bb. The saved state might be incompatible.[0m
+2026-11-26 12:03:32 [27,093ms] [Warning] [omnigibson.objects.usd_object] Object decorative_sign_rypeha_0 was expected to have USD file hash 42d69583e4b4152650d990287368132f but loaded with 5514b23d603035a028fcfcfc9e1721bb. The saved state might be incompatible.
+[33m[00:00:34.548] [WARNING] [omnigibson.objects.usd_object] Object decorative_sign_xzsmxq_0 was expected to have USD file hash 50b17dd7bf51dded04a7fef7a5383914 but loaded with e74ebcdc9d86ec87b47a90c50486fd8a. The saved state might be incompatible.[0m
+2026-11-26 12:03:32 [27,103ms] [Warning] [omnigibson.objects.usd_object] Object decorative_sign_xzsmxq_0 was expected to have USD file hash 50b17dd7bf51dded04a7fef7a5383914 but loaded with e74ebcdc9d86ec87b47a90c50486fd8a. The saved state might be incompatible.
+[33m[00:00:34.565] [WARNING] [omnigibson.objects.usd_object] Object door_bexenl_0 was expected to have USD file hash 7865c16b2356a17e2c56ddca2d9de7dc but loaded with bdc10c9061b7e62f259959de6f8f1196. The saved state might be incompatible.[0m
+2026-11-26 12:03:32 [27,120ms] [Warning] [omnigibson.objects.usd_object] Object door_bexenl_0 was expected to have USD file hash 7865c16b2356a17e2c56ddca2d9de7dc but loaded with bdc10c9061b7e62f259959de6f8f1196. The saved state might be incompatible.
+[33m[00:00:34.582] [WARNING] [omnigibson.objects.usd_object] Object door_bexenl_1 was expected to have USD file hash 7865c16b2356a17e2c56ddca2d9de7dc but loaded with bdc10c9061b7e62f259959de6f8f1196. The saved state might be incompatible.[0m
+2026-11-26 12:03:32 [27,136ms] [Warning] [omnigibson.objects.usd_object] Object door_bexenl_1 was expected to have USD file hash 7865c16b2356a17e2c56ddca2d9de7dc but loaded with bdc10c9061b7e62f259959de6f8f1196. The saved state might be incompatible.
+[33m[00:00:34.600] [WARNING] [omnigibson.objects.usd_object] Object door_vudhlc_0 was expected to have USD file hash c7c5eb1d49930dbf60ae89ca35dd84b6 but loaded with cf63bdf9be712e49538234841dc5c231. The saved state might be incompatible.[0m
+2026-11-26 12:03:32 [27,155ms] [Warning] [omnigibson.objects.usd_object] Object door_vudhlc_0 was expected to have USD file hash c7c5eb1d49930dbf60ae89ca35dd84b6 but loaded with cf63bdf9be712e49538234841dc5c231. The saved state might be incompatible.
+[33m[00:00:34.621] [WARNING] [omnigibson.objects.usd_object] Object door_vudhlc_1 was expected to have USD file hash c7c5eb1d49930dbf60ae89ca35dd84b6 but loaded with cf63bdf9be712e49538234841dc5c231. The saved state might be incompatible.[0m
+2026-11-26 12:03:32 [27,175ms] [Warning] [omnigibson.objects.usd_object] Object door_vudhlc_1 was expected to have USD file hash c7c5eb1d49930dbf60ae89ca35dd84b6 but loaded with cf63bdf9be712e49538234841dc5c231. The saved state might be incompatible.
+[33m[00:00:34.642] [WARNING] [omnigibson.objects.usd_object] Object door_vudhlc_2 was expected to have USD file hash c7c5eb1d49930dbf60ae89ca35dd84b6 but loaded with cf63bdf9be712e49538234841dc5c231. The saved state might be incompatible.[0m
+2026-11-26 12:03:32 [27,197ms] [Warning] [omnigibson.objects.usd_object] Object door_vudhlc_2 was expected to have USD file hash c7c5eb1d49930dbf60ae89ca35dd84b6 but loaded with cf63bdf9be712e49538234841dc5c231. The saved state might be incompatible.
+[33m[00:00:34.662] [WARNING] [omnigibson.objects.usd_object] Object door_vudhlc_3 was expected to have USD file hash c7c5eb1d49930dbf60ae89ca35dd84b6 but loaded with cf63bdf9be712e49538234841dc5c231. The saved state might be incompatible.[0m
+2026-11-26 12:03:32 [27,217ms] [Warning] [omnigibson.objects.usd_object] Object door_vudhlc_3 was expected to have USD file hash c7c5eb1d49930dbf60ae89ca35dd84b6 but loaded with cf63bdf9be712e49538234841dc5c231. The saved state might be incompatible.
+[33m[00:00:34.689] [WARNING] [omnigibson.objects.usd_object] Object downlight_pawfmw_0 was expected to have USD file hash d0ce32190cf88078f7a14ffc1224ce50 but loaded with 2ea650ec103bf9bd57bfd7e5aca6dded. The saved state might be incompatible.[0m
+2026-11-26 12:03:32 [27,243ms] [Warning] [omnigibson.objects.usd_object] Object downlight_pawfmw_0 was expected to have USD file hash d0ce32190cf88078f7a14ffc1224ce50 but loaded with 2ea650ec103bf9bd57bfd7e5aca6dded. The saved state might be incompatible.
+[33m[00:00:34.716] [WARNING] [omnigibson.objects.usd_object] Object downlight_pawfmw_1 was expected to have USD file hash d0ce32190cf88078f7a14ffc1224ce50 but loaded with 2ea650ec103bf9bd57bfd7e5aca6dded. The saved state might be incompatible.[0m
+2026-11-26 12:03:32 [27,271ms] [Warning] [omnigibson.objects.usd_object] Object downlight_pawfmw_1 was expected to have USD file hash d0ce32190cf88078f7a14ffc1224ce50 but loaded with 2ea650ec103bf9bd57bfd7e5aca6dded. The saved state might be incompatible.
+[33m[00:00:34.742] [WARNING] [omnigibson.objects.usd_object] Object downlight_pawfmw_10 was expected to have USD file hash d0ce32190cf88078f7a14ffc1224ce50 but loaded with 2ea650ec103bf9bd57bfd7e5aca6dded. The saved state might be incompatible.[0m
+2026-11-26 12:03:32 [27,296ms] [Warning] [omnigibson.objects.usd_object] Object downlight_pawfmw_10 was expected to have USD file hash d0ce32190cf88078f7a14ffc1224ce50 but loaded with 2ea650ec103bf9bd57bfd7e5aca6dded. The saved state might be incompatible.
+[33m[00:00:34.767] [WARNING] [omnigibson.objects.usd_object] Object downlight_pawfmw_11 was expected to have USD file hash d0ce32190cf88078f7a14ffc1224ce50 but loaded with 2ea650ec103bf9bd57bfd7e5aca6dded. The saved state might be incompatible.[0m
+2026-11-26 12:03:32 [27,322ms] [Warning] [omnigibson.objects.usd_object] Object downlight_pawfmw_11 was expected to have USD file hash d0ce32190cf88078f7a14ffc1224ce50 but loaded with 2ea650ec103bf9bd57bfd7e5aca6dded. The saved state might be incompatible.
+[33m[00:00:34.792] [WARNING] [omnigibson.objects.usd_object] Object downlight_pawfmw_12 was expected to have USD file hash d0ce32190cf88078f7a14ffc1224ce50 but loaded with 2ea650ec103bf9bd57bfd7e5aca6dded. The saved state might be incompatible.[0m
+2026-11-26 12:03:32 [27,347ms] [Warning] [omnigibson.objects.usd_object] Object downlight_pawfmw_12 was expected to have USD file hash d0ce32190cf88078f7a14ffc1224ce50 but loaded with 2ea650ec103bf9bd57bfd7e5aca6dded. The saved state might be incompatible.
+[33m[00:00:34.819] [WARNING] [omnigibson.objects.usd_object] Object downlight_pawfmw_13 was expected to have USD file hash d0ce32190cf88078f7a14ffc1224ce50 but loaded with 2ea650ec103bf9bd57bfd7e5aca6dded. The saved state might be incompatible.[0m
+2026-11-26 12:03:32 [27,374ms] [Warning] [omnigibson.objects.usd_object] Object downlight_pawfmw_13 was expected to have USD file hash d0ce32190cf88078f7a14ffc1224ce50 but loaded with 2ea650ec103bf9bd57bfd7e5aca6dded. The saved state might be incompatible.
+[33m[00:00:34.845] [WARNING] [omnigibson.objects.usd_object] Object downlight_pawfmw_14 was expected to have USD file hash d0ce32190cf88078f7a14ffc1224ce50 but loaded with 2ea650ec103bf9bd57bfd7e5aca6dded. The saved state might be incompatible.[0m
+2026-11-26 12:03:32 [27,399ms] [Warning] [omnigibson.objects.usd_object] Object downlight_pawfmw_14 was expected to have USD file hash d0ce32190cf88078f7a14ffc1224ce50 but loaded with 2ea650ec103bf9bd57bfd7e5aca6dded. The saved state might be incompatible.
+[33m[00:00:34.872] [WARNING] [omnigibson.objects.usd_object] Object downlight_pawfmw_15 was expected to have USD file hash d0ce32190cf88078f7a14ffc1224ce50 but loaded with 2ea650ec103bf9bd57bfd7e5aca6dded. The saved state might be incompatible.[0m
+2026-11-26 12:03:32 [27,426ms] [Warning] [omnigibson.objects.usd_object] Object downlight_pawfmw_15 was expected to have USD file hash d0ce32190cf88078f7a14ffc1224ce50 but loaded with 2ea650ec103bf9bd57bfd7e5aca6dded. The saved state might be incompatible.
+[33m[00:00:34.900] [WARNING] [omnigibson.objects.usd_object] Object downlight_pawfmw_16 was expected to have USD file hash d0ce32190cf88078f7a14ffc1224ce50 but loaded with 2ea650ec103bf9bd57bfd7e5aca6dded. The saved state might be incompatible.[0m
+2026-11-26 12:03:32 [27,455ms] [Warning] [omnigibson.objects.usd_object] Object downlight_pawfmw_16 was expected to have USD file hash d0ce32190cf88078f7a14ffc1224ce50 but loaded with 2ea650ec103bf9bd57bfd7e5aca6dded. The saved state might be incompatible.
+[33m[00:00:34.930] [WARNING] [omnigibson.objects.usd_object] Object downlight_pawfmw_17 was expected to have USD file hash d0ce32190cf88078f7a14ffc1224ce50 but loaded with 2ea650ec103bf9bd57bfd7e5aca6dded. The saved state might be incompatible.[0m
+2026-11-26 12:03:32 [27,485ms] [Warning] [omnigibson.objects.usd_object] Object downlight_pawfmw_17 was expected to have USD file hash d0ce32190cf88078f7a14ffc1224ce50 but loaded with 2ea650ec103bf9bd57bfd7e5aca6dded. The saved state might be incompatible.
+[33m[00:00:34.959] [WARNING] [omnigibson.objects.usd_object] Object downlight_pawfmw_2 was expected to have USD file hash d0ce32190cf88078f7a14ffc1224ce50 but loaded with 2ea650ec103bf9bd57bfd7e5aca6dded. The saved state might be incompatible.[0m
+2026-11-26 12:03:32 [27,514ms] [Warning] [omnigibson.objects.usd_object] Object downlight_pawfmw_2 was expected to have USD file hash d0ce32190cf88078f7a14ffc1224ce50 but loaded with 2ea650ec103bf9bd57bfd7e5aca6dded. The saved state might be incompatible.
+[33m[00:00:34.991] [WARNING] [omnigibson.objects.usd_object] Object downlight_pawfmw_3 was expected to have USD file hash d0ce32190cf88078f7a14ffc1224ce50 but loaded with 2ea650ec103bf9bd57bfd7e5aca6dded. The saved state might be incompatible.[0m
+2026-11-26 12:03:32 [27,545ms] [Warning] [omnigibson.objects.usd_object] Object downlight_pawfmw_3 was expected to have USD file hash d0ce32190cf88078f7a14ffc1224ce50 but loaded with 2ea650ec103bf9bd57bfd7e5aca6dded. The saved state might be incompatible.
+[33m[00:00:35.020] [WARNING] [omnigibson.objects.usd_object] Object downlight_pawfmw_4 was expected to have USD file hash d0ce32190cf88078f7a14ffc1224ce50 but loaded with 2ea650ec103bf9bd57bfd7e5aca6dded. The saved state might be incompatible.[0m
+2026-11-26 12:03:32 [27,574ms] [Warning] [omnigibson.objects.usd_object] Object downlight_pawfmw_4 was expected to have USD file hash d0ce32190cf88078f7a14ffc1224ce50 but loaded with 2ea650ec103bf9bd57bfd7e5aca6dded. The saved state might be incompatible.
+[33m[00:00:35.047] [WARNING] [omnigibson.objects.usd_object] Object downlight_pawfmw_5 was expected to have USD file hash d0ce32190cf88078f7a14ffc1224ce50 but loaded with 2ea650ec103bf9bd57bfd7e5aca6dded. The saved state might be incompatible.[0m
+2026-11-26 12:03:32 [27,602ms] [Warning] [omnigibson.objects.usd_object] Object downlight_pawfmw_5 was expected to have USD file hash d0ce32190cf88078f7a14ffc1224ce50 but loaded with 2ea650ec103bf9bd57bfd7e5aca6dded. The saved state might be incompatible.
+[33m[00:00:35.073] [WARNING] [omnigibson.objects.usd_object] Object downlight_pawfmw_6 was expected to have USD file hash d0ce32190cf88078f7a14ffc1224ce50 but loaded with 2ea650ec103bf9bd57bfd7e5aca6dded. The saved state might be incompatible.[0m
+2026-11-26 12:03:32 [27,628ms] [Warning] [omnigibson.objects.usd_object] Object downlight_pawfmw_6 was expected to have USD file hash d0ce32190cf88078f7a14ffc1224ce50 but loaded with 2ea650ec103bf9bd57bfd7e5aca6dded. The saved state might be incompatible.
+[33m[00:00:35.098] [WARNING] [omnigibson.objects.usd_object] Object downlight_pawfmw_7 was expected to have USD file hash d0ce32190cf88078f7a14ffc1224ce50 but loaded with 2ea650ec103bf9bd57bfd7e5aca6dded. The saved state might be incompatible.[0m
+2026-11-26 12:03:32 [27,653ms] [Warning] [omnigibson.objects.usd_object] Object downlight_pawfmw_7 was expected to have USD file hash d0ce32190cf88078f7a14ffc1224ce50 but loaded with 2ea650ec103bf9bd57bfd7e5aca6dded. The saved state might be incompatible.
+[33m[00:00:35.124] [WARNING] [omnigibson.objects.usd_object] Object downlight_pawfmw_8 was expected to have USD file hash d0ce32190cf88078f7a14ffc1224ce50 but loaded with 2ea650ec103bf9bd57bfd7e5aca6dded. The saved state might be incompatible.[0m
+2026-11-26 12:03:32 [27,679ms] [Warning] [omnigibson.objects.usd_object] Object downlight_pawfmw_8 was expected to have USD file hash d0ce32190cf88078f7a14ffc1224ce50 but loaded with 2ea650ec103bf9bd57bfd7e5aca6dded. The saved state might be incompatible.
+[33m[00:00:35.151] [WARNING] [omnigibson.objects.usd_object] Object downlight_pawfmw_9 was expected to have USD file hash d0ce32190cf88078f7a14ffc1224ce50 but loaded with 2ea650ec103bf9bd57bfd7e5aca6dded. The saved state might be incompatible.[0m
+2026-11-26 12:03:32 [27,706ms] [Warning] [omnigibson.objects.usd_object] Object downlight_pawfmw_9 was expected to have USD file hash d0ce32190cf88078f7a14ffc1224ce50 but loaded with 2ea650ec103bf9bd57bfd7e5aca6dded. The saved state might be incompatible.
+[33m[00:00:35.174] [WARNING] [omnigibson.objects.usd_object] Object driveway_umalys_0 was expected to have USD file hash 35a2db400ef08c7865f41f5854e7a73e but loaded with 379680636ebfb5bc50fb418e33525b9d. The saved state might be incompatible.[0m
+2026-11-26 12:03:32 [27,728ms] [Warning] [omnigibson.objects.usd_object] Object driveway_umalys_0 was expected to have USD file hash 35a2db400ef08c7865f41f5854e7a73e but loaded with 379680636ebfb5bc50fb418e33525b9d. The saved state might be incompatible.
+[33m[00:00:35.183] [WARNING] [omnigibson.objects.usd_object] Object drop_in_sink_lkklqs_0 was expected to have USD file hash 2425c55bea6d7dab1be772b6e9a57b7d but loaded with 7fc97a5e2e1d57d927f89e6a8781d887. The saved state might be incompatible.[0m
+2026-11-26 12:03:32 [27,737ms] [Warning] [omnigibson.objects.usd_object] Object drop_in_sink_lkklqs_0 was expected to have USD file hash 2425c55bea6d7dab1be772b6e9a57b7d but loaded with 7fc97a5e2e1d57d927f89e6a8781d887. The saved state might be incompatible.
+[33m[00:00:35.197] [WARNING] [omnigibson.objects.usd_object] Object electric_switch_strbnw_0 was expected to have USD file hash ba2d1bf51e06e657781716bd5c0cffe5 but loaded with b1b1b34ce7477bd37fe754890415067d. The saved state might be incompatible.[0m
+2026-11-26 12:03:32 [27,752ms] [Warning] [omnigibson.objects.usd_object] Object electric_switch_strbnw_0 was expected to have USD file hash ba2d1bf51e06e657781716bd5c0cffe5 but loaded with b1b1b34ce7477bd37fe754890415067d. The saved state might be incompatible.
+[33m[00:00:35.205] [WARNING] [omnigibson.objects.usd_object] Object electric_switch_strbnw_1 was expected to have USD file hash ba2d1bf51e06e657781716bd5c0cffe5 but loaded with b1b1b34ce7477bd37fe754890415067d. The saved state might be incompatible.[0m
+2026-11-26 12:03:32 [27,760ms] [Warning] [omnigibson.objects.usd_object] Object electric_switch_strbnw_1 was expected to have USD file hash ba2d1bf51e06e657781716bd5c0cffe5 but loaded with b1b1b34ce7477bd37fe754890415067d. The saved state might be incompatible.
+[33m[00:00:35.212] [WARNING] [omnigibson.objects.usd_object] Object electric_switch_strbnw_2 was expected to have USD file hash ba2d1bf51e06e657781716bd5c0cffe5 but loaded with b1b1b34ce7477bd37fe754890415067d. The saved state might be incompatible.[0m
+2026-11-26 12:03:32 [27,767ms] [Warning] [omnigibson.objects.usd_object] Object electric_switch_strbnw_2 was expected to have USD file hash ba2d1bf51e06e657781716bd5c0cffe5 but loaded with b1b1b34ce7477bd37fe754890415067d. The saved state might be incompatible.
+[33m[00:00:35.219] [WARNING] [omnigibson.objects.usd_object] Object electric_switch_strbnw_3 was expected to have USD file hash ba2d1bf51e06e657781716bd5c0cffe5 but loaded with b1b1b34ce7477bd37fe754890415067d. The saved state might be incompatible.[0m
+2026-11-26 12:03:32 [27,773ms] [Warning] [omnigibson.objects.usd_object] Object electric_switch_strbnw_3 was expected to have USD file hash ba2d1bf51e06e657781716bd5c0cffe5 but loaded with b1b1b34ce7477bd37fe754890415067d. The saved state might be incompatible.
+[33m[00:00:35.225] [WARNING] [omnigibson.objects.usd_object] Object fixed_window_kvdqep_0 was expected to have USD file hash 61725e3a9b11c1062ad9959d78f32a2c but loaded with f90c525708efd29641a48b5c872428cf. The saved state might be incompatible.[0m
+2026-11-26 12:03:32 [27,780ms] [Warning] [omnigibson.objects.usd_object] Object fixed_window_kvdqep_0 was expected to have USD file hash 61725e3a9b11c1062ad9959d78f32a2c but loaded with f90c525708efd29641a48b5c872428cf. The saved state might be incompatible.
+[33m[00:00:35.235] [WARNING] [omnigibson.objects.usd_object] Object fixed_window_lhzwtz_0 was expected to have USD file hash 5f2a85d70c12c1d850ea555f4ae19873 but loaded with 3bac42594787ee0bbc783076c912e4e8. The saved state might be incompatible.[0m
+2026-11-26 12:03:32 [27,789ms] [Warning] [omnigibson.objects.usd_object] Object fixed_window_lhzwtz_0 was expected to have USD file hash 5f2a85d70c12c1d850ea555f4ae19873 but loaded with 3bac42594787ee0bbc783076c912e4e8. The saved state might be incompatible.
+[33m[00:00:35.252] [WARNING] [omnigibson.objects.usd_object] Object floors_ghetev_0 was expected to have USD file hash b85488e0da56c02258613c20c2af8773 but loaded with e66a1f5dcae3e53557e9fa8204f5b87a. The saved state might be incompatible.[0m
+2026-11-26 12:03:32 [27,806ms] [Warning] [omnigibson.objects.usd_object] Object floors_ghetev_0 was expected to have USD file hash b85488e0da56c02258613c20c2af8773 but loaded with e66a1f5dcae3e53557e9fa8204f5b87a. The saved state might be incompatible.
+[33m[00:00:35.276] [WARNING] [omnigibson.objects.usd_object] Object floors_irvmpb_0 was expected to have USD file hash cb5f262190ac22e0711aa1864372f335 but loaded with ca324b99d9a975bb3fc96387b111a7af. The saved state might be incompatible.[0m
+2026-11-26 12:03:32 [27,830ms] [Warning] [omnigibson.objects.usd_object] Object floors_irvmpb_0 was expected to have USD file hash cb5f262190ac22e0711aa1864372f335 but loaded with ca324b99d9a975bb3fc96387b111a7af. The saved state might be incompatible.
+[33m[00:00:35.281] [WARNING] [omnigibson.objects.usd_object] Object floors_iwsyoz_0 was expected to have USD file hash ddbf55a2d90dc4af5027f92c55b42f7d but loaded with 2ba014c36de5ff50781c9c9fb88a652b. The saved state might be incompatible.[0m
+2026-11-26 12:03:32 [27,835ms] [Warning] [omnigibson.objects.usd_object] Object floors_iwsyoz_0 was expected to have USD file hash ddbf55a2d90dc4af5027f92c55b42f7d but loaded with 2ba014c36de5ff50781c9c9fb88a652b. The saved state might be incompatible.
+[33m[00:00:35.286] [WARNING] [omnigibson.objects.usd_object] Object floors_ogynye_0 was expected to have USD file hash 2df6fb7b9e79bcb077df5fcfd767c399 but loaded with 9a82c1e4d3282612b2e30ec7c4372c89. The saved state might be incompatible.[0m
+2026-11-26 12:03:32 [27,841ms] [Warning] [omnigibson.objects.usd_object] Object floors_ogynye_0 was expected to have USD file hash 2df6fb7b9e79bcb077df5fcfd767c399 but loaded with 9a82c1e4d3282612b2e30ec7c4372c89. The saved state might be incompatible.
+[33m[00:00:35.292] [WARNING] [omnigibson.objects.usd_object] Object floors_qadhjb_0 was expected to have USD file hash aabcb26a60eef7d3f76c54a75ee11d3b but loaded with 68287cd7aaa9433e80bdb7e07801369e. The saved state might be incompatible.[0m
+2026-11-26 12:03:32 [27,846ms] [Warning] [omnigibson.objects.usd_object] Object floors_qadhjb_0 was expected to have USD file hash aabcb26a60eef7d3f76c54a75ee11d3b but loaded with 68287cd7aaa9433e80bdb7e07801369e. The saved state might be incompatible.
+[33m[00:00:35.297] [WARNING] [omnigibson.objects.usd_object] Object floors_sdejoi_0 was expected to have USD file hash e7b21ac38ea27b6d696c6c21d14aa7d8 but loaded with 96575fef1fe27608bcc478308aacaccf. The saved state might be incompatible.[0m
+2026-11-26 12:03:32 [27,851ms] [Warning] [omnigibson.objects.usd_object] Object floors_sdejoi_0 was expected to have USD file hash e7b21ac38ea27b6d696c6c21d14aa7d8 but loaded with 96575fef1fe27608bcc478308aacaccf. The saved state might be incompatible.
+[33m[00:00:35.302] [WARNING] [omnigibson.objects.usd_object] Object floors_slmyas_0 was expected to have USD file hash 386b39948ef68b26229f17d0ec872556 but loaded with 598762944b7237d86f9c44deccbc3e41. The saved state might be incompatible.[0m
+2026-11-26 12:03:32 [27,857ms] [Warning] [omnigibson.objects.usd_object] Object floors_slmyas_0 was expected to have USD file hash 386b39948ef68b26229f17d0ec872556 but loaded with 598762944b7237d86f9c44deccbc3e41. The saved state might be incompatible.
+[33m[00:00:35.307] [WARNING] [omnigibson.objects.usd_object] Object floors_ulujpr_0 was expected to have USD file hash da6d83b222d92083f433c257beb7824a but loaded with e73f5e9d1d2a97766e05477ced50cecd. The saved state might be incompatible.[0m
+2026-11-26 12:03:32 [27,862ms] [Warning] [omnigibson.objects.usd_object] Object floors_ulujpr_0 was expected to have USD file hash da6d83b222d92083f433c257beb7824a but loaded with e73f5e9d1d2a97766e05477ced50cecd. The saved state might be incompatible.
+[33m[00:00:35.313] [WARNING] [omnigibson.objects.usd_object] Object floors_xorxro_0 was expected to have USD file hash 59ccade0e971ccb4d674f4d3e4eef6f0 but loaded with 9e0c691e3c882ac3b0948212bd1cadd4. The saved state might be incompatible.[0m
+2026-11-26 12:03:32 [27,867ms] [Warning] [omnigibson.objects.usd_object] Object floors_xorxro_0 was expected to have USD file hash 59ccade0e971ccb4d674f4d3e4eef6f0 but loaded with 9e0c691e3c882ac3b0948212bd1cadd4. The saved state might be incompatible.
+[33m[00:00:35.318] [WARNING] [omnigibson.objects.usd_object] Object floors_zqjkvm_0 was expected to have USD file hash 5ef2eea344a85c5dbda9b196082a08b9 but loaded with 9232dc0480ce815a6a6000ac96ac94be. The saved state might be incompatible.[0m
+2026-11-26 12:03:32 [27,872ms] [Warning] [omnigibson.objects.usd_object] Object floors_zqjkvm_0 was expected to have USD file hash 5ef2eea344a85c5dbda9b196082a08b9 but loaded with 9232dc0480ce815a6a6000ac96ac94be. The saved state might be incompatible.
+[33m[00:00:35.326] [WARNING] [omnigibson.objects.usd_object] Object garden_light_qyfrwj_0 was expected to have USD file hash b4bd06ca5b7bdd7d9f9e1ef7df044cf3 but loaded with 89a65546ebd3ded6413bde4ebb484e73. The saved state might be incompatible.[0m
+2026-11-26 12:03:32 [27,880ms] [Warning] [omnigibson.objects.usd_object] Object garden_light_qyfrwj_0 was expected to have USD file hash b4bd06ca5b7bdd7d9f9e1ef7df044cf3 but loaded with 89a65546ebd3ded6413bde4ebb484e73. The saved state might be incompatible.
+[33m[00:00:35.342] [WARNING] [omnigibson.objects.usd_object] Object garden_light_qyfrwj_1 was expected to have USD file hash b4bd06ca5b7bdd7d9f9e1ef7df044cf3 but loaded with 89a65546ebd3ded6413bde4ebb484e73. The saved state might be incompatible.[0m
+2026-11-26 12:03:32 [27,897ms] [Warning] [omnigibson.objects.usd_object] Object garden_light_qyfrwj_1 was expected to have USD file hash b4bd06ca5b7bdd7d9f9e1ef7df044cf3 but loaded with 89a65546ebd3ded6413bde4ebb484e73. The saved state might be incompatible.
+[33m[00:00:35.357] [WARNING] [omnigibson.objects.usd_object] Object garden_light_qyfrwj_2 was expected to have USD file hash b4bd06ca5b7bdd7d9f9e1ef7df044cf3 but loaded with 89a65546ebd3ded6413bde4ebb484e73. The saved state might be incompatible.[0m
+2026-11-26 12:03:32 [27,912ms] [Warning] [omnigibson.objects.usd_object] Object garden_light_qyfrwj_2 was expected to have USD file hash b4bd06ca5b7bdd7d9f9e1ef7df044cf3 but loaded with 89a65546ebd3ded6413bde4ebb484e73. The saved state might be incompatible.
+[33m[00:00:35.375] [WARNING] [omnigibson.objects.usd_object] Object garden_light_qyfrwj_3 was expected to have USD file hash b4bd06ca5b7bdd7d9f9e1ef7df044cf3 but loaded with 89a65546ebd3ded6413bde4ebb484e73. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [27,929ms] [Warning] [omnigibson.objects.usd_object] Object garden_light_qyfrwj_3 was expected to have USD file hash b4bd06ca5b7bdd7d9f9e1ef7df044cf3 but loaded with 89a65546ebd3ded6413bde4ebb484e73. The saved state might be incompatible.
+[33m[00:00:35.389] [WARNING] [omnigibson.objects.usd_object] Object garden_light_qyfrwj_4 was expected to have USD file hash b4bd06ca5b7bdd7d9f9e1ef7df044cf3 but loaded with 89a65546ebd3ded6413bde4ebb484e73. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [27,944ms] [Warning] [omnigibson.objects.usd_object] Object garden_light_qyfrwj_4 was expected to have USD file hash b4bd06ca5b7bdd7d9f9e1ef7df044cf3 but loaded with 89a65546ebd3ded6413bde4ebb484e73. The saved state might be incompatible.
+[33m[00:00:35.405] [WARNING] [omnigibson.objects.usd_object] Object garden_light_qyfrwj_5 was expected to have USD file hash b4bd06ca5b7bdd7d9f9e1ef7df044cf3 but loaded with 89a65546ebd3ded6413bde4ebb484e73. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [27,959ms] [Warning] [omnigibson.objects.usd_object] Object garden_light_qyfrwj_5 was expected to have USD file hash b4bd06ca5b7bdd7d9f9e1ef7df044cf3 but loaded with 89a65546ebd3ded6413bde4ebb484e73. The saved state might be incompatible.
+[33m[00:00:35.420] [WARNING] [omnigibson.objects.usd_object] Object garden_light_qyfrwj_6 was expected to have USD file hash b4bd06ca5b7bdd7d9f9e1ef7df044cf3 but loaded with 89a65546ebd3ded6413bde4ebb484e73. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [27,975ms] [Warning] [omnigibson.objects.usd_object] Object garden_light_qyfrwj_6 was expected to have USD file hash b4bd06ca5b7bdd7d9f9e1ef7df044cf3 but loaded with 89a65546ebd3ded6413bde4ebb484e73. The saved state might be incompatible.
+[33m[00:00:35.435] [WARNING] [omnigibson.objects.usd_object] Object garden_light_qyfrwj_7 was expected to have USD file hash b4bd06ca5b7bdd7d9f9e1ef7df044cf3 but loaded with 89a65546ebd3ded6413bde4ebb484e73. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [27,990ms] [Warning] [omnigibson.objects.usd_object] Object garden_light_qyfrwj_7 was expected to have USD file hash b4bd06ca5b7bdd7d9f9e1ef7df044cf3 but loaded with 89a65546ebd3ded6413bde4ebb484e73. The saved state might be incompatible.
+[33m[00:00:35.451] [WARNING] [omnigibson.objects.usd_object] Object garden_light_qyfrwj_8 was expected to have USD file hash b4bd06ca5b7bdd7d9f9e1ef7df044cf3 but loaded with 89a65546ebd3ded6413bde4ebb484e73. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,005ms] [Warning] [omnigibson.objects.usd_object] Object garden_light_qyfrwj_8 was expected to have USD file hash b4bd06ca5b7bdd7d9f9e1ef7df044cf3 but loaded with 89a65546ebd3ded6413bde4ebb484e73. The saved state might be incompatible.
+[33m[00:00:35.466] [WARNING] [omnigibson.objects.usd_object] Object hall_tree_daxzaw_0 was expected to have USD file hash 6064be1b8b994382d0eeb49ca9e72acb but loaded with 00512187dbfb7412c09f4a4eb1966a9f. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,021ms] [Warning] [omnigibson.objects.usd_object] Object hall_tree_daxzaw_0 was expected to have USD file hash 6064be1b8b994382d0eeb49ca9e72acb but loaded with 00512187dbfb7412c09f4a4eb1966a9f. The saved state might be incompatible.
+[33m[00:00:35.475] [WARNING] [omnigibson.objects.usd_object] Object hall_tree_upkvgr_0 was expected to have USD file hash cfa4111f63bfadaf9af899c2134f5f0a but loaded with 786b74937aa371024926b08f39b7e0eb. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,030ms] [Warning] [omnigibson.objects.usd_object] Object hall_tree_upkvgr_0 was expected to have USD file hash cfa4111f63bfadaf9af899c2134f5f0a but loaded with 786b74937aa371024926b08f39b7e0eb. The saved state might be incompatible.
+[33m[00:00:35.487] [WARNING] [omnigibson.objects.usd_object] Object lawn_aztwla_0 was expected to have USD file hash 31bf51a93ae123f92b43269a0ab631a1 but loaded with d9b7b1d047f1d3795cf43a6242715265. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,041ms] [Warning] [omnigibson.objects.usd_object] Object lawn_aztwla_0 was expected to have USD file hash 31bf51a93ae123f92b43269a0ab631a1 but loaded with d9b7b1d047f1d3795cf43a6242715265. The saved state might be incompatible.
+[33m[00:00:35.492] [WARNING] [omnigibson.objects.usd_object] Object lawn_srfikq_0 was expected to have USD file hash ef7d79805cc8810df19f294f7d722f98 but loaded with c4b50d819578a0ef51b8b580e6aeebff. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,047ms] [Warning] [omnigibson.objects.usd_object] Object lawn_srfikq_0 was expected to have USD file hash ef7d79805cc8810df19f294f7d722f98 but loaded with c4b50d819578a0ef51b8b580e6aeebff. The saved state might be incompatible.
+[33m[00:00:35.498] [WARNING] [omnigibson.objects.usd_object] Object lawn_tiqndr_0 was expected to have USD file hash 1fec0ea95f2fe7c925acbaf47f22fca1 but loaded with be73c1f58cd54b68d8dc2d7ddb42d5a2. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,053ms] [Warning] [omnigibson.objects.usd_object] Object lawn_tiqndr_0 was expected to have USD file hash 1fec0ea95f2fe7c925acbaf47f22fca1 but loaded with be73c1f58cd54b68d8dc2d7ddb42d5a2. The saved state might be incompatible.
+[33m[00:00:35.504] [WARNING] [omnigibson.objects.usd_object] Object lawn_zjtrpt_0 was expected to have USD file hash 92513f35773c03f56fd000ab6c55801b but loaded with 72edd844faa2fba83c2aa1fc56fffb16. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,058ms] [Warning] [omnigibson.objects.usd_object] Object lawn_zjtrpt_0 was expected to have USD file hash 92513f35773c03f56fd000ab6c55801b but loaded with 72edd844faa2fba83c2aa1fc56fffb16. The saved state might be incompatible.
+[33m[00:00:35.510] [WARNING] [omnigibson.objects.usd_object] Object paver_eskaca_0 was expected to have USD file hash 6acdbe05fbc9d97ad1afadd58b7b8f7a but loaded with 6e026b4db31ca2939e5a431770bce50a. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,064ms] [Warning] [omnigibson.objects.usd_object] Object paver_eskaca_0 was expected to have USD file hash 6acdbe05fbc9d97ad1afadd58b7b8f7a but loaded with 6e026b4db31ca2939e5a431770bce50a. The saved state might be incompatible.
+[33m[00:00:35.522] [WARNING] [omnigibson.objects.usd_object] Object paver_lmdfdn_0 was expected to have USD file hash f26fe536d4ef1fe7bec4a8681475b5b5 but loaded with bfc1ba27e83b098e5b23ddfbf6939803. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,076ms] [Warning] [omnigibson.objects.usd_object] Object paver_lmdfdn_0 was expected to have USD file hash f26fe536d4ef1fe7bec4a8681475b5b5 but loaded with bfc1ba27e83b098e5b23ddfbf6939803. The saved state might be incompatible.
+[33m[00:00:35.538] [WARNING] [omnigibson.objects.usd_object] Object paver_sekqqq_0 was expected to have USD file hash 9daeb3c1e31780a1e563659a78ac8cb9 but loaded with 85f2354e815d081ac1d1b596c7fcdf00. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,092ms] [Warning] [omnigibson.objects.usd_object] Object paver_sekqqq_0 was expected to have USD file hash 9daeb3c1e31780a1e563659a78ac8cb9 but loaded with 85f2354e815d081ac1d1b596c7fcdf00. The saved state might be incompatible.
+[33m[00:00:35.557] [WARNING] [omnigibson.objects.usd_object] Object picture_ekagyj_0 was expected to have USD file hash 931f520415eaa97c3a351f55a9e3f1db but loaded with 8b3262d9bb641cf4929a8926a1b9085d. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,111ms] [Warning] [omnigibson.objects.usd_object] Object picture_ekagyj_0 was expected to have USD file hash 931f520415eaa97c3a351f55a9e3f1db but loaded with 8b3262d9bb641cf4929a8926a1b9085d. The saved state might be incompatible.
+[33m[00:00:35.563] [WARNING] [omnigibson.objects.usd_object] Object picture_ggajdz_0 was expected to have USD file hash 90222f7d3d6fd6d98a441a56b8e3da48 but loaded with 5dad6d0602f6eac3b823e7855ea2fd02. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,118ms] [Warning] [omnigibson.objects.usd_object] Object picture_ggajdz_0 was expected to have USD file hash 90222f7d3d6fd6d98a441a56b8e3da48 but loaded with 5dad6d0602f6eac3b823e7855ea2fd02. The saved state might be incompatible.
+[33m[00:00:35.572] [WARNING] [omnigibson.objects.usd_object] Object picture_jnecmu_0 was expected to have USD file hash c2e724ef7133aacd92beaf2d153e70ad but loaded with 295587cdd29da5d69fbda4af138be68f. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,126ms] [Warning] [omnigibson.objects.usd_object] Object picture_jnecmu_0 was expected to have USD file hash c2e724ef7133aacd92beaf2d153e70ad but loaded with 295587cdd29da5d69fbda4af138be68f. The saved state might be incompatible.
+[33m[00:00:35.580] [WARNING] [omnigibson.objects.usd_object] Object picture_qlkknu_0 was expected to have USD file hash 8943f9338563a7db28b46f04a61e4252 but loaded with 1f43f8232a57f74963f59e5f937ab4ca. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,135ms] [Warning] [omnigibson.objects.usd_object] Object picture_qlkknu_0 was expected to have USD file hash 8943f9338563a7db28b46f04a61e4252 but loaded with 1f43f8232a57f74963f59e5f937ab4ca. The saved state might be incompatible.
+[33m[00:00:35.588] [WARNING] [omnigibson.objects.usd_object] Object picture_qlsyco_0 was expected to have USD file hash 7e7bd70f770fefe441fa4e7f17a72217 but loaded with 52b27462d6d6d69a3c9bc767e0b286df. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,143ms] [Warning] [omnigibson.objects.usd_object] Object picture_qlsyco_0 was expected to have USD file hash 7e7bd70f770fefe441fa4e7f17a72217 but loaded with 52b27462d6d6d69a3c9bc767e0b286df. The saved state might be incompatible.
+[33m[00:00:35.594] [WARNING] [omnigibson.objects.usd_object] Object picture_tveyoh_0 was expected to have USD file hash 82d80e537605d3674f8978b2f64cd38c but loaded with 08930af6d8b0cf4ea6b41b87ea964c99. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,149ms] [Warning] [omnigibson.objects.usd_object] Object picture_tveyoh_0 was expected to have USD file hash 82d80e537605d3674f8978b2f64cd38c but loaded with 08930af6d8b0cf4ea6b41b87ea964c99. The saved state might be incompatible.
+[33m[00:00:35.601] [WARNING] [omnigibson.objects.usd_object] Object picture_yzbpie_0 was expected to have USD file hash 94f5176b85ebea7cfba8bbe52a26e90d but loaded with e51bc89bb0a0fdc212df9798e2a2d8cc. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,156ms] [Warning] [omnigibson.objects.usd_object] Object picture_yzbpie_0 was expected to have USD file hash 94f5176b85ebea7cfba8bbe52a26e90d but loaded with e51bc89bb0a0fdc212df9798e2a2d8cc. The saved state might be incompatible.
+[33m[00:00:35.617] [WARNING] [omnigibson.objects.usd_object] Object playground_xdlcdi_0 was expected to have USD file hash 3d327526d99d098755db635ed6ea2dca but loaded with 59dbb574780ca85b35e6f0642939a865. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,171ms] [Warning] [omnigibson.objects.usd_object] Object playground_xdlcdi_0 was expected to have USD file hash 3d327526d99d098755db635ed6ea2dca but loaded with 59dbb574780ca85b35e6f0642939a865. The saved state might be incompatible.
+[33m[00:00:35.643] [WARNING] [omnigibson.objects.usd_object] Object rail_fence_owbrvb_0 was expected to have USD file hash a7e2d4d5c8b270a694b7f5b54454787c but loaded with 06bfeaa1ffa368cd90a357c44e022776. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,198ms] [Warning] [omnigibson.objects.usd_object] Object rail_fence_owbrvb_0 was expected to have USD file hash a7e2d4d5c8b270a694b7f5b54454787c but loaded with 06bfeaa1ffa368cd90a357c44e022776. The saved state might be incompatible.
+[33m[00:00:35.651] [WARNING] [omnigibson.objects.usd_object] Object rail_fence_owbrvb_1 was expected to have USD file hash a7e2d4d5c8b270a694b7f5b54454787c but loaded with 06bfeaa1ffa368cd90a357c44e022776. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,205ms] [Warning] [omnigibson.objects.usd_object] Object rail_fence_owbrvb_1 was expected to have USD file hash a7e2d4d5c8b270a694b7f5b54454787c but loaded with 06bfeaa1ffa368cd90a357c44e022776. The saved state might be incompatible.
+[33m[00:00:35.658] [WARNING] [omnigibson.objects.usd_object] Object rail_fence_owbrvb_2 was expected to have USD file hash a7e2d4d5c8b270a694b7f5b54454787c but loaded with 06bfeaa1ffa368cd90a357c44e022776. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,212ms] [Warning] [omnigibson.objects.usd_object] Object rail_fence_owbrvb_2 was expected to have USD file hash a7e2d4d5c8b270a694b7f5b54454787c but loaded with 06bfeaa1ffa368cd90a357c44e022776. The saved state might be incompatible.
+[33m[00:00:35.664] [WARNING] [omnigibson.objects.usd_object] Object rail_fence_owbrvb_3 was expected to have USD file hash a7e2d4d5c8b270a694b7f5b54454787c but loaded with 06bfeaa1ffa368cd90a357c44e022776. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,218ms] [Warning] [omnigibson.objects.usd_object] Object rail_fence_owbrvb_3 was expected to have USD file hash a7e2d4d5c8b270a694b7f5b54454787c but loaded with 06bfeaa1ffa368cd90a357c44e022776. The saved state might be incompatible.
+[33m[00:00:35.670] [WARNING] [omnigibson.objects.usd_object] Object rail_fence_owbrvb_4 was expected to have USD file hash a7e2d4d5c8b270a694b7f5b54454787c but loaded with 06bfeaa1ffa368cd90a357c44e022776. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,225ms] [Warning] [omnigibson.objects.usd_object] Object rail_fence_owbrvb_4 was expected to have USD file hash a7e2d4d5c8b270a694b7f5b54454787c but loaded with 06bfeaa1ffa368cd90a357c44e022776. The saved state might be incompatible.
+[33m[00:00:35.677] [WARNING] [omnigibson.objects.usd_object] Object rail_fence_owbrvb_5 was expected to have USD file hash a7e2d4d5c8b270a694b7f5b54454787c but loaded with 06bfeaa1ffa368cd90a357c44e022776. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,231ms] [Warning] [omnigibson.objects.usd_object] Object rail_fence_owbrvb_5 was expected to have USD file hash a7e2d4d5c8b270a694b7f5b54454787c but loaded with 06bfeaa1ffa368cd90a357c44e022776. The saved state might be incompatible.
+[33m[00:00:35.685] [WARNING] [omnigibson.objects.usd_object] Object range_hood_xvdfpp_0 was expected to have USD file hash 81bfc056084ea61abdd244371186d8c3 but loaded with 3f997c04aae304f92708e71980b5a945. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,240ms] [Warning] [omnigibson.objects.usd_object] Object range_hood_xvdfpp_0 was expected to have USD file hash 81bfc056084ea61abdd244371186d8c3 but loaded with 3f997c04aae304f92708e71980b5a945. The saved state might be incompatible.
+[33m[00:00:35.696] [WARNING] [omnigibson.objects.usd_object] Object roof_pgwmer_0 was expected to have USD file hash 16e85fae45365873f88aa2ba4e7e4acc but loaded with db0e557b9f46d3e0e28cca811de1c3e7. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,251ms] [Warning] [omnigibson.objects.usd_object] Object roof_pgwmer_0 was expected to have USD file hash 16e85fae45365873f88aa2ba4e7e4acc but loaded with db0e557b9f46d3e0e28cca811de1c3e7. The saved state might be incompatible.
+[33m[00:00:35.715] [WARNING] [omnigibson.objects.usd_object] Object room_light_eqbjaz_0 was expected to have USD file hash 41b6772d0ee658d7f567c3aaf18fe00e but loaded with 6ec1f601865f2d7fc43e108d8d63c8c0. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,270ms] [Warning] [omnigibson.objects.usd_object] Object room_light_eqbjaz_0 was expected to have USD file hash 41b6772d0ee658d7f567c3aaf18fe00e but loaded with 6ec1f601865f2d7fc43e108d8d63c8c0. The saved state might be incompatible.
+[33m[00:00:35.742] [WARNING] [omnigibson.objects.usd_object] Object room_light_kiuayi_0 was expected to have USD file hash 0a708f17db358d92424529282bde269d but loaded with 2ae6b665db268cf056315694ccabccaa. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,297ms] [Warning] [omnigibson.objects.usd_object] Object room_light_kiuayi_0 was expected to have USD file hash 0a708f17db358d92424529282bde269d but loaded with 2ae6b665db268cf056315694ccabccaa. The saved state might be incompatible.
+[33m[00:00:35.762] [WARNING] [omnigibson.objects.usd_object] Object sofa_frlxgz_0 was expected to have USD file hash 97f053b59fad5686fa81fb917c330d8c but loaded with 0f88501c7abc5a750333d79053674e04. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,316ms] [Warning] [omnigibson.objects.usd_object] Object sofa_frlxgz_0 was expected to have USD file hash 97f053b59fad5686fa81fb917c330d8c but loaded with 0f88501c7abc5a750333d79053674e04. The saved state might be incompatible.
+[33m[00:00:35.779] [WARNING] [omnigibson.objects.usd_object] Object stairs_tikozn_0 was expected to have USD file hash 3a312e0397d4aaf7758006345e2b4ac0 but loaded with 18a6275b9edce27b2130d07db9c90c26. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,334ms] [Warning] [omnigibson.objects.usd_object] Object stairs_tikozn_0 was expected to have USD file hash 3a312e0397d4aaf7758006345e2b4ac0 but loaded with 18a6275b9edce27b2130d07db9c90c26. The saved state might be incompatible.
+[33m[00:00:35.802] [WARNING] [omnigibson.objects.usd_object] Object swing_set_yzhrgz_0 was expected to have USD file hash 7a40573dea95f12bc9ec1d298dbb3535 but loaded with bf247a4fb08999d2ed70207d810d3c5e. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,356ms] [Warning] [omnigibson.objects.usd_object] Object swing_set_yzhrgz_0 was expected to have USD file hash 7a40573dea95f12bc9ec1d298dbb3535 but loaded with bf247a4fb08999d2ed70207d810d3c5e. The saved state might be incompatible.
+[33m[00:00:35.834] [WARNING] [omnigibson.objects.usd_object] Object top_cabinet_tynnnw_0 was expected to have USD file hash bb9e8ae548dea044f81606680c1ddd4a but loaded with 9416692e046297f6dfaf44a7b2e13769. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,388ms] [Warning] [omnigibson.objects.usd_object] Object top_cabinet_tynnnw_0 was expected to have USD file hash bb9e8ae548dea044f81606680c1ddd4a but loaded with 9416692e046297f6dfaf44a7b2e13769. The saved state might be incompatible.
+[33m[00:00:35.852] [WARNING] [omnigibson.objects.usd_object] Object top_cabinet_tynnnw_1 was expected to have USD file hash bb9e8ae548dea044f81606680c1ddd4a but loaded with 9416692e046297f6dfaf44a7b2e13769. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,407ms] [Warning] [omnigibson.objects.usd_object] Object top_cabinet_tynnnw_1 was expected to have USD file hash bb9e8ae548dea044f81606680c1ddd4a but loaded with 9416692e046297f6dfaf44a7b2e13769. The saved state might be incompatible.
+[33m[00:00:35.874] [WARNING] [omnigibson.objects.usd_object] Object track_light_ltnnrc_0 was expected to have USD file hash 5f31529050ee2ff807107ab1848f8290 but loaded with b3b0389c845dc8080fcbbe3f4bf62244. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,429ms] [Warning] [omnigibson.objects.usd_object] Object track_light_ltnnrc_0 was expected to have USD file hash 5f31529050ee2ff807107ab1848f8290 but loaded with b3b0389c845dc8080fcbbe3f4bf62244. The saved state might be incompatible.
+[33m[00:00:35.904] [WARNING] [omnigibson.objects.usd_object] Object track_light_ltnnrc_1 was expected to have USD file hash 5f31529050ee2ff807107ab1848f8290 but loaded with b3b0389c845dc8080fcbbe3f4bf62244. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,458ms] [Warning] [omnigibson.objects.usd_object] Object track_light_ltnnrc_1 was expected to have USD file hash 5f31529050ee2ff807107ab1848f8290 but loaded with b3b0389c845dc8080fcbbe3f4bf62244. The saved state might be incompatible.
+[33m[00:00:35.932] [WARNING] [omnigibson.objects.usd_object] Object wall_mounted_tv_dxyfxf_0 was expected to have USD file hash 1990336656301cdc2627aae5f7318022 but loaded with 4641b595ad963a70ac2049c6146be719. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,486ms] [Warning] [omnigibson.objects.usd_object] Object wall_mounted_tv_dxyfxf_0 was expected to have USD file hash 1990336656301cdc2627aae5f7318022 but loaded with 4641b595ad963a70ac2049c6146be719. The saved state might be incompatible.
+[33m[00:00:35.944] [WARNING] [omnigibson.objects.usd_object] Object wall_socket_nujxel_0 was expected to have USD file hash 4330b7cb7432ce234b36152b824a146f but loaded with d149ca77cdf32b328c5eee1ba73954d3. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,498ms] [Warning] [omnigibson.objects.usd_object] Object wall_socket_nujxel_0 was expected to have USD file hash 4330b7cb7432ce234b36152b824a146f but loaded with d149ca77cdf32b328c5eee1ba73954d3. The saved state might be incompatible.
+[33m[00:00:35.953] [WARNING] [omnigibson.objects.usd_object] Object walls_abtbfo_0 was expected to have USD file hash 5b4896a60c91fe6a70dfaf6d3dcdc497 but loaded with da343824e3427da9564837c39414f02c. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,508ms] [Warning] [omnigibson.objects.usd_object] Object walls_abtbfo_0 was expected to have USD file hash 5b4896a60c91fe6a70dfaf6d3dcdc497 but loaded with da343824e3427da9564837c39414f02c. The saved state might be incompatible.
+[33m[00:00:35.960] [WARNING] [omnigibson.objects.usd_object] Object walls_bjekee_0 was expected to have USD file hash 8cf95618eba09e45afe87c1d59d4a841 but loaded with 47cdf1ccf545d6b7b53bf0e51645924d. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,515ms] [Warning] [omnigibson.objects.usd_object] Object walls_bjekee_0 was expected to have USD file hash 8cf95618eba09e45afe87c1d59d4a841 but loaded with 47cdf1ccf545d6b7b53bf0e51645924d. The saved state might be incompatible.
+[33m[00:00:35.966] [WARNING] [omnigibson.objects.usd_object] Object walls_buhmrc_0 was expected to have USD file hash 6d240c22e5f36de3ad60ea086569d665 but loaded with 251bb7c2af9720b29c492ae517afbf4e. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,521ms] [Warning] [omnigibson.objects.usd_object] Object walls_buhmrc_0 was expected to have USD file hash 6d240c22e5f36de3ad60ea086569d665 but loaded with 251bb7c2af9720b29c492ae517afbf4e. The saved state might be incompatible.
+[33m[00:00:35.972] [WARNING] [omnigibson.objects.usd_object] Object walls_chmqjn_0 was expected to have USD file hash 332ac54222e17e0377a4004614cf7790 but loaded with 513f3ed86d9803bf611998e5ed36c139. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,526ms] [Warning] [omnigibson.objects.usd_object] Object walls_chmqjn_0 was expected to have USD file hash 332ac54222e17e0377a4004614cf7790 but loaded with 513f3ed86d9803bf611998e5ed36c139. The saved state might be incompatible.
+[33m[00:00:35.978] [WARNING] [omnigibson.objects.usd_object] Object walls_cvdpaq_0 was expected to have USD file hash 61d61f77095a80ff9b5f03c2669df801 but loaded with ebc7a74f0dc1525c2386dbd8c09d7828. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,532ms] [Warning] [omnigibson.objects.usd_object] Object walls_cvdpaq_0 was expected to have USD file hash 61d61f77095a80ff9b5f03c2669df801 but loaded with ebc7a74f0dc1525c2386dbd8c09d7828. The saved state might be incompatible.
+[33m[00:00:35.984] [WARNING] [omnigibson.objects.usd_object] Object walls_cxsmhr_0 was expected to have USD file hash 1b5be077939eeb28fb416785efe26f03 but loaded with 6c4c94df04f8d595960390246858797c. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,538ms] [Warning] [omnigibson.objects.usd_object] Object walls_cxsmhr_0 was expected to have USD file hash 1b5be077939eeb28fb416785efe26f03 but loaded with 6c4c94df04f8d595960390246858797c. The saved state might be incompatible.
+[33m[00:00:35.990] [WARNING] [omnigibson.objects.usd_object] Object walls_dewyls_0 was expected to have USD file hash fcae1747905d4fed1bdf50e4e2bc6479 but loaded with 7b16924f6707a983442fb2fa496cf84a. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,544ms] [Warning] [omnigibson.objects.usd_object] Object walls_dewyls_0 was expected to have USD file hash fcae1747905d4fed1bdf50e4e2bc6479 but loaded with 7b16924f6707a983442fb2fa496cf84a. The saved state might be incompatible.
+[33m[00:00:35.995] [WARNING] [omnigibson.objects.usd_object] Object walls_dlfarz_0 was expected to have USD file hash 1f18407b01312aa0fd583b93adf96e96 but loaded with 41fec737c35f7de073be56ba25b60654. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,549ms] [Warning] [omnigibson.objects.usd_object] Object walls_dlfarz_0 was expected to have USD file hash 1f18407b01312aa0fd583b93adf96e96 but loaded with 41fec737c35f7de073be56ba25b60654. The saved state might be incompatible.
+[33m[00:00:36.001] [WARNING] [omnigibson.objects.usd_object] Object walls_epketb_0 was expected to have USD file hash d8e9b89b73cd854af80a55322a431a0d but loaded with e40c24c2f6fd6489481121325b0c0157. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,555ms] [Warning] [omnigibson.objects.usd_object] Object walls_epketb_0 was expected to have USD file hash d8e9b89b73cd854af80a55322a431a0d but loaded with e40c24c2f6fd6489481121325b0c0157. The saved state might be incompatible.
+[33m[00:00:36.007] [WARNING] [omnigibson.objects.usd_object] Object walls_fwsbwf_0 was expected to have USD file hash 9f3aa2c8d583922ab877f18a3e5a8df9 but loaded with d98c1bba9943b2688842e01df8f56385. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,561ms] [Warning] [omnigibson.objects.usd_object] Object walls_fwsbwf_0 was expected to have USD file hash 9f3aa2c8d583922ab877f18a3e5a8df9 but loaded with d98c1bba9943b2688842e01df8f56385. The saved state might be incompatible.
+[33m[00:00:36.012] [WARNING] [omnigibson.objects.usd_object] Object walls_gishpf_0 was expected to have USD file hash c972e073ef1ab690da74d37fd2dcb490 but loaded with d96073b063add55e38605a0d94a74d5c. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,567ms] [Warning] [omnigibson.objects.usd_object] Object walls_gishpf_0 was expected to have USD file hash c972e073ef1ab690da74d37fd2dcb490 but loaded with d96073b063add55e38605a0d94a74d5c. The saved state might be incompatible.
+[33m[00:00:36.017] [WARNING] [omnigibson.objects.usd_object] Object walls_hcbqvq_0 was expected to have USD file hash 4c223a0241e1c7e919f7514767a54b7a but loaded with c3a75a78dd4b52cc16e7b5cfddb94773. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,572ms] [Warning] [omnigibson.objects.usd_object] Object walls_hcbqvq_0 was expected to have USD file hash 4c223a0241e1c7e919f7514767a54b7a but loaded with c3a75a78dd4b52cc16e7b5cfddb94773. The saved state might be incompatible.
+[33m[00:00:36.023] [WARNING] [omnigibson.objects.usd_object] Object walls_jemunw_0 was expected to have USD file hash 3122bb8332fa6ea366a14e86d3e219ce but loaded with a1ed2c445551e915e7d7b6b99a097f6b. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,577ms] [Warning] [omnigibson.objects.usd_object] Object walls_jemunw_0 was expected to have USD file hash 3122bb8332fa6ea366a14e86d3e219ce but loaded with a1ed2c445551e915e7d7b6b99a097f6b. The saved state might be incompatible.
+[33m[00:00:36.028] [WARNING] [omnigibson.objects.usd_object] Object walls_jglkyp_0 was expected to have USD file hash 042e510fad798211dad67f4921944b91 but loaded with dd3a4490bfae0f5132a53a3003dbd1c9. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,583ms] [Warning] [omnigibson.objects.usd_object] Object walls_jglkyp_0 was expected to have USD file hash 042e510fad798211dad67f4921944b91 but loaded with dd3a4490bfae0f5132a53a3003dbd1c9. The saved state might be incompatible.
+[33m[00:00:36.033] [WARNING] [omnigibson.objects.usd_object] Object walls_jnbgxj_0 was expected to have USD file hash 6cdd3a9f66cf52b3a80bf7f97e725e32 but loaded with 86e7bfe1d95045b6ce29705428edb360. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,588ms] [Warning] [omnigibson.objects.usd_object] Object walls_jnbgxj_0 was expected to have USD file hash 6cdd3a9f66cf52b3a80bf7f97e725e32 but loaded with 86e7bfe1d95045b6ce29705428edb360. The saved state might be incompatible.
+[33m[00:00:36.039] [WARNING] [omnigibson.objects.usd_object] Object walls_jzwmhx_0 was expected to have USD file hash 261879bc3e684bf2dbd77d26f0c2b12e but loaded with b044e4e34e0bc47d5246f025c2c81860. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,594ms] [Warning] [omnigibson.objects.usd_object] Object walls_jzwmhx_0 was expected to have USD file hash 261879bc3e684bf2dbd77d26f0c2b12e but loaded with b044e4e34e0bc47d5246f025c2c81860. The saved state might be incompatible.
+[33m[00:00:36.045] [WARNING] [omnigibson.objects.usd_object] Object walls_lblwvg_0 was expected to have USD file hash a95c81ecd20891f1bafe760b47c06420 but loaded with 741405a792f2bf69e723cdbbaba90b55. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,599ms] [Warning] [omnigibson.objects.usd_object] Object walls_lblwvg_0 was expected to have USD file hash a95c81ecd20891f1bafe760b47c06420 but loaded with 741405a792f2bf69e723cdbbaba90b55. The saved state might be incompatible.
+[33m[00:00:36.050] [WARNING] [omnigibson.objects.usd_object] Object walls_lovfhw_0 was expected to have USD file hash 1ef27847777cc10a5634cdf9e031485d but loaded with 75989d048163d2eb40de5ff2167e1124. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,605ms] [Warning] [omnigibson.objects.usd_object] Object walls_lovfhw_0 was expected to have USD file hash 1ef27847777cc10a5634cdf9e031485d but loaded with 75989d048163d2eb40de5ff2167e1124. The saved state might be incompatible.
+[33m[00:00:36.056] [WARNING] [omnigibson.objects.usd_object] Object walls_mgumxz_0 was expected to have USD file hash d64ca8201b1ab12b8d30cc5947ae45da but loaded with 122e6728a3da6839ce85ffc9cb03cea3. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,611ms] [Warning] [omnigibson.objects.usd_object] Object walls_mgumxz_0 was expected to have USD file hash d64ca8201b1ab12b8d30cc5947ae45da but loaded with 122e6728a3da6839ce85ffc9cb03cea3. The saved state might be incompatible.
+[33m[00:00:36.061] [WARNING] [omnigibson.objects.usd_object] Object walls_mgvxov_0 was expected to have USD file hash dde5a8a24f95e81ea67759ba1da85bbe but loaded with 60ba1db8e4af4eecdeb07d9d9ccda794. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,616ms] [Warning] [omnigibson.objects.usd_object] Object walls_mgvxov_0 was expected to have USD file hash dde5a8a24f95e81ea67759ba1da85bbe but loaded with 60ba1db8e4af4eecdeb07d9d9ccda794. The saved state might be incompatible.
+[33m[00:00:36.066] [WARNING] [omnigibson.objects.usd_object] Object walls_miltge_0 was expected to have USD file hash 80acf118157114cffb17d2205bd44b6c but loaded with a9ecd956c5ade0e5c9e6d7f8a0f75971. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,621ms] [Warning] [omnigibson.objects.usd_object] Object walls_miltge_0 was expected to have USD file hash 80acf118157114cffb17d2205bd44b6c but loaded with a9ecd956c5ade0e5c9e6d7f8a0f75971. The saved state might be incompatible.
+[33m[00:00:36.072] [WARNING] [omnigibson.objects.usd_object] Object walls_mkgplc_0 was expected to have USD file hash e7d5eb091d9fb1d54402e23050fd5206 but loaded with a196852798cff950f083464a999ea9f4. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,626ms] [Warning] [omnigibson.objects.usd_object] Object walls_mkgplc_0 was expected to have USD file hash e7d5eb091d9fb1d54402e23050fd5206 but loaded with a196852798cff950f083464a999ea9f4. The saved state might be incompatible.
+[33m[00:00:36.077] [WARNING] [omnigibson.objects.usd_object] Object walls_mwlvfb_0 was expected to have USD file hash 77a32e0830f3660a5ed62483d5cac240 but loaded with 86edea759dd36c7ba6195860fa158970. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,632ms] [Warning] [omnigibson.objects.usd_object] Object walls_mwlvfb_0 was expected to have USD file hash 77a32e0830f3660a5ed62483d5cac240 but loaded with 86edea759dd36c7ba6195860fa158970. The saved state might be incompatible.
+[33m[00:00:36.084] [WARNING] [omnigibson.objects.usd_object] Object walls_oiagxk_0 was expected to have USD file hash 657e0d27d79cc93ba85c415d2b42af1f but loaded with 82a34738bcd168e57f68c429882b2cb1. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,638ms] [Warning] [omnigibson.objects.usd_object] Object walls_oiagxk_0 was expected to have USD file hash 657e0d27d79cc93ba85c415d2b42af1f but loaded with 82a34738bcd168e57f68c429882b2cb1. The saved state might be incompatible.
+[33m[00:00:36.090] [WARNING] [omnigibson.objects.usd_object] Object walls_oqrbxo_0 was expected to have USD file hash fa379f9a9c9cd1da7ff648f499198f18 but loaded with 633eb97b0ed37ef6209ae0abd2711598. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,644ms] [Warning] [omnigibson.objects.usd_object] Object walls_oqrbxo_0 was expected to have USD file hash fa379f9a9c9cd1da7ff648f499198f18 but loaded with 633eb97b0ed37ef6209ae0abd2711598. The saved state might be incompatible.
+[33m[00:00:36.095] [WARNING] [omnigibson.objects.usd_object] Object walls_owxeej_0 was expected to have USD file hash 34bef14a7ea780bf2cd93815746eb459 but loaded with 5f05e8c7dcec3592948fa4db7a6cfc26. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,650ms] [Warning] [omnigibson.objects.usd_object] Object walls_owxeej_0 was expected to have USD file hash 34bef14a7ea780bf2cd93815746eb459 but loaded with 5f05e8c7dcec3592948fa4db7a6cfc26. The saved state might be incompatible.
+[33m[00:00:36.100] [WARNING] [omnigibson.objects.usd_object] Object walls_paarsl_0 was expected to have USD file hash e9e1b102347c179e7404ac8c63a057a1 but loaded with 48ff684f43aba733cd889d87faf74fab. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,655ms] [Warning] [omnigibson.objects.usd_object] Object walls_paarsl_0 was expected to have USD file hash e9e1b102347c179e7404ac8c63a057a1 but loaded with 48ff684f43aba733cd889d87faf74fab. The saved state might be incompatible.
+[33m[00:00:36.106] [WARNING] [omnigibson.objects.usd_object] Object walls_pmygxs_0 was expected to have USD file hash cfa38d73f5886197dba5e112adfcc07a but loaded with 1ece52452ca79ed684d916c025c63e41. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,660ms] [Warning] [omnigibson.objects.usd_object] Object walls_pmygxs_0 was expected to have USD file hash cfa38d73f5886197dba5e112adfcc07a but loaded with 1ece52452ca79ed684d916c025c63e41. The saved state might be incompatible.
+[33m[00:00:36.111] [WARNING] [omnigibson.objects.usd_object] Object walls_qeofms_0 was expected to have USD file hash de4be4ceec4d1ed48e605abe3782ada8 but loaded with 8ad736c60a2f016b23df0e02fd857867. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,666ms] [Warning] [omnigibson.objects.usd_object] Object walls_qeofms_0 was expected to have USD file hash de4be4ceec4d1ed48e605abe3782ada8 but loaded with 8ad736c60a2f016b23df0e02fd857867. The saved state might be incompatible.
+[33m[00:00:36.117] [WARNING] [omnigibson.objects.usd_object] Object walls_rrabdp_0 was expected to have USD file hash ce0382609f884e45db5568d574f2e732 but loaded with ad447167e8d01b45cd2d584c9af624bc. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,671ms] [Warning] [omnigibson.objects.usd_object] Object walls_rrabdp_0 was expected to have USD file hash ce0382609f884e45db5568d574f2e732 but loaded with ad447167e8d01b45cd2d584c9af624bc. The saved state might be incompatible.
+[33m[00:00:36.122] [WARNING] [omnigibson.objects.usd_object] Object walls_uiloru_0 was expected to have USD file hash 0ed21a252059af2ca999e818dfd81cbb but loaded with 9944880a59e90247956933e4973e6044. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,676ms] [Warning] [omnigibson.objects.usd_object] Object walls_uiloru_0 was expected to have USD file hash 0ed21a252059af2ca999e818dfd81cbb but loaded with 9944880a59e90247956933e4973e6044. The saved state might be incompatible.
+[33m[00:00:36.127] [WARNING] [omnigibson.objects.usd_object] Object walls_umqqmh_0 was expected to have USD file hash be4f1289ffe5930678abdd08063eb74a but loaded with b5ce4c273355e2aeeb8e34d4ed38306b. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,682ms] [Warning] [omnigibson.objects.usd_object] Object walls_umqqmh_0 was expected to have USD file hash be4f1289ffe5930678abdd08063eb74a but loaded with b5ce4c273355e2aeeb8e34d4ed38306b. The saved state might be incompatible.
+[33m[00:00:36.133] [WARNING] [omnigibson.objects.usd_object] Object walls_upttgq_0 was expected to have USD file hash 326697987c9faf715f6e6116bc9f3801 but loaded with d06c091e049f369a8dd0c5374e42c51c. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,688ms] [Warning] [omnigibson.objects.usd_object] Object walls_upttgq_0 was expected to have USD file hash 326697987c9faf715f6e6116bc9f3801 but loaded with d06c091e049f369a8dd0c5374e42c51c. The saved state might be incompatible.
+[33m[00:00:36.139] [WARNING] [omnigibson.objects.usd_object] Object walls_vxveul_0 was expected to have USD file hash db479ab9cc217e69d2cb0748a8fbe312 but loaded with 00d275ceac4e6aa478c0845aabd332a7. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,693ms] [Warning] [omnigibson.objects.usd_object] Object walls_vxveul_0 was expected to have USD file hash db479ab9cc217e69d2cb0748a8fbe312 but loaded with 00d275ceac4e6aa478c0845aabd332a7. The saved state might be incompatible.
+[33m[00:00:36.145] [WARNING] [omnigibson.objects.usd_object] Object walls_weybsr_0 was expected to have USD file hash 8b98d47f8b384604d4211372b3575ebd but loaded with 35011e637c5edbf6508510943966e994. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,699ms] [Warning] [omnigibson.objects.usd_object] Object walls_weybsr_0 was expected to have USD file hash 8b98d47f8b384604d4211372b3575ebd but loaded with 35011e637c5edbf6508510943966e994. The saved state might be incompatible.
+[33m[00:00:36.150] [WARNING] [omnigibson.objects.usd_object] Object walls_xsubff_0 was expected to have USD file hash 2b2f42d7ef8fef68f4341a6059f45a0c but loaded with d7905d3ded521b28674c14a9b514ce44. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,705ms] [Warning] [omnigibson.objects.usd_object] Object walls_xsubff_0 was expected to have USD file hash 2b2f42d7ef8fef68f4341a6059f45a0c but loaded with d7905d3ded521b28674c14a9b514ce44. The saved state might be incompatible.
+[33m[00:00:36.156] [WARNING] [omnigibson.objects.usd_object] Object walls_xyrbgy_0 was expected to have USD file hash 948fd822034ea730f10f722b2bb1be1a but loaded with 67c3a438dfe118d83545e28849721d12. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,710ms] [Warning] [omnigibson.objects.usd_object] Object walls_xyrbgy_0 was expected to have USD file hash 948fd822034ea730f10f722b2bb1be1a but loaded with 67c3a438dfe118d83545e28849721d12. The saved state might be incompatible.
+[33m[00:00:36.162] [WARNING] [omnigibson.objects.usd_object] Object walls_ylpkth_0 was expected to have USD file hash d46233dedb1a367be1e2e28627c7b665 but loaded with a85398379f4bf08b212c1667ef914a0b. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,716ms] [Warning] [omnigibson.objects.usd_object] Object walls_ylpkth_0 was expected to have USD file hash d46233dedb1a367be1e2e28627c7b665 but loaded with a85398379f4bf08b212c1667ef914a0b. The saved state might be incompatible.
+[33m[00:00:36.167] [WARNING] [omnigibson.objects.usd_object] Object walls_zdhaff_0 was expected to have USD file hash 33d0d39b4bcb4f8eb883f96e2e614cba but loaded with 3f6185061fd097321eebdf8773e8b4c1. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,722ms] [Warning] [omnigibson.objects.usd_object] Object walls_zdhaff_0 was expected to have USD file hash 33d0d39b4bcb4f8eb883f96e2e614cba but loaded with 3f6185061fd097321eebdf8773e8b4c1. The saved state might be incompatible.
+[33m[00:00:36.182] [WARNING] [omnigibson.objects.usd_object] Object popcorn_bag_73 was expected to have USD file hash 8f40ea1093f6c42f4a837128a11e80ee but loaded with c3c3fc108cc259127e8a5781cf04ef9b. The saved state might be incompatible.[0m
+2026-11-26 12:03:33 [28,737ms] [Warning] [omnigibson.objects.usd_object] Object popcorn_bag_73 was expected to have USD file hash 8f40ea1093f6c42f4a837128a11e80ee but loaded with c3c3fc108cc259127e8a5781cf04ef9b. The saved state might be incompatible.
+2026-11-26 12:05:11 [126,430ms] [Warning] [carb] Failed to startup plugin carb.windowing-glfw.plugin (interfaces: [carb::windowing::IGLContext v1.0],[carb::windowing::IWindowing v1.5]) (impl: carb.windowing-glfw.plugin)
+[0m[00:02:13.973] [INFO] [omnigibson.simulator] Imported scene 0.[0m
+[0m[00:02:56.790] [INFO] [omnigibson.envs.data_wrapper] 
+Writing dataset hdf5 to: /nvme3/projects/memory_vla/outputs/benchmarks/web/20261126-200257-15a1de03/unused_playback.hdf5
+[0m
+[33m[00:02:57.291] [WARNING] [omnigibson.objects.object_base] An object's articulation root API was changed while simulation is playing. This may cause issues.[0m
+2026-11-26 12:05:54 [169,846ms] [Warning] [omnigibson.objects.object_base] An object's articulation root API was changed while simulation is playing. This may cause issues.
+{"episode": 400010, "frame": 0, "step": 0}
+{"episode": 400010, "frame": 1000, "step": 0}
+{"episode": 400010, "frame": 2000, "step": 0}
+{"episode": 400010, "frame": 3000, "step": 0}
+{"step": 1, "episode": 400010, "complete": true}
+{"episode": 400020, "frame": 0, "step": 1}
+{"episode": 400020, "frame": 1000, "step": 1}
+{"episode": 400020, "frame": 2000, "step": 1}
+{"episode": 400020, "frame": 3000, "step": 1}
+{"episode": 400020, "frame": 4000, "step": 1}
+{"step": 2, "episode": 400020, "complete": true}
+{"episode": 400030, "frame": 0, "step": 2}
+{"episode": 400030, "frame": 1000, "step": 2}
+{"episode": 400030, "frame": 2000, "step": 2}
+{"episode": 400030, "frame": 3000, "step": 2}
+{"step": 3, "episode": 400030, "complete": true}
+{"episode": 400040, "frame": 0, "step": 3}
+{"episode": 400040, "frame": 1000, "step": 3}
+{"episode": 400040, "frame": 2000, "step": 3}
+{"episode": 400040, "frame": 3000, "step": 3}
+{"step": 4, "episode": 400040, "complete": true}
+{"episode": 400050, "frame": 0, "step": 4}
+{"episode": 400050, "frame": 1000, "step": 4}
+{"episode": 400050, "frame": 2000, "step": 4}
+{"episode": 400050, "frame": 3000, "step": 4}
+{"step": 5, "episode": 400050, "complete": true}
+{"episode": 400060, "frame": 0, "step": 5}
+{"episode": 400060, "frame": 1000, "step": 5}
+{"episode": 400060, "frame": 2000, "step": 5}
+{"episode": 400060, "frame": 3000, "step": 5}
+{"step": 6, "episode": 400060, "complete": true}
+{"episode": 400070, "frame": 0, "step": 6}
+{"episode": 400070, "frame": 1000, "step": 6}
+{"episode": 400070, "frame": 2000, "step": 6}
+{"step": 7, "episode": 400070, "complete": true}
+{"episode": 400080, "frame": 0, "step": 7}
+{"episode": 400080, "frame": 1000, "step": 7}
+{"episode": 400080, "frame": 2000, "step": 7}
+{"episode": 400080, "frame": 3000, "step": 7}
+{"step": 8, "episode": 400080, "complete": true}
+{"episode": 400090, "frame": 0, "step": 8}
+{"episode": 400090, "frame": 1000, "step": 8}
+{"episode": 400090, "frame": 2000, "step": 8}
+{"step": 9, "episode": 400090, "complete": true}
+{"episode": 400100, "frame": 0, "step": 9}
+{"episode": 400100, "frame": 1000, "step": 9}
+{"episode": 400100, "frame": 2000, "step": 9}
+{"episode": 400100, "frame": 3000, "step": 9}
+{"episode": 400100, "frame": 4000, "step": 9}
+{"step": 10, "episode": 400100, "complete": true}
+{"episode": 400110, "frame": 0, "step": 10}
+{"episode": 400110, "frame": 1000, "step": 10}
+{"episode": 400110, "frame": 2000, "step": 10}
+{"episode": 400110, "frame": 3000, "step": 10}
+{"step": 11, "episode": 400110, "complete": true}
+{"episode": 400120, "frame": 0, "step": 11}
+{"episode": 400120, "frame": 1000, "step": 11}
+{"episode": 400120, "frame": 2000, "step": 11}
+{"episode": 400120, "frame": 3000, "step": 11}
+{"step": 12, "episode": 400120, "complete": true}
+{"episode": 400130, "frame": 0, "step": 12}
+{"episode": 400130, "frame": 1000, "step": 12}
+{"episode": 400130, "frame": 2000, "step": 12}
+{"episode": 400130, "frame": 3000, "step": 12}
+{"step": 13, "episode": 400130, "complete": true}

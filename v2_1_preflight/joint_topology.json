@@ -1,0 +1,2071 @@
+{
+  "provenance": {
+    "actual_usd": "/nvme3/projects/SERF-VLA/datasets/omnigibson-robot-assets/models/r1pro/usd/r1pro.usda",
+    "sha256": "6029617cdd3aefce981428058a1c82cffe6af20ae61dc5be1da7334342c3bc52",
+    "md5": "4ed6cf0910d2c4a82afbb472a41ccf25",
+    "size": 131100140,
+    "meters_per_unit": 1.0,
+    "up_axis": "Z"
+  },
+  "links": [
+    {
+      "name": "base_link",
+      "path": "/r1pro/base_link"
+    },
+    {
+      "name": "steer_motor_link1",
+      "path": "/r1pro/steer_motor_link1"
+    },
+    {
+      "name": "wheel_motor_link1",
+      "path": "/r1pro/wheel_motor_link1"
+    },
+    {
+      "name": "steer_motor_link2",
+      "path": "/r1pro/steer_motor_link2"
+    },
+    {
+      "name": "wheel_motor_link2",
+      "path": "/r1pro/wheel_motor_link2"
+    },
+    {
+      "name": "steer_motor_link3",
+      "path": "/r1pro/steer_motor_link3"
+    },
+    {
+      "name": "wheel_motor_link3",
+      "path": "/r1pro/wheel_motor_link3"
+    },
+    {
+      "name": "torso_link1",
+      "path": "/r1pro/torso_link1"
+    },
+    {
+      "name": "torso_link2",
+      "path": "/r1pro/torso_link2"
+    },
+    {
+      "name": "torso_link3",
+      "path": "/r1pro/torso_link3"
+    },
+    {
+      "name": "torso_link4",
+      "path": "/r1pro/torso_link4"
+    },
+    {
+      "name": "left_arm_base_link",
+      "path": "/r1pro/left_arm_base_link"
+    },
+    {
+      "name": "left_arm_link1",
+      "path": "/r1pro/left_arm_link1"
+    },
+    {
+      "name": "left_arm_link2",
+      "path": "/r1pro/left_arm_link2"
+    },
+    {
+      "name": "left_arm_link3",
+      "path": "/r1pro/left_arm_link3"
+    },
+    {
+      "name": "left_arm_link4",
+      "path": "/r1pro/left_arm_link4"
+    },
+    {
+      "name": "left_arm_link5",
+      "path": "/r1pro/left_arm_link5"
+    },
+    {
+      "name": "left_arm_link6",
+      "path": "/r1pro/left_arm_link6"
+    },
+    {
+      "name": "left_arm_link7",
+      "path": "/r1pro/left_arm_link7"
+    },
+    {
+      "name": "left_gripper_link",
+      "path": "/r1pro/left_gripper_link"
+    },
+    {
+      "name": "left_gripper_finger_link1",
+      "path": "/r1pro/left_gripper_finger_link1"
+    },
+    {
+      "name": "left_gripper_finger_link2",
+      "path": "/r1pro/left_gripper_finger_link2"
+    },
+    {
+      "name": "left_realsense_link",
+      "path": "/r1pro/left_realsense_link"
+    },
+    {
+      "name": "right_arm_base_link",
+      "path": "/r1pro/right_arm_base_link"
+    },
+    {
+      "name": "right_arm_link1",
+      "path": "/r1pro/right_arm_link1"
+    },
+    {
+      "name": "right_arm_link2",
+      "path": "/r1pro/right_arm_link2"
+    },
+    {
+      "name": "right_arm_link3",
+      "path": "/r1pro/right_arm_link3"
+    },
+    {
+      "name": "right_arm_link4",
+      "path": "/r1pro/right_arm_link4"
+    },
+    {
+      "name": "right_arm_link5",
+      "path": "/r1pro/right_arm_link5"
+    },
+    {
+      "name": "right_arm_link6",
+      "path": "/r1pro/right_arm_link6"
+    },
+    {
+      "name": "right_arm_link7",
+      "path": "/r1pro/right_arm_link7"
+    },
+    {
+      "name": "right_gripper_link",
+      "path": "/r1pro/right_gripper_link"
+    },
+    {
+      "name": "right_gripper_finger_link1",
+      "path": "/r1pro/right_gripper_finger_link1"
+    },
+    {
+      "name": "right_gripper_finger_link2",
+      "path": "/r1pro/right_gripper_finger_link2"
+    },
+    {
+      "name": "right_realsense_link",
+      "path": "/r1pro/right_realsense_link"
+    },
+    {
+      "name": "zed_link",
+      "path": "/r1pro/zed_link"
+    },
+    {
+      "name": "left_eef_link",
+      "path": "/r1pro/left_eef_link"
+    },
+    {
+      "name": "right_eef_link",
+      "path": "/r1pro/right_eef_link"
+    },
+    {
+      "name": "base_footprint_rz",
+      "path": "/r1pro/base_footprint_rz"
+    },
+    {
+      "name": "base_footprint_ry",
+      "path": "/r1pro/base_footprint_ry"
+    },
+    {
+      "name": "base_footprint_rx",
+      "path": "/r1pro/base_footprint_rx"
+    },
+    {
+      "name": "base_footprint_z",
+      "path": "/r1pro/base_footprint_z"
+    },
+    {
+      "name": "base_footprint_y",
+      "path": "/r1pro/base_footprint_y"
+    },
+    {
+      "name": "base_footprint_x",
+      "path": "/r1pro/base_footprint_x"
+    }
+  ],
+  "joints": [
+    {
+      "name": "steer_motor_joint1",
+      "path": "/r1pro/base_link/steer_motor_joint1",
+      "type": "PhysicsFixedJoint",
+      "parent": "base_link",
+      "child": "steer_motor_link1",
+      "axis": "Z",
+      "pos0": [
+        0.1689700037240982,
+        0.2800000011920929,
+        0.15764999389648438
+      ],
+      "pos1": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "quat0_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "quat1_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "lower_native": -180.0004119873047,
+      "upper_native": 180.0004119873047,
+      "native_unit": null,
+      "max_velocity_native": 1145.9156494140625,
+      "effort_limit": null,
+      "runtime_virtual": false,
+      "limits_SI": [
+        -180.0004119873047,
+        180.0004119873047
+      ],
+      "velocity_limit_SI": 1145.9156494140625
+    },
+    {
+      "name": "steer_motor_joint2",
+      "path": "/r1pro/base_link/steer_motor_joint2",
+      "type": "PhysicsFixedJoint",
+      "parent": "base_link",
+      "child": "steer_motor_link2",
+      "axis": "Z",
+      "pos0": [
+        0.1689700037240982,
+        -0.2800000011920929,
+        0.15764999389648438
+      ],
+      "pos1": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "quat0_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "quat1_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "lower_native": -180.0004119873047,
+      "upper_native": 180.0004119873047,
+      "native_unit": null,
+      "max_velocity_native": 1145.9156494140625,
+      "effort_limit": null,
+      "runtime_virtual": false,
+      "limits_SI": [
+        -180.0004119873047,
+        180.0004119873047
+      ],
+      "velocity_limit_SI": 1145.9156494140625
+    },
+    {
+      "name": "steer_motor_joint3",
+      "path": "/r1pro/base_link/steer_motor_joint3",
+      "type": "PhysicsFixedJoint",
+      "parent": "base_link",
+      "child": "steer_motor_link3",
+      "axis": "Z",
+      "pos0": [
+        -0.3270300030708313,
+        0.0,
+        0.15764999389648438
+      ],
+      "pos1": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "quat0_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "quat1_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "lower_native": -180.0004119873047,
+      "upper_native": 180.0004119873047,
+      "native_unit": null,
+      "max_velocity_native": 1145.9156494140625,
+      "effort_limit": null,
+      "runtime_virtual": false,
+      "limits_SI": [
+        -180.0004119873047,
+        180.0004119873047
+      ],
+      "velocity_limit_SI": 1145.9156494140625
+    },
+    {
+      "name": "torso_joint1",
+      "path": "/r1pro/base_link/torso_joint1",
+      "type": "PhysicsRevoluteJoint",
+      "parent": "base_link",
+      "child": "torso_link1",
+      "axis": "Y",
+      "pos0": [
+        -0.07903199642896652,
+        0.0,
+        0.34264999628067017
+      ],
+      "pos1": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "quat0_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "quat1_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "lower_native": -65.00205993652344,
+      "upper_native": 105.00023651123047,
+      "native_unit": "degree",
+      "max_velocity_native": 143.2394561767578,
+      "effort_limit": 100.0,
+      "runtime_virtual": false,
+      "limits_SI": [
+        -1.1344999664710302,
+        1.8325998424937358
+      ],
+      "velocity_limit_SI": 2.5000001290505525
+    },
+    {
+      "name": "wheel_motor_joint1",
+      "path": "/r1pro/steer_motor_link1/wheel_motor_joint1",
+      "type": "PhysicsFixedJoint",
+      "parent": "steer_motor_link1",
+      "child": "wheel_motor_link1",
+      "axis": "Y",
+      "pos0": [
+        0.0,
+        0.0,
+        -0.08765000104904175
+      ],
+      "pos1": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "quat0_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "quat1_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "lower_native": null,
+      "upper_native": null,
+      "native_unit": null,
+      "max_velocity_native": "+inf",
+      "effort_limit": null,
+      "runtime_virtual": false,
+      "limits_SI": [
+        null,
+        null
+      ],
+      "velocity_limit_SI": "+inf"
+    },
+    {
+      "name": "wheel_motor_joint2",
+      "path": "/r1pro/steer_motor_link2/wheel_motor_joint2",
+      "type": "PhysicsFixedJoint",
+      "parent": "steer_motor_link2",
+      "child": "wheel_motor_link2",
+      "axis": "Y",
+      "pos0": [
+        0.0,
+        0.0,
+        -0.08765000104904175
+      ],
+      "pos1": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "quat0_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "quat1_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "lower_native": null,
+      "upper_native": null,
+      "native_unit": null,
+      "max_velocity_native": "+inf",
+      "effort_limit": null,
+      "runtime_virtual": false,
+      "limits_SI": [
+        null,
+        null
+      ],
+      "velocity_limit_SI": "+inf"
+    },
+    {
+      "name": "wheel_motor_joint3",
+      "path": "/r1pro/steer_motor_link3/wheel_motor_joint3",
+      "type": "PhysicsFixedJoint",
+      "parent": "steer_motor_link3",
+      "child": "wheel_motor_link3",
+      "axis": "Y",
+      "pos0": [
+        0.0,
+        0.0,
+        -0.08765000104904175
+      ],
+      "pos1": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "quat0_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "quat1_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "lower_native": null,
+      "upper_native": null,
+      "native_unit": null,
+      "max_velocity_native": "+inf",
+      "effort_limit": null,
+      "runtime_virtual": false,
+      "limits_SI": [
+        null,
+        null
+      ],
+      "velocity_limit_SI": "+inf"
+    },
+    {
+      "name": "torso_joint2",
+      "path": "/r1pro/torso_link1/torso_joint2",
+      "type": "PhysicsRevoluteJoint",
+      "parent": "torso_link1",
+      "child": "torso_link2",
+      "axis": "Y",
+      "pos0": [
+        0.0,
+        0.0,
+        0.4000000059604645
+      ],
+      "pos1": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "quat0_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "quat1_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "lower_native": -159.9984588623047,
+      "upper_native": 144.9984130859375,
+      "native_unit": "degree",
+      "max_velocity_native": 143.2394561767578,
+      "effort_limit": 100.0,
+      "runtime_virtual": false,
+      "limits_SI": [
+        -2.7924999052639174,
+        2.530699718516441
+      ],
+      "velocity_limit_SI": 2.5000001290505525
+    },
+    {
+      "name": "torso_joint3",
+      "path": "/r1pro/torso_link2/torso_joint3",
+      "type": "PhysicsRevoluteJoint",
+      "parent": "torso_link2",
+      "child": "torso_link3",
+      "axis": "Y",
+      "pos0": [
+        0.0,
+        0.0001005000012810342,
+        0.30000001192092896
+      ],
+      "pos1": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "quat0_xyzw": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "quat1_xyzw": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "lower_native": -105.00023651123047,
+      "upper_native": 90.00020599365234,
+      "native_unit": "degree",
+      "max_velocity_native": 143.2394561767578,
+      "effort_limit": 100.0,
+      "runtime_virtual": false,
+      "limits_SI": [
+        -1.8325998424937358,
+        1.5707999220623683
+      ],
+      "velocity_limit_SI": 2.5000001290505525
+    },
+    {
+      "name": "torso_joint4",
+      "path": "/r1pro/torso_link3/torso_joint4",
+      "type": "PhysicsRevoluteJoint",
+      "parent": "torso_link3",
+      "child": "torso_link4",
+      "axis": "Z",
+      "pos0": [
+        0.0,
+        -0.00010014999861596152,
+        0.09961999952793121
+      ],
+      "pos1": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "quat0_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "quat1_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "lower_native": -174.9984893798828,
+      "upper_native": 174.9984893798828,
+      "native_unit": "degree",
+      "max_velocity_native": 143.2394561767578,
+      "effort_limit": 100.0,
+      "runtime_virtual": false,
+      "limits_SI": [
+        -3.054299825695285,
+        3.054299825695285
+      ],
+      "velocity_limit_SI": 2.5000001290505525
+    },
+    {
+      "name": "left_arm_base_joint",
+      "path": "/r1pro/torso_link4/left_arm_base_joint",
+      "type": "PhysicsFixedJoint",
+      "parent": "torso_link4",
+      "child": "left_arm_base_link",
+      "axis": null,
+      "pos0": [
+        -0.00048618001164868474,
+        0.09723400324583054,
+        0.30302000045776367
+      ],
+      "pos1": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "quat0_xyzw": [
+        0.0,
+        0.7071067690849304,
+        0.0,
+        0.7071067690849304
+      ],
+      "quat1_xyzw": [
+        0.0,
+        0.7071067690849304,
+        0.0,
+        0.7071067690849304
+      ],
+      "lower_native": null,
+      "upper_native": null,
+      "native_unit": null,
+      "max_velocity_native": null,
+      "effort_limit": null,
+      "runtime_virtual": false,
+      "limits_SI": [
+        null,
+        null
+      ],
+      "velocity_limit_SI": null
+    },
+    {
+      "name": "right_arm_base_joint",
+      "path": "/r1pro/torso_link4/right_arm_base_joint",
+      "type": "PhysicsFixedJoint",
+      "parent": "torso_link4",
+      "child": "right_arm_base_link",
+      "axis": null,
+      "pos0": [
+        -0.00048705999506637454,
+        -0.09723600000143051,
+        0.30302000045776367
+      ],
+      "pos1": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "quat0_xyzw": [
+        0.0,
+        0.7071067690849304,
+        0.0,
+        0.7071067690849304
+      ],
+      "quat1_xyzw": [
+        0.0,
+        0.7071067690849304,
+        0.0,
+        0.7071067690849304
+      ],
+      "lower_native": null,
+      "upper_native": null,
+      "native_unit": null,
+      "max_velocity_native": null,
+      "effort_limit": null,
+      "runtime_virtual": false,
+      "limits_SI": [
+        null,
+        null
+      ],
+      "velocity_limit_SI": null
+    },
+    {
+      "name": "zed_joint",
+      "path": "/r1pro/torso_link4/zed_joint",
+      "type": "PhysicsFixedJoint",
+      "parent": "torso_link4",
+      "child": "zed_link",
+      "axis": null,
+      "pos0": [
+        0.06551100313663483,
+        0.06000300124287605,
+        0.4759800136089325
+      ],
+      "pos1": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "quat0_xyzw": [
+        -0.12279969453811646,
+        0.6963621377944946,
+        -0.6963616609573364,
+        -0.12280219793319702
+      ],
+      "quat1_xyzw": [
+        0.0,
+        0.7071067690849304,
+        0.0,
+        0.7071067690849304
+      ],
+      "lower_native": null,
+      "upper_native": null,
+      "native_unit": null,
+      "max_velocity_native": null,
+      "effort_limit": null,
+      "runtime_virtual": false,
+      "limits_SI": [
+        null,
+        null
+      ],
+      "velocity_limit_SI": null
+    },
+    {
+      "name": "left_arm_joint1",
+      "path": "/r1pro/left_arm_base_link/left_arm_joint1",
+      "type": "PhysicsRevoluteJoint",
+      "parent": "left_arm_base_link",
+      "child": "left_arm_link1",
+      "axis": "Y",
+      "pos0": [
+        0.0,
+        0.07349999994039536,
+        0.0
+      ],
+      "pos1": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "quat0_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "quat1_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "lower_native": -255.00059509277344,
+      "upper_native": 75.00017547607422,
+      "native_unit": "degree",
+      "max_velocity_native": 407.9975280761719,
+      "effort_limit": 55.0,
+      "runtime_virtual": false,
+      "limits_SI": [
+        -4.450599978913791,
+        1.3090000016310008
+      ],
+      "velocity_limit_SI": 7.120900204927206
+    },
+    {
+      "name": "left_arm_joint2",
+      "path": "/r1pro/left_arm_link1/left_arm_joint2",
+      "type": "PhysicsRevoluteJoint",
+      "parent": "left_arm_link1",
+      "child": "left_arm_link2",
+      "axis": "X",
+      "pos0": [
+        0.025011999532580376,
+        0.08126500248908997,
+        0.0
+      ],
+      "pos1": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "quat0_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "quat1_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "lower_native": -9.998113632202148,
+      "upper_native": 180.0004119873047,
+      "native_unit": "degree",
+      "max_velocity_native": 407.9975280761719,
+      "effort_limit": 55.0,
+      "runtime_virtual": false,
+      "limits_SI": [
+        -0.17450000187045686,
+        3.1415998441247366
+      ],
+      "velocity_limit_SI": 7.120900204927206
+    },
+    {
+      "name": "left_arm_joint3",
+      "path": "/r1pro/left_arm_link2/left_arm_joint3",
+      "type": "PhysicsRevoluteJoint",
+      "parent": "left_arm_link2",
+      "child": "left_arm_link3",
+      "axis": "Z",
+      "pos0": [
+        -0.025011999532580376,
+        0.0,
+        -0.11550000309944153
+      ],
+      "pos1": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "quat0_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "quat1_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "lower_native": -135.0000762939453,
+      "upper_native": 135.0000762939453,
+      "native_unit": "degree",
+      "max_velocity_native": 480.0010986328125,
+      "effort_limit": 25.0,
+      "runtime_virtual": false,
+      "limits_SI": [
+        -2.3561958217728898,
+        2.3561958217728898
+      ],
+      "velocity_limit_SI": 8.37759958433263
+    },
+    {
+      "name": "left_arm_joint4",
+      "path": "/r1pro/left_arm_link3/left_arm_joint4",
+      "type": "PhysicsRevoluteJoint",
+      "parent": "left_arm_link3",
+      "child": "left_arm_link4",
+      "axis": "Y",
+      "pos0": [
+        0.0,
+        0.035064999014139175,
+        -0.19449999928474426
+      ],
+      "pos1": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "quat0_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "quat1_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "lower_native": -120.0002670288086,
+      "upper_native": 20.001955032348633,
+      "native_unit": "degree",
+      "max_velocity_native": 480.0010986328125,
+      "effort_limit": 25.0,
+      "runtime_virtual": false,
+      "limits_SI": [
+        -2.094399762925103,
+        0.34909997215033256
+      ],
+      "velocity_limit_SI": 8.37759958433263
+    },
+    {
+      "name": "left_arm_joint5",
+      "path": "/r1pro/left_arm_link4/left_arm_joint5",
+      "type": "PhysicsRevoluteJoint",
+      "parent": "left_arm_link4",
+      "child": "left_arm_link5",
+      "axis": "Z",
+      "pos0": [
+        0.0,
+        -0.035064999014139175,
+        -0.0949999988079071
+      ],
+      "pos1": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "quat0_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "quat1_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "lower_native": -135.0000762939453,
+      "upper_native": 135.0000762939453,
+      "native_unit": "degree",
+      "max_velocity_native": 600.0014038085938,
+      "effort_limit": 18.0,
+      "runtime_virtual": false,
+      "limits_SI": [
+        -2.3561958217728898,
+        2.3561958217728898
+      ],
+      "velocity_limit_SI": 10.472000013048007
+    },
+    {
+      "name": "left_arm_joint6",
+      "path": "/r1pro/left_arm_link5/left_arm_joint6",
+      "type": "PhysicsRevoluteJoint",
+      "parent": "left_arm_link5",
+      "child": "left_arm_link6",
+      "axis": "Y",
+      "pos0": [
+        0.0,
+        -0.02800000086426735,
+        -0.16304999589920044
+      ],
+      "pos1": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "quat0_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "quat1_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "lower_native": -60.00002670288086,
+      "upper_native": 60.00002670288086,
+      "native_unit": "degree",
+      "max_velocity_native": 600.0014038085938,
+      "effort_limit": 18.0,
+      "runtime_virtual": false,
+      "limits_SI": [
+        -1.0471980172497886,
+        1.0471980172497886
+      ],
+      "velocity_limit_SI": 10.472000013048007
+    },
+    {
+      "name": "left_arm_joint7",
+      "path": "/r1pro/left_arm_link6/left_arm_joint7",
+      "type": "PhysicsRevoluteJoint",
+      "parent": "left_arm_link6",
+      "child": "left_arm_link7",
+      "axis": "X",
+      "pos0": [
+        0.029500000178813934,
+        0.02800000086426735,
+        0.0
+      ],
+      "pos1": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "quat0_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "quat1_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "lower_native": -90.00020599365234,
+      "upper_native": 90.00020599365234,
+      "native_unit": "degree",
+      "max_velocity_native": 600.0014038085938,
+      "effort_limit": 18.0,
+      "runtime_virtual": false,
+      "limits_SI": [
+        -1.5707999220623683,
+        1.5707999220623683
+      ],
+      "velocity_limit_SI": 10.472000013048007
+    },
+    {
+      "name": "left_gripper_joint",
+      "path": "/r1pro/left_arm_link7/left_gripper_joint",
+      "type": "PhysicsFixedJoint",
+      "parent": "left_arm_link7",
+      "child": "left_gripper_link",
+      "axis": null,
+      "pos0": [
+        -0.029500000178813934,
+        0.0,
+        -0.16064999997615814
+      ],
+      "pos1": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "quat0_xyzw": [
+        0.0,
+        0.7071067690849304,
+        0.0,
+        0.7071067690849304
+      ],
+      "quat1_xyzw": [
+        0.0,
+        0.7071067690849304,
+        0.0,
+        0.7071067690849304
+      ],
+      "lower_native": null,
+      "upper_native": null,
+      "native_unit": null,
+      "max_velocity_native": null,
+      "effort_limit": null,
+      "runtime_virtual": false,
+      "limits_SI": [
+        null,
+        null
+      ],
+      "velocity_limit_SI": null
+    },
+    {
+      "name": "left_gripper_finger_joint1",
+      "path": "/r1pro/left_gripper_link/left_gripper_finger_joint1",
+      "type": "PhysicsPrismaticJoint",
+      "parent": "left_gripper_link",
+      "child": "left_gripper_finger_link1",
+      "axis": "Y",
+      "pos0": [
+        -8.870899910107255e-05,
+        0.013453000225126743,
+        -0.036890000104904175
+      ],
+      "pos1": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "quat0_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "quat1_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "lower_native": 0.0,
+      "upper_native": 0.05000000074505806,
+      "native_unit": "metre",
+      "max_velocity_native": 0.25,
+      "effort_limit": 100.0,
+      "runtime_virtual": false,
+      "limits_SI": [
+        0.0,
+        0.05000000074505806
+      ],
+      "velocity_limit_SI": 0.25
+    },
+    {
+      "name": "left_gripper_finger_joint2",
+      "path": "/r1pro/left_gripper_link/left_gripper_finger_joint2",
+      "type": "PhysicsPrismaticJoint",
+      "parent": "left_gripper_link",
+      "child": "left_gripper_finger_link2",
+      "axis": "Y",
+      "pos0": [
+        8.904599962988868e-05,
+        -0.013453000225126743,
+        -0.036890000104904175
+      ],
+      "pos1": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "quat0_xyzw": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "quat1_xyzw": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "lower_native": 0.0,
+      "upper_native": 0.05000000074505806,
+      "native_unit": "metre",
+      "max_velocity_native": 0.25,
+      "effort_limit": 100.0,
+      "runtime_virtual": false,
+      "limits_SI": [
+        0.0,
+        0.05000000074505806
+      ],
+      "velocity_limit_SI": 0.25
+    },
+    {
+      "name": "left_realsense_joint",
+      "path": "/r1pro/left_gripper_link/left_realsense_joint",
+      "type": "PhysicsFixedJoint",
+      "parent": "left_gripper_link",
+      "child": "left_realsense_link",
+      "axis": null,
+      "pos0": [
+        0.05051000043749809,
+        0.00289339991286397,
+        0.005131700076162815
+      ],
+      "pos1": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "quat0_xyzw": [
+        -0.0015274044126272202,
+        -0.5373068451881409,
+        0.0009699032525531948,
+        0.8433849215507507
+      ],
+      "quat1_xyzw": [
+        0.0,
+        0.7071067690849304,
+        0.0,
+        0.7071067690849304
+      ],
+      "lower_native": null,
+      "upper_native": null,
+      "native_unit": null,
+      "max_velocity_native": null,
+      "effort_limit": null,
+      "runtime_virtual": false,
+      "limits_SI": [
+        null,
+        null
+      ],
+      "velocity_limit_SI": null
+    },
+    {
+      "name": "left_gripper_link_left_eef_link_joint",
+      "path": "/r1pro/left_gripper_link/left_gripper_link_left_eef_link_joint",
+      "type": "PhysicsFixedJoint",
+      "parent": "left_gripper_link",
+      "child": "left_eef_link",
+      "axis": null,
+      "pos0": [
+        0.0,
+        0.0,
+        -0.05999999865889549
+      ],
+      "pos1": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "quat0_xyzw": [
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "quat1_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "lower_native": null,
+      "upper_native": null,
+      "native_unit": null,
+      "max_velocity_native": null,
+      "effort_limit": null,
+      "runtime_virtual": false,
+      "limits_SI": [
+        null,
+        null
+      ],
+      "velocity_limit_SI": null
+    },
+    {
+      "name": "right_arm_joint1",
+      "path": "/r1pro/right_arm_base_link/right_arm_joint1",
+      "type": "PhysicsRevoluteJoint",
+      "parent": "right_arm_base_link",
+      "child": "right_arm_link1",
+      "axis": "Y",
+      "pos0": [
+        0.0,
+        -0.07349999994039536,
+        0.0
+      ],
+      "pos1": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "quat0_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "quat1_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "lower_native": -255.00059509277344,
+      "upper_native": 75.00017547607422,
+      "native_unit": "degree",
+      "max_velocity_native": 407.9975280761719,
+      "effort_limit": 55.0,
+      "runtime_virtual": false,
+      "limits_SI": [
+        -4.450599978913791,
+        1.3090000016310008
+      ],
+      "velocity_limit_SI": 7.120900204927206
+    },
+    {
+      "name": "right_arm_joint2",
+      "path": "/r1pro/right_arm_link1/right_arm_joint2",
+      "type": "PhysicsRevoluteJoint",
+      "parent": "right_arm_link1",
+      "child": "right_arm_link2",
+      "axis": "X",
+      "pos0": [
+        0.02398799918591976,
+        -0.08126500248908997,
+        0.0
+      ],
+      "pos1": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "quat0_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "quat1_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "lower_native": -180.0004119873047,
+      "upper_native": 9.998113632202148,
+      "native_unit": "degree",
+      "max_velocity_native": 407.9975280761719,
+      "effort_limit": 55.0,
+      "runtime_virtual": false,
+      "limits_SI": [
+        -3.1415998441247366,
+        0.17450000187045686
+      ],
+      "velocity_limit_SI": 7.120900204927206
+    },
+    {
+      "name": "right_arm_joint3",
+      "path": "/r1pro/right_arm_link2/right_arm_joint3",
+      "type": "PhysicsRevoluteJoint",
+      "parent": "right_arm_link2",
+      "child": "right_arm_link3",
+      "axis": "Z",
+      "pos0": [
+        -0.02398799918591976,
+        0.0,
+        -0.11550000309944153
+      ],
+      "pos1": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "quat0_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "quat1_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "lower_native": -135.0000762939453,
+      "upper_native": 135.0000762939453,
+      "native_unit": "degree",
+      "max_velocity_native": 480.0010986328125,
+      "effort_limit": 25.0,
+      "runtime_virtual": false,
+      "limits_SI": [
+        -2.3561958217728898,
+        2.3561958217728898
+      ],
+      "velocity_limit_SI": 8.37759958433263
+    },
+    {
+      "name": "right_arm_joint4",
+      "path": "/r1pro/right_arm_link3/right_arm_joint4",
+      "type": "PhysicsRevoluteJoint",
+      "parent": "right_arm_link3",
+      "child": "right_arm_link4",
+      "axis": "Y",
+      "pos0": [
+        0.0,
+        0.035057999193668365,
+        -0.19449999928474426
+      ],
+      "pos1": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "quat0_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "quat1_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "lower_native": -120.0002670288086,
+      "upper_native": 20.001955032348633,
+      "native_unit": "degree",
+      "max_velocity_native": 480.0010986328125,
+      "effort_limit": 25.0,
+      "runtime_virtual": false,
+      "limits_SI": [
+        -2.094399762925103,
+        0.34909997215033256
+      ],
+      "velocity_limit_SI": 8.37759958433263
+    },
+    {
+      "name": "right_arm_joint5",
+      "path": "/r1pro/right_arm_link4/right_arm_joint5",
+      "type": "PhysicsRevoluteJoint",
+      "parent": "right_arm_link4",
+      "child": "right_arm_link5",
+      "axis": "Z",
+      "pos0": [
+        0.0,
+        -0.035057999193668365,
+        -0.0949999988079071
+      ],
+      "pos1": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "quat0_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "quat1_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "lower_native": -135.0000762939453,
+      "upper_native": 135.0000762939453,
+      "native_unit": "degree",
+      "max_velocity_native": 600.0014038085938,
+      "effort_limit": 18.0,
+      "runtime_virtual": false,
+      "limits_SI": [
+        -2.3561958217728898,
+        2.3561958217728898
+      ],
+      "velocity_limit_SI": 10.472000013048007
+    },
+    {
+      "name": "right_arm_joint6",
+      "path": "/r1pro/right_arm_link5/right_arm_joint6",
+      "type": "PhysicsRevoluteJoint",
+      "parent": "right_arm_link5",
+      "child": "right_arm_link6",
+      "axis": "Y",
+      "pos0": [
+        0.0,
+        0.028000999242067337,
+        -0.16304999589920044
+      ],
+      "pos1": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "quat0_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "quat1_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "lower_native": -60.00002670288086,
+      "upper_native": 60.00002670288086,
+      "native_unit": "degree",
+      "max_velocity_native": 600.0014038085938,
+      "effort_limit": 18.0,
+      "runtime_virtual": false,
+      "limits_SI": [
+        -1.0471980172497886,
+        1.0471980172497886
+      ],
+      "velocity_limit_SI": 10.472000013048007
+    },
+    {
+      "name": "right_arm_joint7",
+      "path": "/r1pro/right_arm_link6/right_arm_joint7",
+      "type": "PhysicsRevoluteJoint",
+      "parent": "right_arm_link6",
+      "child": "right_arm_link7",
+      "axis": "X",
+      "pos0": [
+        0.029500000178813934,
+        -0.028000999242067337,
+        0.0
+      ],
+      "pos1": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "quat0_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "quat1_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "lower_native": -90.00020599365234,
+      "upper_native": 90.00020599365234,
+      "native_unit": "degree",
+      "max_velocity_native": 600.0014038085938,
+      "effort_limit": 18.0,
+      "runtime_virtual": false,
+      "limits_SI": [
+        -1.5707999220623683,
+        1.5707999220623683
+      ],
+      "velocity_limit_SI": 10.472000013048007
+    },
+    {
+      "name": "right_gripper_joint",
+      "path": "/r1pro/right_arm_link7/right_gripper_joint",
+      "type": "PhysicsFixedJoint",
+      "parent": "right_arm_link7",
+      "child": "right_gripper_link",
+      "axis": null,
+      "pos0": [
+        -0.029500000178813934,
+        0.0,
+        -0.16064999997615814
+      ],
+      "pos1": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "quat0_xyzw": [
+        0.0,
+        0.7071067690849304,
+        0.0,
+        0.7071067690849304
+      ],
+      "quat1_xyzw": [
+        0.0,
+        0.7071067690849304,
+        0.0,
+        0.7071067690849304
+      ],
+      "lower_native": null,
+      "upper_native": null,
+      "native_unit": null,
+      "max_velocity_native": null,
+      "effort_limit": null,
+      "runtime_virtual": false,
+      "limits_SI": [
+        null,
+        null
+      ],
+      "velocity_limit_SI": null
+    },
+    {
+      "name": "right_gripper_finger_joint1",
+      "path": "/r1pro/right_gripper_link/right_gripper_finger_joint1",
+      "type": "PhysicsPrismaticJoint",
+      "parent": "right_gripper_link",
+      "child": "right_gripper_finger_link1",
+      "axis": "Y",
+      "pos0": [
+        -8.870899910107255e-05,
+        0.013453000225126743,
+        -0.036890000104904175
+      ],
+      "pos1": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "quat0_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "quat1_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "lower_native": 0.0,
+      "upper_native": 0.05000000074505806,
+      "native_unit": "metre",
+      "max_velocity_native": 0.25,
+      "effort_limit": 100.0,
+      "runtime_virtual": false,
+      "limits_SI": [
+        0.0,
+        0.05000000074505806
+      ],
+      "velocity_limit_SI": 0.25
+    },
+    {
+      "name": "right_gripper_finger_joint2",
+      "path": "/r1pro/right_gripper_link/right_gripper_finger_joint2",
+      "type": "PhysicsPrismaticJoint",
+      "parent": "right_gripper_link",
+      "child": "right_gripper_finger_link2",
+      "axis": "Y",
+      "pos0": [
+        8.904599962988868e-05,
+        -0.013453000225126743,
+        -0.036890000104904175
+      ],
+      "pos1": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "quat0_xyzw": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "quat1_xyzw": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "lower_native": 0.0,
+      "upper_native": 0.05000000074505806,
+      "native_unit": "metre",
+      "max_velocity_native": 0.25,
+      "effort_limit": 100.0,
+      "runtime_virtual": false,
+      "limits_SI": [
+        0.0,
+        0.05000000074505806
+      ],
+      "velocity_limit_SI": 0.25
+    },
+    {
+      "name": "right_realsense_joint",
+      "path": "/r1pro/right_gripper_link/right_realsense_joint",
+      "type": "PhysicsFixedJoint",
+      "parent": "right_gripper_link",
+      "child": "right_realsense_link",
+      "axis": null,
+      "pos0": [
+        0.05051000043749809,
+        0.00289339991286397,
+        0.005131700076162815
+      ],
+      "pos1": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "quat0_xyzw": [
+        -0.0015274044126272202,
+        -0.5373068451881409,
+        0.0009699032525531948,
+        0.8433849215507507
+      ],
+      "quat1_xyzw": [
+        0.0,
+        0.7071067690849304,
+        0.0,
+        0.7071067690849304
+      ],
+      "lower_native": null,
+      "upper_native": null,
+      "native_unit": null,
+      "max_velocity_native": null,
+      "effort_limit": null,
+      "runtime_virtual": false,
+      "limits_SI": [
+        null,
+        null
+      ],
+      "velocity_limit_SI": null
+    },
+    {
+      "name": "right_gripper_link_right_eef_link_joint",
+      "path": "/r1pro/right_gripper_link/right_gripper_link_right_eef_link_joint",
+      "type": "PhysicsFixedJoint",
+      "parent": "right_gripper_link",
+      "child": "right_eef_link",
+      "axis": null,
+      "pos0": [
+        0.0,
+        0.0,
+        -0.05999999865889549
+      ],
+      "pos1": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "quat0_xyzw": [
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "quat1_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "lower_native": null,
+      "upper_native": null,
+      "native_unit": null,
+      "max_velocity_native": null,
+      "effort_limit": null,
+      "runtime_virtual": false,
+      "limits_SI": [
+        null,
+        null
+      ],
+      "velocity_limit_SI": null
+    },
+    {
+      "name": "base_footprint_rz_joint",
+      "path": "/r1pro/base_footprint_rz/base_footprint_rz_joint",
+      "type": "PhysicsRevoluteJoint",
+      "parent": "base_footprint_rz",
+      "child": "base_link",
+      "axis": "Z",
+      "pos0": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pos1": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "quat0_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "quat1_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "lower_native": "-inf",
+      "upper_native": "+inf",
+      "native_unit": "degree",
+      "max_velocity_native": null,
+      "effort_limit": "+inf",
+      "runtime_virtual": true,
+      "limits_SI": [
+        "-inf",
+        "+inf"
+      ],
+      "velocity_limit_SI": null
+    },
+    {
+      "name": "base_footprint_ry_joint",
+      "path": "/r1pro/base_footprint_ry/base_footprint_ry_joint",
+      "type": "PhysicsRevoluteJoint",
+      "parent": "base_footprint_ry",
+      "child": "base_footprint_rz",
+      "axis": "Y",
+      "pos0": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pos1": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "quat0_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "quat1_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "lower_native": "-inf",
+      "upper_native": "+inf",
+      "native_unit": "degree",
+      "max_velocity_native": null,
+      "effort_limit": null,
+      "runtime_virtual": true,
+      "limits_SI": [
+        "-inf",
+        "+inf"
+      ],
+      "velocity_limit_SI": null
+    },
+    {
+      "name": "base_footprint_rx_joint",
+      "path": "/r1pro/base_footprint_rx/base_footprint_rx_joint",
+      "type": "PhysicsRevoluteJoint",
+      "parent": "base_footprint_rx",
+      "child": "base_footprint_ry",
+      "axis": "X",
+      "pos0": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pos1": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "quat0_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "quat1_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "lower_native": "-inf",
+      "upper_native": "+inf",
+      "native_unit": "degree",
+      "max_velocity_native": null,
+      "effort_limit": null,
+      "runtime_virtual": true,
+      "limits_SI": [
+        "-inf",
+        "+inf"
+      ],
+      "velocity_limit_SI": null
+    },
+    {
+      "name": "base_footprint_z_joint",
+      "path": "/r1pro/base_footprint_z/base_footprint_z_joint",
+      "type": "PhysicsPrismaticJoint",
+      "parent": "base_footprint_z",
+      "child": "base_footprint_rx",
+      "axis": "Z",
+      "pos0": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pos1": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "quat0_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "quat1_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "lower_native": "-inf",
+      "upper_native": "+inf",
+      "native_unit": "metre",
+      "max_velocity_native": null,
+      "effort_limit": null,
+      "runtime_virtual": true,
+      "limits_SI": [
+        "-inf",
+        "+inf"
+      ],
+      "velocity_limit_SI": null
+    },
+    {
+      "name": "base_footprint_y_joint",
+      "path": "/r1pro/base_footprint_y/base_footprint_y_joint",
+      "type": "PhysicsPrismaticJoint",
+      "parent": "base_footprint_y",
+      "child": "base_footprint_z",
+      "axis": "Y",
+      "pos0": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pos1": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "quat0_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "quat1_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "lower_native": "-inf",
+      "upper_native": "+inf",
+      "native_unit": "metre",
+      "max_velocity_native": null,
+      "effort_limit": "+inf",
+      "runtime_virtual": true,
+      "limits_SI": [
+        "-inf",
+        "+inf"
+      ],
+      "velocity_limit_SI": null
+    },
+    {
+      "name": "base_footprint_x_joint",
+      "path": "/r1pro/base_footprint_x/base_footprint_x_joint",
+      "type": "PhysicsPrismaticJoint",
+      "parent": "base_footprint_x",
+      "child": "base_footprint_y",
+      "axis": "X",
+      "pos0": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "pos1": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "quat0_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "quat1_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "lower_native": "-inf",
+      "upper_native": "+inf",
+      "native_unit": "metre",
+      "max_velocity_native": null,
+      "effort_limit": "+inf",
+      "runtime_virtual": true,
+      "limits_SI": [
+        "-inf",
+        "+inf"
+      ],
+      "velocity_limit_SI": null
+    }
+  ],
+  "counts": {
+    "links": 44,
+    "joints": 43,
+    "nonfixed": 28
+  },
+  "urdf_differences": [
+    {
+      "urdf": "r1pro.urdf",
+      "joint": "steer_motor_joint1",
+      "usd_type": "PhysicsFixedJoint",
+      "urdf_type": "revolute"
+    },
+    {
+      "urdf": "r1pro.urdf",
+      "joint": "steer_motor_joint2",
+      "usd_type": "PhysicsFixedJoint",
+      "urdf_type": "revolute"
+    },
+    {
+      "urdf": "r1pro.urdf",
+      "joint": "steer_motor_joint3",
+      "usd_type": "PhysicsFixedJoint",
+      "urdf_type": "revolute"
+    },
+    {
+      "urdf": "r1pro.urdf",
+      "joint": "wheel_motor_joint1",
+      "usd_type": "PhysicsFixedJoint",
+      "urdf_type": "continuous"
+    },
+    {
+      "urdf": "r1pro.urdf",
+      "joint": "wheel_motor_joint2",
+      "usd_type": "PhysicsFixedJoint",
+      "urdf_type": "continuous"
+    },
+    {
+      "urdf": "r1pro.urdf",
+      "joint": "wheel_motor_joint3",
+      "usd_type": "PhysicsFixedJoint",
+      "urdf_type": "continuous"
+    },
+    {
+      "urdf": "r1pro_with_meta_links.urdf",
+      "joint": "steer_motor_joint1",
+      "usd_type": "PhysicsFixedJoint",
+      "urdf_type": "revolute"
+    },
+    {
+      "urdf": "r1pro_with_meta_links.urdf",
+      "joint": "steer_motor_joint2",
+      "usd_type": "PhysicsFixedJoint",
+      "urdf_type": "revolute"
+    },
+    {
+      "urdf": "r1pro_with_meta_links.urdf",
+      "joint": "steer_motor_joint3",
+      "usd_type": "PhysicsFixedJoint",
+      "urdf_type": "revolute"
+    },
+    {
+      "urdf": "r1pro_with_meta_links.urdf",
+      "joint": "wheel_motor_joint1",
+      "usd_type": "PhysicsFixedJoint",
+      "urdf_type": "continuous"
+    },
+    {
+      "urdf": "r1pro_with_meta_links.urdf",
+      "joint": "wheel_motor_joint2",
+      "usd_type": "PhysicsFixedJoint",
+      "urdf_type": "continuous"
+    },
+    {
+      "urdf": "r1pro_with_meta_links.urdf",
+      "joint": "wheel_motor_joint3",
+      "usd_type": "PhysicsFixedJoint",
+      "urdf_type": "continuous"
+    },
+    {
+      "urdf": "r1pro_source.urdf",
+      "joint": "steer_motor_joint1",
+      "usd_type": "PhysicsFixedJoint",
+      "urdf_type": "revolute"
+    },
+    {
+      "urdf": "r1pro_source.urdf",
+      "joint": "steer_motor_joint2",
+      "usd_type": "PhysicsFixedJoint",
+      "urdf_type": "revolute"
+    },
+    {
+      "urdf": "r1pro_source.urdf",
+      "joint": "steer_motor_joint3",
+      "usd_type": "PhysicsFixedJoint",
+      "urdf_type": "revolute"
+    },
+    {
+      "urdf": "r1pro_source.urdf",
+      "joint": "wheel_motor_joint1",
+      "usd_type": "PhysicsFixedJoint",
+      "urdf_type": "continuous"
+    },
+    {
+      "urdf": "r1pro_source.urdf",
+      "joint": "wheel_motor_joint2",
+      "usd_type": "PhysicsFixedJoint",
+      "urdf_type": "continuous"
+    },
+    {
+      "urdf": "r1pro_source.urdf",
+      "joint": "wheel_motor_joint3",
+      "usd_type": "PhysicsFixedJoint",
+      "urdf_type": "continuous"
+    }
+  ],
+  "runtime_root_fixed_joint": "world -> base_footprint_x: runtime rootJoint, initialized root pose; holonomic_base_robot.py",
+  "coupling": "Each smooth gripper command drives two independent prismatic joints equally; no URDF mimic coupling assumed",
+  "limit_interpretation": "Limits and max velocity are authored USD attributes converted to SI. None means not authored, not zero. Runtime JointPrim.max_velocity may substitute defaults for unspecified/inf values; controllers may impose narrower limits. Native angular values are degrees, runtime q is radians."
+}

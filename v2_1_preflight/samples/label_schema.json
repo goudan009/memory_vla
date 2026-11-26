@@ -1,0 +1,43 @@
+{
+  "index_convention": "zero-based; episode_index is original episode ID, not contiguous ordinal",
+  "rows": 647555,
+  "episodes": 200,
+  "alignment": "state[t] = obs/RGB[t] before action[t]. reward/terminated/truncated[t] are action[t] outcomes; state[T] has no corresponding RGB/action and is excluded.",
+  "labels": {
+    "door_open": {
+      "semantics": "Official Open predicate on microwave joint j_link_0, q>0.07853977382183075rad",
+      "unknown": "abs(q-threshold)<=1e-5rad or nonfinite",
+      "source": "object_states/open_state.py:_compute_joint_threshold/_get_value"
+    },
+    "started": {
+      "semantics": "Current ToggledOn.value, not ever-started",
+      "unknown": "Inherited certified +/-8 frames inclusive around every toggle switch; 17 frames/episode",
+      "source": "object_states/toggle.py:_deserialize/_get_value",
+      "recorded_value": "started_recorded_value remains available at masked boundary"
+    },
+    "bag_grasped": {
+      "semantics": "Robot is_grasping(candidate_obj=bag)",
+      "unknown": "All frames: serialized per-frame AG constraint unavailable"
+    },
+    "bag_inside": {
+      "semantics": "bag.states[Inside].get_value(microwave)",
+      "unknown": "All frames: bag collision asset differs from original; recorded poses alone insufficient for certified AABB/meta-volume"
+    },
+    "cooked_popcorn_exists": {
+      "semantics": "cooked__popcorn serialized particle count >0",
+      "unknown": "None in these records",
+      "not_equivalent_to": "full Real AND Contains task success"
+    }
+  },
+  "validity": "Each nullable Boolean has a corresponding *_valid bool. Unknown is null, never false. Statistics must filter valid.",
+  "explicit_flags": "*_explicitly_recorded false means official sleeping-object omission and carry prior recorded/initial state; does not automatically mean invalid.",
+  "numeric_fields": {
+    "microwave_door_joint_rad": "float32 rad",
+    "microwave_temperature_c": "float32 degreesC",
+    "bag_temperature_c": "float32 degreesC",
+    "cooked_popcorn_particle_count": "int32",
+    "raw_popcorn_particle_count": "int32"
+  },
+  "statistics": "recorded_switches_before_mask uses unmasked recorded values; adjacent_valid_switches counts only adjacent valid pairs; unknown switch count is null, not0.",
+  "historical_note": "samples/official_decode_report.json is a compatibility copy of cpu_decode_report.json, NOT200 official simulator episodes; workbench logs retain37 official episodes."
+}

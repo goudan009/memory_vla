@@ -1,0 +1,32 @@
+{
+  "passed": true,
+  "episodes": 200,
+  "frames": 647555,
+  "state_dimensions": 82,
+  "action_channels": 23,
+  "joints": 43,
+  "links": 44,
+  "video_metadata_checked": 600,
+  "keyframe_pts_checked": 72,
+  "official_comparison_frames": 127312,
+  "transition_summary": {
+    "episodes": 200,
+    "door_transition_count_distribution": {
+      "2": 200
+    },
+    "started_transition_count_distribution": {
+      "1": 200
+    },
+    "door_reopen_episodes": [],
+    "started_then_off_episodes": [],
+    "cooked_absent_final_observation": [
+      400100,
+      400220,
+      400540,
+      401000,
+      401390,
+      401530
+    ],
+    "caution": "Only Open/ToggledOn/particle existence order is known. Grasp and Inside order/repetitions remain unknown. FrameT extra terminal state excluded."
+  }
+}

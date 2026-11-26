@@ -1,0 +1,5604 @@
+{
+  "passed": true,
+  "episodes": [
+    {
+      "episode": 400010,
+      "frame_count": 3879,
+      "label": "started",
+      "positive_valid": 135,
+      "negative_valid": 3727,
+      "unknown": 17,
+      "transition_frames": [
+        3735
+      ],
+      "full_replay_comparison": {
+        "all_frame_disagreements": 0,
+        "known_frame_disagreements": 0
+      },
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3879,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261123-232848-7ecd5d3e/episode_00400010_decoded.npz",
+      "explicitly_recorded_frames": 2513,
+      "artifact_sha256": "f32e72bb1e9cefcadc650847dfb3ac7c49c1e5b41242a99232a8e01b44c2511a",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400010_decoded.npz",
+      "raw_sha256": "2114cab65783ee0908e72622a901ae6255dfd8d34d45b8790810784628839cfc"
+    },
+    {
+      "episode": 400020,
+      "frame_count": 4398,
+      "label": "started",
+      "positive_valid": 71,
+      "negative_valid": 4310,
+      "unknown": 17,
+      "transition_frames": [
+        4318
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 4398,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261123-232848-7ecd5d3e/episode_00400020_decoded.npz",
+      "explicitly_recorded_frames": 2986,
+      "artifact_sha256": "9d82838d295df531e1e6396800a1e3531ec00ad82fdc8a9b224e768be4eef339",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400020_decoded.npz",
+      "raw_sha256": "b5a951b625b478da949e096af2a0b33d8e5c862b5bb086f8cd028c6c7e61815b"
+    },
+    {
+      "episode": 400030,
+      "frame_count": 3464,
+      "label": "started",
+      "positive_valid": 90,
+      "negative_valid": 3357,
+      "unknown": 17,
+      "transition_frames": [
+        3365
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3464,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261123-232848-7ecd5d3e/episode_00400030_decoded.npz",
+      "explicitly_recorded_frames": 2245,
+      "artifact_sha256": "4038712361fba0b49c21e400f0e75f113845b74d823152851050ca0a14e54e52",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400030_decoded.npz",
+      "raw_sha256": "09dc07e01903d6690e29d4e4c32175d415c8689b7067a0d6bf46825e7a1f184b"
+    },
+    {
+      "episode": 400040,
+      "frame_count": 3541,
+      "label": "started",
+      "positive_valid": 149,
+      "negative_valid": 3375,
+      "unknown": 17,
+      "transition_frames": [
+        3383
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3541,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261123-232848-7ecd5d3e/episode_00400040_decoded.npz",
+      "explicitly_recorded_frames": 2347,
+      "artifact_sha256": "8284450eac409fcf5a53ef1486e35907b44cc4263a4cad396ccbd14c0120f028",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400040_decoded.npz",
+      "raw_sha256": "29b871016cfe9cc740dc745291af3af227d619ac4634efb9de6499a9945a2d88"
+    },
+    {
+      "episode": 400050,
+      "frame_count": 3822,
+      "label": "started",
+      "positive_valid": 76,
+      "negative_valid": 3729,
+      "unknown": 17,
+      "transition_frames": [
+        3737
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3822,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261123-232848-7ecd5d3e/episode_00400050_decoded.npz",
+      "explicitly_recorded_frames": 2090,
+      "artifact_sha256": "30acd2814da14e79d6235eae11ce718504fbb31f472cfad03f388058efd33cb0",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400050_decoded.npz",
+      "raw_sha256": "e8e1a00062526d5d1621dee247d61d40769670096262dd85c344e5459a4db675"
+    },
+    {
+      "episode": 400060,
+      "frame_count": 3340,
+      "label": "started",
+      "positive_valid": 80,
+      "negative_valid": 3243,
+      "unknown": 17,
+      "transition_frames": [
+        3251
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3340,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261123-232848-7ecd5d3e/episode_00400060_decoded.npz",
+      "explicitly_recorded_frames": 2576,
+      "artifact_sha256": "460512d5b23418ed127c67a8d79b3c682925629e36a1b8c90d9f5c681e9692e8",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400060_decoded.npz",
+      "raw_sha256": "98bbb9d1d9b4c684ff26dc6976bb4c2e43f96c4c9fd6604a3cd1cc8533a935ef"
+    },
+    {
+      "episode": 400070,
+      "frame_count": 2937,
+      "label": "started",
+      "positive_valid": 73,
+      "negative_valid": 2847,
+      "unknown": 17,
+      "transition_frames": [
+        2855
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 2937,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261123-232848-7ecd5d3e/episode_00400070_decoded.npz",
+      "explicitly_recorded_frames": 2241,
+      "artifact_sha256": "0290da73e7393deed17efbd391df16116bf19f13af5c4d895d963e938eef1738",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400070_decoded.npz",
+      "raw_sha256": "773055a7273fde67935c69c476c46ef1f4fc98a702ab73a8d6c32f0fcde7cc54"
+    },
+    {
+      "episode": 400080,
+      "frame_count": 3785,
+      "label": "started",
+      "positive_valid": 85,
+      "negative_valid": 3683,
+      "unknown": 17,
+      "transition_frames": [
+        3691
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3785,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261123-232848-7ecd5d3e/episode_00400080_decoded.npz",
+      "explicitly_recorded_frames": 2326,
+      "artifact_sha256": "ca0a6bdbbd706e159c00d42bf7c4b6aa471b0aff971e406d691841841231c0d0",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400080_decoded.npz",
+      "raw_sha256": "2fefd14b5d2b87c02cddb1a32b571fb593eb06d3b64c543008b6e7c6d7adc3e9"
+    },
+    {
+      "episode": 400090,
+      "frame_count": 2976,
+      "label": "started",
+      "positive_valid": 78,
+      "negative_valid": 2881,
+      "unknown": 17,
+      "transition_frames": [
+        2889
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 2976,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261123-232848-7ecd5d3e/episode_00400090_decoded.npz",
+      "explicitly_recorded_frames": 2235,
+      "artifact_sha256": "dd78eac86f32abeabcd7ad117e36a1d3bd9805900d83f2a4da0774e500c7a88c",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400090_decoded.npz",
+      "raw_sha256": "72df4e6bcd3dbefb59ad459c0d8b26f5f6f1205134e6b2e0d8fb87e271e3c430"
+    },
+    {
+      "episode": 400100,
+      "frame_count": 4853,
+      "label": "started",
+      "positive_valid": 67,
+      "negative_valid": 4769,
+      "unknown": 17,
+      "transition_frames": [
+        4777
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 4853,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261123-232848-7ecd5d3e/episode_00400100_decoded.npz",
+      "explicitly_recorded_frames": 3939,
+      "artifact_sha256": "c3ef1a4a6a369480a8d13177af2edbcc0195c653356a400e1196157605aca5d8",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400100_decoded.npz",
+      "raw_sha256": "2892a9b0d001f92cf0f3c63c4f14ff9aebdce2b50e49995c050c63e51825ad1b"
+    },
+    {
+      "episode": 400110,
+      "frame_count": 3731,
+      "label": "started",
+      "positive_valid": 91,
+      "negative_valid": 3623,
+      "unknown": 17,
+      "transition_frames": [
+        3631
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3731,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261123-232848-7ecd5d3e/episode_00400110_decoded.npz",
+      "explicitly_recorded_frames": 2293,
+      "artifact_sha256": "1bceb0853eb10d774c2d6225f65d6cd15b278aa787f87dfb19b25e9b6491d476",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400110_decoded.npz",
+      "raw_sha256": "3d0730c15bf887dff7258cd0916b52361658842b68a7b3c1ff6973dae29dd3bb"
+    },
+    {
+      "episode": 400120,
+      "frame_count": 3391,
+      "label": "started",
+      "positive_valid": 90,
+      "negative_valid": 3284,
+      "unknown": 17,
+      "transition_frames": [
+        3292
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3391,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261123-232848-7ecd5d3e/episode_00400120_decoded.npz",
+      "explicitly_recorded_frames": 1945,
+      "artifact_sha256": "222b6ac8a79b0743946cda4882720ea63efd221aa128d653e5bf520a18f3a487",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400120_decoded.npz",
+      "raw_sha256": "8ae9c980cf4e989ea35279b56da45895f8d82a83b8d83bcee817b18ee535e287"
+    },
+    {
+      "episode": 400130,
+      "frame_count": 3285,
+      "label": "started",
+      "positive_valid": 281,
+      "negative_valid": 2987,
+      "unknown": 17,
+      "transition_frames": [
+        2995
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3285,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261123-232848-7ecd5d3e/episode_00400130_decoded.npz",
+      "explicitly_recorded_frames": 2357,
+      "artifact_sha256": "b0e4c794215e04101fc6851b01a2fb53b0bde8c3f8a1713254d7a5fdbcab0fc5",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400130_decoded.npz",
+      "raw_sha256": "4cb17e69af5b73f072e889e6856ef5947c14f436578ab160df2c7c41554ddbc1"
+    },
+    {
+      "episode": 400140,
+      "frame_count": 4050,
+      "label": "started",
+      "positive_valid": 89,
+      "negative_valid": 3944,
+      "unknown": 17,
+      "transition_frames": [
+        3952
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 4050,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261123-232848-7ecd5d3e/episode_00400140_decoded.npz",
+      "explicitly_recorded_frames": 2324,
+      "artifact_sha256": "a0796d82d7fa544a53b666ad37514d7658a1091472c6832be830a021f806b669",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400140_decoded.npz",
+      "raw_sha256": "c0ae8e3bf376e3be73033fa61421ce1a46e9dc069949e1b59e77130e1702317e"
+    },
+    {
+      "episode": 400150,
+      "frame_count": 3456,
+      "label": "started",
+      "positive_valid": 81,
+      "negative_valid": 3358,
+      "unknown": 17,
+      "transition_frames": [
+        3366
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3456,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261123-232848-7ecd5d3e/episode_00400150_decoded.npz",
+      "explicitly_recorded_frames": 2189,
+      "artifact_sha256": "738be98cd68523c9e0b54f65f9e0f5b8aff5313a98a1af426f3a3c9e51e7fa69",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400150_decoded.npz",
+      "raw_sha256": "44c59dc4ae54a647a663e4df9dbfcbd98feb5915852aec4e6bf9392cab8ff058"
+    },
+    {
+      "episode": 400160,
+      "frame_count": 2810,
+      "label": "started",
+      "positive_valid": 121,
+      "negative_valid": 2672,
+      "unknown": 17,
+      "transition_frames": [
+        2680
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 2810,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261123-232848-7ecd5d3e/episode_00400160_decoded.npz",
+      "explicitly_recorded_frames": 2353,
+      "artifact_sha256": "d9c3245fde7ac20327db979963222e90f8e1b760d46f7aeece996c8e3dda6044",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400160_decoded.npz",
+      "raw_sha256": "f49dbbdf521fb97c63951fc75efb2b39fe7252ea4d499b3cbd16ddcfcc7d4b22"
+    },
+    {
+      "episode": 400170,
+      "frame_count": 3262,
+      "label": "started",
+      "positive_valid": 81,
+      "negative_valid": 3164,
+      "unknown": 17,
+      "transition_frames": [
+        3172
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3262,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261123-232848-7ecd5d3e/episode_00400170_decoded.npz",
+      "explicitly_recorded_frames": 2394,
+      "artifact_sha256": "08e12b488af678944017dc40b9c44b4656509a4b806708758493d2862e3e9d40",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400170_decoded.npz",
+      "raw_sha256": "0e30d4e31f08a7080461cfe5903e25f98210b6ed0d6b98768281f17b5df62862"
+    },
+    {
+      "episode": 400180,
+      "frame_count": 3135,
+      "label": "started",
+      "positive_valid": 87,
+      "negative_valid": 3031,
+      "unknown": 17,
+      "transition_frames": [
+        3039
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3135,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261123-232848-7ecd5d3e/episode_00400180_decoded.npz",
+      "explicitly_recorded_frames": 2154,
+      "artifact_sha256": "77f45337e2eb81200925857edbdbf1e3e6e93ee36d089138676954e1df5623fd",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400180_decoded.npz",
+      "raw_sha256": "fd4b99ec6ce811592f389f1c458d4598a3bdf921b815e3b0d4b2c8f535e699ab"
+    },
+    {
+      "episode": 400190,
+      "frame_count": 3625,
+      "label": "started",
+      "positive_valid": 73,
+      "negative_valid": 3535,
+      "unknown": 17,
+      "transition_frames": [
+        3543
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3625,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261123-232848-7ecd5d3e/episode_00400190_decoded.npz",
+      "explicitly_recorded_frames": 2731,
+      "artifact_sha256": "bdc6d2873041079b14775f9838ea67a566ca6a4f78bcf84ee68b7ea29dd6023d",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400190_decoded.npz",
+      "raw_sha256": "2f3761c62be8e83a9d9f19bd3b7c1b083ad49ea866fd534e20e09a0a6941a3fb"
+    },
+    {
+      "episode": 400200,
+      "frame_count": 2727,
+      "label": "started",
+      "positive_valid": 79,
+      "negative_valid": 2631,
+      "unknown": 17,
+      "transition_frames": [
+        2639
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 2727,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261123-232848-7ecd5d3e/episode_00400200_decoded.npz",
+      "explicitly_recorded_frames": 2083,
+      "artifact_sha256": "ab224ce9241b0e717af64b827d13f3e24900967827a4cc87da9c86645149ac35",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400200_decoded.npz",
+      "raw_sha256": "f83255293aea8835eba5b1273ec22d47818b24d8866d5ee64b62a9024f95c3cb"
+    },
+    {
+      "episode": 400210,
+      "frame_count": 3670,
+      "label": "started",
+      "positive_valid": 89,
+      "negative_valid": 3564,
+      "unknown": 17,
+      "transition_frames": [
+        3572
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3670,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261123-232848-7ecd5d3e/episode_00400210_decoded.npz",
+      "explicitly_recorded_frames": 2248,
+      "artifact_sha256": "b31e769329ab0971dc77eddd1b6cdbe843e56aa2d7e4817b3543bb1bf5d79315",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400210_decoded.npz",
+      "raw_sha256": "c5960fb91941bcfe31ea69a958f3651e49ba3b33b1c06e2f88adf5d0027f1ff5"
+    },
+    {
+      "episode": 400220,
+      "frame_count": 3200,
+      "label": "started",
+      "positive_valid": 67,
+      "negative_valid": 3116,
+      "unknown": 17,
+      "transition_frames": [
+        3124
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3200,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261123-232848-7ecd5d3e/episode_00400220_decoded.npz",
+      "explicitly_recorded_frames": 2169,
+      "artifact_sha256": "416192a266d5ffaf6fec58c4634dbaac34ef5f9c9afdf8f928cc6b36d403881a",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400220_decoded.npz",
+      "raw_sha256": "0798ca92defd159749c3d786ab76d42e43249d21f3776aeb3a0fd9e96ed29d98"
+    },
+    {
+      "episode": 400230,
+      "frame_count": 3051,
+      "label": "started",
+      "positive_valid": 87,
+      "negative_valid": 2947,
+      "unknown": 17,
+      "transition_frames": [
+        2955
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3051,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261123-232848-7ecd5d3e/episode_00400230_decoded.npz",
+      "explicitly_recorded_frames": 2029,
+      "artifact_sha256": "85227f1306aa8aa5530739defd873a64a77f8c84b910379ba305629e6853c645",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400230_decoded.npz",
+      "raw_sha256": "a0afd62cbc23a3662fff759031379c85b6b14264b84f7446264d9a3ad58dd20e"
+    },
+    {
+      "episode": 400240,
+      "frame_count": 2879,
+      "label": "started",
+      "positive_valid": 84,
+      "negative_valid": 2778,
+      "unknown": 17,
+      "transition_frames": [
+        2786
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 2879,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261123-232848-7ecd5d3e/episode_00400240_decoded.npz",
+      "explicitly_recorded_frames": 1959,
+      "artifact_sha256": "608dec64273516b59822d33dff460cbf8003f273abf9ab9e142ef67a4ca9120a",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400240_decoded.npz",
+      "raw_sha256": "ac7155f94b5c7cf2b77b6451187c953f96c71c2e777d7bf0b14e715e103f4da4"
+    },
+    {
+      "episode": 400250,
+      "frame_count": 3979,
+      "label": "started",
+      "positive_valid": 84,
+      "negative_valid": 3878,
+      "unknown": 17,
+      "transition_frames": [
+        3886
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3979,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261123-232848-7ecd5d3e/episode_00400250_decoded.npz",
+      "explicitly_recorded_frames": 2784,
+      "artifact_sha256": "08e69be1f069396f191f849bbe9b1360ff8826ce1020d3ec2ad9a59f29d8e820",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400250_decoded.npz",
+      "raw_sha256": "4b82b92ff5e95c955511c92abf050bb89dbbe8ae6c17bcfc85d84e90e7e03a0a"
+    },
+    {
+      "episode": 400260,
+      "frame_count": 3425,
+      "label": "started",
+      "positive_valid": 87,
+      "negative_valid": 3321,
+      "unknown": 17,
+      "transition_frames": [
+        3329
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3425,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261123-232848-7ecd5d3e/episode_00400260_decoded.npz",
+      "explicitly_recorded_frames": 2432,
+      "artifact_sha256": "9fca06ede11c8946e397acf03e067698dbfb5c259ed452ff9d50aa8f10448b1c",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400260_decoded.npz",
+      "raw_sha256": "ce9d1c2a949d58fe21c4e9e9e10cf220cc3938fc003c809cf6b36054472bb62b"
+    },
+    {
+      "episode": 400270,
+      "frame_count": 2737,
+      "label": "started",
+      "positive_valid": 166,
+      "negative_valid": 2554,
+      "unknown": 17,
+      "transition_frames": [
+        2562
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 2737,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261123-232848-7ecd5d3e/episode_00400270_decoded.npz",
+      "explicitly_recorded_frames": 1903,
+      "artifact_sha256": "4fcb74b516210b3317b157c7a9eab9ea4ee873e755e23923bd53149b0611c26f",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400270_decoded.npz",
+      "raw_sha256": "ff2c2403bce8235a2bf0086b80f30d700ba2052adec59cec57d19282c419cd1a"
+    },
+    {
+      "episode": 400280,
+      "frame_count": 2917,
+      "label": "started",
+      "positive_valid": 121,
+      "negative_valid": 2779,
+      "unknown": 17,
+      "transition_frames": [
+        2787
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 2917,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261123-232848-7ecd5d3e/episode_00400280_decoded.npz",
+      "explicitly_recorded_frames": 2013,
+      "artifact_sha256": "34271107a6a43bc5b635ae312d9b5bc0fff77b06faafa78da4eff47371c149e7",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400280_decoded.npz",
+      "raw_sha256": "86c888207ab926803364f53d06aa914cd4c5919bb3f46e459a77664369f704fa"
+    },
+    {
+      "episode": 400290,
+      "frame_count": 3775,
+      "label": "started",
+      "positive_valid": 83,
+      "negative_valid": 3675,
+      "unknown": 17,
+      "transition_frames": [
+        3683
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3775,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261123-232848-7ecd5d3e/episode_00400290_decoded.npz",
+      "explicitly_recorded_frames": 2931,
+      "artifact_sha256": "0c685708d6f175718885186a706685bd03ce62c23c4c81d85e4ec606a9f60caf",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400290_decoded.npz",
+      "raw_sha256": "f32818349532b70f6954be669db71a5087fcfed7f7d661ec8b0a098d5d7d90fd"
+    },
+    {
+      "episode": 400300,
+      "frame_count": 3370,
+      "label": "started",
+      "positive_valid": 146,
+      "negative_valid": 3207,
+      "unknown": 17,
+      "transition_frames": [
+        3215
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3370,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261123-232848-7ecd5d3e/episode_00400300_decoded.npz",
+      "explicitly_recorded_frames": 2618,
+      "artifact_sha256": "b9cab6d844028d3f785d21c4d4d38afe733f1d663844857659d78dfb6aa5d0cf",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400300_decoded.npz",
+      "raw_sha256": "0059a77683295d6a0897480b2f79326604f7f41a6dca862011cee23e06953465"
+    },
+    {
+      "episode": 400310,
+      "frame_count": 4314,
+      "label": "started",
+      "positive_valid": 96,
+      "negative_valid": 4201,
+      "unknown": 17,
+      "transition_frames": [
+        4209
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 4314,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261123-232848-7ecd5d3e/episode_00400310_decoded.npz",
+      "explicitly_recorded_frames": 3045,
+      "artifact_sha256": "f8d436e4b78d007179ef675783a01172cb3f72591befaae80eea94617086ebe4",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400310_decoded.npz",
+      "raw_sha256": "874bc727f1113734212769357bdd4837f721bf28c91eceff8248d44fe6cd9f46"
+    },
+    {
+      "episode": 400320,
+      "frame_count": 3175,
+      "label": "started",
+      "positive_valid": 88,
+      "negative_valid": 3070,
+      "unknown": 17,
+      "transition_frames": [
+        3078
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3175,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261123-232848-7ecd5d3e/episode_00400320_decoded.npz",
+      "explicitly_recorded_frames": 2383,
+      "artifact_sha256": "4ff1374ac414ce8299b162118f6c74924ef426d06d7941c47dc8114c0df43325",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400320_decoded.npz",
+      "raw_sha256": "46dc84ea47ca4bf3ae0e4afb46987cf183944fd61ed458575d0b8dd089e6a469"
+    },
+    {
+      "episode": 400330,
+      "frame_count": 3808,
+      "label": "started",
+      "positive_valid": 73,
+      "negative_valid": 3718,
+      "unknown": 17,
+      "transition_frames": [
+        3726
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3808,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261123-232848-7ecd5d3e/episode_00400330_decoded.npz",
+      "explicitly_recorded_frames": 2781,
+      "artifact_sha256": "e481e5f298f002095b833ffa7f73fe1fa7ef49d5d1038b89cf1c60a24f982132",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400330_decoded.npz",
+      "raw_sha256": "c14f366f5a95989123d1de40ab8c8114c5afd080a8ede74395afc5f9100df6ac"
+    },
+    {
+      "episode": 400340,
+      "frame_count": 2990,
+      "label": "started",
+      "positive_valid": 121,
+      "negative_valid": 2852,
+      "unknown": 17,
+      "transition_frames": [
+        2860
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 2990,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261123-232848-7ecd5d3e/episode_00400340_decoded.npz",
+      "explicitly_recorded_frames": 1913,
+      "artifact_sha256": "1ed2b516815fae6e12d2be36ff1fe57e04b9d918027a2d8d807e366786a720ed",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400340_decoded.npz",
+      "raw_sha256": "069b40bf97a2ff81ffc58e4a701ddd48e6c49fc5c42512fe13470c5004682b6f"
+    },
+    {
+      "episode": 400350,
+      "frame_count": 3480,
+      "label": "started",
+      "positive_valid": 88,
+      "negative_valid": 3375,
+      "unknown": 17,
+      "transition_frames": [
+        3383
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3480,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261123-232848-7ecd5d3e/episode_00400350_decoded.npz",
+      "explicitly_recorded_frames": 2449,
+      "artifact_sha256": "c550c583bb66f40eae243cf9a9ffec32e77f47922a5d60851b2e9c91edefb34d",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400350_decoded.npz",
+      "raw_sha256": "8c2089e6fb2a7437dabaf643171df35106e17daf7c42511a7ed5b6154933d81b"
+    },
+    {
+      "episode": 400360,
+      "frame_count": 2935,
+      "label": "started",
+      "positive_valid": 125,
+      "negative_valid": 2793,
+      "unknown": 17,
+      "transition_frames": [
+        2801
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 2935,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261123-232848-7ecd5d3e/episode_00400360_decoded.npz",
+      "explicitly_recorded_frames": 1957,
+      "artifact_sha256": "dd9bab73a199f1d72f91ca7398a51dea366d351b1ca49bd95b34d29d0c4ef2e7",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400360_decoded.npz",
+      "raw_sha256": "007b9a1c78eb75d8da90c43ed6c64dd97287d7df29d1d6fb2e485c5e1fa24fb0"
+    },
+    {
+      "episode": 400370,
+      "frame_count": 3140,
+      "label": "started",
+      "positive_valid": 290,
+      "negative_valid": 2833,
+      "unknown": 17,
+      "transition_frames": [
+        2841
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3140,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261123-232848-7ecd5d3e/episode_00400370_decoded.npz",
+      "explicitly_recorded_frames": 2069,
+      "artifact_sha256": "8409a0c2891017ba9a391c80fe90b909a62d6b70de70c28302d2d7ec89000bf9",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400370_decoded.npz",
+      "raw_sha256": "33eb0c8e2271993ade63d638e1e1e8ff087a277080aeeac6c701ad613747400f"
+    },
+    {
+      "episode": 400380,
+      "frame_count": 3896,
+      "label": "started",
+      "positive_valid": 83,
+      "negative_valid": 3796,
+      "unknown": 17,
+      "transition_frames": [
+        3804
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3896,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261123-232848-7ecd5d3e/episode_00400380_decoded.npz",
+      "explicitly_recorded_frames": 2481,
+      "artifact_sha256": "1f92c12bb7b4e4060c217fd8115b85a8e9d4b3460236155311d3baec91387128",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400380_decoded.npz",
+      "raw_sha256": "95d81a0204b9dc213ea199695835541397aadc20837d608642ec7f8823cdf61c"
+    },
+    {
+      "episode": 400390,
+      "frame_count": 4129,
+      "label": "started",
+      "positive_valid": 114,
+      "negative_valid": 3998,
+      "unknown": 17,
+      "transition_frames": [
+        4006
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 4129,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261123-232848-7ecd5d3e/episode_00400390_decoded.npz",
+      "explicitly_recorded_frames": 2905,
+      "artifact_sha256": "bb79b27d4a3ed40072efc990239319b68fd8d8c46fa804c6e1fea0a91c17a22c",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400390_decoded.npz",
+      "raw_sha256": "2c6dd2115ae17488094e30b3ad2c31eee1fd5c901efd049656fec9d0afe568be"
+    },
+    {
+      "episode": 400400,
+      "frame_count": 3632,
+      "label": "started",
+      "positive_valid": 222,
+      "negative_valid": 3393,
+      "unknown": 17,
+      "transition_frames": [
+        3401
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3632,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261123-232848-7ecd5d3e/episode_00400400_decoded.npz",
+      "explicitly_recorded_frames": 2446,
+      "artifact_sha256": "9ae6cb078e475994067b38f69b2474fff7fbff467078206bf43017a86a75e5b2",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400400_decoded.npz",
+      "raw_sha256": "e46e21c34149b6bfa5ce073ed6b32b81c4990c294f9cba42c71dbca9f3445683"
+    },
+    {
+      "episode": 400410,
+      "frame_count": 2713,
+      "label": "started",
+      "positive_valid": 99,
+      "negative_valid": 2597,
+      "unknown": 17,
+      "transition_frames": [
+        2605
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 2713,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261123-232848-7ecd5d3e/episode_00400410_decoded.npz",
+      "explicitly_recorded_frames": 2168,
+      "artifact_sha256": "d739127ca11e2b827ecda18e83ee7c4acc977a7694c8dd7c548eda6ff369772b",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400410_decoded.npz",
+      "raw_sha256": "b8cb3699352eb984068fde796b52ee6cb4acacf9939104f2a1a4ac363ad6aafd"
+    },
+    {
+      "episode": 400420,
+      "frame_count": 3895,
+      "label": "started",
+      "positive_valid": 83,
+      "negative_valid": 3795,
+      "unknown": 17,
+      "transition_frames": [
+        3803
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3895,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261123-232848-7ecd5d3e/episode_00400420_decoded.npz",
+      "explicitly_recorded_frames": 2143,
+      "artifact_sha256": "1d2af93371b1b7619ff102ee7593cd3175442b448d5a3030b0ea5b2d8035c3f5",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400420_decoded.npz",
+      "raw_sha256": "7dd64212bd0fbffce181c34ad38568b22d8f4a5233c996a348d24549c030a21a"
+    },
+    {
+      "episode": 400430,
+      "frame_count": 2929,
+      "label": "started",
+      "positive_valid": 79,
+      "negative_valid": 2833,
+      "unknown": 17,
+      "transition_frames": [
+        2841
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 2929,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261123-232848-7ecd5d3e/episode_00400430_decoded.npz",
+      "explicitly_recorded_frames": 2180,
+      "artifact_sha256": "417cf3c6c45dc2aee4ce34d28a9e6b98491a525b4eddb99169ab1a50f13fff37",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400430_decoded.npz",
+      "raw_sha256": "09a14ced24a29f65059a2ad03a5de5fc53bbaa3e10c482f5d5ed549b655fd3d8"
+    },
+    {
+      "episode": 400440,
+      "frame_count": 2378,
+      "label": "started",
+      "positive_valid": 122,
+      "negative_valid": 2239,
+      "unknown": 17,
+      "transition_frames": [
+        2247
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 2378,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261123-232848-7ecd5d3e/episode_00400440_decoded.npz",
+      "explicitly_recorded_frames": 1949,
+      "artifact_sha256": "0b0ff1ef876cd7b424f9eb3599e35fb394e73b353780410c34c65d5fe477c050",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400440_decoded.npz",
+      "raw_sha256": "deebdcfbcbffe1b45efc01f496ffadf236f12ebc778b73d7c97fd6a36c24e487"
+    },
+    {
+      "episode": 400450,
+      "frame_count": 3537,
+      "label": "started",
+      "positive_valid": 231,
+      "negative_valid": 3289,
+      "unknown": 17,
+      "transition_frames": [
+        3297
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3537,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261123-232848-7ecd5d3e/episode_00400450_decoded.npz",
+      "explicitly_recorded_frames": 2198,
+      "artifact_sha256": "16f625931a402b8ad76bd8dbf259cee6e89e355085b7169da6b232e493e67d32",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400450_decoded.npz",
+      "raw_sha256": "fbfc6b0efe06adb3c1a92a4878f517693dbd2bcdc1825724a5be38c12defb674"
+    },
+    {
+      "episode": 400460,
+      "frame_count": 3384,
+      "label": "started",
+      "positive_valid": 95,
+      "negative_valid": 3272,
+      "unknown": 17,
+      "transition_frames": [
+        3280
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3384,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261123-232848-7ecd5d3e/episode_00400460_decoded.npz",
+      "explicitly_recorded_frames": 2242,
+      "artifact_sha256": "312f44287b1b2f33261799198c268c8bd31589e8d32914d9cc6c1fdf86de111e",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400460_decoded.npz",
+      "raw_sha256": "e95080f75b4f6dc3115fe9d660750719bdd839603f3ca57022ed27e2b9f10142"
+    },
+    {
+      "episode": 400480,
+      "frame_count": 3083,
+      "label": "started",
+      "positive_valid": 97,
+      "negative_valid": 2969,
+      "unknown": 17,
+      "transition_frames": [
+        2977
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3083,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261123-232848-7ecd5d3e/episode_00400480_decoded.npz",
+      "explicitly_recorded_frames": 2780,
+      "artifact_sha256": "8c0372bd390a8eb5b60baefdba267283cfe12dc064bb8f6f1b210022eb94f885",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400480_decoded.npz",
+      "raw_sha256": "3ba18d03381b523cd0381f40351b555aa1f811fa1ac6499c9bbf3198c022e33b"
+    },
+    {
+      "episode": 400490,
+      "frame_count": 3467,
+      "label": "started",
+      "positive_valid": 80,
+      "negative_valid": 3370,
+      "unknown": 17,
+      "transition_frames": [
+        3378
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3467,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261123-232848-7ecd5d3e/episode_00400490_decoded.npz",
+      "explicitly_recorded_frames": 2565,
+      "artifact_sha256": "6bf701c612865f805ca2de55e31c81a7a7cf33131aa8adc30785db6fe6fea12b",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400490_decoded.npz",
+      "raw_sha256": "f25bc778df90ef0740af90c49bf42e57695ce590bcea18602fa2e1f064f4a5a0"
+    },
+    {
+      "episode": 400500,
+      "frame_count": 3177,
+      "label": "started",
+      "positive_valid": 109,
+      "negative_valid": 3051,
+      "unknown": 17,
+      "transition_frames": [
+        3059
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3177,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261123-232848-7ecd5d3e/episode_00400500_decoded.npz",
+      "explicitly_recorded_frames": 2446,
+      "artifact_sha256": "48533d9a7aeade91f0bdaad1bf124a34163200106dfd0f1c835e4323594dabd2",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400500_decoded.npz",
+      "raw_sha256": "83b03fa51441dc9b9be4f67adc1c56e5b66f076637ce74a5ab220b2a5ed3ca3e"
+    },
+    {
+      "episode": 400510,
+      "frame_count": 3027,
+      "label": "started",
+      "positive_valid": 102,
+      "negative_valid": 2908,
+      "unknown": 17,
+      "transition_frames": [
+        2916
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3027,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261123-232848-7ecd5d3e/episode_00400510_decoded.npz",
+      "explicitly_recorded_frames": 2332,
+      "artifact_sha256": "17d1ad3a4275ae62d9f16957aceb72fba7766a6ddbf25d811b4f3be2a3eaa8fc",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400510_decoded.npz",
+      "raw_sha256": "d255a6144710400e0e9fff6aadbb42d0f2aed282d3079cf6bd9f68fa306a6cca"
+    },
+    {
+      "episode": 400520,
+      "frame_count": 3295,
+      "label": "started",
+      "positive_valid": 103,
+      "negative_valid": 3175,
+      "unknown": 17,
+      "transition_frames": [
+        3183
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_1",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 289,
+          "complete": true
+        },
+        {
+          "group": "demo_1",
+          "frames": 3295,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2565,
+      "artifact_sha256": "be0f60d7f53040b08db802efaf0242f57268c76308fd74ccdda93a605807f51c",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400520_decoded.npz",
+      "raw_sha256": "2ce11d9ffbb094b9f5f88f0fea5a3ac290a1e2082096af9475d622de4db870ea"
+    },
+    {
+      "episode": 400530,
+      "frame_count": 4221,
+      "label": "started",
+      "positive_valid": 95,
+      "negative_valid": 4109,
+      "unknown": 17,
+      "transition_frames": [
+        4117
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_1",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 1374,
+          "complete": true
+        },
+        {
+          "group": "demo_1",
+          "frames": 4221,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2656,
+      "artifact_sha256": "d070c12f18e9fcf221a078975e1a6b7faa687bfadf2863ac96cdb6c278e2803b",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400530_decoded.npz",
+      "raw_sha256": "7e8c95fb4bf6e65a5246c3d69f3e3a5becb70282f863aa56791b481b0f119910"
+    },
+    {
+      "episode": 400540,
+      "frame_count": 3547,
+      "label": "started",
+      "positive_valid": 67,
+      "negative_valid": 3463,
+      "unknown": 17,
+      "transition_frames": [
+        3471
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_1",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 1,
+          "complete": true
+        },
+        {
+          "group": "demo_1",
+          "frames": 3547,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2587,
+      "artifact_sha256": "dbdd73a0a3c880ae3ec4d488ad0e8fe83b1bd7571e66809b07ec3bd52f5a08fd",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400540_decoded.npz",
+      "raw_sha256": "3e47274d88000d72ae16c256f24f1eeba2429a7a6d4b18940d82b032f9def4c1"
+    },
+    {
+      "episode": 400550,
+      "frame_count": 3086,
+      "label": "started",
+      "positive_valid": 119,
+      "negative_valid": 2950,
+      "unknown": 17,
+      "transition_frames": [
+        2958
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_8",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 1,
+          "complete": true
+        },
+        {
+          "group": "demo_1",
+          "frames": null,
+          "complete": false
+        },
+        {
+          "group": "demo_2",
+          "frames": null,
+          "complete": false
+        },
+        {
+          "group": "demo_3",
+          "frames": null,
+          "complete": false
+        },
+        {
+          "group": "demo_4",
+          "frames": null,
+          "complete": false
+        },
+        {
+          "group": "demo_5",
+          "frames": null,
+          "complete": false
+        },
+        {
+          "group": "demo_6",
+          "frames": null,
+          "complete": false
+        },
+        {
+          "group": "demo_7",
+          "frames": null,
+          "complete": false
+        },
+        {
+          "group": "demo_8",
+          "frames": 3086,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2111,
+      "artifact_sha256": "006bd99c286c53e1c59bc84062632005c2fcb6a5ee202f6e0fd9e8446fd48e14",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400550_decoded.npz",
+      "raw_sha256": "ee42c2778a06e83817c9f43f948f5edf3f5da502c0f37b88dde6c8a3399d7e3c"
+    },
+    {
+      "episode": 400560,
+      "frame_count": 3488,
+      "label": "started",
+      "positive_valid": 106,
+      "negative_valid": 3365,
+      "unknown": 17,
+      "transition_frames": [
+        3373
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3488,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2317,
+      "artifact_sha256": "58fbf141560f9111348f739fae3af77cb65e3638733ec81b3cf5dbe68ce01381",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400560_decoded.npz",
+      "raw_sha256": "e29cfe5697940ede4e87a89bf5c4f4ba7efe353d2db57a731fa89daa026ba0b8"
+    },
+    {
+      "episode": 400570,
+      "frame_count": 3264,
+      "label": "started",
+      "positive_valid": 79,
+      "negative_valid": 3168,
+      "unknown": 17,
+      "transition_frames": [
+        3176
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3264,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2340,
+      "artifact_sha256": "038b8d00f36f9437b5d6f99f796b8487d7d6dcaa75d4595fcf2c8b4e1db26324",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400570_decoded.npz",
+      "raw_sha256": "e1fcb0e6267513a7ebfa181fc491b382f3881cedc8fd56b99c53e02365398cb7"
+    },
+    {
+      "episode": 400580,
+      "frame_count": 3149,
+      "label": "started",
+      "positive_valid": 111,
+      "negative_valid": 3021,
+      "unknown": 17,
+      "transition_frames": [
+        3029
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3149,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2288,
+      "artifact_sha256": "e96c6e01877c67e2a571c76eabe4f121f5ab5b6dd176bd9aed9558117e84e060",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400580_decoded.npz",
+      "raw_sha256": "ea27561716c18c1af3d3d6bfee5ba05cb7a01e321f295ca9019684dda4686cb5"
+    },
+    {
+      "episode": 400600,
+      "frame_count": 3259,
+      "label": "started",
+      "positive_valid": 129,
+      "negative_valid": 3113,
+      "unknown": 17,
+      "transition_frames": [
+        3121
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3259,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2146,
+      "artifact_sha256": "a879c2e8e64492a9c07ad704611ff6294b0ecbc6ee9308f0d28e96fe8896c9db",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400600_decoded.npz",
+      "raw_sha256": "a66c1ddfaf0e630500883d611b931b8470b07f01cb0472669351dc8a21d5e53b"
+    },
+    {
+      "episode": 400610,
+      "frame_count": 3158,
+      "label": "started",
+      "positive_valid": 126,
+      "negative_valid": 3015,
+      "unknown": 17,
+      "transition_frames": [
+        3023
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3158,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2157,
+      "artifact_sha256": "5293769a45b417e068c3254a5f4e46a59e79994d5668ebfad7195ae63a480de1",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400610_decoded.npz",
+      "raw_sha256": "25f4b769dbca4089e0fc1685c151398835fc41b6fbe95025e411fc569419b027"
+    },
+    {
+      "episode": 400620,
+      "frame_count": 2171,
+      "label": "started",
+      "positive_valid": 80,
+      "negative_valid": 2074,
+      "unknown": 17,
+      "transition_frames": [
+        2082
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 2171,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 1384,
+      "artifact_sha256": "bd75bef38b27e3c0fb33eabf2d3c7231b28970afd0cdccbaf57db15d4de39f59",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400620_decoded.npz",
+      "raw_sha256": "50f583b099265b5166365aecf615c891f40f340822cf828fede96fe56d338fbb"
+    },
+    {
+      "episode": 400640,
+      "frame_count": 3080,
+      "label": "started",
+      "positive_valid": 86,
+      "negative_valid": 2977,
+      "unknown": 17,
+      "transition_frames": [
+        2985
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3080,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2190,
+      "artifact_sha256": "5f8a14ab3f451716b8d82255250b48c01fb05bc4c083a12421789f95d13b607c",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400640_decoded.npz",
+      "raw_sha256": "03c8a84f6a8756a11ea5a2a1a365cb108135c317bff90c761507a3de8bfc1d13"
+    },
+    {
+      "episode": 400660,
+      "frame_count": 3466,
+      "label": "started",
+      "positive_valid": 115,
+      "negative_valid": 3334,
+      "unknown": 17,
+      "transition_frames": [
+        3342
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3466,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2564,
+      "artifact_sha256": "d3475ccb4c8d09bf38070921ff93f0a88d56d1a2804e0256d548ccb2a64ea749",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400660_decoded.npz",
+      "raw_sha256": "690532465ff39e116f1c2e47d7e8e0533ea230560e9df03e99187a59a1327b84"
+    },
+    {
+      "episode": 400670,
+      "frame_count": 3378,
+      "label": "started",
+      "positive_valid": 423,
+      "negative_valid": 2938,
+      "unknown": 17,
+      "transition_frames": [
+        2946
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3378,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2189,
+      "artifact_sha256": "f33877191001e641e62e0e6945998b2ab7e9f86286263e719da0c5a714ba5ba4",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400670_decoded.npz",
+      "raw_sha256": "b995809585930e49d3a2a6b2003ee335dea4e25185246087bc0bb84014fab797"
+    },
+    {
+      "episode": 400680,
+      "frame_count": 2932,
+      "label": "started",
+      "positive_valid": 113,
+      "negative_valid": 2802,
+      "unknown": 17,
+      "transition_frames": [
+        2810
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 2932,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2397,
+      "artifact_sha256": "2b0f5d86967989118c652c60b9e83edcefd369d7c9d3214bd02b4613e5b7d612",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400680_decoded.npz",
+      "raw_sha256": "711484e1974dff6146f2166434e8a2c984ecc2b840c4bf31a26cc0b910afdc01"
+    },
+    {
+      "episode": 400690,
+      "frame_count": 3089,
+      "label": "started",
+      "positive_valid": 103,
+      "negative_valid": 2969,
+      "unknown": 17,
+      "transition_frames": [
+        2977
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3089,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2129,
+      "artifact_sha256": "8c767b4442b1e81830fcd660aa2f6689a40edaa1941b8d76a49d2ec3c5686eae",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400690_decoded.npz",
+      "raw_sha256": "2b1b5e001a164234ae7be4039df4d9c25e293e7425bb9aa9ed48ff9d01bbf66d"
+    },
+    {
+      "episode": 400700,
+      "frame_count": 3553,
+      "label": "started",
+      "positive_valid": 115,
+      "negative_valid": 3421,
+      "unknown": 17,
+      "transition_frames": [
+        3429
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3553,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2079,
+      "artifact_sha256": "2c549af5ea170e85809d1357486f0f0fcdcdf6a8f75ccbb2cfc9c44c1c0d6903",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400700_decoded.npz",
+      "raw_sha256": "76c31251566ae96afbf14938bc0391cfcffe8e4cd9a62f48873db2db0526726c"
+    },
+    {
+      "episode": 400710,
+      "frame_count": 3020,
+      "label": "started",
+      "positive_valid": 85,
+      "negative_valid": 2918,
+      "unknown": 17,
+      "transition_frames": [
+        2926
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3020,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2419,
+      "artifact_sha256": "b98a94240ab363c8e21944a88465062c13e583d04abc82c8a3bca5c466a01610",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400710_decoded.npz",
+      "raw_sha256": "d6b25b0ca716efdebd557b04d303ed057611edddfef113774816aebb2005047b"
+    },
+    {
+      "episode": 400720,
+      "frame_count": 3710,
+      "label": "started",
+      "positive_valid": 119,
+      "negative_valid": 3574,
+      "unknown": 17,
+      "transition_frames": [
+        3582
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3710,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2275,
+      "artifact_sha256": "6c56b0f8f3e8c10d80ccf7e9b9dbb9e6e9707077a1d0a413e3ba450b75f2254b",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400720_decoded.npz",
+      "raw_sha256": "f67afd67c1f7e9bb4fa8fcbad1a434fd9189ebd5795a80b72bbc34cc98978a49"
+    },
+    {
+      "episode": 400730,
+      "frame_count": 3194,
+      "label": "started",
+      "positive_valid": 123,
+      "negative_valid": 3054,
+      "unknown": 17,
+      "transition_frames": [
+        3062
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3194,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2445,
+      "artifact_sha256": "5a50a2829b180bbb4bf7229fc3cb49fe99900739c338bfe8dfa9878fa0590d39",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400730_decoded.npz",
+      "raw_sha256": "7f56092c01422d8a164551989c1d5748a031c7978214fba7c7d9ef67c3999cba"
+    },
+    {
+      "episode": 400740,
+      "frame_count": 4036,
+      "label": "started",
+      "positive_valid": 119,
+      "negative_valid": 3900,
+      "unknown": 17,
+      "transition_frames": [
+        3908
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 4036,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2376,
+      "artifact_sha256": "8a295121452c2c2467ce12c9996697ab759b16d3a37f5d45ee5b09215510a871",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400740_decoded.npz",
+      "raw_sha256": "26c2b4ab8c28e94539c577612b9e2f5ce3c698a96f23cd84694bf36df9bd5356"
+    },
+    {
+      "episode": 400750,
+      "frame_count": 3112,
+      "label": "started",
+      "positive_valid": 92,
+      "negative_valid": 3003,
+      "unknown": 17,
+      "transition_frames": [
+        3011
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3112,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2252,
+      "artifact_sha256": "64da1a53ae4cb6400c3ddae099e61d90130d2e16fa9e3a5a0c9ca7178e4807bb",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400750_decoded.npz",
+      "raw_sha256": "4aab7867c39eb3add21a8a970fa04c2a151728e4d3b3acb5928ff2031c3ed28d"
+    },
+    {
+      "episode": 400760,
+      "frame_count": 2901,
+      "label": "started",
+      "positive_valid": 110,
+      "negative_valid": 2774,
+      "unknown": 17,
+      "transition_frames": [
+        2782
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 2901,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2233,
+      "artifact_sha256": "3ddc3c40b470a48dd34db69e99097352174fbb95a2157ecbca4c0c02e7b8066c",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400760_decoded.npz",
+      "raw_sha256": "bab7a1ae16a5284174259ee0ae29e566f100591e52cb7a23abd66c0ae1c5710f"
+    },
+    {
+      "episode": 400780,
+      "frame_count": 2692,
+      "label": "started",
+      "positive_valid": 78,
+      "negative_valid": 2597,
+      "unknown": 17,
+      "transition_frames": [
+        2605
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 2692,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2276,
+      "artifact_sha256": "ec36aade55487647347125a8b46d8dbf99c35dfe696855ed5952fea7dfcbe9dc",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400780_decoded.npz",
+      "raw_sha256": "f2618192589b0b332e5a84146e3e0d6e2471066f433eb30c3ce6fbaf8e087bf8"
+    },
+    {
+      "episode": 400790,
+      "frame_count": 2787,
+      "label": "started",
+      "positive_valid": 105,
+      "negative_valid": 2665,
+      "unknown": 17,
+      "transition_frames": [
+        2673
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 2787,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 1716,
+      "artifact_sha256": "dadd4903e27fbba2fc81fd87fa3e98079140565981659f566799d6c93f826a9d",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400790_decoded.npz",
+      "raw_sha256": "356ba403a4217b0f162e9a1cca0011a62ad878b0dbcb266edea9ebfe7a6ee09a"
+    },
+    {
+      "episode": 400800,
+      "frame_count": 2647,
+      "label": "started",
+      "positive_valid": 115,
+      "negative_valid": 2515,
+      "unknown": 17,
+      "transition_frames": [
+        2523
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 2647,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 1880,
+      "artifact_sha256": "b20d1b1942117315f22efe492250924a8583548e63375fb5b205399cac127ae8",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400800_decoded.npz",
+      "raw_sha256": "ed5ee129cadf02a12b276be94ba56f2a5c1aea08cfca808d71d091f4ec196aca"
+    },
+    {
+      "episode": 400810,
+      "frame_count": 2970,
+      "label": "started",
+      "positive_valid": 110,
+      "negative_valid": 2843,
+      "unknown": 17,
+      "transition_frames": [
+        2851
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 2970,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 1834,
+      "artifact_sha256": "05cc4547e62b846c8200fe4db9127ad5a146f2e722a798c453927cbbdef58594",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400810_decoded.npz",
+      "raw_sha256": "7962449b617213b2b4bb4a0b554ded22c95aa1c09ba506cf65f2532dee85496c"
+    },
+    {
+      "episode": 400820,
+      "frame_count": 3092,
+      "label": "started",
+      "positive_valid": 83,
+      "negative_valid": 2992,
+      "unknown": 17,
+      "transition_frames": [
+        3000
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3092,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2230,
+      "artifact_sha256": "0cda2859e17fe45a7592cff4482705a38cd6d7e4ffeb27dcee702b1cf73813e5",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400820_decoded.npz",
+      "raw_sha256": "117d3014db0558b047219b078bb06e19572108fa62297160cf300feba71b4e84"
+    },
+    {
+      "episode": 400830,
+      "frame_count": 2937,
+      "label": "started",
+      "positive_valid": 113,
+      "negative_valid": 2807,
+      "unknown": 17,
+      "transition_frames": [
+        2815
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 2937,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2136,
+      "artifact_sha256": "a573761e05409888d1648c71ead3910aeed5eac59e5b4ed15b3f0346d0ef6c7a",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400830_decoded.npz",
+      "raw_sha256": "0de52c025b1186bf7a751512b4358a5ea796446fbd1c504eed6c0124b3cbe912"
+    },
+    {
+      "episode": 400840,
+      "frame_count": 3330,
+      "label": "started",
+      "positive_valid": 74,
+      "negative_valid": 3239,
+      "unknown": 17,
+      "transition_frames": [
+        3247
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3330,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2234,
+      "artifact_sha256": "670c8d5edde7e0db0d39e8856722203f8992502101f3df4ef97a497ed53b48fc",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400840_decoded.npz",
+      "raw_sha256": "df2b8d9c7ed7f2f522a88d4907e3d95865c56ccac2bf6fa80736e9a26bc34d2c"
+    },
+    {
+      "episode": 400850,
+      "frame_count": 2992,
+      "label": "started",
+      "positive_valid": 102,
+      "negative_valid": 2873,
+      "unknown": 17,
+      "transition_frames": [
+        2881
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 2992,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2071,
+      "artifact_sha256": "3cc7ca9ca0fe70344c5b8d22122ce6aad74c809044b3984829f2226d40d3f974",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400850_decoded.npz",
+      "raw_sha256": "e691b600d5958bdd7b4d183234b0db26f395bf414ef4345a43362497462379fb"
+    },
+    {
+      "episode": 400860,
+      "frame_count": 2716,
+      "label": "started",
+      "positive_valid": 82,
+      "negative_valid": 2617,
+      "unknown": 17,
+      "transition_frames": [
+        2625
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 2716,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2078,
+      "artifact_sha256": "0619f1314e1be4ae3e64f34123b20b439124398ebd3d31d73f2552c5c85ff51e",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400860_decoded.npz",
+      "raw_sha256": "9ec4f0eafe7f2d62a6ad1ca17ee3719b4def208df10be12efdfe2f181630e176"
+    },
+    {
+      "episode": 400870,
+      "frame_count": 4069,
+      "label": "started",
+      "positive_valid": 116,
+      "negative_valid": 3936,
+      "unknown": 17,
+      "transition_frames": [
+        3944
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 4069,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2322,
+      "artifact_sha256": "d3f92a8e685393064d391badb6b563dfd20eabd914b4ea76ea1f8cacf1af5c76",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400870_decoded.npz",
+      "raw_sha256": "87bb643b848c5b60d1d8c507ce9eb6f5dcd51a50b0b5fb2f29bec53cadbe3124"
+    },
+    {
+      "episode": 400880,
+      "frame_count": 2937,
+      "label": "started",
+      "positive_valid": 74,
+      "negative_valid": 2846,
+      "unknown": 17,
+      "transition_frames": [
+        2854
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 2937,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2390,
+      "artifact_sha256": "84d8821ff68490a759904cb8be0d8b22cf0c39588c11199ce02fc07def7a147a",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400880_decoded.npz",
+      "raw_sha256": "ad71e13070e5e035c2590390bbcf3b7ccce3402607055df3ff9b0a126d06b5e3"
+    },
+    {
+      "episode": 400890,
+      "frame_count": 2815,
+      "label": "started",
+      "positive_valid": 123,
+      "negative_valid": 2675,
+      "unknown": 17,
+      "transition_frames": [
+        2683
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 2815,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 1810,
+      "artifact_sha256": "d9bad683c5b00315bb8cc8913dd40db630b0e6a04cc6afc65ee66a068e2647b6",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400890_decoded.npz",
+      "raw_sha256": "c9a39202cfd719c1ba345595527ebd0dbf0a2a3c883ec3457ddebba59d224218"
+    },
+    {
+      "episode": 400900,
+      "frame_count": 2701,
+      "label": "started",
+      "positive_valid": 121,
+      "negative_valid": 2563,
+      "unknown": 17,
+      "transition_frames": [
+        2571
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 2701,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 1781,
+      "artifact_sha256": "5556c3dd66fe9d8a687c4399c55528c414e737365559195e901fcc47b92529a5",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400900_decoded.npz",
+      "raw_sha256": "63b2d3d265db3809499dde0fe0c9d442531225e017f66f21d73305b6d71c7ecb"
+    },
+    {
+      "episode": 400910,
+      "frame_count": 2891,
+      "label": "started",
+      "positive_valid": 99,
+      "negative_valid": 2775,
+      "unknown": 17,
+      "transition_frames": [
+        2783
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 2891,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 1969,
+      "artifact_sha256": "792bde5eb15e4e9ee35289bf3e25f28b79a77d9f9a0b4ab796178284f5c596b0",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400910_decoded.npz",
+      "raw_sha256": "55ff1fc936ba0d48552f0968585eacfd3e1f30fd60184ef4a0e4ee000c6e9b4e"
+    },
+    {
+      "episode": 400920,
+      "frame_count": 2614,
+      "label": "started",
+      "positive_valid": 97,
+      "negative_valid": 2500,
+      "unknown": 17,
+      "transition_frames": [
+        2508
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 2614,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2138,
+      "artifact_sha256": "a701c1e11d88be61d934119f21e588e0cd9fa9a2ae4c392dd00c1116b9e8395b",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400920_decoded.npz",
+      "raw_sha256": "bf90f59d99a8d58a1dc16b41aac129b9a671452939b8c0b04dbd16efb1721f18"
+    },
+    {
+      "episode": 400930,
+      "frame_count": 2436,
+      "label": "started",
+      "positive_valid": 97,
+      "negative_valid": 2322,
+      "unknown": 17,
+      "transition_frames": [
+        2330
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 2436,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 1789,
+      "artifact_sha256": "1d6ccae5209d777bf21fc9f4865450b7faec9e94ed7bcc0630d8714b9a8ee44e",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400930_decoded.npz",
+      "raw_sha256": "0e167079290958af7f0a3ec7e6ad93d516e4f4a54045d9a3e40bcb3669d0b71c"
+    },
+    {
+      "episode": 400940,
+      "frame_count": 2436,
+      "label": "started",
+      "positive_valid": 95,
+      "negative_valid": 2324,
+      "unknown": 17,
+      "transition_frames": [
+        2332
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 2436,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 1723,
+      "artifact_sha256": "025905f8a677167194e58e8dd38258ed77376cdd0ea1a986470831fac5911b4a",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400940_decoded.npz",
+      "raw_sha256": "2f9d03347e0d75a7081ddcf2ec7eb41b7a0dc4ffe81005fa2f30c43a0dc19b98"
+    },
+    {
+      "episode": 400950,
+      "frame_count": 3191,
+      "label": "started",
+      "positive_valid": 88,
+      "negative_valid": 3086,
+      "unknown": 17,
+      "transition_frames": [
+        3094
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3191,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2162,
+      "artifact_sha256": "7ecb966cde1d4a856d05442c8d18a3ee0d714089fa1b24924f353e3c0bcc2bfc",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400950_decoded.npz",
+      "raw_sha256": "da554dc335095e5bebea64ab7150a187e42a1b261505a25ce51796d445bd6add"
+    },
+    {
+      "episode": 400960,
+      "frame_count": 3042,
+      "label": "started",
+      "positive_valid": 114,
+      "negative_valid": 2911,
+      "unknown": 17,
+      "transition_frames": [
+        2919
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3042,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 1720,
+      "artifact_sha256": "1ac1c6e6766769ebc05f75bb97990ce3d5cb20d4a25eaad6b6747dc778314045",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400960_decoded.npz",
+      "raw_sha256": "043e08ec920b6948d7cc0acd6d1c91f8c3fb924396bbc63ff35a1b526da190b7"
+    },
+    {
+      "episode": 400970,
+      "frame_count": 3019,
+      "label": "started",
+      "positive_valid": 73,
+      "negative_valid": 2929,
+      "unknown": 17,
+      "transition_frames": [
+        2937
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3019,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2185,
+      "artifact_sha256": "aeabb66d7fc16a088201531a81445ca5acb50b0bf7ae42c6fa8c2b74be50aa78",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400970_decoded.npz",
+      "raw_sha256": "11346051c53cc9d55e9c6d74a056552ebb295b79ce25094d81cb6a85cf0d1b99"
+    },
+    {
+      "episode": 400990,
+      "frame_count": 3442,
+      "label": "started",
+      "positive_valid": 75,
+      "negative_valid": 3350,
+      "unknown": 17,
+      "transition_frames": [
+        3358
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3442,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2350,
+      "artifact_sha256": "d8170e818998ecdce417640fcc307340c95f4406bf067a42a90319a6b02e430a",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00400990_decoded.npz",
+      "raw_sha256": "c549454a029d417d38c972b7f4066a39c3114c21d561f828dc2883bb848a718b"
+    },
+    {
+      "episode": 401000,
+      "frame_count": 4458,
+      "label": "started",
+      "positive_valid": 67,
+      "negative_valid": 4374,
+      "unknown": 17,
+      "transition_frames": [
+        4382
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 4458,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 3165,
+      "artifact_sha256": "2fb07bbd27a855823ef402ca551fd125e96d3ccbc1a6a556e4e77dc723e1c5f5",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00401000_decoded.npz",
+      "raw_sha256": "9566dfe9b4e7f117eae1f96965f01b07fda74f49a003294c61528e74bba0bc8e"
+    },
+    {
+      "episode": 401010,
+      "frame_count": 3160,
+      "label": "started",
+      "positive_valid": 79,
+      "negative_valid": 3064,
+      "unknown": 17,
+      "transition_frames": [
+        3072
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3160,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2407,
+      "artifact_sha256": "eecfe560a4f91fe53c21161f5d7a243921359c5e41bdf04da0cf42620b8d75f0",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00401010_decoded.npz",
+      "raw_sha256": "ef45c1c26967822a879de5b6c2dfed3f671bfdada6a2300ca943745f6106fb15"
+    },
+    {
+      "episode": 401020,
+      "frame_count": 2890,
+      "label": "started",
+      "positive_valid": 80,
+      "negative_valid": 2793,
+      "unknown": 17,
+      "transition_frames": [
+        2801
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 2890,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 1890,
+      "artifact_sha256": "99543631f3179e12d486167ebe0da17f482dc16667a68caf3927b8c98b689952",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00401020_decoded.npz",
+      "raw_sha256": "b6acb466e428fe513d32b7e89f6856685f72e40f87f1adc9dd51ce14996572f5"
+    },
+    {
+      "episode": 401030,
+      "frame_count": 2988,
+      "label": "started",
+      "positive_valid": 78,
+      "negative_valid": 2893,
+      "unknown": 17,
+      "transition_frames": [
+        2901
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 2988,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2153,
+      "artifact_sha256": "63dd06cf1d3ec143e85983424b518cdbcda79caac57c0558ae81d494aaaaf86e",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00401030_decoded.npz",
+      "raw_sha256": "7c3bf2a17391ee4d1e56f5971cbf9bd63f8faab4879fe11913f5a03365303c98"
+    },
+    {
+      "episode": 401040,
+      "frame_count": 3117,
+      "label": "started",
+      "positive_valid": 171,
+      "negative_valid": 2929,
+      "unknown": 17,
+      "transition_frames": [
+        2937
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3117,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 1894,
+      "artifact_sha256": "01a61fd18c645e4dcff550e3ae29c552623cd111a6b7e147e330e0472da561ac",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00401040_decoded.npz",
+      "raw_sha256": "0c864f2ea84e798fcb386e7708d7d343bc931fbf25a5a9faeb63dc312e08f7c8"
+    },
+    {
+      "episode": 401050,
+      "frame_count": 3145,
+      "label": "started",
+      "positive_valid": 73,
+      "negative_valid": 3055,
+      "unknown": 17,
+      "transition_frames": [
+        3063
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3145,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2193,
+      "artifact_sha256": "d0e9fccfb6843a9094bcb1a76cbfe6cc7115d30b2d7b146fa095c2c389b63490",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00401050_decoded.npz",
+      "raw_sha256": "edcb681a26d0e65e23e99bb9fcebeb4f2fb31e11ac3598911584d4a0577f3321"
+    },
+    {
+      "episode": 401060,
+      "frame_count": 2692,
+      "label": "started",
+      "positive_valid": 95,
+      "negative_valid": 2580,
+      "unknown": 17,
+      "transition_frames": [
+        2588
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 2692,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 1844,
+      "artifact_sha256": "6d5b68116be83f5b95c38450bd7eb1006a729f33cf59dbdcb55e1b4e607a8a8e",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00401060_decoded.npz",
+      "raw_sha256": "ac8de68666752bc1e0f6915ad5e856823d1263c3dd7fc52fe14c6c4324bdaa50"
+    },
+    {
+      "episode": 401080,
+      "frame_count": 3307,
+      "label": "started",
+      "positive_valid": 97,
+      "negative_valid": 3193,
+      "unknown": 17,
+      "transition_frames": [
+        3201
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3307,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2078,
+      "artifact_sha256": "ba5397ae19c0cdb787ee6db8e8fa82720bbd5de58e975aed32646eb81d8f680b",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00401080_decoded.npz",
+      "raw_sha256": "d8f3073ab43f08bc7e618626b875dec6b0d9fa67577c40b4009b231985d4238c"
+    },
+    {
+      "episode": 401090,
+      "frame_count": 3140,
+      "label": "started",
+      "positive_valid": 82,
+      "negative_valid": 3041,
+      "unknown": 17,
+      "transition_frames": [
+        3049
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3140,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2224,
+      "artifact_sha256": "fb9cc49961adf2d358804184bbd4cf1358e3e09eaf05c3cc556cc5aca9728265",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00401090_decoded.npz",
+      "raw_sha256": "f4f9cce047a5cdf82f4d0640628445d4cbe0a976f8c5953d6b3b9fcadaa02165"
+    },
+    {
+      "episode": 401100,
+      "frame_count": 2880,
+      "label": "started",
+      "positive_valid": 80,
+      "negative_valid": 2783,
+      "unknown": 17,
+      "transition_frames": [
+        2791
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 2880,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2061,
+      "artifact_sha256": "2bdf336b3d213db711766b3eceaeec7e8f1ea73962882a36b380dd5fb608317e",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00401100_decoded.npz",
+      "raw_sha256": "6e0bb8f17a40ed7638ced080e723211b48bfff4ad074bd31c9351ee603227544"
+    },
+    {
+      "episode": 401110,
+      "frame_count": 3549,
+      "label": "started",
+      "positive_valid": 92,
+      "negative_valid": 3440,
+      "unknown": 17,
+      "transition_frames": [
+        3448
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3549,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2477,
+      "artifact_sha256": "142859e7f4f3fd254be9f8e6b983e6aabfb40eefd15793131da8f640892de628",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00401110_decoded.npz",
+      "raw_sha256": "3da30ff0640a19bfce65a73f5332369c5d84ec742e188ae80426c1f946fde32e"
+    },
+    {
+      "episode": 401120,
+      "frame_count": 2937,
+      "label": "started",
+      "positive_valid": 107,
+      "negative_valid": 2813,
+      "unknown": 17,
+      "transition_frames": [
+        2821
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 2937,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2163,
+      "artifact_sha256": "aabc73a329e9243f8646d17c1fb7eb4aa63de1b88acd17bfd29e58ca6372dedc",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00401120_decoded.npz",
+      "raw_sha256": "217a2b1bf40893e9b5c54eea48d70c4c8a0dab94d442671348bcb494c219f2a0"
+    },
+    {
+      "episode": 401130,
+      "frame_count": 3276,
+      "label": "started",
+      "positive_valid": 150,
+      "negative_valid": 3109,
+      "unknown": 17,
+      "transition_frames": [
+        3117
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3276,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2101,
+      "artifact_sha256": "29a92acd28cc7e1706838636677862a0445aa78740095fd80ebc16880bc4486e",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00401130_decoded.npz",
+      "raw_sha256": "9b9691cedada523c807962cb16c3314ca84a19d89f5cc69e6d5dd720ddadce9e"
+    },
+    {
+      "episode": 401140,
+      "frame_count": 2571,
+      "label": "started",
+      "positive_valid": 81,
+      "negative_valid": 2473,
+      "unknown": 17,
+      "transition_frames": [
+        2481
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 2571,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 1808,
+      "artifact_sha256": "92ddfc83613800fce72718638e2155d1f5a04bf97db37dfa942f187e7fd4b79b",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00401140_decoded.npz",
+      "raw_sha256": "c5ef3a05f5a2050a43ffe8dd61429e65d3eedffee0e0cfa82ae12a17d7c6b3db"
+    },
+    {
+      "episode": 401150,
+      "frame_count": 2921,
+      "label": "started",
+      "positive_valid": 172,
+      "negative_valid": 2732,
+      "unknown": 17,
+      "transition_frames": [
+        2740
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 2921,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2074,
+      "artifact_sha256": "a5f19dd39286b06f297cbc9e56dd04b99fc6df3472edac18a8035edec8aedd86",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00401150_decoded.npz",
+      "raw_sha256": "4914adcfa8196155e39d8fbc28720874d65024f12e2806f72c34012b38b5db90"
+    },
+    {
+      "episode": 401160,
+      "frame_count": 3482,
+      "label": "started",
+      "positive_valid": 86,
+      "negative_valid": 3379,
+      "unknown": 17,
+      "transition_frames": [
+        3387
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3482,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2024,
+      "artifact_sha256": "9178f4fee7e9c974fad66c6e19830971d02cdb61b4e77d819d704d679aad96d2",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00401160_decoded.npz",
+      "raw_sha256": "981297f604cd1f37ae1b5af026ec56a494cb6c9d94ec800af3c7a1c02805c45b"
+    },
+    {
+      "episode": 401200,
+      "frame_count": 3633,
+      "label": "started",
+      "positive_valid": 100,
+      "negative_valid": 3516,
+      "unknown": 17,
+      "transition_frames": [
+        3524
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_2",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 1,
+          "complete": true
+        },
+        {
+          "group": "demo_1",
+          "frames": null,
+          "complete": false
+        },
+        {
+          "group": "demo_2",
+          "frames": 3633,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2212,
+      "artifact_sha256": "ee6dd52c6de92abc9fef6db59cc167722e2da1538c8d5a10f9a85208eba6a69d",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00401200_decoded.npz",
+      "raw_sha256": "5e44ba9466a3c35105aec2dce5a4dcd2a763ab6b2f3ebe7b10bf1038c06243f2"
+    },
+    {
+      "episode": 401220,
+      "frame_count": 3280,
+      "label": "started",
+      "positive_valid": 126,
+      "negative_valid": 3137,
+      "unknown": 17,
+      "transition_frames": [
+        3145
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_2",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 128,
+          "complete": true
+        },
+        {
+          "group": "demo_1",
+          "frames": 1,
+          "complete": true
+        },
+        {
+          "group": "demo_2",
+          "frames": 3280,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2211,
+      "artifact_sha256": "eac6f819a620b2e64efdb630e89af88a5132067fc952c101e6101842d101bb4c",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00401220_decoded.npz",
+      "raw_sha256": "2fd58a5e32fb3f43a48f37ae1ef208532d6f2cbc84b73836ead84e75c16f81fa"
+    },
+    {
+      "episode": 401230,
+      "frame_count": 2926,
+      "label": "started",
+      "positive_valid": 84,
+      "negative_valid": 2825,
+      "unknown": 17,
+      "transition_frames": [
+        2833
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_2",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 98,
+          "complete": true
+        },
+        {
+          "group": "demo_1",
+          "frames": 1,
+          "complete": true
+        },
+        {
+          "group": "demo_2",
+          "frames": 2926,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2191,
+      "artifact_sha256": "f0ac84bdaf04aa48250ee1db4b65d18178892a7a58e16f3d483112a729098096",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00401230_decoded.npz",
+      "raw_sha256": "46164ac58e5df828c0940aa2ef60c0eb41f9234e4c899c7e525452fdf6512d8a"
+    },
+    {
+      "episode": 401240,
+      "frame_count": 3787,
+      "label": "started",
+      "positive_valid": 81,
+      "negative_valid": 3689,
+      "unknown": 17,
+      "transition_frames": [
+        3697
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_2",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 1,
+          "complete": true
+        },
+        {
+          "group": "demo_1",
+          "frames": null,
+          "complete": false
+        },
+        {
+          "group": "demo_2",
+          "frames": 3787,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2093,
+      "artifact_sha256": "68e1962758523a9cfd2cc75a154ba7abf173c3e54dbeeb9f1e95f6cb7fa766e2",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00401240_decoded.npz",
+      "raw_sha256": "ee0ad830297896b42cd2ff8c9aa089b22b417028c3d96d9b874be3f9b60a7af2"
+    },
+    {
+      "episode": 401250,
+      "frame_count": 4145,
+      "label": "started",
+      "positive_valid": 79,
+      "negative_valid": 4049,
+      "unknown": 17,
+      "transition_frames": [
+        4057
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_2",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 1,
+          "complete": true
+        },
+        {
+          "group": "demo_1",
+          "frames": null,
+          "complete": false
+        },
+        {
+          "group": "demo_2",
+          "frames": 4145,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2540,
+      "artifact_sha256": "8df13ba0f4fc2c480a516174800d14709aaef9dc71ec43c91bc1bfb9d0d9824f",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00401250_decoded.npz",
+      "raw_sha256": "29b1f4a7b94f03b3e459ac7a57b1e3d9662c547824ffd525f2bbf896c8a1de18"
+    },
+    {
+      "episode": 401260,
+      "frame_count": 2169,
+      "label": "started",
+      "positive_valid": 79,
+      "negative_valid": 2073,
+      "unknown": 17,
+      "transition_frames": [
+        2081
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_1",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 1,
+          "complete": true
+        },
+        {
+          "group": "demo_1",
+          "frames": 2169,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 1685,
+      "artifact_sha256": "c581c4b84bd8273f6e324aa91251ce29e3c329090f5acb501f042c8b309d94b5",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00401260_decoded.npz",
+      "raw_sha256": "134aeab8e4f678b1f517c267510c62243c6939d32399a75ef72bd6199873fac9"
+    },
+    {
+      "episode": 401270,
+      "frame_count": 3105,
+      "label": "started",
+      "positive_valid": 74,
+      "negative_valid": 3014,
+      "unknown": 17,
+      "transition_frames": [
+        3022
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_1",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 1,
+          "complete": true
+        },
+        {
+          "group": "demo_1",
+          "frames": 3105,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 1910,
+      "artifact_sha256": "dbdf9b4b4cf9504c7d1af59117588cdbbbdb943ecf629c768383bf4025e4b0a7",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00401270_decoded.npz",
+      "raw_sha256": "22930347554c662550d90bb55f3f3ee7fe6ce9f795357e3dfe48c375c84e3b7d"
+    },
+    {
+      "episode": 401280,
+      "frame_count": 3397,
+      "label": "started",
+      "positive_valid": 77,
+      "negative_valid": 3303,
+      "unknown": 17,
+      "transition_frames": [
+        3311
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3397,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2071,
+      "artifact_sha256": "5081f7dd22a6fd195ca830a0119c7440d0f7a9719407fc73b2893d8a0d9a200a",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00401280_decoded.npz",
+      "raw_sha256": "f1151b668a7fb82b0b3f5ed9201a3a3418699bc211023c5cdf2d65c0924b3183"
+    },
+    {
+      "episode": 401290,
+      "frame_count": 2843,
+      "label": "started",
+      "positive_valid": 93,
+      "negative_valid": 2733,
+      "unknown": 17,
+      "transition_frames": [
+        2741
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 2843,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 1936,
+      "artifact_sha256": "84c6e45571a07b08af6e2a081667645b8b933f38416a274d519c33a596b52b40",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00401290_decoded.npz",
+      "raw_sha256": "f3088ddbb849f6a452ddf2afd8f97c2cd73bd705ccf6be251eae014486f9945e"
+    },
+    {
+      "episode": 401300,
+      "frame_count": 3201,
+      "label": "started",
+      "positive_valid": 93,
+      "negative_valid": 3091,
+      "unknown": 17,
+      "transition_frames": [
+        3099
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3201,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2156,
+      "artifact_sha256": "07dd0739d214485cbd95ed90f35ce09bfe6015d50259003df8b30a7186844ff7",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00401300_decoded.npz",
+      "raw_sha256": "e201d14980ddabc90f8ac58f41b7d452dd41b10f296a70110d4efe0b40f6e449"
+    },
+    {
+      "episode": 401310,
+      "frame_count": 3321,
+      "label": "started",
+      "positive_valid": 76,
+      "negative_valid": 3228,
+      "unknown": 17,
+      "transition_frames": [
+        3236
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3321,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2197,
+      "artifact_sha256": "00a0254f01a59449855bd5bb14cab17c56ed0778ad586f24960a4bd9ec4bdd7e",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00401310_decoded.npz",
+      "raw_sha256": "682379c8725e0dd99f93718737dd8e216e5f5a47f274b439469440e871018e8f"
+    },
+    {
+      "episode": 401320,
+      "frame_count": 3019,
+      "label": "started",
+      "positive_valid": 89,
+      "negative_valid": 2913,
+      "unknown": 17,
+      "transition_frames": [
+        2921
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3019,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2061,
+      "artifact_sha256": "c1d7f111d77de817b136b1d2f23d10a474502625fc5c29e91dea1885019e787c",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00401320_decoded.npz",
+      "raw_sha256": "ca3fa1de0dad5f7b84a4951c164b066c227597de44b4420040767990e211f808"
+    },
+    {
+      "episode": 401340,
+      "frame_count": 2726,
+      "label": "started",
+      "positive_valid": 72,
+      "negative_valid": 2637,
+      "unknown": 17,
+      "transition_frames": [
+        2645
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 2726,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 1932,
+      "artifact_sha256": "599bafb3ed070dae6ad8b9ee6ed7215e4c5650ceef5dd19465e54e6f34ab81bb",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00401340_decoded.npz",
+      "raw_sha256": "8694483dbb241f1a1b238a3f7b026b84bc65b9096a744166b9381583a061b4f2"
+    },
+    {
+      "episode": 401350,
+      "frame_count": 2479,
+      "label": "started",
+      "positive_valid": 124,
+      "negative_valid": 2338,
+      "unknown": 17,
+      "transition_frames": [
+        2346
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 2479,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 1651,
+      "artifact_sha256": "5b2a18d7ce9818ee82a7de60974f2aa0b50ccace800a8b0885c8f7d8abe0f794",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00401350_decoded.npz",
+      "raw_sha256": "7bfc99181b114664fb1642d2fc6a9051da3e1c161a94f777b0a436b3f931f0cd"
+    },
+    {
+      "episode": 401360,
+      "frame_count": 2957,
+      "label": "started",
+      "positive_valid": 88,
+      "negative_valid": 2852,
+      "unknown": 17,
+      "transition_frames": [
+        2860
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 2957,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2334,
+      "artifact_sha256": "8b9d1aeca15fbc4b712377cef03312038f5d6a35956ebf97805f982b492a89ff",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00401360_decoded.npz",
+      "raw_sha256": "cf850e4a620b83221c2d89c9dae2f5f82498dcb123e3ea7e2d9151bac025d67f"
+    },
+    {
+      "episode": 401370,
+      "frame_count": 2592,
+      "label": "started",
+      "positive_valid": 100,
+      "negative_valid": 2475,
+      "unknown": 17,
+      "transition_frames": [
+        2483
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 2592,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 1617,
+      "artifact_sha256": "e9a34761080705e3f16ed8a8d030b343d37998d2892b17f995dad1875af0a2e6",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00401370_decoded.npz",
+      "raw_sha256": "c286fd153e4903eec36f36d14adb0b5424441f3be1fb9e9817246bdd71b4ff7b"
+    },
+    {
+      "episode": 401380,
+      "frame_count": 3745,
+      "label": "started",
+      "positive_valid": 77,
+      "negative_valid": 3651,
+      "unknown": 17,
+      "transition_frames": [
+        3659
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3745,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2519,
+      "artifact_sha256": "d37265148d08da7ba3d5250b478cf137e2a8e18206a9737e84b58af3b626e9f9",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00401380_decoded.npz",
+      "raw_sha256": "f444ec8bd452e32f565fcc0d345e3ac1317f4a77bf981fcd9cd1820be884ba80"
+    },
+    {
+      "episode": 401390,
+      "frame_count": 3074,
+      "label": "started",
+      "positive_valid": 67,
+      "negative_valid": 2990,
+      "unknown": 17,
+      "transition_frames": [
+        2998
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3074,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2016,
+      "artifact_sha256": "becefae5b62cb37a96539f9c0ec8bf3b7f7e084702f9b1d915f3b491fd0d79fb",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00401390_decoded.npz",
+      "raw_sha256": "457af5b3f5b03e591f17712ae248e22acc284f327fb78f1e84620a02bbeec002"
+    },
+    {
+      "episode": 401400,
+      "frame_count": 3548,
+      "label": "started",
+      "positive_valid": 84,
+      "negative_valid": 3447,
+      "unknown": 17,
+      "transition_frames": [
+        3455
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3548,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2381,
+      "artifact_sha256": "49a319cc2a473d745d794b1cc6e3124fa3ea2479a86255503ae3ac2ed29d589d",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00401400_decoded.npz",
+      "raw_sha256": "8007995ea413d78bc0a6ed7852c83c642949759c7c9a7dcec934d5740b652c4e"
+    },
+    {
+      "episode": 401410,
+      "frame_count": 3004,
+      "label": "started",
+      "positive_valid": 85,
+      "negative_valid": 2902,
+      "unknown": 17,
+      "transition_frames": [
+        2910
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3004,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 1856,
+      "artifact_sha256": "611bda9a178e587dc1b7786dfc2d9db24fb26a2d96ea16bd3406fd3abfa4ffd7",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00401410_decoded.npz",
+      "raw_sha256": "bd000942719d04c9d9aea8dc1b64dc5f73ff8244e7ecf54db8098a63d50f061d"
+    },
+    {
+      "episode": 401420,
+      "frame_count": 3496,
+      "label": "started",
+      "positive_valid": 101,
+      "negative_valid": 3378,
+      "unknown": 17,
+      "transition_frames": [
+        3386
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3496,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2138,
+      "artifact_sha256": "3d1fa38401255ceb909e04020752a94a0bd77b9391e600333bb201330fca2074",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00401420_decoded.npz",
+      "raw_sha256": "7334be70c9129d87c38b64fc652904f9c28eb543967e13dcce7f488fbc127820"
+    },
+    {
+      "episode": 401430,
+      "frame_count": 3039,
+      "label": "started",
+      "positive_valid": 442,
+      "negative_valid": 2580,
+      "unknown": 17,
+      "transition_frames": [
+        2588
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3039,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 1780,
+      "artifact_sha256": "d9b7505cce23f0f8204ce4590a531b22f6a0864b9c6fc1a0e8529f35ef777d2a",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00401430_decoded.npz",
+      "raw_sha256": "283d06df1971aa7b58bfc5f01edb3ccc1f311579ae0b5eab1662f45a5b06d5e8"
+    },
+    {
+      "episode": 401450,
+      "frame_count": 3087,
+      "label": "started",
+      "positive_valid": 201,
+      "negative_valid": 2869,
+      "unknown": 17,
+      "transition_frames": [
+        2877
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3087,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2558,
+      "artifact_sha256": "9dd27f0d7ed79377529394cbce7589a9ab6a4df50a9ef22225c528b82f0d1030",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00401450_decoded.npz",
+      "raw_sha256": "68136b641448fd1e3b5dbc0fa4b469e14e97f7798673a0ee0e0e059471e17e6b"
+    },
+    {
+      "episode": 401460,
+      "frame_count": 3350,
+      "label": "started",
+      "positive_valid": 105,
+      "negative_valid": 3228,
+      "unknown": 17,
+      "transition_frames": [
+        3236
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_2",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 1304,
+          "complete": true
+        },
+        {
+          "group": "demo_1",
+          "frames": 1,
+          "complete": true
+        },
+        {
+          "group": "demo_2",
+          "frames": 3350,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 1907,
+      "artifact_sha256": "44f8235514b5523ff77c43e5280937edc2fd229b3af4d050cc896f5ec5bfb87e",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00401460_decoded.npz",
+      "raw_sha256": "7bd9ce41de0f48541b0923584b6fd8167a295117a0e26b40774232833ccaa7bc"
+    },
+    {
+      "episode": 401470,
+      "frame_count": 3368,
+      "label": "started",
+      "positive_valid": 77,
+      "negative_valid": 3274,
+      "unknown": 17,
+      "transition_frames": [
+        3282
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_1",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 1,
+          "complete": true
+        },
+        {
+          "group": "demo_1",
+          "frames": 3368,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2391,
+      "artifact_sha256": "a4e8898249692f8a96376929451a50c41a98343cea08ca58774a35beb4d2dc18",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00401470_decoded.npz",
+      "raw_sha256": "a26df1a13dc59bb12ddefe4c494ad9eceade98a89a4eae4e93d1f6a97b3f60c5"
+    },
+    {
+      "episode": 401480,
+      "frame_count": 3357,
+      "label": "started",
+      "positive_valid": 271,
+      "negative_valid": 3069,
+      "unknown": 17,
+      "transition_frames": [
+        3077
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_1",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 1,
+          "complete": true
+        },
+        {
+          "group": "demo_1",
+          "frames": 3357,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2235,
+      "artifact_sha256": "907c453864191640fb74496e0e82c98fb2f97aaccb1679ec07d13e107dadd390",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00401480_decoded.npz",
+      "raw_sha256": "591c8310e2c3a87c87ab4abc05ec11fceaf810f3174e15c772bf52cf673d490a"
+    },
+    {
+      "episode": 401490,
+      "frame_count": 3448,
+      "label": "started",
+      "positive_valid": 198,
+      "negative_valid": 3233,
+      "unknown": 17,
+      "transition_frames": [
+        3241
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_1",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 374,
+          "complete": true
+        },
+        {
+          "group": "demo_1",
+          "frames": 3448,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2281,
+      "artifact_sha256": "dd049dfa625fd33b2f63c6776c65244645c50ad58fab3d29cf7339365749d644",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00401490_decoded.npz",
+      "raw_sha256": "b1c9fb4bbe312e29524c0918af05cc0aba785c86687f6f070a2d0210dd26d645"
+    },
+    {
+      "episode": 401500,
+      "frame_count": 2827,
+      "label": "started",
+      "positive_valid": 96,
+      "negative_valid": 2714,
+      "unknown": 17,
+      "transition_frames": [
+        2722
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_1",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 1,
+          "complete": true
+        },
+        {
+          "group": "demo_1",
+          "frames": 2827,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 1899,
+      "artifact_sha256": "f8aa49000f9473d3ace48dddcf3bfd930b3e6bbe2e7bba326fd79d132ab1d83d",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00401500_decoded.npz",
+      "raw_sha256": "5777034929caee8faa6e62c74637f8b213cdaa1bac8520bfd1e0016d67486ee9"
+    },
+    {
+      "episode": 401510,
+      "frame_count": 2727,
+      "label": "started",
+      "positive_valid": 93,
+      "negative_valid": 2617,
+      "unknown": 17,
+      "transition_frames": [
+        2625
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_1",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 1,
+          "complete": true
+        },
+        {
+          "group": "demo_1",
+          "frames": 2727,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 1958,
+      "artifact_sha256": "bd6d1e209e766c41441d8140771bbb4e1cb57a0b6c90c8e475d7a83f13363ef4",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00401510_decoded.npz",
+      "raw_sha256": "30cfb332cbb898e79e729e9f7506a31992d24686c24eb2c0e36bf3acc269d381"
+    },
+    {
+      "episode": 401520,
+      "frame_count": 3967,
+      "label": "started",
+      "positive_valid": 151,
+      "negative_valid": 3799,
+      "unknown": 17,
+      "transition_frames": [
+        3807
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_1",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 1,
+          "complete": true
+        },
+        {
+          "group": "demo_1",
+          "frames": 3967,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2241,
+      "artifact_sha256": "c2a1fe73efd4e9fc435bc180040656c6a6085f493df1369a9a3f3837001c50bf",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00401520_decoded.npz",
+      "raw_sha256": "58a65d04d46afcadb51e2f824b85f5ea222bc519cdb93b30d92da770ddad844c"
+    },
+    {
+      "episode": 401530,
+      "frame_count": 2999,
+      "label": "started",
+      "positive_valid": 67,
+      "negative_valid": 2915,
+      "unknown": 17,
+      "transition_frames": [
+        2923
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_1",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 1,
+          "complete": true
+        },
+        {
+          "group": "demo_1",
+          "frames": 2999,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2173,
+      "artifact_sha256": "7ac1b0bc846c40117372585acd38e4696b18157eed08f7f89b528a26b3e6cdb7",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00401530_decoded.npz",
+      "raw_sha256": "eabf3aba6c64fef625b0cfa89a0ede1206f4ef8bcf6b388ddd1c0df3d9e76c58"
+    },
+    {
+      "episode": 401540,
+      "frame_count": 3199,
+      "label": "started",
+      "positive_valid": 85,
+      "negative_valid": 3097,
+      "unknown": 17,
+      "transition_frames": [
+        3105
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_1",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 85,
+          "complete": true
+        },
+        {
+          "group": "demo_1",
+          "frames": 3199,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2290,
+      "artifact_sha256": "d4b67b8578baade25ff80dee0cca186a074419843c87ca61c4b9b38820e07c83",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00401540_decoded.npz",
+      "raw_sha256": "f244dfb3aa18caf2d2ee6552fcee65db4519b905ed04ad3b6ea576a74a8d713d"
+    },
+    {
+      "episode": 401560,
+      "frame_count": 2216,
+      "label": "started",
+      "positive_valid": 70,
+      "negative_valid": 2129,
+      "unknown": 17,
+      "transition_frames": [
+        2137
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 2216,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 1356,
+      "artifact_sha256": "e060b50127e51c9db250a0e3decb4b3be0c078c916f4baa213f5ef6c8cdb3cbd",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00401560_decoded.npz",
+      "raw_sha256": "61dfd22b35b54bcf95fc417b7dcca54c509f835575b1bfe78f80896d19a0bfe4"
+    },
+    {
+      "episode": 401580,
+      "frame_count": 1888,
+      "label": "started",
+      "positive_valid": 79,
+      "negative_valid": 1792,
+      "unknown": 17,
+      "transition_frames": [
+        1800
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 1888,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 1315,
+      "artifact_sha256": "43f4feb14d6b424369145f1eb4083a1d9cf1bdbee8370035fbc87530fcbf85ca",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00401580_decoded.npz",
+      "raw_sha256": "c310dc06461476542121c04603d9d39907fb7ac08085641569ca426d31492d7b"
+    },
+    {
+      "episode": 401650,
+      "frame_count": 2095,
+      "label": "started",
+      "positive_valid": 150,
+      "negative_valid": 1928,
+      "unknown": 17,
+      "transition_frames": [
+        1936
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 2095,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 1439,
+      "artifact_sha256": "cf3169e590949d51a46eb920812c9db99d3679c7d51346c81ec628c5bb4104f3",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00401650_decoded.npz",
+      "raw_sha256": "66f67e497d40500fc4d12b614601a28e2e11cc8413a012a8614d71a6e0063bc8"
+    },
+    {
+      "episode": 401710,
+      "frame_count": 2254,
+      "label": "started",
+      "positive_valid": 117,
+      "negative_valid": 2120,
+      "unknown": 17,
+      "transition_frames": [
+        2128
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 2254,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 1573,
+      "artifact_sha256": "cbc2b0fbb3f48ff3bbc4b5047488c5e635dda06eba38389b9649b8043975171e",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00401710_decoded.npz",
+      "raw_sha256": "4c33316354ff6379b81c2a0ee1c3298c2b598baac7c7a7418a6cab39bf2c37a5"
+    },
+    {
+      "episode": 401860,
+      "frame_count": 2089,
+      "label": "started",
+      "positive_valid": 78,
+      "negative_valid": 1994,
+      "unknown": 17,
+      "transition_frames": [
+        2002
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 2089,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 1452,
+      "artifact_sha256": "f139af41382da28fa6993094e5471df14eb9c48dbf4f332411c7a6a3725569b9",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00401860_decoded.npz",
+      "raw_sha256": "3e1e999d8c98090ad0817c2d971db8ddee24a891ec0c41ee79540528a39df772"
+    },
+    {
+      "episode": 401880,
+      "frame_count": 2209,
+      "label": "started",
+      "positive_valid": 88,
+      "negative_valid": 2104,
+      "unknown": 17,
+      "transition_frames": [
+        2112
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 2209,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 1538,
+      "artifact_sha256": "1418728ca3f51a2ec0a1c690886f679986a630ee4540ee8b8170a842fccc3a4f",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00401880_decoded.npz",
+      "raw_sha256": "206d1ff869217b7aadd3cfc327e2ac4a6541f144ed6e17afc7b141ef449b23d6"
+    },
+    {
+      "episode": 401910,
+      "frame_count": 2728,
+      "label": "started",
+      "positive_valid": 78,
+      "negative_valid": 2633,
+      "unknown": 17,
+      "transition_frames": [
+        2641
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 2728,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2201,
+      "artifact_sha256": "451dae44a4b6978e17f71e30ece4a05d5c39873b31d41e3985b8d28f75c14796",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00401910_decoded.npz",
+      "raw_sha256": "abd931b9edfc8a134f8cefec0f1649104a19220db294724c1afc168a770693d8"
+    },
+    {
+      "episode": 401950,
+      "frame_count": 2091,
+      "label": "started",
+      "positive_valid": 107,
+      "negative_valid": 1967,
+      "unknown": 17,
+      "transition_frames": [
+        1975
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 2091,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 1700,
+      "artifact_sha256": "6aa575ac8998b79be644f0b03dfa4649fa34267bd0d502c0cbe83f6241e5b6df",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00401950_decoded.npz",
+      "raw_sha256": "cd0012cd7b9e5e7cb38468a994ce21fb3469c82769d0a6836603058012b51a44"
+    },
+    {
+      "episode": 402010,
+      "frame_count": 2590,
+      "label": "started",
+      "positive_valid": 95,
+      "negative_valid": 2478,
+      "unknown": 17,
+      "transition_frames": [
+        2486
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 2590,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 1703,
+      "artifact_sha256": "a7ba4ea82e1e5fb3af854157359984dd9a8f8786788fa5c547f93b389eb8c864",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00402010_decoded.npz",
+      "raw_sha256": "75f60ad489f7f84739bc4ba600977dc8399bf5058146774aac0818d58d694098"
+    },
+    {
+      "episode": 402190,
+      "frame_count": 1867,
+      "label": "started",
+      "positive_valid": 85,
+      "negative_valid": 1765,
+      "unknown": 17,
+      "transition_frames": [
+        1773
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 1867,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 1347,
+      "artifact_sha256": "fc936d3090301fc66fa9496b9d95cd7466c1794e3609597088080f8feaf079f9",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00402190_decoded.npz",
+      "raw_sha256": "1ace6259128731a12acac230042da278eb1c764fae3ea8967d007891935adec6"
+    },
+    {
+      "episode": 402230,
+      "frame_count": 2353,
+      "label": "started",
+      "positive_valid": 71,
+      "negative_valid": 2265,
+      "unknown": 17,
+      "transition_frames": [
+        2273
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 2353,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 1255,
+      "artifact_sha256": "717e99ef7811a93b008f0d518fce65596aa68c32f65bffaf973ed3e78507ee5f",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00402230_decoded.npz",
+      "raw_sha256": "fd92c420599345d52423fc73fa3ebf52e25c423d903022b34f871786cbb8a928"
+    },
+    {
+      "episode": 402340,
+      "frame_count": 1878,
+      "label": "started",
+      "positive_valid": 79,
+      "negative_valid": 1782,
+      "unknown": 17,
+      "transition_frames": [
+        1790
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 1878,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 1272,
+      "artifact_sha256": "cf7cdebf6d5ab08f645b34273a7141969bad439688c647e6f2157c970f1a99b4",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00402340_decoded.npz",
+      "raw_sha256": "bf5973935ae22aaf767921acc1f2388254c9fb09574f370203d227d0c0142b26"
+    },
+    {
+      "episode": 402470,
+      "frame_count": 2925,
+      "label": "started",
+      "positive_valid": 396,
+      "negative_valid": 2512,
+      "unknown": 17,
+      "transition_frames": [
+        2520
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 2925,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 1463,
+      "artifact_sha256": "1bf062ff768f519d7e4f4d29b66eb53bda75cfdb6293053601e39fe0ccac5e1f",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00402470_decoded.npz",
+      "raw_sha256": "f8124b418b37a8ae6c458dfe6138586967cf4e3a2a17e6974630fea9c8516504"
+    },
+    {
+      "episode": 402500,
+      "frame_count": 1584,
+      "label": "started",
+      "positive_valid": 72,
+      "negative_valid": 1495,
+      "unknown": 17,
+      "transition_frames": [
+        1503
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 1584,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 1158,
+      "artifact_sha256": "9c502f8d6d8cf77f3a66366a64293219c821b8d51170531e1fb724f47dd555ba",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00402500_decoded.npz",
+      "raw_sha256": "d983d8028c6f56b1ffd60d509266c054108acb7ed163e41b54dcb7f9ccebade6"
+    },
+    {
+      "episode": 402510,
+      "frame_count": 3095,
+      "label": "started",
+      "positive_valid": 87,
+      "negative_valid": 2991,
+      "unknown": 17,
+      "transition_frames": [
+        2999
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3095,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 1893,
+      "artifact_sha256": "08e22c3c69c3e95972c8d395d998ab04f60f54a94fd9c9206b808db2e2a81e44",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00402510_decoded.npz",
+      "raw_sha256": "e0b61ce7ab3c2732b8cf333d6c04f6a7f4514c6e483c52dd4bad74195776af64"
+    },
+    {
+      "episode": 402520,
+      "frame_count": 4254,
+      "label": "started",
+      "positive_valid": 91,
+      "negative_valid": 4146,
+      "unknown": 17,
+      "transition_frames": [
+        4154
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 4254,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 3041,
+      "artifact_sha256": "f6d4f478c235ef8730353e880148d1d1a8d00bc5d45d6bbd0a7148d9d51c633c",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00402520_decoded.npz",
+      "raw_sha256": "8adfe147bd6f982399be997f94cb90767cc2be6d582282c0ee8d5f50e6a5ddfc"
+    },
+    {
+      "episode": 402530,
+      "frame_count": 3631,
+      "label": "started",
+      "positive_valid": 87,
+      "negative_valid": 3527,
+      "unknown": 17,
+      "transition_frames": [
+        3535
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3631,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2397,
+      "artifact_sha256": "fd282939ed7c65505e5a0dc5a3ae9bc516913dfcbaba4f27fe8232f8d03db549",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00402530_decoded.npz",
+      "raw_sha256": "876d2513246184763ca869c3e2752818495e984009e707190c69606ff645ca88"
+    },
+    {
+      "episode": 402550,
+      "frame_count": 3819,
+      "label": "started",
+      "positive_valid": 94,
+      "negative_valid": 3708,
+      "unknown": 17,
+      "transition_frames": [
+        3716
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3819,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2103,
+      "artifact_sha256": "7f4c75fe633dfce4a9b3129403d7933040b0626e12b048ffeab83fd66ffcd913",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00402550_decoded.npz",
+      "raw_sha256": "6d55c73c89c70147941222d83e582e721b6252d89a10e86cdd73913edd94016b"
+    },
+    {
+      "episode": 402560,
+      "frame_count": 4160,
+      "label": "started",
+      "positive_valid": 81,
+      "negative_valid": 4062,
+      "unknown": 17,
+      "transition_frames": [
+        4070
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 4160,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2524,
+      "artifact_sha256": "f49bf25bcebf24ad5d025fb98fa8cc0975654383c50ddf6b22521f8021d44924",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00402560_decoded.npz",
+      "raw_sha256": "4fdb1b8fbcd4bd7ec6e1b0904403a67261b1b68103eed354b8c6c11f02422002"
+    },
+    {
+      "episode": 402570,
+      "frame_count": 3582,
+      "label": "started",
+      "positive_valid": 116,
+      "negative_valid": 3449,
+      "unknown": 17,
+      "transition_frames": [
+        3457
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3582,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2338,
+      "artifact_sha256": "9e6d32952fdb93987e36fe230da6011fc73aff10bc9ebe831ff6e16a67e58e7e",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00402570_decoded.npz",
+      "raw_sha256": "3750834465b8ef7b413ce2027ac9b4aa7b28f5675a7bf09dffdcd18d77ee6a6b"
+    },
+    {
+      "episode": 402580,
+      "frame_count": 4435,
+      "label": "started",
+      "positive_valid": 120,
+      "negative_valid": 4298,
+      "unknown": 17,
+      "transition_frames": [
+        4306
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 4435,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2563,
+      "artifact_sha256": "dfefd831d431b4b82aed1bac68e96135ab3260178e680c6c84213497550fd95a",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00402580_decoded.npz",
+      "raw_sha256": "28e63a3718191f8a4f2689a1334faac3c24b7b571a12d4a922486c6b11c7deea"
+    },
+    {
+      "episode": 402590,
+      "frame_count": 3745,
+      "label": "started",
+      "positive_valid": 88,
+      "negative_valid": 3640,
+      "unknown": 17,
+      "transition_frames": [
+        3648
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3745,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2321,
+      "artifact_sha256": "5a0fadeec408c843fbf2ca0f56c4f79d708e6ff6d702f586e3b200fe464611fe",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00402590_decoded.npz",
+      "raw_sha256": "b987c468cc1674971094c32c949b9488e5fdf0dafca4bf1de1b1cf4dfca7167a"
+    },
+    {
+      "episode": 402600,
+      "frame_count": 3383,
+      "label": "started",
+      "positive_valid": 106,
+      "negative_valid": 3260,
+      "unknown": 17,
+      "transition_frames": [
+        3268
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3383,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2583,
+      "artifact_sha256": "c7f75cd616d2d6dddddfa1910b66354b34243f23e77f26baa53fc9bbd2dfbb7c",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00402600_decoded.npz",
+      "raw_sha256": "d7695997a17f78af867ac40540f2f189e1c2ac8de85655544c027b597ec26e14"
+    },
+    {
+      "episode": 402610,
+      "frame_count": 3828,
+      "label": "started",
+      "positive_valid": 94,
+      "negative_valid": 3717,
+      "unknown": 17,
+      "transition_frames": [
+        3725
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3828,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2856,
+      "artifact_sha256": "c55a98d0383a6fd692250d9472832d55ddf0d4fdf0e3f5c42947bd3407182a96",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00402610_decoded.npz",
+      "raw_sha256": "ad11fdc88fd4f04b1decbe283265e05e0a7f7d6704a86f512e1acb2163a80a9e"
+    },
+    {
+      "episode": 402620,
+      "frame_count": 4114,
+      "label": "started",
+      "positive_valid": 84,
+      "negative_valid": 4013,
+      "unknown": 17,
+      "transition_frames": [
+        4021
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 4114,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2864,
+      "artifact_sha256": "9f9ea8d303b4e9be4503adf3459efd3b545f381549030551f58d001141fb7e3b",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00402620_decoded.npz",
+      "raw_sha256": "877b09e8eec4d100f5684340203a6297a47eb36dc47cf2af6e3531c5beeea58f"
+    },
+    {
+      "episode": 402630,
+      "frame_count": 3482,
+      "label": "started",
+      "positive_valid": 78,
+      "negative_valid": 3387,
+      "unknown": 17,
+      "transition_frames": [
+        3395
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3482,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2867,
+      "artifact_sha256": "505f4ad2ab0e93caca73c5304fbf13ab7dd1b32b28f940b7367bbdb69cb5c8ad",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00402630_decoded.npz",
+      "raw_sha256": "dbc612e2bcdb84ef98b871404e133c1bbfb70610ce83387b5042869b630e54c5"
+    },
+    {
+      "episode": 402640,
+      "frame_count": 3585,
+      "label": "started",
+      "positive_valid": 102,
+      "negative_valid": 3466,
+      "unknown": 17,
+      "transition_frames": [
+        3474
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3585,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2358,
+      "artifact_sha256": "933f19554b58e0dcd0fd5d3054655e35ef7dcf47f933f0b5e0ee708a51dbedaf",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00402640_decoded.npz",
+      "raw_sha256": "c22f44deb3a4659dce9f7d008d7314af45751098983d628813e6e01649139eb9"
+    },
+    {
+      "episode": 402650,
+      "frame_count": 3554,
+      "label": "started",
+      "positive_valid": 102,
+      "negative_valid": 3435,
+      "unknown": 17,
+      "transition_frames": [
+        3443
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3554,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2514,
+      "artifact_sha256": "91b0b81abe4ed378424eed23dacf69f8b4cbe6d63094588d25aa537d320d2b94",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00402650_decoded.npz",
+      "raw_sha256": "e8cfa57869d06f7ec59aab552188c2a4fffa926d90e1375414e48e8c5f6700b4"
+    },
+    {
+      "episode": 402660,
+      "frame_count": 3869,
+      "label": "started",
+      "positive_valid": 90,
+      "negative_valid": 3762,
+      "unknown": 17,
+      "transition_frames": [
+        3770
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3869,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2952,
+      "artifact_sha256": "c5a7a64c3df5a6036294ef952191ff958362f6bfd56bf899e50e9b86464dc4e4",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00402660_decoded.npz",
+      "raw_sha256": "2a0376a636d547bab28dd7e4ba1c47a4d1b895deef236e94065389d9d01d2f2e"
+    },
+    {
+      "episode": 402670,
+      "frame_count": 4698,
+      "label": "started",
+      "positive_valid": 90,
+      "negative_valid": 4591,
+      "unknown": 17,
+      "transition_frames": [
+        4599
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 4698,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 3987,
+      "artifact_sha256": "1ab71a55e1701b6e8f4047a7741eca3804282efd0920a7cf7278c19728d6cfa5",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00402670_decoded.npz",
+      "raw_sha256": "2f61b188c05b1ce3f56c6341a10ca5fd09650e21da8bb0403337e8e8756e83f1"
+    },
+    {
+      "episode": 402680,
+      "frame_count": 4130,
+      "label": "started",
+      "positive_valid": 74,
+      "negative_valid": 4039,
+      "unknown": 17,
+      "transition_frames": [
+        4047
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 4130,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2588,
+      "artifact_sha256": "d447572ff9ea6d44339560b86326ec7a4a894d8ac5b81bb9bed51763d298dfd8",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00402680_decoded.npz",
+      "raw_sha256": "91f2c7cbf35816ecd1a69bf8a47c141e6646e766af79d2eca664f3948d313cfa"
+    },
+    {
+      "episode": 402710,
+      "frame_count": 3319,
+      "label": "started",
+      "positive_valid": 96,
+      "negative_valid": 3206,
+      "unknown": 17,
+      "transition_frames": [
+        3214
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3319,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2218,
+      "artifact_sha256": "8c0f2ed5afc3f1e0597462a90269e1d923b20a101912aea730866e9c268b8220",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00402710_decoded.npz",
+      "raw_sha256": "341074442c80ba671efe57a2cce75407ad7bc1e28ea6719c9704d401fd62bdc2"
+    },
+    {
+      "episode": 402720,
+      "frame_count": 3469,
+      "label": "started",
+      "positive_valid": 91,
+      "negative_valid": 3361,
+      "unknown": 17,
+      "transition_frames": [
+        3369
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3469,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2759,
+      "artifact_sha256": "c6f0eebfc23ddcc7f078955682e1ba5da85cf050543f7d73c3154f170a9a66c8",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00402720_decoded.npz",
+      "raw_sha256": "7f226c87b20b0ab10c87b74c127d092b690240d00ce3f89ca45d24ab4590bba2"
+    },
+    {
+      "episode": 402740,
+      "frame_count": 3965,
+      "label": "started",
+      "positive_valid": 82,
+      "negative_valid": 3866,
+      "unknown": 17,
+      "transition_frames": [
+        3874
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3965,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2935,
+      "artifact_sha256": "e926ddc5d526d37cfc2f27f1d70988fd3cf8a30b7763a4ecdf7c7b8914a41eb6",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00402740_decoded.npz",
+      "raw_sha256": "e4c7e68900d3806348ce32cce3b33204465b2c3466bf38cd1e9544f72f29aa51"
+    },
+    {
+      "episode": 402750,
+      "frame_count": 4000,
+      "label": "started",
+      "positive_valid": 114,
+      "negative_valid": 3869,
+      "unknown": 17,
+      "transition_frames": [
+        3877
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 4000,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2736,
+      "artifact_sha256": "cb0fa389c99e332cba0bdd172b5639b848b4694a9f14fcd87ffc0c102c8b058d",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00402750_decoded.npz",
+      "raw_sha256": "57a3e0c9ac4e9ac00f3fc4fc5bf20b520acff59ee4425ce12fc929f41dc6a5e8"
+    },
+    {
+      "episode": 402760,
+      "frame_count": 4325,
+      "label": "started",
+      "positive_valid": 81,
+      "negative_valid": 4227,
+      "unknown": 17,
+      "transition_frames": [
+        4235
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 4325,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2654,
+      "artifact_sha256": "f13a619a788e643beb981257405cce2ecc955ae1da14dbb43b3c777baf142c80",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00402760_decoded.npz",
+      "raw_sha256": "a6a7b3746d54173cad346f5e69be759df10df069c4535464355b108b7c571508"
+    },
+    {
+      "episode": 402770,
+      "frame_count": 4079,
+      "label": "started",
+      "positive_valid": 83,
+      "negative_valid": 3979,
+      "unknown": 17,
+      "transition_frames": [
+        3987
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 4079,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2599,
+      "artifact_sha256": "c9de0815c0d4810a4f38b63790a4f7c4c95c32f5e1d35bf5769fe0b18b7f73b9",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00402770_decoded.npz",
+      "raw_sha256": "1f098486754fdb8155ae290f894f6ba46df70100c485336b44eb3437328b153b"
+    },
+    {
+      "episode": 402780,
+      "frame_count": 4070,
+      "label": "started",
+      "positive_valid": 130,
+      "negative_valid": 3923,
+      "unknown": 17,
+      "transition_frames": [
+        3931
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 4070,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2751,
+      "artifact_sha256": "1c3e7f4d16ac0829489cb2cf5d1b6bcca566db036cedd155ebb4e1bc3d71a1b3",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00402780_decoded.npz",
+      "raw_sha256": "fab0f9c026a9a5692b2da9589cddff1e3b1903bb7c089aeec72f8fee8db5d875"
+    },
+    {
+      "episode": 402790,
+      "frame_count": 3085,
+      "label": "started",
+      "positive_valid": 79,
+      "negative_valid": 2989,
+      "unknown": 17,
+      "transition_frames": [
+        2997
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3085,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2052,
+      "artifact_sha256": "ed75f98d9527e4f55e6062b3fc97717f66e87f3cc442d461ca505a4c0acebb0a",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00402790_decoded.npz",
+      "raw_sha256": "b135d4e42211418c2462d9f94749397291ea287bdc0d8d1271020855f89dd950"
+    },
+    {
+      "episode": 402800,
+      "frame_count": 3322,
+      "label": "started",
+      "positive_valid": 113,
+      "negative_valid": 3192,
+      "unknown": 17,
+      "transition_frames": [
+        3200
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3322,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2029,
+      "artifact_sha256": "02f721d629aa8240805fc202c8ea2de07cd7a0de68f864b9ebad1c00ccfd4789",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00402800_decoded.npz",
+      "raw_sha256": "a9ad4856b0756c1c81b09923657ef49d73617bc8aa9c01ec3413242aca9e5812"
+    },
+    {
+      "episode": 402810,
+      "frame_count": 3417,
+      "label": "started",
+      "positive_valid": 91,
+      "negative_valid": 3309,
+      "unknown": 17,
+      "transition_frames": [
+        3317
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3417,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2622,
+      "artifact_sha256": "439fd50e3cffed7090baea8cfb4739000b98c5f2e00d505d05887e4b200f1660",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00402810_decoded.npz",
+      "raw_sha256": "f2c645971ea5c5b7856fe4f8ec48cfb9c88788be82886c1bdc830fb4857c158c"
+    },
+    {
+      "episode": 402820,
+      "frame_count": 3694,
+      "label": "started",
+      "positive_valid": 87,
+      "negative_valid": 3590,
+      "unknown": 17,
+      "transition_frames": [
+        3598
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3694,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2429,
+      "artifact_sha256": "a83e11f7177c71de4434b079b46111a95c86b6d15397c5e354f75e13c05e6722",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00402820_decoded.npz",
+      "raw_sha256": "35df9b119c9058f73ba094b74c9b0e199964a339e9f33ce5c6c2db0b1a66db72"
+    },
+    {
+      "episode": 402830,
+      "frame_count": 3178,
+      "label": "started",
+      "positive_valid": 82,
+      "negative_valid": 3079,
+      "unknown": 17,
+      "transition_frames": [
+        3087
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3178,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2227,
+      "artifact_sha256": "387eb25e80e98d0805675f44e92ea4c642d1f309c36972a2b14b28873c55e93e",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00402830_decoded.npz",
+      "raw_sha256": "7c8f540e3d00fdaa018cba394413e6621d54d6dcc796b729be35aa0353aaf51e"
+    },
+    {
+      "episode": 402840,
+      "frame_count": 3495,
+      "label": "started",
+      "positive_valid": 92,
+      "negative_valid": 3386,
+      "unknown": 17,
+      "transition_frames": [
+        3394
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3495,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2625,
+      "artifact_sha256": "fd60598b434a81b727f25ea9f66d694f60861e5adec63854c58b3b880a3c891a",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00402840_decoded.npz",
+      "raw_sha256": "4e944649d7104c65e1712edea91dc47f150760a0695534145d44dcd5b62ba6a9"
+    },
+    {
+      "episode": 402850,
+      "frame_count": 3639,
+      "label": "started",
+      "positive_valid": 91,
+      "negative_valid": 3531,
+      "unknown": 17,
+      "transition_frames": [
+        3539
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3639,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2268,
+      "artifact_sha256": "91a7e42b9f6c23ede6216dd24715a11c8f15f49953de6f644c57c1f0eecd592b",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00402850_decoded.npz",
+      "raw_sha256": "7ce948b809b287d7e6ad3944f4b11fefeeae107954ba3d7362d717f4b9a665cf"
+    },
+    {
+      "episode": 402860,
+      "frame_count": 3385,
+      "label": "started",
+      "positive_valid": 88,
+      "negative_valid": 3280,
+      "unknown": 17,
+      "transition_frames": [
+        3288
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3385,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2480,
+      "artifact_sha256": "f58c6f98a9e2a4c1918de520aaa88094b7fc1b2acbd890a6acc3e6bf556d99fa",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00402860_decoded.npz",
+      "raw_sha256": "54fb6a124096c02bc71bc167d5ea9bce73fcd7e511f41d25cf104f4d64bf9a3e"
+    },
+    {
+      "episode": 402870,
+      "frame_count": 3533,
+      "label": "started",
+      "positive_valid": 116,
+      "negative_valid": 3400,
+      "unknown": 17,
+      "transition_frames": [
+        3408
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3533,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2231,
+      "artifact_sha256": "b12a00aacf44557337614324d984813be9c70ace6d1e7d4deb341b11a7635632",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00402870_decoded.npz",
+      "raw_sha256": "cfe178793b1dd0736b12c1604bd35fe2d492573d60546a9a74069c9829e7ddd4"
+    },
+    {
+      "episode": 402880,
+      "frame_count": 2385,
+      "label": "started",
+      "positive_valid": 105,
+      "negative_valid": 2263,
+      "unknown": 17,
+      "transition_frames": [
+        2271
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 2385,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 1499,
+      "artifact_sha256": "32394904383c8c79fe493c158573ecf9ce879d210f4682ecec3889939a2708f6",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00402880_decoded.npz",
+      "raw_sha256": "3033f0973450064f481e8c21486ad1c291a266b9771b1905351b0068c577d2de"
+    },
+    {
+      "episode": 402900,
+      "frame_count": 3379,
+      "label": "started",
+      "positive_valid": 95,
+      "negative_valid": 3267,
+      "unknown": 17,
+      "transition_frames": [
+        3275
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3379,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2878,
+      "artifact_sha256": "f4784265c931bc7c74800911cfb1230a1f104d6f7a73c905c548688e7c56e5b7",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00402900_decoded.npz",
+      "raw_sha256": "31985bde3486d42d42d492ec51f8526400049e28b30eed51c4c8d00f377bc9b4"
+    },
+    {
+      "episode": 402910,
+      "frame_count": 3246,
+      "label": "started",
+      "positive_valid": 69,
+      "negative_valid": 3160,
+      "unknown": 17,
+      "transition_frames": [
+        3168
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3246,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2870,
+      "artifact_sha256": "20fa4ac9a5df086477f01b72028e35b95c62e0c68bea244ffd71423daaf47900",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00402910_decoded.npz",
+      "raw_sha256": "f4ea173e73fb5c24ba13ff600bcc15263caa0e3f65065633fee8a59ab5834f28"
+    },
+    {
+      "episode": 402920,
+      "frame_count": 3454,
+      "label": "started",
+      "positive_valid": 264,
+      "negative_valid": 3173,
+      "unknown": 17,
+      "transition_frames": [
+        3181
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3454,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2230,
+      "artifact_sha256": "d1ae5d6d444662e19305c793d2e25af9210d0ac98a4136bb894f1c810d517042",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00402920_decoded.npz",
+      "raw_sha256": "3b2971d61bcc20a4c4bd67c178dd344ec1d86cd1bc2cc331927a919c77889a18"
+    },
+    {
+      "episode": 402930,
+      "frame_count": 2979,
+      "label": "started",
+      "positive_valid": 87,
+      "negative_valid": 2875,
+      "unknown": 17,
+      "transition_frames": [
+        2883
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 2979,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2523,
+      "artifact_sha256": "a206cab04d145c88459f0f742dd2ef5666ab59d62f9d556fd9f6e389b7b6dbce",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00402930_decoded.npz",
+      "raw_sha256": "ca14c426311a4b9e901756607ab992976869c05d32f3bd0b6e2361701e8db8f6"
+    },
+    {
+      "episode": 402940,
+      "frame_count": 2809,
+      "label": "started",
+      "positive_valid": 85,
+      "negative_valid": 2707,
+      "unknown": 17,
+      "transition_frames": [
+        2715
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 2809,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2182,
+      "artifact_sha256": "915682136884176e8edb64848daa58cce0fbd62700358c0f46f5245efcfb54c8",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00402940_decoded.npz",
+      "raw_sha256": "139ba03ac564d985674522c8b5f83ea5f1b14dea180d2aedb5586c49abd4b22a"
+    },
+    {
+      "episode": 402950,
+      "frame_count": 3222,
+      "label": "started",
+      "positive_valid": 339,
+      "negative_valid": 2866,
+      "unknown": 17,
+      "transition_frames": [
+        2874
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3222,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 1913,
+      "artifact_sha256": "6a3a7a4f760df78d9026604855645cc0b192a6a3e844aef6ed7eb363f48eac40",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00402950_decoded.npz",
+      "raw_sha256": "e875cbe166cbc481ac86e07879890eb20d345295ed8eaf5ecaf2eee072b76a91"
+    },
+    {
+      "episode": 402960,
+      "frame_count": 2552,
+      "label": "started",
+      "positive_valid": 70,
+      "negative_valid": 2465,
+      "unknown": 17,
+      "transition_frames": [
+        2473
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 2552,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 1463,
+      "artifact_sha256": "e5e0a66742474602953cb1511db97a59d6b9c7397674f4a1a8339352aaae4b7f",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00402960_decoded.npz",
+      "raw_sha256": "84f5e1a4216f8ad3746dfb4cac9e75ea142b17672b1793d9f56b422c3714bd3b"
+    },
+    {
+      "episode": 402970,
+      "frame_count": 2798,
+      "label": "started",
+      "positive_valid": 98,
+      "negative_valid": 2683,
+      "unknown": 17,
+      "transition_frames": [
+        2691
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 2798,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2285,
+      "artifact_sha256": "585723509883a15f319a170b2174ccce9f1bcabebf332559d6a34529def98a21",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00402970_decoded.npz",
+      "raw_sha256": "96a01044f8b8126dbd096f45a546878f900309fa020e985d7d21c9e33cff468f"
+    },
+    {
+      "episode": 402980,
+      "frame_count": 3068,
+      "label": "started",
+      "positive_valid": 84,
+      "negative_valid": 2967,
+      "unknown": 17,
+      "transition_frames": [
+        2975
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3068,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 1986,
+      "artifact_sha256": "9a29478966a70e18037f2657fce77821d8562bcef626e5a3bf9aafb8e54eba92",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00402980_decoded.npz",
+      "raw_sha256": "cdaebc009e286f3d0811e20be26b9b499b7e584f9ee57634b59e2d8f56c4f77e"
+    },
+    {
+      "episode": 402990,
+      "frame_count": 3632,
+      "label": "started",
+      "positive_valid": 79,
+      "negative_valid": 3536,
+      "unknown": 17,
+      "transition_frames": [
+        3544
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3632,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2402,
+      "artifact_sha256": "537f57aafaab75c7d0bd020ffb60e688a20f0efe770b9a4219042c6bdd236ca1",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00402990_decoded.npz",
+      "raw_sha256": "e074cc1984a4766426db113da84d9f76e8881e065e3118ff2f0649797968a12f"
+    },
+    {
+      "episode": 403000,
+      "frame_count": 3173,
+      "label": "started",
+      "positive_valid": 107,
+      "negative_valid": 3049,
+      "unknown": 17,
+      "transition_frames": [
+        3057
+      ],
+      "full_replay_comparison": null,
+      "labels_certified": true,
+      "selected_raw_group": "demo_0",
+      "raw_attempt_inventory": [
+        {
+          "group": "demo_0",
+          "frames": 3173,
+          "complete": true
+        }
+      ],
+      "actions_exact_match": true,
+      "reused_from": null,
+      "explicitly_recorded_frames": 2031,
+      "artifact_sha256": "68a6d1dacb187fccec192420ae39f430e9bd5312403974f7880a113cd10d0da5",
+      "artifact": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261124-005439-a051a4af/episode_00403000_decoded.npz",
+      "raw_sha256": "ecebbf2fc2487c49d07efe65142da0f0d3827f2cafede79db6787b54be4c9a45"
+    }
+  ],
+  "training_steps": 0,
+  "labels_certified": true,
+  "label_names": [
+    "started"
+  ],
+  "observation_mapping": "raw state[t] -> observation[t], final extra state excluded",
+  "boundary_unknown_radius_frames": 8,
+  "split": "/nvme3/projects/memory_vla/Output/test_02/experiment_01/evidence/data_split.json",
+  "scope": "Certified recorded started only, not certification of geometric predicates or training performance",
+  "counts": {
+    "train": {
+      "positive": 19098,
+      "negative": 560780,
+      "unknown": 3060,
+      "episodes": 180
+    },
+    "validation": {
+      "positive": 2314,
+      "negative": 61963,
+      "unknown": 340,
+      "episodes": 20
+    }
+  },
+  "physical_definition": "Recorded microwave_hjjxmi_0 non_kin.ToggledOn.value via initialized official og.sim.deserialize",
+  "source": "Official behavior-1k/2025-challenge-rawdata task-0040; revision b3c9a714b8730701c480e77173d8aa4a8f19e1c0",
+  "disabled_fields": [
+    "door_open",
+    "bag_inside"
+  ],
+  "validation": "3 original RGB before/after panels; ep400010 full physical replay agrees all frames; official schema consumes every raw vector; episode identity and length checked",
+  "unknown_policy": "Mask +/-8 frames around a recorded toggle change; no boundary shifting or missing-as-false"
+}

@@ -1,0 +1,6479 @@
+{
+  "passed": false,
+  "method": "official og.sim.deserialize, no load_state / no physics stepping",
+  "open_both_sides": false,
+  "open_joints": [
+    {
+      "name": "j_link_0",
+      "lower": 0.0,
+      "upper": 1.5707954168319702,
+      "direction": 1,
+      "threshold": 0.07853977382183075
+    }
+  ],
+  "schemas": [
+    {
+      "name": "bush_cwsigt_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "ModifiedParticles",
+        "Saturated",
+        "ContactParticles",
+        "Covered",
+        "ParticleRemover",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside"
+      ],
+      "stateful": [
+        "ModifiedParticles",
+        "Saturated",
+        "ParticleRemover"
+      ]
+    },
+    {
+      "name": "bush_cwsigt_1",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "ModifiedParticles",
+        "Saturated",
+        "ContactParticles",
+        "Covered",
+        "ParticleRemover",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside"
+      ],
+      "stateful": [
+        "ModifiedParticles",
+        "Saturated",
+        "ParticleRemover"
+      ]
+    },
+    {
+      "name": "bush_cwsigt_10",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "ModifiedParticles",
+        "Saturated",
+        "ContactParticles",
+        "Covered",
+        "ParticleRemover",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside"
+      ],
+      "stateful": [
+        "ModifiedParticles",
+        "Saturated",
+        "ParticleRemover"
+      ]
+    },
+    {
+      "name": "bush_cwsigt_2",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "ModifiedParticles",
+        "Saturated",
+        "ContactParticles",
+        "Covered",
+        "ParticleRemover",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside"
+      ],
+      "stateful": [
+        "ModifiedParticles",
+        "Saturated",
+        "ParticleRemover"
+      ]
+    },
+    {
+      "name": "bush_cwsigt_3",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "ModifiedParticles",
+        "Saturated",
+        "ContactParticles",
+        "Covered",
+        "ParticleRemover",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside"
+      ],
+      "stateful": [
+        "ModifiedParticles",
+        "Saturated",
+        "ParticleRemover"
+      ]
+    },
+    {
+      "name": "bush_cwsigt_4",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "ModifiedParticles",
+        "Saturated",
+        "ContactParticles",
+        "Covered",
+        "ParticleRemover",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside"
+      ],
+      "stateful": [
+        "ModifiedParticles",
+        "Saturated",
+        "ParticleRemover"
+      ]
+    },
+    {
+      "name": "bush_cwsigt_5",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "ModifiedParticles",
+        "Saturated",
+        "ContactParticles",
+        "Covered",
+        "ParticleRemover",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside"
+      ],
+      "stateful": [
+        "ModifiedParticles",
+        "Saturated",
+        "ParticleRemover"
+      ]
+    },
+    {
+      "name": "bush_cwsigt_6",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "ModifiedParticles",
+        "Saturated",
+        "ContactParticles",
+        "Covered",
+        "ParticleRemover",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside"
+      ],
+      "stateful": [
+        "ModifiedParticles",
+        "Saturated",
+        "ParticleRemover"
+      ]
+    },
+    {
+      "name": "bush_cwsigt_7",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "ModifiedParticles",
+        "Saturated",
+        "ContactParticles",
+        "Covered",
+        "ParticleRemover",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside"
+      ],
+      "stateful": [
+        "ModifiedParticles",
+        "Saturated",
+        "ParticleRemover"
+      ]
+    },
+    {
+      "name": "bush_cwsigt_8",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "ModifiedParticles",
+        "Saturated",
+        "ContactParticles",
+        "Covered",
+        "ParticleRemover",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside"
+      ],
+      "stateful": [
+        "ModifiedParticles",
+        "Saturated",
+        "ParticleRemover"
+      ]
+    },
+    {
+      "name": "bush_cwsigt_9",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "ModifiedParticles",
+        "Saturated",
+        "ContactParticles",
+        "Covered",
+        "ParticleRemover",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside"
+      ],
+      "stateful": [
+        "ModifiedParticles",
+        "Saturated",
+        "ParticleRemover"
+      ]
+    },
+    {
+      "name": "bush_frqici_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "ModifiedParticles",
+        "Saturated",
+        "ContactParticles",
+        "Covered",
+        "ParticleRemover",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside"
+      ],
+      "stateful": [
+        "ModifiedParticles",
+        "Saturated",
+        "ParticleRemover"
+      ]
+    },
+    {
+      "name": "bush_frqici_1",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "ModifiedParticles",
+        "Saturated",
+        "ContactParticles",
+        "Covered",
+        "ParticleRemover",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside"
+      ],
+      "stateful": [
+        "ModifiedParticles",
+        "Saturated",
+        "ParticleRemover"
+      ]
+    },
+    {
+      "name": "bush_frqici_2",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "ModifiedParticles",
+        "Saturated",
+        "ContactParticles",
+        "Covered",
+        "ParticleRemover",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside"
+      ],
+      "stateful": [
+        "ModifiedParticles",
+        "Saturated",
+        "ParticleRemover"
+      ]
+    },
+    {
+      "name": "bush_frqici_3",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "ModifiedParticles",
+        "Saturated",
+        "ContactParticles",
+        "Covered",
+        "ParticleRemover",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside"
+      ],
+      "stateful": [
+        "ModifiedParticles",
+        "Saturated",
+        "ParticleRemover"
+      ]
+    },
+    {
+      "name": "bush_frqici_4",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "ModifiedParticles",
+        "Saturated",
+        "ContactParticles",
+        "Covered",
+        "ParticleRemover",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside"
+      ],
+      "stateful": [
+        "ModifiedParticles",
+        "Saturated",
+        "ParticleRemover"
+      ]
+    },
+    {
+      "name": "bush_kjakgd_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "ModifiedParticles",
+        "Saturated",
+        "ContactParticles",
+        "Covered",
+        "ParticleRemover",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside"
+      ],
+      "stateful": [
+        "ModifiedParticles",
+        "Saturated",
+        "ParticleRemover"
+      ]
+    },
+    {
+      "name": "bush_kjakgd_1",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "ModifiedParticles",
+        "Saturated",
+        "ContactParticles",
+        "Covered",
+        "ParticleRemover",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside"
+      ],
+      "stateful": [
+        "ModifiedParticles",
+        "Saturated",
+        "ParticleRemover"
+      ]
+    },
+    {
+      "name": "bush_knspbi_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "ModifiedParticles",
+        "Saturated",
+        "ContactParticles",
+        "Covered",
+        "ParticleRemover",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside"
+      ],
+      "stateful": [
+        "ModifiedParticles",
+        "Saturated",
+        "ParticleRemover"
+      ]
+    },
+    {
+      "name": "bush_knspbi_1",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "ModifiedParticles",
+        "Saturated",
+        "ContactParticles",
+        "Covered",
+        "ParticleRemover",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside"
+      ],
+      "stateful": [
+        "ModifiedParticles",
+        "Saturated",
+        "ParticleRemover"
+      ]
+    },
+    {
+      "name": "bush_knspbi_2",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "ModifiedParticles",
+        "Saturated",
+        "ContactParticles",
+        "Covered",
+        "ParticleRemover",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside"
+      ],
+      "stateful": [
+        "ModifiedParticles",
+        "Saturated",
+        "ParticleRemover"
+      ]
+    },
+    {
+      "name": "bush_knspbi_3",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "ModifiedParticles",
+        "Saturated",
+        "ContactParticles",
+        "Covered",
+        "ParticleRemover",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside"
+      ],
+      "stateful": [
+        "ModifiedParticles",
+        "Saturated",
+        "ParticleRemover"
+      ]
+    },
+    {
+      "name": "bush_knspbi_4",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "ModifiedParticles",
+        "Saturated",
+        "ContactParticles",
+        "Covered",
+        "ParticleRemover",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside"
+      ],
+      "stateful": [
+        "ModifiedParticles",
+        "Saturated",
+        "ParticleRemover"
+      ]
+    },
+    {
+      "name": "bush_knspbi_5",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "ModifiedParticles",
+        "Saturated",
+        "ContactParticles",
+        "Covered",
+        "ParticleRemover",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside"
+      ],
+      "stateful": [
+        "ModifiedParticles",
+        "Saturated",
+        "ParticleRemover"
+      ]
+    },
+    {
+      "name": "bush_kyghri_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "ModifiedParticles",
+        "Saturated",
+        "ContactParticles",
+        "Covered",
+        "ParticleRemover",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside"
+      ],
+      "stateful": [
+        "ModifiedParticles",
+        "Saturated",
+        "ParticleRemover"
+      ]
+    },
+    {
+      "name": "bush_kyghri_1",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "ModifiedParticles",
+        "Saturated",
+        "ContactParticles",
+        "Covered",
+        "ParticleRemover",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside"
+      ],
+      "stateful": [
+        "ModifiedParticles",
+        "Saturated",
+        "ParticleRemover"
+      ]
+    },
+    {
+      "name": "bush_kyghri_2",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "ModifiedParticles",
+        "Saturated",
+        "ContactParticles",
+        "Covered",
+        "ParticleRemover",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside"
+      ],
+      "stateful": [
+        "ModifiedParticles",
+        "Saturated",
+        "ParticleRemover"
+      ]
+    },
+    {
+      "name": "bush_kyghri_3",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "ModifiedParticles",
+        "Saturated",
+        "ContactParticles",
+        "Covered",
+        "ParticleRemover",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside"
+      ],
+      "stateful": [
+        "ModifiedParticles",
+        "Saturated",
+        "ParticleRemover"
+      ]
+    },
+    {
+      "name": "bush_kyghri_4",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "ModifiedParticles",
+        "Saturated",
+        "ContactParticles",
+        "Covered",
+        "ParticleRemover",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside"
+      ],
+      "stateful": [
+        "ModifiedParticles",
+        "Saturated",
+        "ParticleRemover"
+      ]
+    },
+    {
+      "name": "bush_kyghri_5",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "ModifiedParticles",
+        "Saturated",
+        "ContactParticles",
+        "Covered",
+        "ParticleRemover",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside"
+      ],
+      "stateful": [
+        "ModifiedParticles",
+        "Saturated",
+        "ParticleRemover"
+      ]
+    },
+    {
+      "name": "bush_kyghri_6",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "ModifiedParticles",
+        "Saturated",
+        "ContactParticles",
+        "Covered",
+        "ParticleRemover",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside"
+      ],
+      "stateful": [
+        "ModifiedParticles",
+        "Saturated",
+        "ParticleRemover"
+      ]
+    },
+    {
+      "name": "bush_kyghri_7",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "ModifiedParticles",
+        "Saturated",
+        "ContactParticles",
+        "Covered",
+        "ParticleRemover",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside"
+      ],
+      "stateful": [
+        "ModifiedParticles",
+        "Saturated",
+        "ParticleRemover"
+      ]
+    },
+    {
+      "name": "bush_kyghri_8",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "ModifiedParticles",
+        "Saturated",
+        "ContactParticles",
+        "Covered",
+        "ParticleRemover",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside"
+      ],
+      "stateful": [
+        "ModifiedParticles",
+        "Saturated",
+        "ParticleRemover"
+      ]
+    },
+    {
+      "name": "bush_lfyqkj_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "ModifiedParticles",
+        "Saturated",
+        "ContactParticles",
+        "Covered",
+        "ParticleRemover",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside"
+      ],
+      "stateful": [
+        "ModifiedParticles",
+        "Saturated",
+        "ParticleRemover"
+      ]
+    },
+    {
+      "name": "bush_lfyqkj_1",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "ModifiedParticles",
+        "Saturated",
+        "ContactParticles",
+        "Covered",
+        "ParticleRemover",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside"
+      ],
+      "stateful": [
+        "ModifiedParticles",
+        "Saturated",
+        "ParticleRemover"
+      ]
+    },
+    {
+      "name": "bush_lfyqkj_2",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "ModifiedParticles",
+        "Saturated",
+        "ContactParticles",
+        "Covered",
+        "ParticleRemover",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside"
+      ],
+      "stateful": [
+        "ModifiedParticles",
+        "Saturated",
+        "ParticleRemover"
+      ]
+    },
+    {
+      "name": "bush_lfyqkj_3",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "ModifiedParticles",
+        "Saturated",
+        "ContactParticles",
+        "Covered",
+        "ParticleRemover",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside"
+      ],
+      "stateful": [
+        "ModifiedParticles",
+        "Saturated",
+        "ParticleRemover"
+      ]
+    },
+    {
+      "name": "bush_lfyqkj_4",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "ModifiedParticles",
+        "Saturated",
+        "ContactParticles",
+        "Covered",
+        "ParticleRemover",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside"
+      ],
+      "stateful": [
+        "ModifiedParticles",
+        "Saturated",
+        "ParticleRemover"
+      ]
+    },
+    {
+      "name": "bush_lfyqkj_5",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "ModifiedParticles",
+        "Saturated",
+        "ContactParticles",
+        "Covered",
+        "ParticleRemover",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside"
+      ],
+      "stateful": [
+        "ModifiedParticles",
+        "Saturated",
+        "ParticleRemover"
+      ]
+    },
+    {
+      "name": "bush_lfyqkj_6",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "ModifiedParticles",
+        "Saturated",
+        "ContactParticles",
+        "Covered",
+        "ParticleRemover",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside"
+      ],
+      "stateful": [
+        "ModifiedParticles",
+        "Saturated",
+        "ParticleRemover"
+      ]
+    },
+    {
+      "name": "bush_oedeqi_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "ModifiedParticles",
+        "Saturated",
+        "ContactParticles",
+        "Covered",
+        "ParticleRemover",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside"
+      ],
+      "stateful": [
+        "ModifiedParticles",
+        "Saturated",
+        "ParticleRemover"
+      ]
+    },
+    {
+      "name": "bush_oedeqi_1",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "ModifiedParticles",
+        "Saturated",
+        "ContactParticles",
+        "Covered",
+        "ParticleRemover",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside"
+      ],
+      "stateful": [
+        "ModifiedParticles",
+        "Saturated",
+        "ParticleRemover"
+      ]
+    },
+    {
+      "name": "bush_oedeqi_2",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "ModifiedParticles",
+        "Saturated",
+        "ContactParticles",
+        "Covered",
+        "ParticleRemover",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside"
+      ],
+      "stateful": [
+        "ModifiedParticles",
+        "Saturated",
+        "ParticleRemover"
+      ]
+    },
+    {
+      "name": "bush_pjhpwk_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "ModifiedParticles",
+        "Saturated",
+        "ContactParticles",
+        "Covered",
+        "ParticleRemover",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside"
+      ],
+      "stateful": [
+        "ModifiedParticles",
+        "Saturated",
+        "ParticleRemover"
+      ]
+    },
+    {
+      "name": "bush_pjhpwk_1",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "ModifiedParticles",
+        "Saturated",
+        "ContactParticles",
+        "Covered",
+        "ParticleRemover",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside"
+      ],
+      "stateful": [
+        "ModifiedParticles",
+        "Saturated",
+        "ParticleRemover"
+      ]
+    },
+    {
+      "name": "bush_pjhpwk_2",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "ModifiedParticles",
+        "Saturated",
+        "ContactParticles",
+        "Covered",
+        "ParticleRemover",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside"
+      ],
+      "stateful": [
+        "ModifiedParticles",
+        "Saturated",
+        "ParticleRemover"
+      ]
+    },
+    {
+      "name": "bush_pjhpwk_3",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "ModifiedParticles",
+        "Saturated",
+        "ContactParticles",
+        "Covered",
+        "ParticleRemover",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside"
+      ],
+      "stateful": [
+        "ModifiedParticles",
+        "Saturated",
+        "ParticleRemover"
+      ]
+    },
+    {
+      "name": "bush_pjhpwk_4",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "ModifiedParticles",
+        "Saturated",
+        "ContactParticles",
+        "Covered",
+        "ParticleRemover",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside"
+      ],
+      "stateful": [
+        "ModifiedParticles",
+        "Saturated",
+        "ParticleRemover"
+      ]
+    },
+    {
+      "name": "bush_yhjhta_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "ModifiedParticles",
+        "Saturated",
+        "ContactParticles",
+        "Covered",
+        "ParticleRemover",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside"
+      ],
+      "stateful": [
+        "ModifiedParticles",
+        "Saturated",
+        "ParticleRemover"
+      ]
+    },
+    {
+      "name": "bush_yhjhta_1",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "ModifiedParticles",
+        "Saturated",
+        "ContactParticles",
+        "Covered",
+        "ParticleRemover",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside"
+      ],
+      "stateful": [
+        "ModifiedParticles",
+        "Saturated",
+        "ParticleRemover"
+      ]
+    },
+    {
+      "name": "bush_yhjhta_2",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "ModifiedParticles",
+        "Saturated",
+        "ContactParticles",
+        "Covered",
+        "ParticleRemover",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside"
+      ],
+      "stateful": [
+        "ModifiedParticles",
+        "Saturated",
+        "ParticleRemover"
+      ]
+    },
+    {
+      "name": "bush_yhjhta_3",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "ModifiedParticles",
+        "Saturated",
+        "ContactParticles",
+        "Covered",
+        "ParticleRemover",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside"
+      ],
+      "stateful": [
+        "ModifiedParticles",
+        "Saturated",
+        "ParticleRemover"
+      ]
+    },
+    {
+      "name": "bush_yhjhta_4",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "ModifiedParticles",
+        "Saturated",
+        "ContactParticles",
+        "Covered",
+        "ParticleRemover",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside"
+      ],
+      "stateful": [
+        "ModifiedParticles",
+        "Saturated",
+        "ParticleRemover"
+      ]
+    },
+    {
+      "name": "bush_yhjhta_5",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "ModifiedParticles",
+        "Saturated",
+        "ContactParticles",
+        "Covered",
+        "ParticleRemover",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside"
+      ],
+      "stateful": [
+        "ModifiedParticles",
+        "Saturated",
+        "ParticleRemover"
+      ]
+    },
+    {
+      "name": "bush_yhjhta_6",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "ModifiedParticles",
+        "Saturated",
+        "ContactParticles",
+        "Covered",
+        "ParticleRemover",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside"
+      ],
+      "stateful": [
+        "ModifiedParticles",
+        "Saturated",
+        "ParticleRemover"
+      ]
+    },
+    {
+      "name": "car_xxsgpq_0",
+      "class_name": "DatasetObject",
+      "joints": [
+        "j_trunk"
+      ],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "Temperature",
+        "Open",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "Heated",
+        "Frozen",
+        "ContainedParticles",
+        "Filled",
+        "ContactParticles",
+        "Covered",
+        "Contains",
+        "AttachedTo"
+      ],
+      "stateful": [
+        "Temperature",
+        "AttachedTo"
+      ]
+    },
+    {
+      "name": "charcoal_grill_crdaeu_0",
+      "class_name": "DatasetObject",
+      "joints": [
+        "j_leaf"
+      ],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "ToggledOn",
+        "Inside",
+        "HeatSourceOrSink",
+        "Temperature",
+        "OnTop",
+        "OnFire",
+        "HorizontalAdjacency",
+        "NextTo",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": [
+        "ToggledOn",
+        "Temperature"
+      ]
+    },
+    {
+      "name": "countertop_tpuwys_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "dishwasher_ynrhuk_0",
+      "class_name": "DatasetObject",
+      "joints": [
+        "j_link_0",
+        "j_link_1",
+        "j_link_2"
+      ],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "Open",
+        "ToggledOn",
+        "Temperature",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "Heated",
+        "Frozen",
+        "ContainedParticles",
+        "Filled",
+        "ContactParticles",
+        "Covered",
+        "Contains"
+      ],
+      "stateful": [
+        "ToggledOn",
+        "Temperature"
+      ]
+    },
+    {
+      "name": "fridge_petcxr_0",
+      "class_name": "DatasetObject",
+      "joints": [
+        "j_left_door",
+        "j_right_door"
+      ],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "Open",
+        "Inside",
+        "HeatSourceOrSink",
+        "Temperature",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Heated",
+        "Frozen",
+        "ContainedParticles",
+        "Filled",
+        "ContactParticles",
+        "Covered",
+        "Contains"
+      ],
+      "stateful": [
+        "Temperature"
+      ]
+    },
+    {
+      "name": "microwave_hjjxmi_0",
+      "class_name": "DatasetObject",
+      "joints": [
+        "j_link_0"
+      ],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "Open",
+        "ToggledOn",
+        "Inside",
+        "HeatSourceOrSink",
+        "Temperature",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Heated",
+        "Frozen",
+        "ContainedParticles",
+        "Filled",
+        "ContactParticles",
+        "Covered",
+        "Contains"
+      ],
+      "stateful": [
+        "ToggledOn",
+        "Temperature"
+      ]
+    },
+    {
+      "name": "oven_ffitak_0",
+      "class_name": "DatasetObject",
+      "joints": [
+        "j_door",
+        "j_rack1",
+        "j_rack2"
+      ],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "Open",
+        "ToggledOn",
+        "Inside",
+        "HeatSourceOrSink",
+        "Temperature",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Heated",
+        "Frozen",
+        "ContainedParticles",
+        "Filled",
+        "ContactParticles",
+        "Covered",
+        "Contains"
+      ],
+      "stateful": [
+        "ToggledOn",
+        "Temperature"
+      ]
+    },
+    {
+      "name": "tree_dyymaq_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "Temperature",
+        "OnTop",
+        "Inside",
+        "OnFire",
+        "HorizontalAdjacency",
+        "NextTo",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": [
+        "Temperature"
+      ]
+    },
+    {
+      "name": "tree_dyymaq_1",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "Temperature",
+        "OnTop",
+        "Inside",
+        "OnFire",
+        "HorizontalAdjacency",
+        "NextTo",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": [
+        "Temperature"
+      ]
+    },
+    {
+      "name": "tree_dyymaq_2",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "Temperature",
+        "OnTop",
+        "Inside",
+        "OnFire",
+        "HorizontalAdjacency",
+        "NextTo",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": [
+        "Temperature"
+      ]
+    },
+    {
+      "name": "tree_flkzbo_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "Temperature",
+        "OnTop",
+        "Inside",
+        "OnFire",
+        "HorizontalAdjacency",
+        "NextTo",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": [
+        "Temperature"
+      ]
+    },
+    {
+      "name": "tree_flkzbo_1",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "Temperature",
+        "OnTop",
+        "Inside",
+        "OnFire",
+        "HorizontalAdjacency",
+        "NextTo",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": [
+        "Temperature"
+      ]
+    },
+    {
+      "name": "tree_flkzbo_2",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "Temperature",
+        "OnTop",
+        "Inside",
+        "OnFire",
+        "HorizontalAdjacency",
+        "NextTo",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": [
+        "Temperature"
+      ]
+    },
+    {
+      "name": "tree_gmzozb_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "Temperature",
+        "OnTop",
+        "Inside",
+        "OnFire",
+        "HorizontalAdjacency",
+        "NextTo",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": [
+        "Temperature"
+      ]
+    },
+    {
+      "name": "tree_gmzozb_1",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "Temperature",
+        "OnTop",
+        "Inside",
+        "OnFire",
+        "HorizontalAdjacency",
+        "NextTo",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": [
+        "Temperature"
+      ]
+    },
+    {
+      "name": "tree_gmzozb_2",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "Temperature",
+        "OnTop",
+        "Inside",
+        "OnFire",
+        "HorizontalAdjacency",
+        "NextTo",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": [
+        "Temperature"
+      ]
+    },
+    {
+      "name": "tree_gmzozb_3",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "Temperature",
+        "OnTop",
+        "Inside",
+        "OnFire",
+        "HorizontalAdjacency",
+        "NextTo",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": [
+        "Temperature"
+      ]
+    },
+    {
+      "name": "tree_gmzozb_4",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "Temperature",
+        "OnTop",
+        "Inside",
+        "OnFire",
+        "HorizontalAdjacency",
+        "NextTo",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": [
+        "Temperature"
+      ]
+    },
+    {
+      "name": "tree_rrhqpw_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "Temperature",
+        "OnTop",
+        "Inside",
+        "OnFire",
+        "HorizontalAdjacency",
+        "NextTo",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": [
+        "Temperature"
+      ]
+    },
+    {
+      "name": "tree_rrhqpw_1",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "Temperature",
+        "OnTop",
+        "Inside",
+        "OnFire",
+        "HorizontalAdjacency",
+        "NextTo",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": [
+        "Temperature"
+      ]
+    },
+    {
+      "name": "tree_rrhqpw_2",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "Temperature",
+        "OnTop",
+        "Inside",
+        "OnFire",
+        "HorizontalAdjacency",
+        "NextTo",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": [
+        "Temperature"
+      ]
+    },
+    {
+      "name": "tree_rrhqpw_3",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "Temperature",
+        "OnTop",
+        "Inside",
+        "OnFire",
+        "HorizontalAdjacency",
+        "NextTo",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": [
+        "Temperature"
+      ]
+    },
+    {
+      "name": "tree_rrhqpw_4",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "Temperature",
+        "OnTop",
+        "Inside",
+        "OnFire",
+        "HorizontalAdjacency",
+        "NextTo",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": [
+        "Temperature"
+      ]
+    },
+    {
+      "name": "tree_rrhqpw_5",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "Temperature",
+        "OnTop",
+        "Inside",
+        "OnFire",
+        "HorizontalAdjacency",
+        "NextTo",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": [
+        "Temperature"
+      ]
+    },
+    {
+      "name": "tree_wtyipq_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "Temperature",
+        "OnTop",
+        "Inside",
+        "OnFire",
+        "HorizontalAdjacency",
+        "NextTo",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": [
+        "Temperature"
+      ]
+    },
+    {
+      "name": "tree_wtyipq_1",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "Temperature",
+        "OnTop",
+        "Inside",
+        "OnFire",
+        "HorizontalAdjacency",
+        "NextTo",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": [
+        "Temperature"
+      ]
+    },
+    {
+      "name": "tree_wtyipq_2",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "Temperature",
+        "OnTop",
+        "Inside",
+        "OnFire",
+        "HorizontalAdjacency",
+        "NextTo",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": [
+        "Temperature"
+      ]
+    },
+    {
+      "name": "tree_wtyipq_3",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "Temperature",
+        "OnTop",
+        "Inside",
+        "OnFire",
+        "HorizontalAdjacency",
+        "NextTo",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": [
+        "Temperature"
+      ]
+    },
+    {
+      "name": "tree_wtyipq_4",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "Temperature",
+        "OnTop",
+        "Inside",
+        "OnFire",
+        "HorizontalAdjacency",
+        "NextTo",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": [
+        "Temperature"
+      ]
+    },
+    {
+      "name": "tree_wtyipq_5",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "Temperature",
+        "OnTop",
+        "Inside",
+        "OnFire",
+        "HorizontalAdjacency",
+        "NextTo",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": [
+        "Temperature"
+      ]
+    },
+    {
+      "name": "tree_wtyipq_6",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "Temperature",
+        "OnTop",
+        "Inside",
+        "OnFire",
+        "HorizontalAdjacency",
+        "NextTo",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": [
+        "Temperature"
+      ]
+    },
+    {
+      "name": "tree_wtyipq_7",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "Temperature",
+        "OnTop",
+        "Inside",
+        "OnFire",
+        "HorizontalAdjacency",
+        "NextTo",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": [
+        "Temperature"
+      ]
+    },
+    {
+      "name": "tree_wtyipq_8",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "Temperature",
+        "OnTop",
+        "Inside",
+        "OnFire",
+        "HorizontalAdjacency",
+        "NextTo",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": [
+        "Temperature"
+      ]
+    },
+    {
+      "name": "wall_nail_wlnail_1",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered",
+        "AttachedTo"
+      ],
+      "stateful": [
+        "AttachedTo"
+      ]
+    },
+    {
+      "name": "wood_fireplace_gpnsij_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "Temperature",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "Heated",
+        "Frozen",
+        "ContainedParticles",
+        "Filled",
+        "ContactParticles",
+        "Covered",
+        "Contains"
+      ],
+      "stateful": [
+        "Temperature"
+      ]
+    },
+    {
+      "name": "bar_byvbuc_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "burner_mdanhg_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "ToggledOn",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "HeatSourceOrSink",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": [
+        "ToggledOn"
+      ]
+    },
+    {
+      "name": "shelf_vanltx_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "breakfast_table_xftrki_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "coffee_table_koagbh_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "garden_chair_cottya_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "garden_chair_cottya_1",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "garden_chair_cottya_2",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "garden_chair_lraplz_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "standing_mirror_wwkuuf_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "straight_chair_hgunnf_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "straight_chair_uofiqj_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "straight_chair_uofiqj_1",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "straight_chair_zdhnyg_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "bar_egwapq_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "bottom_cabinet_rhdbzv_0",
+      "class_name": "DatasetObject",
+      "joints": [
+        "j_left_drawer",
+        "j_right_drawer"
+      ],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "Temperature",
+        "Open",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "Heated",
+        "Frozen",
+        "ContainedParticles",
+        "Filled",
+        "ContactParticles",
+        "Covered",
+        "Contains"
+      ],
+      "stateful": [
+        "Temperature"
+      ]
+    },
+    {
+      "name": "ceilings_alydei_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "ceilings_aoekre_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "ceilings_feolie_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "ceilings_isizwh_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "ceilings_kbxtoc_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "ceilings_sbkyof_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "ceilings_vkfllw_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "decorative_sign_hgonwj_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "decorative_sign_rypeha_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "decorative_sign_xzsmxq_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "door_bexenl_0",
+      "class_name": "DatasetObject",
+      "joints": [
+        "j_leaf"
+      ],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "Open",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "door_bexenl_1",
+      "class_name": "DatasetObject",
+      "joints": [
+        "j_leaf"
+      ],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "Open",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "door_vudhlc_0",
+      "class_name": "DatasetObject",
+      "joints": [
+        "j_leaf"
+      ],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "Open",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "door_vudhlc_1",
+      "class_name": "DatasetObject",
+      "joints": [
+        "j_leaf"
+      ],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "Open",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "door_vudhlc_2",
+      "class_name": "DatasetObject",
+      "joints": [
+        "j_leaf"
+      ],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "Open",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "door_vudhlc_3",
+      "class_name": "DatasetObject",
+      "joints": [
+        "j_leaf"
+      ],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "Open",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "downlight_pawfmw_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "downlight_pawfmw_1",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "downlight_pawfmw_10",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "downlight_pawfmw_11",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "downlight_pawfmw_12",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "downlight_pawfmw_13",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "downlight_pawfmw_14",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "downlight_pawfmw_15",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "downlight_pawfmw_16",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "downlight_pawfmw_17",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "downlight_pawfmw_2",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "downlight_pawfmw_3",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "downlight_pawfmw_4",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "downlight_pawfmw_5",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "downlight_pawfmw_6",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "downlight_pawfmw_7",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "downlight_pawfmw_8",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "downlight_pawfmw_9",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "driveway_umalys_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "drop_in_sink_lkklqs_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "ToggledOn",
+        "Temperature",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "Heated",
+        "Frozen",
+        "ContainedParticles",
+        "Filled",
+        "ContactParticles",
+        "Covered",
+        "Contains"
+      ],
+      "stateful": [
+        "ToggledOn",
+        "Temperature"
+      ]
+    },
+    {
+      "name": "electric_switch_strbnw_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "ToggledOn",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": [
+        "ToggledOn"
+      ]
+    },
+    {
+      "name": "electric_switch_strbnw_1",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "ToggledOn",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": [
+        "ToggledOn"
+      ]
+    },
+    {
+      "name": "electric_switch_strbnw_2",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "ToggledOn",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": [
+        "ToggledOn"
+      ]
+    },
+    {
+      "name": "electric_switch_strbnw_3",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "ToggledOn",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": [
+        "ToggledOn"
+      ]
+    },
+    {
+      "name": "fixed_window_kvdqep_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "fixed_window_lhzwtz_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "floors_ghetev_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "floors_irvmpb_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "floors_iwsyoz_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "floors_ogynye_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "floors_qadhjb_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "floors_sdejoi_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "floors_slmyas_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "floors_ulujpr_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "floors_xorxro_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "floors_zqjkvm_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "garden_light_qyfrwj_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "ToggledOn",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": [
+        "ToggledOn"
+      ]
+    },
+    {
+      "name": "garden_light_qyfrwj_1",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "ToggledOn",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": [
+        "ToggledOn"
+      ]
+    },
+    {
+      "name": "garden_light_qyfrwj_2",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "ToggledOn",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": [
+        "ToggledOn"
+      ]
+    },
+    {
+      "name": "garden_light_qyfrwj_3",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "ToggledOn",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": [
+        "ToggledOn"
+      ]
+    },
+    {
+      "name": "garden_light_qyfrwj_4",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "ToggledOn",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": [
+        "ToggledOn"
+      ]
+    },
+    {
+      "name": "garden_light_qyfrwj_5",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "ToggledOn",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": [
+        "ToggledOn"
+      ]
+    },
+    {
+      "name": "garden_light_qyfrwj_6",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "ToggledOn",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": [
+        "ToggledOn"
+      ]
+    },
+    {
+      "name": "garden_light_qyfrwj_7",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "ToggledOn",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": [
+        "ToggledOn"
+      ]
+    },
+    {
+      "name": "garden_light_qyfrwj_8",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "ToggledOn",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": [
+        "ToggledOn"
+      ]
+    },
+    {
+      "name": "hall_tree_daxzaw_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "hall_tree_upkvgr_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "lawn_aztwla_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "lawn_srfikq_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "lawn_tiqndr_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "lawn_zjtrpt_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "paver_eskaca_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "paver_lmdfdn_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "paver_sekqqq_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "picture_ekagyj_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "Temperature",
+        "OnTop",
+        "Inside",
+        "OnFire",
+        "HorizontalAdjacency",
+        "NextTo",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": [
+        "Temperature"
+      ]
+    },
+    {
+      "name": "picture_ggajdz_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "Temperature",
+        "OnTop",
+        "Inside",
+        "OnFire",
+        "HorizontalAdjacency",
+        "NextTo",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": [
+        "Temperature"
+      ]
+    },
+    {
+      "name": "picture_jnecmu_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "Temperature",
+        "OnTop",
+        "Inside",
+        "OnFire",
+        "HorizontalAdjacency",
+        "NextTo",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": [
+        "Temperature"
+      ]
+    },
+    {
+      "name": "picture_qlkknu_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "Temperature",
+        "OnTop",
+        "Inside",
+        "OnFire",
+        "HorizontalAdjacency",
+        "NextTo",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": [
+        "Temperature"
+      ]
+    },
+    {
+      "name": "picture_qlsyco_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "Temperature",
+        "OnTop",
+        "Inside",
+        "OnFire",
+        "HorizontalAdjacency",
+        "NextTo",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": [
+        "Temperature"
+      ]
+    },
+    {
+      "name": "picture_tveyoh_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "Temperature",
+        "OnTop",
+        "Inside",
+        "OnFire",
+        "HorizontalAdjacency",
+        "NextTo",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": [
+        "Temperature"
+      ]
+    },
+    {
+      "name": "picture_yzbpie_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "Temperature",
+        "OnTop",
+        "Inside",
+        "OnFire",
+        "HorizontalAdjacency",
+        "NextTo",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": [
+        "Temperature"
+      ]
+    },
+    {
+      "name": "playground_xdlcdi_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "rail_fence_owbrvb_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "rail_fence_owbrvb_1",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "rail_fence_owbrvb_2",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "rail_fence_owbrvb_3",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "rail_fence_owbrvb_4",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "rail_fence_owbrvb_5",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "range_hood_xvdfpp_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "ToggledOn",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": [
+        "ToggledOn"
+      ]
+    },
+    {
+      "name": "roof_pgwmer_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "room_light_eqbjaz_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "room_light_kiuayi_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "sofa_frlxgz_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "ModifiedParticles",
+        "Saturated",
+        "ContactParticles",
+        "Covered",
+        "ParticleRemover",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside"
+      ],
+      "stateful": [
+        "ModifiedParticles",
+        "Saturated",
+        "ParticleRemover"
+      ]
+    },
+    {
+      "name": "stairs_tikozn_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "swing_set_yzhrgz_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "top_cabinet_tynnnw_0",
+      "class_name": "DatasetObject",
+      "joints": [
+        "j_leftdoor",
+        "j_rightdoor"
+      ],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "Temperature",
+        "Open",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "Heated",
+        "Frozen",
+        "ContainedParticles",
+        "Filled",
+        "ContactParticles",
+        "Covered",
+        "Contains"
+      ],
+      "stateful": [
+        "Temperature"
+      ]
+    },
+    {
+      "name": "top_cabinet_tynnnw_1",
+      "class_name": "DatasetObject",
+      "joints": [
+        "j_leftdoor",
+        "j_rightdoor"
+      ],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "Temperature",
+        "Open",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "Heated",
+        "Frozen",
+        "ContainedParticles",
+        "Filled",
+        "ContactParticles",
+        "Covered",
+        "Contains"
+      ],
+      "stateful": [
+        "Temperature"
+      ]
+    },
+    {
+      "name": "track_light_ltnnrc_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "track_light_ltnnrc_1",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "wall_mounted_tv_dxyfxf_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "ToggledOn",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": [
+        "ToggledOn"
+      ]
+    },
+    {
+      "name": "wall_socket_nujxel_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "walls_abtbfo_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "walls_bjekee_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "walls_buhmrc_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "walls_chmqjn_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "walls_cvdpaq_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "walls_cxsmhr_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "walls_dewyls_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "walls_dlfarz_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "walls_epketb_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "walls_fwsbwf_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "walls_gishpf_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "walls_hcbqvq_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "walls_jemunw_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "walls_jglkyp_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "walls_jnbgxj_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "walls_jzwmhx_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "walls_lblwvg_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "walls_lovfhw_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "walls_mgumxz_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "walls_mgvxov_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "walls_miltge_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "walls_mkgplc_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "walls_mwlvfb_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "walls_oiagxk_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "walls_oqrbxo_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "walls_owxeej_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "walls_paarsl_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "walls_pmygxs_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "walls_qeofms_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "walls_rrabdp_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "walls_uiloru_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "walls_umqqmh_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "walls_upttgq_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "walls_vxveul_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "walls_weybsr_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "walls_xsubff_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "walls_xyrbgy_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "walls_ylpkth_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "walls_zdhaff_0",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    },
+    {
+      "name": "popcorn_bag_73",
+      "class_name": "DatasetObject",
+      "joints": [],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "Temperature",
+        "OnTop",
+        "Inside",
+        "OnFire",
+        "HorizontalAdjacency",
+        "NextTo",
+        "Heated",
+        "Frozen",
+        "ContainedParticles",
+        "Filled",
+        "ContactParticles",
+        "Covered",
+        "Contains"
+      ],
+      "stateful": [
+        "Temperature"
+      ]
+    },
+    {
+      "name": "robot_r1",
+      "class_name": "R1Pro",
+      "joints": [
+        "base_footprint_x_joint",
+        "base_footprint_y_joint",
+        "base_footprint_z_joint",
+        "base_footprint_rx_joint",
+        "base_footprint_ry_joint",
+        "base_footprint_rz_joint",
+        "torso_joint1",
+        "torso_joint2",
+        "torso_joint3",
+        "torso_joint4",
+        "left_arm_joint1",
+        "right_arm_joint1",
+        "left_arm_joint2",
+        "right_arm_joint2",
+        "left_arm_joint3",
+        "right_arm_joint3",
+        "left_arm_joint4",
+        "right_arm_joint4",
+        "left_arm_joint5",
+        "right_arm_joint5",
+        "left_arm_joint6",
+        "right_arm_joint6",
+        "left_arm_joint7",
+        "right_arm_joint7",
+        "left_gripper_finger_joint1",
+        "left_gripper_finger_joint2",
+        "right_gripper_finger_joint1",
+        "right_gripper_finger_joint2"
+      ],
+      "states": [
+        "AABB",
+        "VerticalAdjacency",
+        "Pose",
+        "Joint",
+        "ContactBodies",
+        "Under",
+        "Touching",
+        "OnTop",
+        "ObjectsInFOVOfRobot",
+        "HorizontalAdjacency",
+        "NextTo",
+        "IsGrasping",
+        "Inside",
+        "ContactParticles",
+        "Covered"
+      ],
+      "stateful": []
+    }
+  ],
+  "episodes": [
+    {
+      "episode": 400010,
+      "frames": 3879,
+      "selected_raw_group": "demo_0",
+      "attempts": [
+        {
+          "group": "demo_0",
+          "frames": 3879,
+          "complete": true
+        }
+      ],
+      "seconds": 23.180326409172267,
+      "artifact": "/nvme3/projects/memory_vla/v2_1_preflight/samples/decoded/episode_00400010.npz",
+      "sha256": "7e27634b5958b3ad24616206718d16d08be1414fb0881e163396b00e777724be",
+      "reused_from": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261126-200257-15a1de03/preflight_extract.json"
+    },
+    {
+      "episode": 400020,
+      "frames": 4398,
+      "selected_raw_group": "demo_0",
+      "attempts": [
+        {
+          "group": "demo_0",
+          "frames": 4398,
+          "complete": true
+        }
+      ],
+      "seconds": 24.265512208919972,
+      "artifact": "/nvme3/projects/memory_vla/v2_1_preflight/samples/decoded/episode_00400020.npz",
+      "sha256": "b9319f223df76c5efb4b3419ab608f325ed6f7699fb413314e7b528d0be9ec9e",
+      "reused_from": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261126-200257-15a1de03/preflight_extract.json"
+    },
+    {
+      "episode": 400030,
+      "frames": 3464,
+      "selected_raw_group": "demo_0",
+      "attempts": [
+        {
+          "group": "demo_0",
+          "frames": 3464,
+          "complete": true
+        }
+      ],
+      "seconds": 24.64686477696523,
+      "artifact": "/nvme3/projects/memory_vla/v2_1_preflight/samples/decoded/episode_00400030.npz",
+      "sha256": "e5506cdec8188bd6537539b31d4fe812771c1b5076317059cd8251f56e9eaa37",
+      "reused_from": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261126-200257-15a1de03/preflight_extract.json"
+    },
+    {
+      "episode": 400040,
+      "frames": 3541,
+      "selected_raw_group": "demo_0",
+      "attempts": [
+        {
+          "group": "demo_0",
+          "frames": 3541,
+          "complete": true
+        }
+      ],
+      "seconds": 24.793061058036983,
+      "artifact": "/nvme3/projects/memory_vla/v2_1_preflight/samples/decoded/episode_00400040.npz",
+      "sha256": "4bfcf6abd1a2f47c3bf499d334580c791e4424a424242fe6cb81b5259305c2fe",
+      "reused_from": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261126-200257-15a1de03/preflight_extract.json"
+    },
+    {
+      "episode": 400050,
+      "frames": 3822,
+      "selected_raw_group": "demo_0",
+      "attempts": [
+        {
+          "group": "demo_0",
+          "frames": 3822,
+          "complete": true
+        }
+      ],
+      "seconds": 25.108000602107495,
+      "artifact": "/nvme3/projects/memory_vla/v2_1_preflight/samples/decoded/episode_00400050.npz",
+      "sha256": "2736cc05ac88520d32573605b3ddd7c71c14600a382e9fe7bd91b4e808318108",
+      "reused_from": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261126-200257-15a1de03/preflight_extract.json"
+    },
+    {
+      "episode": 400060,
+      "frames": 3340,
+      "selected_raw_group": "demo_0",
+      "attempts": [
+        {
+          "group": "demo_0",
+          "frames": 3340,
+          "complete": true
+        }
+      ],
+      "seconds": 24.348336804192513,
+      "artifact": "/nvme3/projects/memory_vla/v2_1_preflight/samples/decoded/episode_00400060.npz",
+      "sha256": "fb2c8afa42286d001c9e54ac4e8bb41f15bda76fbfa523525d0496c0a9c87bb3",
+      "reused_from": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261126-200257-15a1de03/preflight_extract.json"
+    },
+    {
+      "episode": 400070,
+      "frames": 2937,
+      "selected_raw_group": "demo_0",
+      "attempts": [
+        {
+          "group": "demo_0",
+          "frames": 2937,
+          "complete": true
+        }
+      ],
+      "seconds": 23.86631094990298,
+      "artifact": "/nvme3/projects/memory_vla/v2_1_preflight/samples/decoded/episode_00400070.npz",
+      "sha256": "e0c99b3c9bfb249a0d191fabd35cdbfb8aa19fdf9e2c279b649266c06c65757c",
+      "reused_from": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261126-200257-15a1de03/preflight_extract.json"
+    },
+    {
+      "episode": 400080,
+      "frames": 3785,
+      "selected_raw_group": "demo_0",
+      "attempts": [
+        {
+          "group": "demo_0",
+          "frames": 3785,
+          "complete": true
+        }
+      ],
+      "seconds": 25.31912482297048,
+      "artifact": "/nvme3/projects/memory_vla/v2_1_preflight/samples/decoded/episode_00400080.npz",
+      "sha256": "9e7173dbd2bf0da0a478b0e05d854acb2eafb4ac2b6cbe1bb6afe181c13e89ea",
+      "reused_from": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261126-200257-15a1de03/preflight_extract.json"
+    },
+    {
+      "episode": 400090,
+      "frames": 2976,
+      "selected_raw_group": "demo_0",
+      "attempts": [
+        {
+          "group": "demo_0",
+          "frames": 2976,
+          "complete": true
+        }
+      ],
+      "seconds": 24.178899724967778,
+      "artifact": "/nvme3/projects/memory_vla/v2_1_preflight/samples/decoded/episode_00400090.npz",
+      "sha256": "a6be58b7d9fa4724ba9add56f53ac3b97942a22a105b4ef1c1cdba27ee70d7cb",
+      "reused_from": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261126-200257-15a1de03/preflight_extract.json"
+    },
+    {
+      "episode": 400100,
+      "frames": 4853,
+      "selected_raw_group": "demo_0",
+      "attempts": [
+        {
+          "group": "demo_0",
+          "frames": 4853,
+          "complete": true
+        }
+      ],
+      "seconds": 11.93334843404591,
+      "artifact": "/nvme3/projects/memory_vla/v2_1_preflight/samples/decoded/episode_00400100.npz",
+      "sha256": "cabc05574acfa30c752f75799310109caa60e079e7b5224a3409acfcec92d953",
+      "reused_from": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261126-200257-15a1de03/preflight_extract.json"
+    },
+    {
+      "episode": 400110,
+      "frames": 3731,
+      "selected_raw_group": "demo_0",
+      "attempts": [
+        {
+          "group": "demo_0",
+          "frames": 3731,
+          "complete": true
+        }
+      ],
+      "seconds": 17.416363744065166,
+      "artifact": "/nvme3/projects/memory_vla/v2_1_preflight/samples/decoded/episode_00400110.npz",
+      "sha256": "3efda153c10591d68a20426664f4872de6f09f40e1d0424ae99364871898bb44",
+      "reused_from": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261126-200257-15a1de03/preflight_extract.json"
+    },
+    {
+      "episode": 400120,
+      "frames": 3391,
+      "selected_raw_group": "demo_0",
+      "attempts": [
+        {
+          "group": "demo_0",
+          "frames": 3391,
+          "complete": true
+        }
+      ],
+      "seconds": 25.438218909315765,
+      "artifact": "/nvme3/projects/memory_vla/v2_1_preflight/samples/decoded/episode_00400120.npz",
+      "sha256": "7857806a545cd4bb3baa0a9db22ace1e3707ecc75fca4a507fa6863c50db4555",
+      "reused_from": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261126-200257-15a1de03/preflight_extract.json"
+    },
+    {
+      "episode": 400130,
+      "frames": 3285,
+      "selected_raw_group": "demo_0",
+      "attempts": [
+        {
+          "group": "demo_0",
+          "frames": 3285,
+          "complete": true
+        }
+      ],
+      "seconds": 26.00901086675003,
+      "artifact": "/nvme3/projects/memory_vla/v2_1_preflight/samples/decoded/episode_00400130.npz",
+      "sha256": "f36e262c7cf1d3814c09192597c0347ff106ab125ab3d4891fa0a4036ce700fa",
+      "reused_from": "/nvme3/projects/memory_vla/outputs/benchmarks/web/20261126-200257-15a1de03/preflight_extract.json"
+    },
+    {
+      "episode": 400140,
+      "frames": 4050,
+      "selected_raw_group": "demo_0",
+      "attempts": [
+        {
+          "group": "demo_0",
+          "frames": 4050,
+          "complete": true
+        }
+      ],
+      "seconds": 22.375068369787186,
+      "artifact": "/nvme3/projects/memory_vla/v2_1_preflight/samples/decoded/episode_00400140.npz",
+      "sha256": "013c27953978ee9ae1084f68aad636513001cc0d1158a59f2e6368de78db2af3"
+    },
+    {
+      "episode": 400150,
+      "frames": 3456,
+      "selected_raw_group": "demo_0",
+      "attempts": [
+        {
+          "group": "demo_0",
+          "frames": 3456,
+          "complete": true
+        }
+      ],
+      "seconds": 23.6996367899701,
+      "artifact": "/nvme3/projects/memory_vla/v2_1_preflight/samples/decoded/episode_00400150.npz",
+      "sha256": "de306da2077187ff281264665479fe6e3e3d6c22aaac40b08e925a5c6adf2c90"
+    },
+    {
+      "episode": 400160,
+      "frames": 2810,
+      "selected_raw_group": "demo_0",
+      "attempts": [
+        {
+          "group": "demo_0",
+          "frames": 2810,
+          "complete": true
+        }
+      ],
+      "seconds": 22.949025973211974,
+      "artifact": "/nvme3/projects/memory_vla/v2_1_preflight/samples/decoded/episode_00400160.npz",
+      "sha256": "eae24166a0c8e0eccc014f3f7c6cc5dc96eb94f18cb936ac1e9d64e3772cec59"
+    },
+    {
+      "episode": 400170,
+      "frames": 3262,
+      "selected_raw_group": "demo_0",
+      "attempts": [
+        {
+          "group": "demo_0",
+          "frames": 3262,
+          "complete": true
+        }
+      ],
+      "seconds": 24.208411960396916,
+      "artifact": "/nvme3/projects/memory_vla/v2_1_preflight/samples/decoded/episode_00400170.npz",
+      "sha256": "e0e6baff07773491c58f6159d3f31253f86752c631bc16cf74b46f73a860ebba"
+    },
+    {
+      "episode": 400180,
+      "frames": 3135,
+      "selected_raw_group": "demo_0",
+      "attempts": [
+        {
+          "group": "demo_0",
+          "frames": 3135,
+          "complete": true
+        }
+      ],
+      "seconds": 22.30592380417511,
+      "artifact": "/nvme3/projects/memory_vla/v2_1_preflight/samples/decoded/episode_00400180.npz",
+      "sha256": "68abed835d673d6066a26ee77e9be5f07161266880bd13564d8b80133e22e7e6"
+    },
+    {
+      "episode": 400190,
+      "frames": 3625,
+      "selected_raw_group": "demo_0",
+      "attempts": [
+        {
+          "group": "demo_0",
+          "frames": 3625,
+          "complete": true
+        }
+      ],
+      "seconds": 23.24878733092919,
+      "artifact": "/nvme3/projects/memory_vla/v2_1_preflight/samples/decoded/episode_00400190.npz",
+      "sha256": "4d1c2afb1c58397dd34f36bb4b11fe64fabeb2c9b9b1b2167e12001bc461144a"
+    },
+    {
+      "episode": 400200,
+      "frames": 2727,
+      "selected_raw_group": "demo_0",
+      "attempts": [
+        {
+          "group": "demo_0",
+          "frames": 2727,
+          "complete": true
+        }
+      ],
+      "seconds": 23.018245350103825,
+      "artifact": "/nvme3/projects/memory_vla/v2_1_preflight/samples/decoded/episode_00400200.npz",
+      "sha256": "f636ae5a4936498495e30d5425558ef265a1a7c7f58acda0e50fccca6ce3a42d"
+    },
+    {
+      "episode": 400210,
+      "frames": 3670,
+      "selected_raw_group": "demo_0",
+      "attempts": [
+        {
+          "group": "demo_0",
+          "frames": 3670,
+          "complete": true
+        }
+      ],
+      "seconds": 22.691005242057145,
+      "artifact": "/nvme3/projects/memory_vla/v2_1_preflight/samples/decoded/episode_00400210.npz",
+      "sha256": "e2ab81523c8c69f5732ac281d3045caabf9837fd99f4d0ac60221b5a7a71c463"
+    },
+    {
+      "episode": 400220,
+      "frames": 3200,
+      "selected_raw_group": "demo_0",
+      "attempts": [
+        {
+          "group": "demo_0",
+          "frames": 3200,
+          "complete": true
+        }
+      ],
+      "seconds": 9.97649232391268,
+      "artifact": "/nvme3/projects/memory_vla/v2_1_preflight/samples/decoded/episode_00400220.npz",
+      "sha256": "1cb2fc8a4cd39008ecf2457431921684a69c68913007a32acaa5b48a5e662e71"
+    },
+    {
+      "episode": 400230,
+      "frames": 3051,
+      "selected_raw_group": "demo_0",
+      "attempts": [
+        {
+          "group": "demo_0",
+          "frames": 3051,
+          "complete": true
+        }
+      ],
+      "seconds": 15.903926253318787,
+      "artifact": "/nvme3/projects/memory_vla/v2_1_preflight/samples/decoded/episode_00400230.npz",
+      "sha256": "9cb4f4e24e9304a5439bc34a12aee9f956c813f316b0ab70acf281e986122c1b"
+    },
+    {
+      "episode": 400240,
+      "frames": 2879,
+      "selected_raw_group": "demo_0",
+      "attempts": [
+        {
+          "group": "demo_0",
+          "frames": 2879,
+          "complete": true
+        }
+      ],
+      "seconds": 24.049161735922098,
+      "artifact": "/nvme3/projects/memory_vla/v2_1_preflight/samples/decoded/episode_00400240.npz",
+      "sha256": "cccadcf59451c120e88a59f5e05729f3ce65849d17490c00c90759905924e10a"
+    },
+    {
+      "episode": 400250,
+      "frames": 3979,
+      "selected_raw_group": "demo_0",
+      "attempts": [
+        {
+          "group": "demo_0",
+          "frames": 3979,
+          "complete": true
+        }
+      ],
+      "seconds": 24.499253110960126,
+      "artifact": "/nvme3/projects/memory_vla/v2_1_preflight/samples/decoded/episode_00400250.npz",
+      "sha256": "804b473b6610b8306a3647067fb6425f54ba0a8d1e4847962db929b739c95431"
+    },
+    {
+      "episode": 400260,
+      "frames": 3425,
+      "selected_raw_group": "demo_0",
+      "attempts": [
+        {
+          "group": "demo_0",
+          "frames": 3425,
+          "complete": true
+        }
+      ],
+      "seconds": 23.156648255884647,
+      "artifact": "/nvme3/projects/memory_vla/v2_1_preflight/samples/decoded/episode_00400260.npz",
+      "sha256": "ad7c2deaef26baa56f751e4705dd12354b9866fe0d757233b29a52fc668c50e3"
+    },
+    {
+      "episode": 400270,
+      "frames": 2737,
+      "selected_raw_group": "demo_0",
+      "attempts": [
+        {
+          "group": "demo_0",
+          "frames": 2737,
+          "complete": true
+        }
+      ],
+      "seconds": 23.269680785946548,
+      "artifact": "/nvme3/projects/memory_vla/v2_1_preflight/samples/decoded/episode_00400270.npz",
+      "sha256": "7c0635eeb15df9166c63f1f8be47682e96687e6471e5f15f2e196b1f244d7b2e"
+    },
+    {
+      "episode": 400280,
+      "frames": 2917,
+      "selected_raw_group": "demo_0",
+      "attempts": [
+        {
+          "group": "demo_0",
+          "frames": 2917,
+          "complete": true
+        }
+      ],
+      "seconds": 24.040490108076483,
+      "artifact": "/nvme3/projects/memory_vla/v2_1_preflight/samples/decoded/episode_00400280.npz",
+      "sha256": "db949d5d3f6b1f9e9d0ec0774bae89da1373d98b06569ecbbb7b1077b9a0bb59"
+    },
+    {
+      "episode": 400290,
+      "frames": 3775,
+      "selected_raw_group": "demo_0",
+      "attempts": [
+        {
+          "group": "demo_0",
+          "frames": 3775,
+          "complete": true
+        }
+      ],
+      "seconds": 22.822153210639954,
+      "artifact": "/nvme3/projects/memory_vla/v2_1_preflight/samples/decoded/episode_00400290.npz",
+      "sha256": "eed5a3a1107905d2da5bd76b5707c76f86d9cdbebac0b2fc0d995fbe3db9d72f"
+    },
+    {
+      "episode": 400300,
+      "frames": 3370,
+      "selected_raw_group": "demo_0",
+      "attempts": [
+        {
+          "group": "demo_0",
+          "frames": 3370,
+          "complete": true
+        }
+      ],
+      "seconds": 24.4141966518946,
+      "artifact": "/nvme3/projects/memory_vla/v2_1_preflight/samples/decoded/episode_00400300.npz",
+      "sha256": "e261a5ba07ea726016bec8f8af1d8e3b9a8e0c13f733178d4b2a6245a665d2a1"
+    },
+    {
+      "episode": 400310,
+      "frames": 4314,
+      "selected_raw_group": "demo_0",
+      "attempts": [
+        {
+          "group": "demo_0",
+          "frames": 4314,
+          "complete": true
+        }
+      ],
+      "seconds": 23.92620320431888,
+      "artifact": "/nvme3/projects/memory_vla/v2_1_preflight/samples/decoded/episode_00400310.npz",
+      "sha256": "24dc61f71305429a57c62391b533799e45d20ef353437fc5ebaf92c9ca689a25"
+    },
+    {
+      "episode": 400320,
+      "frames": 3175,
+      "selected_raw_group": "demo_0",
+      "attempts": [
+        {
+          "group": "demo_0",
+          "frames": 3175,
+          "complete": true
+        }
+      ],
+      "seconds": 24.401896228082478,
+      "artifact": "/nvme3/projects/memory_vla/v2_1_preflight/samples/decoded/episode_00400320.npz",
+      "sha256": "856510786e1c17ee73dad9acb96537340f0a0f1ee7d80581f559bb9cabecef81"
+    },
+    {
+      "episode": 400330,
+      "frames": 3808,
+      "selected_raw_group": "demo_0",
+      "attempts": [
+        {
+          "group": "demo_0",
+          "frames": 3808,
+          "complete": true
+        }
+      ],
+      "seconds": 24.570847106166184,
+      "artifact": "/nvme3/projects/memory_vla/v2_1_preflight/samples/decoded/episode_00400330.npz",
+      "sha256": "846b675c64b8ad58ca4e44402a0a9f153c1af8b51154ee3a6b2a0c610146f115"
+    },
+    {
+      "episode": 400340,
+      "frames": 2990,
+      "selected_raw_group": "demo_0",
+      "attempts": [
+        {
+          "group": "demo_0",
+          "frames": 2990,
+          "complete": true
+        }
+      ],
+      "seconds": 26.084168972447515,
+      "artifact": "/nvme3/projects/memory_vla/v2_1_preflight/samples/decoded/episode_00400340.npz",
+      "sha256": "852ffe38541a45d752ddbaa952200139f6cb273fdf29d71f21a259678c9a296d"
+    },
+    {
+      "episode": 400350,
+      "frames": 3480,
+      "selected_raw_group": "demo_0",
+      "attempts": [
+        {
+          "group": "demo_0",
+          "frames": 3480,
+          "complete": true
+        }
+      ],
+      "seconds": 24.57521121390164,
+      "artifact": "/nvme3/projects/memory_vla/v2_1_preflight/samples/decoded/episode_00400350.npz",
+      "sha256": "2064603b4c08adfb26b9ccfbb383e34bc28cacbcc0dee4cc21fe402aa0b046bb"
+    },
+    {
+      "episode": 400360,
+      "frames": 2935,
+      "selected_raw_group": "demo_0",
+      "attempts": [
+        {
+          "group": "demo_0",
+          "frames": 2935,
+          "complete": true
+        }
+      ],
+      "seconds": 24.052886820863932,
+      "artifact": "/nvme3/projects/memory_vla/v2_1_preflight/samples/decoded/episode_00400360.npz",
+      "sha256": "21edbfbe2a220d480d460ed77348b9a6664029759aa057bc97ae9a58d1fd8676"
+    },
+    {
+      "episode": 400370,
+      "frames": 3140,
+      "selected_raw_group": "demo_0",
+      "attempts": [
+        {
+          "group": "demo_0",
+          "frames": 3140,
+          "complete": true
+        }
+      ],
+      "seconds": 23.55197271797806,
+      "artifact": "/nvme3/projects/memory_vla/v2_1_preflight/samples/decoded/episode_00400370.npz",
+      "sha256": "608f1a02bb9130365ce2c65cb803dd2ffa6f1d32d7396e544323311e14359be7"
+    }
+  ],
+  "optimization": "Skip only unrelated fixed-length object payloads after official size derivation; official UUID registry and variable states unchanged; full parse comparison each500 frames"
+}

@@ -1,0 +1,18 @@
+[
+  {
+    "source": "/nvme3/projects/memory_vla-v2-v3-backup-oEWaKh/Output/test_02/experiment_01/evidence/4090-label-audit-attempt01.json",
+    "sha256": "817d105ff01bd0270f98d00a64644d685d295d857b4eec3957f9fb73f1c2604d",
+    "matching_log_lines": [
+      "\u001b[33m[00:04:35.898] [WARNING] [omnigibson.objects.usd_object] Object popcorn_bag_73 was expected to have USD file hash 8f40ea1093f6c42f4a837128a11e80ee but loaded with c3c3fc108cc259127e8a5781cf04ef9b. The saved state might be incompatible.\u001b[0m",
+      "2026-11-23 14:37:55 [267,685ms] [Warning] [omnigibson.objects.usd_object] Object popcorn_bag_73 was expected to have USD file hash 8f40ea1093f6c42f4a837128a11e80ee but loaded with c3c3fc108cc259127e8a5781cf04ef9b. The saved state might be incompatible."
+    ]
+  },
+  {
+    "source": "/nvme3/projects/memory_vla-v2-v3-backup-oEWaKh/Output/test_02/experiment_01/evidence/4090-label-audit-attempt02.json",
+    "sha256": "5a87112c6736f6ea61ea9c26e70be035c3a3cd5f8daa91c139fed413ab8cedca",
+    "matching_log_lines": [
+      "\u001b[33m[00:04:34.177] [WARNING] [omnigibson.objects.usd_object] Object popcorn_bag_73 was expected to have USD file hash 8f40ea1093f6c42f4a837128a11e80ee but loaded with c3c3fc108cc259127e8a5781cf04ef9b. The saved state might be incompatible.\u001b[0m",
+      "2026-11-23 14:57:31 [265,196ms] [Warning] [omnigibson.objects.usd_object] Object popcorn_bag_73 was expected to have USD file hash 8f40ea1093f6c42f4a837128a11e80ee but loaded with c3c3fc108cc259127e8a5781cf04ef9b. The saved state might be incompatible."
+    ]
+  }
+]

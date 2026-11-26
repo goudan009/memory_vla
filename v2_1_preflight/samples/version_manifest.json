@@ -1,0 +1,72 @@
+{
+  "created_at_utc": "2026-11-26T12:45:42.098390+00:00",
+  "hostname": {
+    "argv": [
+      "hostname"
+    ],
+    "returncode": 0,
+    "stdout": "server-4090\n",
+    "stderr": ""
+  },
+  "current_git": {
+    "argv": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "returncode": 0,
+    "stdout": "f180c05a8e4d9587689541591fdb2bda125b1285\n",
+    "stderr": ""
+  },
+  "source_commit": "0d28bc506c3def15b2f76bdbdc0a3ccb1b4567a8",
+  "historical_v2_commit": "b710fc4df586216b4b6a1a3776f09c725300cd98",
+  "omnigibson_git": {
+    "argv": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "returncode": 0,
+    "stdout": "4a6b45d02196c815bd0bfd5f6ff77e693b373821\n",
+    "stderr": ""
+  },
+  "raw_dataset_revision": "b3c9a714b8730701c480e77173d8aa4a8f19e1c0",
+  "design_sources": [
+    {
+      "path": "docs/v2/2.1.html",
+      "sha256": "26298154268063f789194cbb7fc84de4c6ac9e1ed1cc3302fa0425953c7b40d0"
+    },
+    {
+      "path": "docs/v2/2.1.md",
+      "sha256": "35e66cadc8d922f5c3457d4e3ce3a6c3a8f8e411a34f2a9fdd4b851d122b654c"
+    },
+    {
+      "path": "docs/v2/2.1-protocol.md",
+      "sha256": "f07473f7ce141fd75dbe26e3b292b7326992155d69b1b824d363d1c7554cc836"
+    },
+    {
+      "path": "docs/v2/notation.md",
+      "sha256": "dd21346f8dfd197984516915720b6c01b18e6d2f518d5629fedc75d45270b82f"
+    }
+  ],
+  "local_gpu": {
+    "argv": [
+      "nvidia-smi",
+      "--query-gpu=index,uuid,name,memory.used,memory.total,utilization.gpu",
+      "--format=csv"
+    ],
+    "returncode": 0,
+    "stdout": "index, uuid, name, memory.used [MiB], memory.total [MiB], utilization.gpu [%]\n0, GPU-49fbbb98-a702-2adb-f148-a55b95f77252, NVIDIA GeForce RTX 4090, 21071 MiB, 49140 MiB, 42 %\n1, GPU-5c0dd939-b099-8f50-60a4-48f1bab85bb0, NVIDIA GeForce RTX 4090, 13506 MiB, 49140 MiB, 36 %\n",
+    "stderr": ""
+  },
+  "local_gpu_processes": {
+    "argv": [
+      "nvidia-smi",
+      "--query-compute-apps=pid,gpu_uuid,process_name,used_memory",
+      "--format=csv"
+    ],
+    "returncode": 0,
+    "stdout": "pid, gpu_uuid, process_name, used_gpu_memory [MiB]\n1493945, GPU-49fbbb98-a702-2adb-f148-a55b95f77252, /nvme3/projects/MRS_ROBOT_sim/arena_benchmark/.venv/bin/python, 244 MiB\n1179241, GPU-49fbbb98-a702-2adb-f148-a55b95f77252, /home/2025201288DYD/.steam/debian-installation/steamrt64/steamwebhelper, 14 MiB\n1207353, GPU-49fbbb98-a702-2adb-f148-a55b95f77252, /nvme3/envs/b1k2025-sim/bin/python, 18438 MiB\n1253419, GPU-49fbbb98-a702-2adb-f148-a55b95f77252, S:\\steamapps\\common\\Probably Stolen\\Probably Stolen.exe, 1198 MiB\n1493945, GPU-5c0dd939-b099-8f50-60a4-48f1bab85bb0, /nvme3/projects/MRS_ROBOT_sim/arena_benchmark/.venv/bin/python, 6038 MiB\n1015124, GPU-5c0dd939-b099-8f50-60a4-48f1bab85bb0, /nvme3/envs/b1k2025-policy/bin/python, 7020 MiB\n1207353, GPU-5c0dd939-b099-8f50-60a4-48f1bab85bb0, /nvme3/envs/b1k2025-sim/bin/python, 194 MiB\n",
+    "stderr": ""
+  }
+}

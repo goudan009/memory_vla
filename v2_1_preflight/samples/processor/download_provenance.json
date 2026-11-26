@@ -1,0 +1,56 @@
+{
+  "repo": "nvidia/GR00T-N1.6-3B",
+  "revision": "d0814e7ecb19202e7c8468b46098b0b7ef3a6d61",
+  "files": [
+    {
+      "rfilename": "LICENSE",
+      "blobId": "293c642500e9ea4f1035f43382b0e81875fd446c",
+      "size": 4063
+    },
+    {
+      "rfilename": "config.json",
+      "blobId": "7af1251826f275543cdfb9bafbce643474eec9de",
+      "size": 1818
+    },
+    {
+      "rfilename": "embodiment_id.json",
+      "blobId": "4177f449978082be2535fd43012538ce62454d64",
+      "size": 148
+    },
+    {
+      "rfilename": "model-00001-of-00002.safetensors",
+      "blobId": "d1457131daa0112ea81f367b7f4af4d49d216c78",
+      "size": 4991091456,
+      "lfs": {
+        "sha256": "9710d31d331b79cfa229fd23605ba9ad47e207cb0f4c7722fe0bacdc666c8326",
+        "size": 4991091456,
+        "pointerSize": 135
+      }
+    },
+    {
+      "rfilename": "model-00002-of-00002.safetensors",
+      "blobId": "1b17c27c2dfea9873bbcf26c4965471aabfe0050",
+      "size": 1582283096,
+      "lfs": {
+        "sha256": "eb79bbd7893068897cda18c86ed91064e92e20e356dea97bc398bf9c8bf2fa35",
+        "size": 1582283096,
+        "pointerSize": 135
+      }
+    },
+    {
+      "rfilename": "model.safetensors.index.json",
+      "blobId": "bf83f5c1591d5d1cf6a2d6f71d45d89c0f0e2539",
+      "size": 121820
+    },
+    {
+      "rfilename": "processor_config.json",
+      "blobId": "3399769ada2d2383c759f97e3692f11e7f9206d1",
+      "size": 9318
+    },
+    {
+      "rfilename": "statistics.json",
+      "blobId": "9782cc755fc6ec1aa87ec8762cf4dfa3f854ce99",
+      "size": 262849
+    }
+  ]
+}

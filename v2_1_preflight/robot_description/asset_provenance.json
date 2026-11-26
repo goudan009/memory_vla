@@ -1,0 +1,8 @@
+{
+  "actual_usd": "/nvme3/projects/SERF-VLA/datasets/omnigibson-robot-assets/models/r1pro/usd/r1pro.usda",
+  "sha256": "6029617cdd3aefce981428058a1c82cffe6af20ae61dc5be1da7334342c3bc52",
+  "md5": "4ed6cf0910d2c4a82afbb472a41ccf25",
+  "size": 131100140,
+  "meters_per_unit": 1.0,
+  "up_axis": "Z"
+}

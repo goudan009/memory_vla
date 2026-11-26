@@ -1,0 +1,45 @@
+{
+  "config": {
+    "kind": "v2_state_decode",
+    "gpu": 0,
+    "notes": "V2.1 read-only raw state extraction; zero training",
+    "category": "v2_1_preflight_readonly",
+    "model_version": "v2",
+    "test_id": "test02",
+    "experiment_id": "exp01",
+    "training_steps": 0,
+    "extraction_script": "/nvme3/projects/memory_vla/v2_1_preflight/scripts/sim_extract.py",
+    "extraction_sha256": "a5f5b57b5c7712af0a7b0fe5f323cd8761cb6bdf97895062726df0bc4699e6c2"
+  },
+  "title": "V2.1 preflight raw state extraction",
+  "stages": [
+    {
+      "name": "V2.1 official state extraction / 200 demos",
+      "argv": [
+        "env",
+        "OMNIGIBSON_GPU_ID=0",
+        "OMNIGIBSON_APPDATA_PATH={run}/isaac_appdata",
+        "/nvme3/projects/memory_vla/scripts/b1k_python.sh",
+        "/nvme3/projects/memory_vla/v2_1_preflight/scripts/sim_extract.py",
+        "--output",
+        "{run}/preflight_extract.json"
+      ],
+      "report": "preflight_extract.json",
+      "steps": 200
+    }
+  ],
+  "gpu": {
+    "index": 0,
+    "name": "NVIDIA GeForce RTX 4090",
+    "free_mb": 28905,
+    "total_mb": 49140
+  },
+  "required_free_mb": 16000,
+  "ready": true,
+  "commands": [
+    "env OMNIGIBSON_GPU_ID=0 'OMNIGIBSON_APPDATA_PATH={run}/isaac_appdata' /nvme3/projects/memory_vla/scripts/b1k_python.sh /nvme3/projects/memory_vla/v2_1_preflight/scripts/sim_extract.py --output '{run}/preflight_extract.json'"
+  ],
+  "id": "20261126-200257-15a1de03",
+  "created_at": "2026-11-26 20:02:57",
+  "source_digest": "c3a7e379c0f3d99cdab792d42ddec559c1c58337930e13dd45ba0ba0967e6b28"
+}

@@ -1,0 +1,6194 @@
+{
+  "summary": {
+    "episodes": 200,
+    "door_transition_count_distribution": {
+      "2": 200
+    },
+    "started_transition_count_distribution": {
+      "1": 200
+    },
+    "door_reopen_episodes": [],
+    "started_then_off_episodes": [],
+    "cooked_absent_final_observation": [
+      400100,
+      400220,
+      400540,
+      401000,
+      401390,
+      401530
+    ],
+    "caution": "Only Open/ToggledOn/particle existence order is known. Grasp and Inside order/repetitions remain unknown. FrameT extra terminal state excluded."
+  },
+  "episodes": [
+    {
+      "episode": 400010,
+      "events": {
+        "door_open": [
+          {
+            "frame": 975,
+            "value": true
+          },
+          {
+            "frame": 3333,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3735,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3811,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400020,
+      "events": {
+        "door_open": [
+          {
+            "frame": 1474,
+            "value": true
+          },
+          {
+            "frame": 3986,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 4318,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 4394,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400030,
+      "events": {
+        "door_open": [
+          {
+            "frame": 1261,
+            "value": true
+          },
+          {
+            "frame": 3058,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3365,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3441,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400040,
+      "events": {
+        "door_open": [
+          {
+            "frame": 885,
+            "value": true
+          },
+          {
+            "frame": 3024,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3383,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3459,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400050,
+      "events": {
+        "door_open": [
+          {
+            "frame": 1341,
+            "value": true
+          },
+          {
+            "frame": 3297,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3737,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3813,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400060,
+      "events": {
+        "door_open": [
+          {
+            "frame": 839,
+            "value": true
+          },
+          {
+            "frame": 3089,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3251,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3327,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400070,
+      "events": {
+        "door_open": [
+          {
+            "frame": 573,
+            "value": true
+          },
+          {
+            "frame": 2653,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2855,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 2931,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400080,
+      "events": {
+        "door_open": [
+          {
+            "frame": 1224,
+            "value": true
+          },
+          {
+            "frame": 3368,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3691,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3767,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400090,
+      "events": {
+        "door_open": [
+          {
+            "frame": 670,
+            "value": true
+          },
+          {
+            "frame": 2664,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2889,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 2965,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400100,
+      "events": {
+        "door_open": [
+          {
+            "frame": 997,
+            "value": true
+          },
+          {
+            "frame": 4462,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 4777,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": []
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": false
+    },
+    {
+      "episode": 400110,
+      "events": {
+        "door_open": [
+          {
+            "frame": 1108,
+            "value": true
+          },
+          {
+            "frame": 3171,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3631,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3707,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400120,
+      "events": {
+        "door_open": [
+          {
+            "frame": 1025,
+            "value": true
+          },
+          {
+            "frame": 2839,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3292,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3368,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400130,
+      "events": {
+        "door_open": [
+          {
+            "frame": 435,
+            "value": true
+          },
+          {
+            "frame": 2669,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2995,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3071,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400140,
+      "events": {
+        "door_open": [
+          {
+            "frame": 1464,
+            "value": true
+          },
+          {
+            "frame": 3607,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3952,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 4028,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400150,
+      "events": {
+        "door_open": [
+          {
+            "frame": 1004,
+            "value": true
+          },
+          {
+            "frame": 3014,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3366,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3442,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400160,
+      "events": {
+        "door_open": [
+          {
+            "frame": 539,
+            "value": true
+          },
+          {
+            "frame": 2390,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2680,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 2756,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400170,
+      "events": {
+        "door_open": [
+          {
+            "frame": 502,
+            "value": true
+          },
+          {
+            "frame": 2695,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3172,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3248,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400180,
+      "events": {
+        "door_open": [
+          {
+            "frame": 702,
+            "value": true
+          },
+          {
+            "frame": 2689,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3039,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3115,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400190,
+      "events": {
+        "door_open": [
+          {
+            "frame": 928,
+            "value": true
+          },
+          {
+            "frame": 3248,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3543,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3619,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400200,
+      "events": {
+        "door_open": [
+          {
+            "frame": 294,
+            "value": true
+          },
+          {
+            "frame": 2219,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2639,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 2715,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400210,
+      "events": {
+        "door_open": [
+          {
+            "frame": 1139,
+            "value": true
+          },
+          {
+            "frame": 3203,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3572,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3648,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400220,
+      "events": {
+        "door_open": [
+          {
+            "frame": 700,
+            "value": true
+          },
+          {
+            "frame": 2750,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3124,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": []
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": false
+    },
+    {
+      "episode": 400230,
+      "events": {
+        "door_open": [
+          {
+            "frame": 797,
+            "value": true
+          },
+          {
+            "frame": 2687,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2955,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3031,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400240,
+      "events": {
+        "door_open": [
+          {
+            "frame": 661,
+            "value": true
+          },
+          {
+            "frame": 2496,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2786,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 2862,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400250,
+      "events": {
+        "door_open": [
+          {
+            "frame": 1257,
+            "value": true
+          },
+          {
+            "frame": 3506,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3886,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3962,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400260,
+      "events": {
+        "door_open": [
+          {
+            "frame": 691,
+            "value": true
+          },
+          {
+            "frame": 2930,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3329,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3405,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400270,
+      "events": {
+        "door_open": [
+          {
+            "frame": 443,
+            "value": true
+          },
+          {
+            "frame": 2215,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2562,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 2638,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400280,
+      "events": {
+        "door_open": [
+          {
+            "frame": 649,
+            "value": true
+          },
+          {
+            "frame": 2479,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2787,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 2863,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400290,
+      "events": {
+        "door_open": [
+          {
+            "frame": 589,
+            "value": true
+          },
+          {
+            "frame": 3272,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3683,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3759,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400300,
+      "events": {
+        "door_open": [
+          {
+            "frame": 488,
+            "value": true
+          },
+          {
+            "frame": 2884,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3215,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3291,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400310,
+      "events": {
+        "door_open": [
+          {
+            "frame": 1329,
+            "value": true
+          },
+          {
+            "frame": 3857,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 4209,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 4285,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400320,
+      "events": {
+        "door_open": [
+          {
+            "frame": 489,
+            "value": true
+          },
+          {
+            "frame": 2668,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3078,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3154,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400330,
+      "events": {
+        "door_open": [
+          {
+            "frame": 657,
+            "value": true
+          },
+          {
+            "frame": 3261,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3726,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3802,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400340,
+      "events": {
+        "door_open": [
+          {
+            "frame": 772,
+            "value": true
+          },
+          {
+            "frame": 2518,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2860,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 2936,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400350,
+      "events": {
+        "door_open": [
+          {
+            "frame": 878,
+            "value": true
+          },
+          {
+            "frame": 2995,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3383,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3459,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400360,
+      "events": {
+        "door_open": [
+          {
+            "frame": 707,
+            "value": true
+          },
+          {
+            "frame": 2490,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2801,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 2877,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400370,
+      "events": {
+        "door_open": [
+          {
+            "frame": 595,
+            "value": true
+          },
+          {
+            "frame": 2477,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2841,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 2917,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400380,
+      "events": {
+        "door_open": [
+          {
+            "frame": 1029,
+            "value": true
+          },
+          {
+            "frame": 3340,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3804,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3880,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400390,
+      "events": {
+        "door_open": [
+          {
+            "frame": 974,
+            "value": true
+          },
+          {
+            "frame": 3723,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 4006,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 4082,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400400,
+      "events": {
+        "door_open": [
+          {
+            "frame": 929,
+            "value": true
+          },
+          {
+            "frame": 3060,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3401,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3477,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400410,
+      "events": {
+        "door_open": [
+          {
+            "frame": 615,
+            "value": true
+          },
+          {
+            "frame": 2254,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2605,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 2681,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400420,
+      "events": {
+        "door_open": [
+          {
+            "frame": 1416,
+            "value": true
+          },
+          {
+            "frame": 3361,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3803,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3879,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400430,
+      "events": {
+        "door_open": [
+          {
+            "frame": 486,
+            "value": true
+          },
+          {
+            "frame": 2451,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2841,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 2917,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400440,
+      "events": {
+        "door_open": [
+          {
+            "frame": 241,
+            "value": true
+          },
+          {
+            "frame": 1986,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2247,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 2323,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400450,
+      "events": {
+        "door_open": [
+          {
+            "frame": 955,
+            "value": true
+          },
+          {
+            "frame": 2949,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3297,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3373,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400460,
+      "events": {
+        "door_open": [
+          {
+            "frame": 740,
+            "value": true
+          },
+          {
+            "frame": 2838,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3280,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3356,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400480,
+      "events": {
+        "door_open": [
+          {
+            "frame": 422,
+            "value": true
+          },
+          {
+            "frame": 2590,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2977,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3053,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400490,
+      "events": {
+        "door_open": [
+          {
+            "frame": 705,
+            "value": true
+          },
+          {
+            "frame": 3073,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3378,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3454,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400500,
+      "events": {
+        "door_open": [
+          {
+            "frame": 448,
+            "value": true
+          },
+          {
+            "frame": 2763,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3059,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3135,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400510,
+      "events": {
+        "door_open": [
+          {
+            "frame": 510,
+            "value": true
+          },
+          {
+            "frame": 2623,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2916,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 2992,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400520,
+      "events": {
+        "door_open": [
+          {
+            "frame": 825,
+            "value": true
+          },
+          {
+            "frame": 2845,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3183,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3259,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400530,
+      "events": {
+        "door_open": [
+          {
+            "frame": 1089,
+            "value": true
+          },
+          {
+            "frame": 3616,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 4117,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 4193,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400540,
+      "events": {
+        "door_open": [
+          {
+            "frame": 577,
+            "value": true
+          },
+          {
+            "frame": 2964,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3471,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": []
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": false
+    },
+    {
+      "episode": 400550,
+      "events": {
+        "door_open": [
+          {
+            "frame": 629,
+            "value": true
+          },
+          {
+            "frame": 2567,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2958,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3034,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400560,
+      "events": {
+        "door_open": [
+          {
+            "frame": 868,
+            "value": true
+          },
+          {
+            "frame": 3018,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3373,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3449,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400570,
+      "events": {
+        "door_open": [
+          {
+            "frame": 670,
+            "value": true
+          },
+          {
+            "frame": 2875,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3176,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3252,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400580,
+      "events": {
+        "door_open": [
+          {
+            "frame": 640,
+            "value": true
+          },
+          {
+            "frame": 2739,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3029,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3105,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400600,
+      "events": {
+        "door_open": [
+          {
+            "frame": 732,
+            "value": true
+          },
+          {
+            "frame": 2712,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3121,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3197,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400610,
+      "events": {
+        "door_open": [
+          {
+            "frame": 733,
+            "value": true
+          },
+          {
+            "frame": 2712,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3023,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3099,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400620,
+      "events": {
+        "door_open": [
+          {
+            "frame": 631,
+            "value": true
+          },
+          {
+            "frame": 1853,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2082,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 2158,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400640,
+      "events": {
+        "door_open": [
+          {
+            "frame": 668,
+            "value": true
+          },
+          {
+            "frame": 2733,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2985,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3061,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400660,
+      "events": {
+        "door_open": [
+          {
+            "frame": 965,
+            "value": true
+          },
+          {
+            "frame": 3060,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3342,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3418,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400670,
+      "events": {
+        "door_open": [
+          {
+            "frame": 621,
+            "value": true
+          },
+          {
+            "frame": 2684,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2946,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3022,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400680,
+      "events": {
+        "door_open": [
+          {
+            "frame": 596,
+            "value": true
+          },
+          {
+            "frame": 2500,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2810,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 2886,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400690,
+      "events": {
+        "door_open": [
+          {
+            "frame": 684,
+            "value": true
+          },
+          {
+            "frame": 2667,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2977,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3053,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400700,
+      "events": {
+        "door_open": [
+          {
+            "frame": 1147,
+            "value": true
+          },
+          {
+            "frame": 3018,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3429,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3505,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400710,
+      "events": {
+        "door_open": [
+          {
+            "frame": 653,
+            "value": true
+          },
+          {
+            "frame": 2713,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2926,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3002,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400720,
+      "events": {
+        "door_open": [
+          {
+            "frame": 1173,
+            "value": true
+          },
+          {
+            "frame": 3278,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3582,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3658,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400730,
+      "events": {
+        "door_open": [
+          {
+            "frame": 552,
+            "value": true
+          },
+          {
+            "frame": 2732,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3062,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3138,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400740,
+      "events": {
+        "door_open": [
+          {
+            "frame": 1317,
+            "value": true
+          },
+          {
+            "frame": 3552,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3908,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3984,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400750,
+      "events": {
+        "door_open": [
+          {
+            "frame": 933,
+            "value": true
+          },
+          {
+            "frame": 2799,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3011,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3087,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400760,
+      "events": {
+        "door_open": [
+          {
+            "frame": 466,
+            "value": true
+          },
+          {
+            "frame": 2471,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2782,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 2858,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400780,
+      "events": {
+        "door_open": [
+          {
+            "frame": 491,
+            "value": true
+          },
+          {
+            "frame": 2436,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2605,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 2681,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400790,
+      "events": {
+        "door_open": [
+          {
+            "frame": 780,
+            "value": true
+          },
+          {
+            "frame": 2337,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2673,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 2749,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400800,
+      "events": {
+        "door_open": [
+          {
+            "frame": 525,
+            "value": true
+          },
+          {
+            "frame": 2227,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2523,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 2599,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400810,
+      "events": {
+        "door_open": [
+          {
+            "frame": 952,
+            "value": true
+          },
+          {
+            "frame": 2584,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2851,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 2927,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400820,
+      "events": {
+        "door_open": [
+          {
+            "frame": 657,
+            "value": true
+          },
+          {
+            "frame": 2594,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3000,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3076,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400830,
+      "events": {
+        "door_open": [
+          {
+            "frame": 499,
+            "value": true
+          },
+          {
+            "frame": 2468,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2815,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 2891,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400840,
+      "events": {
+        "door_open": [
+          {
+            "frame": 1009,
+            "value": true
+          },
+          {
+            "frame": 3002,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3247,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3323,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400850,
+      "events": {
+        "door_open": [
+          {
+            "frame": 554,
+            "value": true
+          },
+          {
+            "frame": 2520,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2881,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 2957,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400860,
+      "events": {
+        "door_open": [
+          {
+            "frame": 482,
+            "value": true
+          },
+          {
+            "frame": 2441,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2625,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 2701,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400870,
+      "events": {
+        "door_open": [
+          {
+            "frame": 1322,
+            "value": true
+          },
+          {
+            "frame": 3531,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3944,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 4020,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400880,
+      "events": {
+        "door_open": [
+          {
+            "frame": 621,
+            "value": true
+          },
+          {
+            "frame": 2601,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2854,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 2930,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400890,
+      "events": {
+        "door_open": [
+          {
+            "frame": 657,
+            "value": true
+          },
+          {
+            "frame": 2375,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2683,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 2759,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400900,
+      "events": {
+        "door_open": [
+          {
+            "frame": 615,
+            "value": true
+          },
+          {
+            "frame": 2243,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2571,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 2647,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400910,
+      "events": {
+        "door_open": [
+          {
+            "frame": 716,
+            "value": true
+          },
+          {
+            "frame": 2491,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2783,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 2859,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400920,
+      "events": {
+        "door_open": [
+          {
+            "frame": 341,
+            "value": true
+          },
+          {
+            "frame": 2249,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2508,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 2584,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400930,
+      "events": {
+        "door_open": [
+          {
+            "frame": 391,
+            "value": true
+          },
+          {
+            "frame": 2000,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2330,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 2406,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400940,
+      "events": {
+        "door_open": [
+          {
+            "frame": 568,
+            "value": true
+          },
+          {
+            "frame": 2111,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2332,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 2408,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400950,
+      "events": {
+        "door_open": [
+          {
+            "frame": 758,
+            "value": true
+          },
+          {
+            "frame": 2785,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3094,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3170,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400960,
+      "events": {
+        "door_open": [
+          {
+            "frame": 970,
+            "value": true
+          },
+          {
+            "frame": 2590,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2919,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 2995,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400970,
+      "events": {
+        "door_open": [
+          {
+            "frame": 604,
+            "value": true
+          },
+          {
+            "frame": 2668,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2937,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3013,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 400990,
+      "events": {
+        "door_open": [
+          {
+            "frame": 877,
+            "value": true
+          },
+          {
+            "frame": 3068,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3358,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3434,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 401000,
+      "events": {
+        "door_open": [
+          {
+            "frame": 1043,
+            "value": true
+          },
+          {
+            "frame": 3958,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 4382,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": []
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": false
+    },
+    {
+      "episode": 401010,
+      "events": {
+        "door_open": [
+          {
+            "frame": 473,
+            "value": true
+          },
+          {
+            "frame": 2755,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3072,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3148,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 401020,
+      "events": {
+        "door_open": [
+          {
+            "frame": 676,
+            "value": true
+          },
+          {
+            "frame": 2406,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2801,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 2877,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 401030,
+      "events": {
+        "door_open": [
+          {
+            "frame": 477,
+            "value": true
+          },
+          {
+            "frame": 2458,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2901,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 2977,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 401040,
+      "events": {
+        "door_open": [
+          {
+            "frame": 964,
+            "value": true
+          },
+          {
+            "frame": 2653,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2937,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3013,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 401050,
+      "events": {
+        "door_open": [
+          {
+            "frame": 1037,
+            "value": true
+          },
+          {
+            "frame": 2731,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3063,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3139,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 401060,
+      "events": {
+        "door_open": [
+          {
+            "frame": 520,
+            "value": true
+          },
+          {
+            "frame": 2235,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2588,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 2664,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 401080,
+      "events": {
+        "door_open": [
+          {
+            "frame": 925,
+            "value": true
+          },
+          {
+            "frame": 2883,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3201,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3277,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 401090,
+      "events": {
+        "door_open": [
+          {
+            "frame": 956,
+            "value": true
+          },
+          {
+            "frame": 2787,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3049,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3125,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 401100,
+      "events": {
+        "door_open": [
+          {
+            "frame": 572,
+            "value": true
+          },
+          {
+            "frame": 2537,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2791,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 2867,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 401110,
+      "events": {
+        "door_open": [
+          {
+            "frame": 955,
+            "value": true
+          },
+          {
+            "frame": 3074,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3448,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3524,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 401120,
+      "events": {
+        "door_open": [
+          {
+            "frame": 569,
+            "value": true
+          },
+          {
+            "frame": 2549,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2821,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 2897,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 401130,
+      "events": {
+        "door_open": [
+          {
+            "frame": 863,
+            "value": true
+          },
+          {
+            "frame": 2790,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3117,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3193,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 401140,
+      "events": {
+        "door_open": [
+          {
+            "frame": 416,
+            "value": true
+          },
+          {
+            "frame": 2132,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2481,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 2557,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 401150,
+      "events": {
+        "door_open": [
+          {
+            "frame": 606,
+            "value": true
+          },
+          {
+            "frame": 2417,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2740,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 2816,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 401160,
+      "events": {
+        "door_open": [
+          {
+            "frame": 1131,
+            "value": true
+          },
+          {
+            "frame": 2958,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3387,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3463,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 401200,
+      "events": {
+        "door_open": [
+          {
+            "frame": 1158,
+            "value": true
+          },
+          {
+            "frame": 3168,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3524,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3600,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 401220,
+      "events": {
+        "door_open": [
+          {
+            "frame": 728,
+            "value": true
+          },
+          {
+            "frame": 2779,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3145,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3221,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 401230,
+      "events": {
+        "door_open": [
+          {
+            "frame": 385,
+            "value": true
+          },
+          {
+            "frame": 2473,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2833,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 2909,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 401240,
+      "events": {
+        "door_open": [
+          {
+            "frame": 1352,
+            "value": true
+          },
+          {
+            "frame": 3333,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3697,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3773,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 401250,
+      "events": {
+        "door_open": [
+          {
+            "frame": 1286,
+            "value": true
+          },
+          {
+            "frame": 3641,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 4057,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 4133,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 401260,
+      "events": {
+        "door_open": [
+          {
+            "frame": 412,
+            "value": true
+          },
+          {
+            "frame": 1740,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2081,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 2157,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 401270,
+      "events": {
+        "door_open": [
+          {
+            "frame": 1078,
+            "value": true
+          },
+          {
+            "frame": 2696,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3022,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3098,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 401280,
+      "events": {
+        "door_open": [
+          {
+            "frame": 1086,
+            "value": true
+          },
+          {
+            "frame": 2999,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3311,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3387,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 401290,
+      "events": {
+        "door_open": [
+          {
+            "frame": 708,
+            "value": true
+          },
+          {
+            "frame": 2387,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2741,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 2817,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 401300,
+      "events": {
+        "door_open": [
+          {
+            "frame": 791,
+            "value": true
+          },
+          {
+            "frame": 2774,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3099,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3175,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 401310,
+      "events": {
+        "door_open": [
+          {
+            "frame": 893,
+            "value": true
+          },
+          {
+            "frame": 2931,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3236,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3312,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 401320,
+      "events": {
+        "door_open": [
+          {
+            "frame": 670,
+            "value": true
+          },
+          {
+            "frame": 2563,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2921,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 2997,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 401340,
+      "events": {
+        "door_open": [
+          {
+            "frame": 495,
+            "value": true
+          },
+          {
+            "frame": 2296,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2645,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 2721,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 401350,
+      "events": {
+        "door_open": [
+          {
+            "frame": 551,
+            "value": true
+          },
+          {
+            "frame": 2094,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2346,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 2422,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 401360,
+      "events": {
+        "door_open": [
+          {
+            "frame": 683,
+            "value": true
+          },
+          {
+            "frame": 2551,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2860,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 2936,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 401370,
+      "events": {
+        "door_open": [
+          {
+            "frame": 689,
+            "value": true
+          },
+          {
+            "frame": 2088,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2483,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 2559,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 401380,
+      "events": {
+        "door_open": [
+          {
+            "frame": 930,
+            "value": true
+          },
+          {
+            "frame": 3296,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3659,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3735,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 401390,
+      "events": {
+        "door_open": [
+          {
+            "frame": 797,
+            "value": true
+          },
+          {
+            "frame": 2660,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2998,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": []
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": false
+    },
+    {
+      "episode": 401400,
+      "events": {
+        "door_open": [
+          {
+            "frame": 1256,
+            "value": true
+          },
+          {
+            "frame": 3171,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3455,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3531,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 401410,
+      "events": {
+        "door_open": [
+          {
+            "frame": 799,
+            "value": true
+          },
+          {
+            "frame": 2498,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2910,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 2986,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 401420,
+      "events": {
+        "door_open": [
+          {
+            "frame": 1081,
+            "value": true
+          },
+          {
+            "frame": 2990,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3386,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3462,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 401430,
+      "events": {
+        "door_open": [
+          {
+            "frame": 719,
+            "value": true
+          },
+          {
+            "frame": 2270,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2588,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 2664,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 401450,
+      "events": {
+        "door_open": [
+          {
+            "frame": 589,
+            "value": true
+          },
+          {
+            "frame": 2482,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2877,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 2953,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 401460,
+      "events": {
+        "door_open": [
+          {
+            "frame": 1107,
+            "value": true
+          },
+          {
+            "frame": 2829,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3236,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3312,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 401470,
+      "events": {
+        "door_open": [
+          {
+            "frame": 1015,
+            "value": true
+          },
+          {
+            "frame": 2934,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3282,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3358,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 401480,
+      "events": {
+        "door_open": [
+          {
+            "frame": 626,
+            "value": true
+          },
+          {
+            "frame": 2659,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3077,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3153,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 401490,
+      "events": {
+        "door_open": [
+          {
+            "frame": 628,
+            "value": true
+          },
+          {
+            "frame": 2743,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3241,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3317,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 401500,
+      "events": {
+        "door_open": [
+          {
+            "frame": 576,
+            "value": true
+          },
+          {
+            "frame": 2309,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2722,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 2798,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 401510,
+      "events": {
+        "door_open": [
+          {
+            "frame": 464,
+            "value": true
+          },
+          {
+            "frame": 2230,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2625,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 2701,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 401520,
+      "events": {
+        "door_open": [
+          {
+            "frame": 1368,
+            "value": true
+          },
+          {
+            "frame": 3407,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3807,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3883,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 401530,
+      "events": {
+        "door_open": [
+          {
+            "frame": 582,
+            "value": true
+          },
+          {
+            "frame": 2584,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2923,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": []
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": false
+    },
+    {
+      "episode": 401540,
+      "events": {
+        "door_open": [
+          {
+            "frame": 561,
+            "value": true
+          },
+          {
+            "frame": 2685,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3105,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3181,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 401560,
+      "events": {
+        "door_open": [
+          {
+            "frame": 624,
+            "value": true
+          },
+          {
+            "frame": 1883,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2137,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 2213,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 401580,
+      "events": {
+        "door_open": [
+          {
+            "frame": 387,
+            "value": true
+          },
+          {
+            "frame": 1612,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 1800,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 1876,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 401650,
+      "events": {
+        "door_open": [
+          {
+            "frame": 373,
+            "value": true
+          },
+          {
+            "frame": 1678,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 1936,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 2012,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 401710,
+      "events": {
+        "door_open": [
+          {
+            "frame": 427,
+            "value": true
+          },
+          {
+            "frame": 1863,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2128,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 2204,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 401860,
+      "events": {
+        "door_open": [
+          {
+            "frame": 437,
+            "value": true
+          },
+          {
+            "frame": 1760,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2002,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 2078,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 401880,
+      "events": {
+        "door_open": [
+          {
+            "frame": 531,
+            "value": true
+          },
+          {
+            "frame": 1907,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2112,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 2188,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 401910,
+      "events": {
+        "door_open": [
+          {
+            "frame": 568,
+            "value": true
+          },
+          {
+            "frame": 2430,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2641,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 2717,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 401950,
+      "events": {
+        "door_open": [
+          {
+            "frame": 244,
+            "value": true
+          },
+          {
+            "frame": 1762,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 1975,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 2051,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 402010,
+      "events": {
+        "door_open": [
+          {
+            "frame": 924,
+            "value": true
+          },
+          {
+            "frame": 2274,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2486,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 2562,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 402190,
+      "events": {
+        "door_open": [
+          {
+            "frame": 303,
+            "value": true
+          },
+          {
+            "frame": 1515,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 1773,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 1849,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 402230,
+      "events": {
+        "door_open": [
+          {
+            "frame": 932,
+            "value": true
+          },
+          {
+            "frame": 2052,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2273,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 2349,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 402340,
+      "events": {
+        "door_open": [
+          {
+            "frame": 454,
+            "value": true
+          },
+          {
+            "frame": 1602,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 1790,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 1866,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 402470,
+      "events": {
+        "door_open": [
+          {
+            "frame": 1029,
+            "value": true
+          },
+          {
+            "frame": 2377,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2520,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 2596,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 402500,
+      "events": {
+        "door_open": [
+          {
+            "frame": 333,
+            "value": true
+          },
+          {
+            "frame": 1328,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 1503,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 1579,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 402510,
+      "events": {
+        "door_open": [
+          {
+            "frame": 1044,
+            "value": true
+          },
+          {
+            "frame": 2626,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2999,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3075,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 402520,
+      "events": {
+        "door_open": [
+          {
+            "frame": 1289,
+            "value": true
+          },
+          {
+            "frame": 3746,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 4154,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 4230,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 402530,
+      "events": {
+        "door_open": [
+          {
+            "frame": 765,
+            "value": true
+          },
+          {
+            "frame": 2991,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3535,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3611,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 402550,
+      "events": {
+        "door_open": [
+          {
+            "frame": 1368,
+            "value": true
+          },
+          {
+            "frame": 3289,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3716,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3792,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 402560,
+      "events": {
+        "door_open": [
+          {
+            "frame": 1334,
+            "value": true
+          },
+          {
+            "frame": 3707,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 4070,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 4146,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 402570,
+      "events": {
+        "door_open": [
+          {
+            "frame": 927,
+            "value": true
+          },
+          {
+            "frame": 3104,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3457,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3533,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 402580,
+      "events": {
+        "door_open": [
+          {
+            "frame": 1490,
+            "value": true
+          },
+          {
+            "frame": 3807,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 4306,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 4382,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 402590,
+      "events": {
+        "door_open": [
+          {
+            "frame": 1053,
+            "value": true
+          },
+          {
+            "frame": 3155,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3648,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3724,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 402600,
+      "events": {
+        "door_open": [
+          {
+            "frame": 860,
+            "value": true
+          },
+          {
+            "frame": 2872,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3268,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3344,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 402610,
+      "events": {
+        "door_open": [
+          {
+            "frame": 794,
+            "value": true
+          },
+          {
+            "frame": 3268,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3725,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3801,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 402620,
+      "events": {
+        "door_open": [
+          {
+            "frame": 865,
+            "value": true
+          },
+          {
+            "frame": 3588,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 4021,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 4097,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 402630,
+      "events": {
+        "door_open": [
+          {
+            "frame": 647,
+            "value": true
+          },
+          {
+            "frame": 2977,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3395,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3471,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 402640,
+      "events": {
+        "door_open": [
+          {
+            "frame": 593,
+            "value": true
+          },
+          {
+            "frame": 2796,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3474,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3550,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 402650,
+      "events": {
+        "door_open": [
+          {
+            "frame": 675,
+            "value": true
+          },
+          {
+            "frame": 2939,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3443,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3519,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 402660,
+      "events": {
+        "door_open": [
+          {
+            "frame": 1012,
+            "value": true
+          },
+          {
+            "frame": 3355,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3770,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3846,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 402670,
+      "events": {
+        "door_open": [
+          {
+            "frame": 746,
+            "value": true
+          },
+          {
+            "frame": 4103,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 4599,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 4675,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 402680,
+      "events": {
+        "door_open": [
+          {
+            "frame": 1077,
+            "value": true
+          },
+          {
+            "frame": 3520,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 4047,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 4123,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 402710,
+      "events": {
+        "door_open": [
+          {
+            "frame": 643,
+            "value": true
+          },
+          {
+            "frame": 2740,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3214,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3290,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 402720,
+      "events": {
+        "door_open": [
+          {
+            "frame": 367,
+            "value": true
+          },
+          {
+            "frame": 2908,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3369,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3445,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 402740,
+      "events": {
+        "door_open": [
+          {
+            "frame": 864,
+            "value": true
+          },
+          {
+            "frame": 3315,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3874,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3950,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 402750,
+      "events": {
+        "door_open": [
+          {
+            "frame": 922,
+            "value": true
+          },
+          {
+            "frame": 3482,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3877,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3953,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 402760,
+      "events": {
+        "door_open": [
+          {
+            "frame": 1296,
+            "value": true
+          },
+          {
+            "frame": 3775,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 4235,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 4311,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 402770,
+      "events": {
+        "door_open": [
+          {
+            "frame": 1058,
+            "value": true
+          },
+          {
+            "frame": 3528,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3987,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 4063,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 402780,
+      "events": {
+        "door_open": [
+          {
+            "frame": 959,
+            "value": true
+          },
+          {
+            "frame": 3572,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3931,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 4007,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 402790,
+      "events": {
+        "door_open": [
+          {
+            "frame": 721,
+            "value": true
+          },
+          {
+            "frame": 2627,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2997,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3073,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 402800,
+      "events": {
+        "door_open": [
+          {
+            "frame": 1007,
+            "value": true
+          },
+          {
+            "frame": 2822,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3200,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3276,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 402810,
+      "events": {
+        "door_open": [
+          {
+            "frame": 862,
+            "value": true
+          },
+          {
+            "frame": 3012,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3317,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3393,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 402820,
+      "events": {
+        "door_open": [
+          {
+            "frame": 954,
+            "value": true
+          },
+          {
+            "frame": 3263,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3598,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3674,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 402830,
+      "events": {
+        "door_open": [
+          {
+            "frame": 675,
+            "value": true
+          },
+          {
+            "frame": 2737,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3087,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3163,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 402840,
+      "events": {
+        "door_open": [
+          {
+            "frame": 717,
+            "value": true
+          },
+          {
+            "frame": 3038,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3394,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3470,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 402850,
+      "events": {
+        "door_open": [
+          {
+            "frame": 1042,
+            "value": true
+          },
+          {
+            "frame": 3143,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3539,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3615,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 402860,
+      "events": {
+        "door_open": [
+          {
+            "frame": 944,
+            "value": true
+          },
+          {
+            "frame": 3034,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3288,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3364,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 402870,
+      "events": {
+        "door_open": [
+          {
+            "frame": 1274,
+            "value": true
+          },
+          {
+            "frame": 3082,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3408,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3484,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 402880,
+      "events": {
+        "door_open": [
+          {
+            "frame": 585,
+            "value": true
+          },
+          {
+            "frame": 1947,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2271,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 2347,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 402900,
+      "events": {
+        "door_open": [
+          {
+            "frame": 612,
+            "value": true
+          },
+          {
+            "frame": 2854,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3275,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3351,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 402910,
+      "events": {
+        "door_open": [
+          {
+            "frame": 415,
+            "value": true
+          },
+          {
+            "frame": 2827,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3168,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3244,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 402920,
+      "events": {
+        "door_open": [
+          {
+            "frame": 771,
+            "value": true
+          },
+          {
+            "frame": 2841,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3181,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3257,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 402930,
+      "events": {
+        "door_open": [
+          {
+            "frame": 535,
+            "value": true
+          },
+          {
+            "frame": 2569,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2883,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 2959,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 402940,
+      "events": {
+        "door_open": [
+          {
+            "frame": 411,
+            "value": true
+          },
+          {
+            "frame": 2404,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2715,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 2791,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 402950,
+      "events": {
+        "door_open": [
+          {
+            "frame": 980,
+            "value": true
+          },
+          {
+            "frame": 2609,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2874,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 2950,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 402960,
+      "events": {
+        "door_open": [
+          {
+            "frame": 808,
+            "value": true
+          },
+          {
+            "frame": 2172,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2473,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 2549,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 402970,
+      "events": {
+        "door_open": [
+          {
+            "frame": 559,
+            "value": true
+          },
+          {
+            "frame": 2433,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2691,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 2767,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 402980,
+      "events": {
+        "door_open": [
+          {
+            "frame": 803,
+            "value": true
+          },
+          {
+            "frame": 2618,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 2975,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3051,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 402990,
+      "events": {
+        "door_open": [
+          {
+            "frame": 912,
+            "value": true
+          },
+          {
+            "frame": 3172,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3544,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3620,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    },
+    {
+      "episode": 403000,
+      "events": {
+        "door_open": [
+          {
+            "frame": 930,
+            "value": true
+          },
+          {
+            "frame": 2727,
+            "value": false
+          }
+        ],
+        "started": [
+          {
+            "frame": 3057,
+            "value": true
+          }
+        ],
+        "cooked_popcorn_exists": [
+          {
+            "frame": 3133,
+            "value": true
+          }
+        ]
+      },
+      "door_reopened_after_close": false,
+      "started_then_off": false,
+      "started_while_door_open_frames": 0,
+      "cooked_at_final_observation": true
+    }
+  ]
+}

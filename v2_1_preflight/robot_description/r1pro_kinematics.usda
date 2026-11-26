@@ -1,0 +1,965 @@
+#usda 1.0
+(
+    metersPerUnit = 1
+    upAxis = "Z"
+)
+
+def Xform "r1pro"
+{
+    def Xform "base_link" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI"]
+    )
+    {
+        def PhysicsFixedJoint "steer_motor_joint1"
+        {
+            custom float drive:angular:physics:damping = 0
+            custom float drive:angular:physics:maxForce = 50
+            custom float drive:angular:physics:stiffness = 0
+            custom token drive:angular:physics:type = "force"
+            custom token physics:axis = "Z"
+            rel physics:body0 = </r1pro/base_link>
+            rel physics:body1 = </r1pro/steer_motor_link1>
+            float physics:breakForce = 3.4028235e38
+            float physics:breakTorque = 3.4028235e38
+            point3f physics:localPos0 = (0.16897, 0.28, 0.15765)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (1, 0, 0, 0)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            custom float physics:lowerLimit = -180.00041
+            custom float physics:upperLimit = 180.00041
+            custom float physxJoint:maxJointVelocity = 1145.9156
+        }
+
+        def PhysicsFixedJoint "steer_motor_joint2"
+        {
+            custom float drive:angular:physics:damping = 0
+            custom float drive:angular:physics:maxForce = 50
+            custom float drive:angular:physics:stiffness = 0
+            custom token drive:angular:physics:type = "force"
+            custom token physics:axis = "Z"
+            rel physics:body0 = </r1pro/base_link>
+            rel physics:body1 = </r1pro/steer_motor_link2>
+            float physics:breakForce = 3.4028235e38
+            float physics:breakTorque = 3.4028235e38
+            point3f physics:localPos0 = (0.16897, -0.28, 0.15765)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (1, 0, 0, 0)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            custom float physics:lowerLimit = -180.00041
+            custom float physics:upperLimit = 180.00041
+            custom float physxJoint:maxJointVelocity = 1145.9156
+        }
+
+        def PhysicsFixedJoint "steer_motor_joint3"
+        {
+            custom float drive:angular:physics:damping = 0
+            custom float drive:angular:physics:maxForce = 50
+            custom float drive:angular:physics:stiffness = 0
+            custom token drive:angular:physics:type = "force"
+            custom token physics:axis = "Z"
+            rel physics:body0 = </r1pro/base_link>
+            rel physics:body1 = </r1pro/steer_motor_link3>
+            float physics:breakForce = 3.4028235e38
+            float physics:breakTorque = 3.4028235e38
+            point3f physics:localPos0 = (-0.32703, 0, 0.15765)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (1, 0, 0, 0)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            custom float physics:lowerLimit = -180.00041
+            custom float physics:upperLimit = 180.00041
+            custom float physxJoint:maxJointVelocity = 1145.9156
+        }
+
+        def PhysicsRevoluteJoint "torso_joint1"
+        {
+            custom float drive:angular:physics:damping = 0
+            custom float drive:angular:physics:maxForce = 100
+            custom float drive:angular:physics:stiffness = 0
+            custom token drive:angular:physics:type = "force"
+            uniform token physics:axis = "Y"
+            rel physics:body0 = </r1pro/base_link>
+            rel physics:body1 = </r1pro/torso_link1>
+            float physics:breakForce = 3.4028235e38
+            float physics:breakTorque = 3.4028235e38
+            point3f physics:localPos0 = (-0.079032, 0, 0.34265)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (1, 0, 0, 0)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -65.00206
+            float physics:upperLimit = 105.00024
+            custom float physxJoint:maxJointVelocity = 143.23946
+        }
+    }
+
+    def Xform "steer_motor_link1" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI"]
+    )
+    {
+        def PhysicsFixedJoint "wheel_motor_joint1"
+        {
+            custom float drive:angular:physics:damping = 0
+            custom float drive:angular:physics:maxForce = 3.4028235e38
+            custom float drive:angular:physics:stiffness = 0
+            custom token drive:angular:physics:type = "force"
+            custom token physics:axis = "Y"
+            rel physics:body0 = </r1pro/steer_motor_link1>
+            rel physics:body1 = </r1pro/wheel_motor_link1>
+            float physics:breakForce = 3.4028235e38
+            float physics:breakTorque = 3.4028235e38
+            point3f physics:localPos0 = (0, 0, -0.08765)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (1, 0, 0, 0)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            custom float physxJoint:maxJointVelocity = inf
+        }
+    }
+
+    def Xform "wheel_motor_link1" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI"]
+    )
+    {
+    }
+
+    def Xform "steer_motor_link2" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI"]
+    )
+    {
+        def PhysicsFixedJoint "wheel_motor_joint2"
+        {
+            custom float drive:angular:physics:damping = 0
+            custom float drive:angular:physics:maxForce = 3.4028235e38
+            custom float drive:angular:physics:stiffness = 0
+            custom token drive:angular:physics:type = "force"
+            custom token physics:axis = "Y"
+            rel physics:body0 = </r1pro/steer_motor_link2>
+            rel physics:body1 = </r1pro/wheel_motor_link2>
+            float physics:breakForce = 3.4028235e38
+            float physics:breakTorque = 3.4028235e38
+            point3f physics:localPos0 = (0, 0, -0.08765)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (1, 0, 0, 0)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            custom float physxJoint:maxJointVelocity = inf
+        }
+    }
+
+    def Xform "wheel_motor_link2" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI"]
+    )
+    {
+    }
+
+    def Xform "steer_motor_link3" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI"]
+    )
+    {
+        def PhysicsFixedJoint "wheel_motor_joint3"
+        {
+            custom float drive:angular:physics:damping = 0
+            custom float drive:angular:physics:maxForce = 3.4028235e38
+            custom float drive:angular:physics:stiffness = 0
+            custom token drive:angular:physics:type = "force"
+            custom token physics:axis = "Y"
+            rel physics:body0 = </r1pro/steer_motor_link3>
+            rel physics:body1 = </r1pro/wheel_motor_link3>
+            float physics:breakForce = 3.4028235e38
+            float physics:breakTorque = 3.4028235e38
+            point3f physics:localPos0 = (0, 0, -0.08765)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (1, 0, 0, 0)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            custom float physxJoint:maxJointVelocity = inf
+        }
+    }
+
+    def Xform "wheel_motor_link3" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI"]
+    )
+    {
+    }
+
+    def Xform "torso_link1" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI"]
+    )
+    {
+        def PhysicsRevoluteJoint "torso_joint2"
+        {
+            custom float drive:angular:physics:damping = 0
+            custom float drive:angular:physics:maxForce = 100
+            custom float drive:angular:physics:stiffness = 0
+            custom token drive:angular:physics:type = "force"
+            uniform token physics:axis = "Y"
+            rel physics:body0 = </r1pro/torso_link1>
+            rel physics:body1 = </r1pro/torso_link2>
+            float physics:breakForce = 3.4028235e38
+            float physics:breakTorque = 3.4028235e38
+            point3f physics:localPos0 = (0, 0, 0.4)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (1, 0, 0, 0)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -159.99846
+            float physics:upperLimit = 144.99841
+            custom float physxJoint:maxJointVelocity = 143.23946
+        }
+    }
+
+    def Xform "torso_link2" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI"]
+    )
+    {
+        def PhysicsRevoluteJoint "torso_joint3"
+        {
+            custom float drive:angular:physics:damping = 0
+            custom float drive:angular:physics:maxForce = 100
+            custom float drive:angular:physics:stiffness = 0
+            custom token drive:angular:physics:type = "force"
+            uniform token physics:axis = "Y"
+            rel physics:body0 = </r1pro/torso_link2>
+            rel physics:body1 = </r1pro/torso_link3>
+            float physics:breakForce = 3.4028235e38
+            float physics:breakTorque = 3.4028235e38
+            point3f physics:localPos0 = (0, 0.0001005, 0.3)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0, 1, 0, 0)
+            quatf physics:localRot1 = (0, 1, 0, 0)
+            float physics:lowerLimit = -105.00024
+            float physics:upperLimit = 90.000206
+            custom float physxJoint:maxJointVelocity = 143.23946
+        }
+    }
+
+    def Xform "torso_link3" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI"]
+    )
+    {
+        def PhysicsRevoluteJoint "torso_joint4"
+        {
+            custom float drive:angular:physics:damping = 0
+            custom float drive:angular:physics:maxForce = 100
+            custom float drive:angular:physics:stiffness = 0
+            custom token drive:angular:physics:type = "force"
+            uniform token physics:axis = "Z"
+            rel physics:body0 = </r1pro/torso_link3>
+            rel physics:body1 = </r1pro/torso_link4>
+            float physics:breakForce = 3.4028235e38
+            float physics:breakTorque = 3.4028235e38
+            point3f physics:localPos0 = (0, -0.00010015, 0.09962)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (1, 0, 0, 0)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -174.99849
+            float physics:upperLimit = 174.99849
+            custom float physxJoint:maxJointVelocity = 143.23946
+        }
+    }
+
+    def Xform "torso_link4" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI"]
+    )
+    {
+        def PhysicsFixedJoint "left_arm_base_joint"
+        {
+            rel physics:body0 = </r1pro/torso_link4>
+            rel physics:body1 = </r1pro/left_arm_base_link>
+            float physics:breakForce = 3.4028235e38
+            float physics:breakTorque = 3.4028235e38
+            point3f physics:localPos0 = (-0.00048618, 0.097234, 0.30302)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.70710677, 0, 0.70710677, 0)
+            quatf physics:localRot1 = (0.70710677, 0, 0.70710677, 0)
+        }
+
+        def PhysicsFixedJoint "right_arm_base_joint"
+        {
+            rel physics:body0 = </r1pro/torso_link4>
+            rel physics:body1 = </r1pro/right_arm_base_link>
+            float physics:breakForce = 3.4028235e38
+            float physics:breakTorque = 3.4028235e38
+            point3f physics:localPos0 = (-0.00048706, -0.097236, 0.30302)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.70710677, 0, 0.70710677, 0)
+            quatf physics:localRot1 = (0.70710677, 0, 0.70710677, 0)
+        }
+
+        def PhysicsFixedJoint "zed_joint"
+        {
+            rel physics:body0 = </r1pro/torso_link4>
+            rel physics:body1 = </r1pro/zed_link>
+            float physics:breakForce = 3.4028235e38
+            float physics:breakTorque = 3.4028235e38
+            point3f physics:localPos0 = (0.065511, 0.060003, 0.47598)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (-0.1228022, -0.122799695, 0.69636214, -0.69636166)
+            quatf physics:localRot1 = (0.70710677, 0, 0.70710677, 0)
+        }
+    }
+
+    def Xform "left_arm_base_link" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI"]
+    )
+    {
+        def PhysicsRevoluteJoint "left_arm_joint1"
+        {
+            custom float drive:angular:physics:damping = 0
+            custom float drive:angular:physics:maxForce = 55
+            custom float drive:angular:physics:stiffness = 0
+            custom token drive:angular:physics:type = "force"
+            uniform token physics:axis = "Y"
+            rel physics:body0 = </r1pro/left_arm_base_link>
+            rel physics:body1 = </r1pro/left_arm_link1>
+            float physics:breakForce = 3.4028235e38
+            float physics:breakTorque = 3.4028235e38
+            point3f physics:localPos0 = (0, 0.0735, 0)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (1, 0, 0, 0)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -255.0006
+            float physics:upperLimit = 75.000175
+            custom float physxJoint:maxJointVelocity = 407.99753
+        }
+    }
+
+    def Xform "left_arm_link1" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI"]
+    )
+    {
+        def PhysicsRevoluteJoint "left_arm_joint2"
+        {
+            custom float drive:angular:physics:damping = 0
+            custom float drive:angular:physics:maxForce = 55
+            custom float drive:angular:physics:stiffness = 0
+            custom token drive:angular:physics:type = "force"
+            uniform token physics:axis = "X"
+            rel physics:body0 = </r1pro/left_arm_link1>
+            rel physics:body1 = </r1pro/left_arm_link2>
+            float physics:breakForce = 3.4028235e38
+            float physics:breakTorque = 3.4028235e38
+            point3f physics:localPos0 = (0.025012, 0.081265, 0)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (1, 0, 0, 0)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -9.998114
+            float physics:upperLimit = 180.00041
+            custom float physxJoint:maxJointVelocity = 407.99753
+        }
+    }
+
+    def Xform "left_arm_link2" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI"]
+    )
+    {
+        def PhysicsRevoluteJoint "left_arm_joint3"
+        {
+            custom float drive:angular:physics:damping = 0
+            custom float drive:angular:physics:maxForce = 25
+            custom float drive:angular:physics:stiffness = 0
+            custom token drive:angular:physics:type = "force"
+            uniform token physics:axis = "Z"
+            rel physics:body0 = </r1pro/left_arm_link2>
+            rel physics:body1 = </r1pro/left_arm_link3>
+            float physics:breakForce = 3.4028235e38
+            float physics:breakTorque = 3.4028235e38
+            point3f physics:localPos0 = (-0.025012, 0, -0.1155)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (1, 0, 0, 0)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -135.00008
+            float physics:upperLimit = 135.00008
+            custom float physxJoint:maxJointVelocity = 480.0011
+        }
+    }
+
+    def Xform "left_arm_link3" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI"]
+    )
+    {
+        def PhysicsRevoluteJoint "left_arm_joint4"
+        {
+            custom float drive:angular:physics:damping = 0
+            custom float drive:angular:physics:maxForce = 25
+            custom float drive:angular:physics:stiffness = 0
+            custom token drive:angular:physics:type = "force"
+            uniform token physics:axis = "Y"
+            rel physics:body0 = </r1pro/left_arm_link3>
+            rel physics:body1 = </r1pro/left_arm_link4>
+            float physics:breakForce = 3.4028235e38
+            float physics:breakTorque = 3.4028235e38
+            point3f physics:localPos0 = (0, 0.035065, -0.1945)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (1, 0, 0, 0)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -120.00027
+            float physics:upperLimit = 20.001955
+            custom float physxJoint:maxJointVelocity = 480.0011
+        }
+    }
+
+    def Xform "left_arm_link4" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI"]
+    )
+    {
+        def PhysicsRevoluteJoint "left_arm_joint5"
+        {
+            custom float drive:angular:physics:damping = 0
+            custom float drive:angular:physics:maxForce = 18
+            custom float drive:angular:physics:stiffness = 0
+            custom token drive:angular:physics:type = "force"
+            uniform token physics:axis = "Z"
+            rel physics:body0 = </r1pro/left_arm_link4>
+            rel physics:body1 = </r1pro/left_arm_link5>
+            float physics:breakForce = 3.4028235e38
+            float physics:breakTorque = 3.4028235e38
+            point3f physics:localPos0 = (0, -0.035065, -0.095)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (1, 0, 0, 0)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -135.00008
+            float physics:upperLimit = 135.00008
+            custom float physxJoint:maxJointVelocity = 600.0014
+        }
+    }
+
+    def Xform "left_arm_link5" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI"]
+    )
+    {
+        def PhysicsRevoluteJoint "left_arm_joint6"
+        {
+            custom float drive:angular:physics:damping = 0
+            custom float drive:angular:physics:maxForce = 18
+            custom float drive:angular:physics:stiffness = 0
+            custom token drive:angular:physics:type = "force"
+            uniform token physics:axis = "Y"
+            rel physics:body0 = </r1pro/left_arm_link5>
+            rel physics:body1 = </r1pro/left_arm_link6>
+            float physics:breakForce = 3.4028235e38
+            float physics:breakTorque = 3.4028235e38
+            point3f physics:localPos0 = (0, -0.028, -0.16305)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (1, 0, 0, 0)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -60.000027
+            float physics:upperLimit = 60.000027
+            custom float physxJoint:maxJointVelocity = 600.0014
+        }
+    }
+
+    def Xform "left_arm_link6" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI"]
+    )
+    {
+        def PhysicsRevoluteJoint "left_arm_joint7"
+        {
+            custom float drive:angular:physics:damping = 0
+            custom float drive:angular:physics:maxForce = 18
+            custom float drive:angular:physics:stiffness = 0
+            custom token drive:angular:physics:type = "force"
+            uniform token physics:axis = "X"
+            rel physics:body0 = </r1pro/left_arm_link6>
+            rel physics:body1 = </r1pro/left_arm_link7>
+            float physics:breakForce = 3.4028235e38
+            float physics:breakTorque = 3.4028235e38
+            point3f physics:localPos0 = (0.0295, 0.028, 0)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (1, 0, 0, 0)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -90.000206
+            float physics:upperLimit = 90.000206
+            custom float physxJoint:maxJointVelocity = 600.0014
+        }
+    }
+
+    def Xform "left_arm_link7" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI"]
+    )
+    {
+        def PhysicsFixedJoint "left_gripper_joint"
+        {
+            rel physics:body0 = </r1pro/left_arm_link7>
+            rel physics:body1 = </r1pro/left_gripper_link>
+            float physics:breakForce = 3.4028235e38
+            float physics:breakTorque = 3.4028235e38
+            point3f physics:localPos0 = (-0.0295, 0, -0.16065)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.70710677, 0, 0.70710677, 0)
+            quatf physics:localRot1 = (0.70710677, 0, 0.70710677, 0)
+        }
+    }
+
+    def Xform "left_gripper_link" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI"]
+    )
+    {
+        def PhysicsPrismaticJoint "left_gripper_finger_joint1"
+        {
+            custom float drive:linear:physics:damping = 0
+            custom float drive:linear:physics:maxForce = 100
+            custom float drive:linear:physics:stiffness = 0
+            custom token drive:linear:physics:type = "force"
+            uniform token physics:axis = "Y"
+            rel physics:body0 = </r1pro/left_gripper_link>
+            rel physics:body1 = </r1pro/left_gripper_finger_link1>
+            float physics:breakForce = 3.4028235e38
+            float physics:breakTorque = 3.4028235e38
+            point3f physics:localPos0 = (-0.000088709, 0.013453, -0.03689)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (1, 0, 0, 0)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = 0
+            float physics:upperLimit = 0.05
+            custom float physxJoint:maxJointVelocity = 0.25
+        }
+
+        def PhysicsPrismaticJoint "left_gripper_finger_joint2"
+        {
+            custom float drive:linear:physics:damping = 0
+            custom float drive:linear:physics:maxForce = 100
+            custom float drive:linear:physics:stiffness = 0
+            custom token drive:linear:physics:type = "force"
+            uniform token physics:axis = "Y"
+            rel physics:body0 = </r1pro/left_gripper_link>
+            rel physics:body1 = </r1pro/left_gripper_finger_link2>
+            float physics:breakForce = 3.4028235e38
+            float physics:breakTorque = 3.4028235e38
+            point3f physics:localPos0 = (0.000089046, -0.013453, -0.03689)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0, 1, 0, 0)
+            quatf physics:localRot1 = (0, 1, 0, 0)
+            float physics:lowerLimit = 0
+            float physics:upperLimit = 0.05
+            custom float physxJoint:maxJointVelocity = 0.25
+        }
+
+        def PhysicsFixedJoint "left_realsense_joint"
+        {
+            rel physics:body0 = </r1pro/left_gripper_link>
+            rel physics:body1 = </r1pro/left_realsense_link>
+            float physics:breakForce = 3.4028235e38
+            float physics:breakTorque = 3.4028235e38
+            point3f physics:localPos0 = (0.05051, 0.0028934, 0.0051317)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.8433849, -0.0015274044, -0.53730685, 0.00096990325)
+            quatf physics:localRot1 = (0.70710677, 0, 0.70710677, 0)
+        }
+
+        def PhysicsFixedJoint "left_gripper_link_left_eef_link_joint"
+        {
+            rel physics:body0 = </r1pro/left_gripper_link>
+            rel physics:body1 = </r1pro/left_eef_link>
+            uniform bool physics:excludeFromArticulation = 0
+            bool physics:jointEnabled = 1
+            point3f physics:localPos0 = (0, 0, -0.06)
+            quatf physics:localRot0 = (0, 0, 1, 0)
+        }
+    }
+
+    def Xform "left_gripper_finger_link1" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI"]
+    )
+    {
+    }
+
+    def Xform "left_gripper_finger_link2" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI"]
+    )
+    {
+    }
+
+    def Xform "left_realsense_link" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI"]
+    )
+    {
+    }
+
+    def Xform "right_arm_base_link" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI"]
+    )
+    {
+        def PhysicsRevoluteJoint "right_arm_joint1"
+        {
+            custom float drive:angular:physics:damping = 0
+            custom float drive:angular:physics:maxForce = 55
+            custom float drive:angular:physics:stiffness = 0
+            custom token drive:angular:physics:type = "force"
+            uniform token physics:axis = "Y"
+            rel physics:body0 = </r1pro/right_arm_base_link>
+            rel physics:body1 = </r1pro/right_arm_link1>
+            float physics:breakForce = 3.4028235e38
+            float physics:breakTorque = 3.4028235e38
+            point3f physics:localPos0 = (0, -0.0735, 0)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (1, 0, 0, 0)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -255.0006
+            float physics:upperLimit = 75.000175
+            custom float physxJoint:maxJointVelocity = 407.99753
+        }
+    }
+
+    def Xform "right_arm_link1" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI"]
+    )
+    {
+        def PhysicsRevoluteJoint "right_arm_joint2"
+        {
+            custom float drive:angular:physics:damping = 0
+            custom float drive:angular:physics:maxForce = 55
+            custom float drive:angular:physics:stiffness = 0
+            custom token drive:angular:physics:type = "force"
+            uniform token physics:axis = "X"
+            rel physics:body0 = </r1pro/right_arm_link1>
+            rel physics:body1 = </r1pro/right_arm_link2>
+            float physics:breakForce = 3.4028235e38
+            float physics:breakTorque = 3.4028235e38
+            point3f physics:localPos0 = (0.023988, -0.081265, 0)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (1, 0, 0, 0)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -180.00041
+            float physics:upperLimit = 9.998114
+            custom float physxJoint:maxJointVelocity = 407.99753
+        }
+    }
+
+    def Xform "right_arm_link2" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI"]
+    )
+    {
+        def PhysicsRevoluteJoint "right_arm_joint3"
+        {
+            custom float drive:angular:physics:damping = 0
+            custom float drive:angular:physics:maxForce = 25
+            custom float drive:angular:physics:stiffness = 0
+            custom token drive:angular:physics:type = "force"
+            uniform token physics:axis = "Z"
+            rel physics:body0 = </r1pro/right_arm_link2>
+            rel physics:body1 = </r1pro/right_arm_link3>
+            float physics:breakForce = 3.4028235e38
+            float physics:breakTorque = 3.4028235e38
+            point3f physics:localPos0 = (-0.023988, 0, -0.1155)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (1, 0, 0, 0)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -135.00008
+            float physics:upperLimit = 135.00008
+            custom float physxJoint:maxJointVelocity = 480.0011
+        }
+    }
+
+    def Xform "right_arm_link3" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI"]
+    )
+    {
+        def PhysicsRevoluteJoint "right_arm_joint4"
+        {
+            custom float drive:angular:physics:damping = 0
+            custom float drive:angular:physics:maxForce = 25
+            custom float drive:angular:physics:stiffness = 0
+            custom token drive:angular:physics:type = "force"
+            uniform token physics:axis = "Y"
+            rel physics:body0 = </r1pro/right_arm_link3>
+            rel physics:body1 = </r1pro/right_arm_link4>
+            float physics:breakForce = 3.4028235e38
+            float physics:breakTorque = 3.4028235e38
+            point3f physics:localPos0 = (0, 0.035058, -0.1945)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (1, 0, 0, 0)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -120.00027
+            float physics:upperLimit = 20.001955
+            custom float physxJoint:maxJointVelocity = 480.0011
+        }
+    }
+
+    def Xform "right_arm_link4" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI"]
+    )
+    {
+        def PhysicsRevoluteJoint "right_arm_joint5"
+        {
+            custom float drive:angular:physics:damping = 0
+            custom float drive:angular:physics:maxForce = 18
+            custom float drive:angular:physics:stiffness = 0
+            custom token drive:angular:physics:type = "force"
+            uniform token physics:axis = "Z"
+            rel physics:body0 = </r1pro/right_arm_link4>
+            rel physics:body1 = </r1pro/right_arm_link5>
+            float physics:breakForce = 3.4028235e38
+            float physics:breakTorque = 3.4028235e38
+            point3f physics:localPos0 = (0, -0.035058, -0.095)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (1, 0, 0, 0)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -135.00008
+            float physics:upperLimit = 135.00008
+            custom float physxJoint:maxJointVelocity = 600.0014
+        }
+    }
+
+    def Xform "right_arm_link5" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI"]
+    )
+    {
+        def PhysicsRevoluteJoint "right_arm_joint6"
+        {
+            custom float drive:angular:physics:damping = 0
+            custom float drive:angular:physics:maxForce = 18
+            custom float drive:angular:physics:stiffness = 0
+            custom token drive:angular:physics:type = "force"
+            uniform token physics:axis = "Y"
+            rel physics:body0 = </r1pro/right_arm_link5>
+            rel physics:body1 = </r1pro/right_arm_link6>
+            float physics:breakForce = 3.4028235e38
+            float physics:breakTorque = 3.4028235e38
+            point3f physics:localPos0 = (0, 0.028001, -0.16305)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (1, 0, 0, 0)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -60.000027
+            float physics:upperLimit = 60.000027
+            custom float physxJoint:maxJointVelocity = 600.0014
+        }
+    }
+
+    def Xform "right_arm_link6" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI"]
+    )
+    {
+        def PhysicsRevoluteJoint "right_arm_joint7"
+        {
+            custom float drive:angular:physics:damping = 0
+            custom float drive:angular:physics:maxForce = 18
+            custom float drive:angular:physics:stiffness = 0
+            custom token drive:angular:physics:type = "force"
+            uniform token physics:axis = "X"
+            rel physics:body0 = </r1pro/right_arm_link6>
+            rel physics:body1 = </r1pro/right_arm_link7>
+            float physics:breakForce = 3.4028235e38
+            float physics:breakTorque = 3.4028235e38
+            point3f physics:localPos0 = (0.0295, -0.028001, 0)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (1, 0, 0, 0)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -90.000206
+            float physics:upperLimit = 90.000206
+            custom float physxJoint:maxJointVelocity = 600.0014
+        }
+    }
+
+    def Xform "right_arm_link7" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI"]
+    )
+    {
+        def PhysicsFixedJoint "right_gripper_joint"
+        {
+            rel physics:body0 = </r1pro/right_arm_link7>
+            rel physics:body1 = </r1pro/right_gripper_link>
+            float physics:breakForce = 3.4028235e38
+            float physics:breakTorque = 3.4028235e38
+            point3f physics:localPos0 = (-0.0295, 0, -0.16065)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.70710677, 0, 0.70710677, 0)
+            quatf physics:localRot1 = (0.70710677, 0, 0.70710677, 0)
+        }
+    }
+
+    def Xform "right_gripper_link" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI"]
+    )
+    {
+        def PhysicsPrismaticJoint "right_gripper_finger_joint1"
+        {
+            custom float drive:linear:physics:damping = 0
+            custom float drive:linear:physics:maxForce = 100
+            custom float drive:linear:physics:stiffness = 0
+            custom token drive:linear:physics:type = "force"
+            uniform token physics:axis = "Y"
+            rel physics:body0 = </r1pro/right_gripper_link>
+            rel physics:body1 = </r1pro/right_gripper_finger_link1>
+            float physics:breakForce = 3.4028235e38
+            float physics:breakTorque = 3.4028235e38
+            point3f physics:localPos0 = (-0.000088709, 0.013453, -0.03689)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (1, 0, 0, 0)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = 0
+            float physics:upperLimit = 0.05
+            custom float physxJoint:maxJointVelocity = 0.25
+        }
+
+        def PhysicsPrismaticJoint "right_gripper_finger_joint2"
+        {
+            custom float drive:linear:physics:damping = 0
+            custom float drive:linear:physics:maxForce = 100
+            custom float drive:linear:physics:stiffness = 0
+            custom token drive:linear:physics:type = "force"
+            uniform token physics:axis = "Y"
+            rel physics:body0 = </r1pro/right_gripper_link>
+            rel physics:body1 = </r1pro/right_gripper_finger_link2>
+            float physics:breakForce = 3.4028235e38
+            float physics:breakTorque = 3.4028235e38
+            point3f physics:localPos0 = (0.000089046, -0.013453, -0.03689)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0, 1, 0, 0)
+            quatf physics:localRot1 = (0, 1, 0, 0)
+            float physics:lowerLimit = 0
+            float physics:upperLimit = 0.05
+            custom float physxJoint:maxJointVelocity = 0.25
+        }
+
+        def PhysicsFixedJoint "right_realsense_joint"
+        {
+            rel physics:body0 = </r1pro/right_gripper_link>
+            rel physics:body1 = </r1pro/right_realsense_link>
+            float physics:breakForce = 3.4028235e38
+            float physics:breakTorque = 3.4028235e38
+            point3f physics:localPos0 = (0.05051, 0.0028934, 0.0051317)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.8433849, -0.0015274044, -0.53730685, 0.00096990325)
+            quatf physics:localRot1 = (0.70710677, 0, 0.70710677, 0)
+        }
+
+        def PhysicsFixedJoint "right_gripper_link_right_eef_link_joint"
+        {
+            rel physics:body0 = </r1pro/right_gripper_link>
+            rel physics:body1 = </r1pro/right_eef_link>
+            uniform bool physics:excludeFromArticulation = 0
+            bool physics:jointEnabled = 1
+            point3f physics:localPos0 = (0, 0, -0.06)
+            quatf physics:localRot0 = (0, 0, 1, 0)
+        }
+    }
+
+    def Xform "right_gripper_finger_link1" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI"]
+    )
+    {
+    }
+
+    def Xform "right_gripper_finger_link2" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI"]
+    )
+    {
+    }
+
+    def Xform "right_realsense_link" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI"]
+    )
+    {
+    }
+
+    def Xform "zed_link" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI"]
+    )
+    {
+    }
+
+    def Xform "left_eef_link" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI"]
+    )
+    {
+    }
+
+    def Xform "right_eef_link" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI"]
+    )
+    {
+    }
+
+    def Xform "base_footprint_rz" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI"]
+    )
+    {
+        def PhysicsRevoluteJoint "base_footprint_rz_joint"
+        {
+            uniform token physics:axis = "Z"
+            rel physics:body0 = </r1pro/base_footprint_rz>
+            rel physics:body1 = </r1pro/base_link>
+            uniform bool physics:excludeFromArticulation = 0
+            bool physics:jointEnabled = 1
+            point3f physics:localPos0 = (0, 0, 0)
+            quatf physics:localRot0 = (1, 0, 0, 0)
+        }
+    }
+
+    def Xform "base_footprint_ry" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI"]
+    )
+    {
+        def PhysicsRevoluteJoint "base_footprint_ry_joint"
+        {
+            uniform token physics:axis = "Y"
+            rel physics:body0 = </r1pro/base_footprint_ry>
+            rel physics:body1 = </r1pro/base_footprint_rz>
+            uniform bool physics:excludeFromArticulation = 0
+            bool physics:jointEnabled = 1
+            point3f physics:localPos0 = (0, 0, 0)
+            quatf physics:localRot0 = (1, 0, 0, 0)
+        }
+    }
+
+    def Xform "base_footprint_rx" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI"]
+    )
+    {
+        def PhysicsRevoluteJoint "base_footprint_rx_joint"
+        {
+            uniform token physics:axis = "X"
+            rel physics:body0 = </r1pro/base_footprint_rx>
+            rel physics:body1 = </r1pro/base_footprint_ry>
+            uniform bool physics:excludeFromArticulation = 0
+            bool physics:jointEnabled = 1
+            point3f physics:localPos0 = (0, 0, 0)
+            quatf physics:localRot0 = (1, 0, 0, 0)
+        }
+    }
+
+    def Xform "base_footprint_z" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI"]
+    )
+    {
+        def PhysicsPrismaticJoint "base_footprint_z_joint"
+        {
+            uniform token physics:axis = "Z"
+            rel physics:body0 = </r1pro/base_footprint_z>
+            rel physics:body1 = </r1pro/base_footprint_rx>
+            uniform bool physics:excludeFromArticulation = 0
+            bool physics:jointEnabled = 1
+            point3f physics:localPos0 = (0, 0, 0)
+            quatf physics:localRot0 = (1, 0, 0, 0)
+        }
+    }
+
+    def Xform "base_footprint_y" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI"]
+    )
+    {
+        def PhysicsPrismaticJoint "base_footprint_y_joint"
+        {
+            uniform token physics:axis = "Y"
+            rel physics:body0 = </r1pro/base_footprint_y>
+            rel physics:body1 = </r1pro/base_footprint_z>
+            uniform bool physics:excludeFromArticulation = 0
+            bool physics:jointEnabled = 1
+            point3f physics:localPos0 = (0, 0, 0)
+            quatf physics:localRot0 = (1, 0, 0, 0)
+        }
+    }
+
+    def Xform "base_footprint_x" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI"]
+    )
+    {
+        def PhysicsPrismaticJoint "base_footprint_x_joint"
+        {
+            uniform token physics:axis = "X"
+            rel physics:body0 = </r1pro/base_footprint_x>
+            rel physics:body1 = </r1pro/base_footprint_y>
+            uniform bool physics:excludeFromArticulation = 0
+            bool physics:jointEnabled = 1
+            point3f physics:localPos0 = (0, 0, 0)
+            quatf physics:localRot0 = (1, 0, 0, 0)
+        }
+    }
+}
+

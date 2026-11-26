@@ -1,0 +1,12 @@
+{
+  "status": "stopped",
+  "completed": 0,
+  "total": 1,
+  "stage": "V2.1 official state extraction / 200 demos",
+  "elapsed_seconds": 482.31177718099207,
+  "step": 13,
+  "steps": 200,
+  "loss": null,
+  "cognitive_q_gradient": null,
+  "returncode": -15
+}

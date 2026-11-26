@@ -1,0 +1,36 @@
+[
+  {
+    "job_id": "20261126-200257-15a1de03",
+    "status": {
+      "status": "stopped",
+      "completed": 0,
+      "total": 1,
+      "stage": "V2.1 official state extraction / 200 demos",
+      "elapsed_seconds": 482.31177718099207,
+      "step": 13,
+      "steps": 200,
+      "loss": null,
+      "cognitive_q_gradient": null,
+      "returncode": -15
+    },
+    "original_process_alive": false,
+    "reason": "Intentional stop of read-only extraction; CPU decoder completed all200 after reference agreement. Not a completed200 simulator job."
+  },
+  {
+    "job_id": "20261126-201130-d9b4bb46",
+    "status": {
+      "status": "stopped",
+      "completed": 0,
+      "total": 1,
+      "stage": "V2.1 official state extraction / 200 demos",
+      "elapsed_seconds": 729.2808420672081,
+      "step": 37,
+      "steps": 200,
+      "loss": null,
+      "cognitive_q_gradient": null,
+      "returncode": -15
+    },
+    "original_process_alive": false,
+    "reason": "Intentional stop of read-only extraction; CPU decoder completed all200 after reference agreement. Not a completed200 simulator job."
+  }
+]

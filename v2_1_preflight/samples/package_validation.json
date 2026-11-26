@@ -1,0 +1,19 @@
+{
+  "passed": true,
+  "episodes": 200,
+  "frames": 647555,
+  "nullable_labels_checked": 5,
+  "state_dimensions": 82,
+  "action_channels": 23,
+  "joints": 43,
+  "links": 44,
+  "inventory_entries": 87,
+  "object_state_classes": 55,
+  "fk_comparisons": 300,
+  "official_reference_episodes": 37,
+  "official_reference_frames": 127312,
+  "video_metadata_records": 600,
+  "keyframes": 72,
+  "git_exact_sources": 35,
+  "limits": "Validates bundled values/provenance, not a new physics replay, independent official deserialization or model forward. Inside and grasp remain unknown."
+}
