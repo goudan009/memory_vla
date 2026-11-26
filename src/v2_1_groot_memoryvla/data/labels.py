@@ -34,9 +34,10 @@ class Labels:
 
 def state_terms(logits,target,quality,pos_weight,weak_weight=.5):
     if logits.shape!=target.shape or target.shape!=quality.shape:raise ValueError("state shape mismatch")
+    if not ((quality==0)|(quality==1)|(quality==2)).all():raise ValueError('invalid quality code')
     known=quality>0
     target=torch.where(known,target,0.).float()
-    if not torch.isfinite(target).all():raise ValueError("bad known targets")
+    if not ((target==0)|(target==1)).all():raise ValueError("bad known targets")
     weight=torch.where(quality==1,1.,torch.where(quality==2,weak_weight,0.))
     loss=F.binary_cross_entropy_with_logits(logits.float(),target,pos_weight=pos_weight.float(),reduction="none")
     return (loss*weight).sum(0),known.sum(0)
