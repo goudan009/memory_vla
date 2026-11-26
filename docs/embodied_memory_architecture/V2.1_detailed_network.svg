@@ -1,0 +1,500 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2160" height="1450" viewBox="0 0 2160 1450" font-family="Noto Sans CJK SC, Microsoft YaHei, PingFang SC, Arial, sans-serif"><title>V2.1 详细 Token 架构及梯度路径</title><desc>四个模块、双记忆、联合相关性矩阵、自由度修正、前向及反向传播。</desc><defs><marker id="fwd" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#8795a4"/></marker><marker id="grad" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#b74649"/></marker><marker id="write" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#a66a21"/></marker><marker id="loop" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#257065"/></marker></defs><rect x="0" y="0" width="2160" height="1450" rx="0" fill="#f7f9fb" stroke="#f7f9fb" stroke-width="1.4"/>
+<text x="35" y="45" font-size="34" font-weight="750" fill="#243242" text-anchor="start">V2.1  ·  任务—本体联合记忆检索与协同速度场修正</text>
+<text x="36" y="75" font-size="17" font-weight="400" fill="#667789" text-anchor="start">Stage 2 / B1K 单样本示意  ·  H=50, N=23, L=64  ·  灰色冻结、蓝色训练、橙色历史  ·  所有维度以真实 checkpoint / processor 验证为准</text>
+<rect x="36" y="87" width="19" height="15" rx="2" fill="#f0f3f6" stroke="#a4afb9" stroke-width="1.4"/>
+<text x="62" y="100" font-size="14" font-weight="400" fill="#243242" text-anchor="start">冻结 GR00T</text>
+<rect x="185" y="87" width="19" height="15" rx="2" fill="#e8f1fb" stroke="#8daecc" stroke-width="1.4"/>
+<text x="211" y="100" font-size="14" font-weight="400" fill="#243242" text-anchor="start">可训练模块</text>
+<rect x="335" y="87" width="19" height="15" rx="2" fill="#fff0da" stroke="#d7a15a" stroke-width="1.4"/>
+<text x="361" y="100" font-size="14" font-weight="400" fill="#243242" text-anchor="start">记忆 / 读出</text>
+<polyline points="510,94 567,94" fill="none" stroke="#8795a4" stroke-width="1.8"  stroke-linejoin="round" marker-end="url(#fwd)"/>
+<text x="578" y="100" font-size="14" font-weight="400" fill="#243242" text-anchor="start">前向</text>
+<polyline points="650,94 707,94" fill="none" stroke="#b74649" stroke-width="2.4" stroke-dasharray="9 6" stroke-linejoin="round" marker-end="url(#grad)"/>
+<text x="718" y="100" font-size="14" font-weight="400" fill="#243242" text-anchor="start">反向梯度（示意）</text>
+<polyline points="870,94 927,94" fill="none" stroke="#a66a21" stroke-width="1.8" stroke-dasharray="3 6" stroke-linejoin="round" marker-end="url(#write)"/>
+<text x="938" y="100" font-size="14" font-weight="400" fill="#243242" text-anchor="start">detach 写入下一决策</text>
+<polyline points="1155,94 1212,94" fill="none" stroke="#257065" stroke-width="1.8" stroke-dasharray="7 5" stroke-linejoin="round" marker-end="url(#loop)"/>
+<text x="1223" y="100" font-size="14" font-weight="400" fill="#243242" text-anchor="start">推理循环</text>
+<text x="2108" y="100" font-size="15" font-weight="500" fill="#667789" text-anchor="end">实线跨区同名端口为同一张量；训练不展开推理循环</text>
+<rect x="35" y="120" width="490" height="595" rx="12" fill="#ffffff" stroke="#c7d2dd" stroke-width="1.4"/>
+<rect x="48" y="133" width="34" height="34" rx="6" fill="#263e58" stroke="#263e58" stroke-width="1.4"/>
+<text x="65" y="156" font-size="19" font-weight="700" fill="#ffffff" text-anchor="middle">1</text>
+<text x="93" y="157" font-size="22" font-weight="700" fill="#243242" text-anchor="start">当前观测与本体编码</text>
+<rect x="52" y="174" width="455" height="69" rx="8" fill="#f0f3f6" stroke="#a4afb9" stroke-width="1.4"/>
+<text x="64" y="198" font-size="18" font-weight="650" fill="#243242" text-anchor="start">输入：三相机图像  +  指令 l</text>
+<text x="64" y="221" font-size="15" font-weight="400" fill="#667789" text-anchor="start">head / left wrist / right wrist · 256×256</text>
+<rect x="52" y="259" width="455" height="82" rx="8" fill="#f0f3f6" stroke="#a4afb9" stroke-width="1.4"/>
+<text x="64" y="283" font-size="18" font-weight="650" fill="#243242" text-anchor="start">Eagle 视觉编码 + mlp1 + LLM</text>
+<text x="64" y="306" font-size="15" font-weight="400" fill="#667789" text-anchor="start">保留完整原 VLM 条件；提取 LLM 前视觉、user EOS</text>
+<polyline points="280,243 280,259" fill="none" stroke="#8795a4" stroke-width="1.8"  stroke-linejoin="round" marker-end="url(#fwd)"/>
+<rect x="64" y="352" width="18" height="22" rx="2" fill="#c9d7e6" stroke="#8799ac" stroke-width="1"/>
+<rect x="87" y="352" width="18" height="22" rx="2" fill="#c9d7e6" stroke="#8799ac" stroke-width="1"/>
+<rect x="110" y="352" width="18" height="22" rx="2" fill="#c9d7e6" stroke="#8799ac" stroke-width="1"/>
+<rect x="133" y="352" width="18" height="22" rx="2" fill="#c9d7e6" stroke="#8799ac" stroke-width="1"/>
+<rect x="156" y="352" width="18" height="22" rx="2" fill="#c9d7e6" stroke="#8799ac" stroke-width="1"/>
+<rect x="179" y="352" width="18" height="22" rx="2" fill="#c9d7e6" stroke="#8799ac" stroke-width="1"/>
+<rect x="202" y="352" width="18" height="22" rx="2" fill="#c9d7e6" stroke="#8799ac" stroke-width="1"/>
+<rect x="225" y="352" width="18" height="22" rx="2" fill="#c9d7e6" stroke="#8799ac" stroke-width="1"/>
+<rect x="248" y="352" width="18" height="22" rx="2" fill="#c9d7e6" stroke="#8799ac" stroke-width="1"/>
+<text x="280" y="369" font-size="15" font-weight="550" fill="#243242" text-anchor="start">视觉原特征 ≈243×2048</text>
+<rect x="64" y="386" width="20" height="23" rx="2" fill="#c9d7e6" stroke="#8799ac" stroke-width="1"/>
+<text x="93" y="403" font-size="16" font-weight="550" fill="#243242" text-anchor="start">cₜ：EOS 2048</text>
+<rect x="353" y="386" width="142" height="25" rx="4" fill="#ffffff" stroke="#9eb2c7" stroke-width="1.4"/>
+<text x="424" y="403" font-size="13" font-weight="650" fill="#2c639e" text-anchor="middle">原条件 O</text>
+<rect x="52" y="423" width="455" height="73" rx="8" fill="#e8f1fb" stroke="#8daecc" stroke-width="1.4"/>
+<text x="64" y="447" font-size="18" font-weight="650" fill="#243242" text-anchor="start">共享视觉压缩器 Eₚ + 均值摘要</text>
+<text x="64" y="470" font-size="15" font-weight="400" fill="#667789" text-anchor="start">vₜ: 243×256；v̄ₜ: 256 · 保留多视觉 token</text>
+<polyline points="160,374 160,423" fill="none" stroke="#8795a4" stroke-width="1.8"  stroke-linejoin="round" marker-end="url(#fwd)"/>
+<rect x="64" y="502" width="16" height="20" rx="2" fill="#b7d1ee" stroke="#8799ac" stroke-width="1"/>
+<rect x="86" y="502" width="16" height="20" rx="2" fill="#b7d1ee" stroke="#8799ac" stroke-width="1"/>
+<rect x="108" y="502" width="16" height="20" rx="2" fill="#b7d1ee" stroke="#8799ac" stroke-width="1"/>
+<rect x="130" y="502" width="16" height="20" rx="2" fill="#b7d1ee" stroke="#8799ac" stroke-width="1"/>
+<rect x="152" y="502" width="16" height="20" rx="2" fill="#b7d1ee" stroke="#8799ac" stroke-width="1"/>
+<rect x="174" y="502" width="16" height="20" rx="2" fill="#b7d1ee" stroke="#8799ac" stroke-width="1"/>
+<rect x="196" y="502" width="16" height="20" rx="2" fill="#b7d1ee" stroke="#8799ac" stroke-width="1"/>
+<rect x="218" y="502" width="16" height="20" rx="2" fill="#b7d1ee" stroke="#8799ac" stroke-width="1"/>
+<rect x="261" y="499" width="125" height="25" rx="4" fill="#ffffff" stroke="#9eb2c7" stroke-width="1.4"/>
+<text x="323.5" y="516" font-size="13" font-weight="650" fill="#2c639e" text-anchor="middle">vₜ / v̄ₜ</text>
+<rect x="390" y="499" width="105" height="25" rx="4" fill="#ffffff" stroke="#9eb2c7" stroke-width="1.4"/>
+<text x="442.5" y="516" font-size="13" font-weight="650" fill="#2c639e" text-anchor="middle">cₜ</text>
+<rect x="52" y="539" width="455" height="74" rx="8" fill="#f0f3f6" stroke="#a4afb9" stroke-width="1.4"/>
+<text x="64" y="563" font-size="18" font-weight="650" fill="#243242" text-anchor="start">全身 qₜ：82维有效状态（预期）</text>
+<text x="64" y="586" font-size="15" font-weight="400" fill="#667789" text-anchor="start">物理字段映射 / 归一化；qₜʲ 不等于 qₜ[j]</text>
+<rect x="64" y="623" width="85" height="25" rx="4" fill="#ffffff" stroke="#9eb2c7" stroke-width="1.4"/>
+<text x="106.5" y="640" font-size="13" font-weight="650" fill="#2c639e" text-anchor="middle">qₜ</text>
+<rect x="161" y="622" width="346" height="66" rx="8" fill="#e8f1fb" stroke="#8daecc" stroke-width="1.4"/>
+<text x="173" y="646" font-size="18" font-weight="650" fill="#243242" text-anchor="start">Ewhole(qₜ) → zₜ: 128</text>
+<text x="173" y="669" font-size="15" font-weight="400" fill="#667789" text-anchor="start">共享 MLP 82→256→128（输入依有效映射）</text>
+<polyline points="280,613 280,622" fill="none" stroke="#8795a4" stroke-width="1.8"  stroke-linejoin="round" marker-end="url(#fwd)"/>
+<rect x="540" y="120" width="658" height="595" rx="12" fill="#ffffff" stroke="#c7d2dd" stroke-width="1.4"/>
+<rect x="553" y="133" width="34" height="34" rx="6" fill="#263e58" stroke="#263e58" stroke-width="1.4"/>
+<text x="570" y="156" font-size="19" font-weight="700" fill="#ffffff" text-anchor="middle">2</text>
+<text x="598" y="157" font-size="22" font-weight="700" fill="#243242" text-anchor="start">任务状态、双库与读写</text>
+<rect x="557" y="174" width="624" height="72" rx="8" fill="#e8f1fb" stroke="#8daecc" stroke-width="1.4"/>
+<text x="569" y="198" font-size="18" font-weight="650" fill="#243242" text-anchor="start">任务状态增强 fθ：concat(cₜ, v̄ₜ, ŝₜ₋₁, valid)</text>
+<text x="569" y="221" font-size="15" font-weight="400" fill="#667789" text-anchor="start">MLP 隐宽256，输出2048；c̃ₜ = cₜ + fθ(·)；上一预测 detach</text>
+<rect x="557" y="253" width="133" height="25" rx="4" fill="#ffffff" stroke="#9eb2c7" stroke-width="1.4"/>
+<text x="623.5" y="270" font-size="13" font-weight="650" fill="#2c639e" text-anchor="middle">c̃ₜ:2048</text>
+<rect x="713" y="253" width="468" height="72" rx="8" fill="#e8f1fb" stroke="#8daecc" stroke-width="1.4"/>
+<text x="725" y="277" font-size="18" font-weight="650" fill="#243242" text-anchor="start">状态头 gφ：2048→256→3 logits</text>
+<text x="725" y="300" font-size="15" font-weight="400" fill="#667789" text-anchor="start">door_open / bag_inside / started；sigmoid→ŝₜ</text>
+<polyline points="868,246 868,253" fill="none" stroke="#8795a4" stroke-width="1.8"  stroke-linejoin="round" marker-end="url(#fwd)"/>
+<rect x="557" y="339" width="294" height="73" rx="8" fill="#e8f1fb" stroke="#8daecc" stroke-width="1.4"/>
+<text x="569" y="363" font-size="18" font-weight="650" fill="#243242" text-anchor="start">状态监督 Lstate</text>
+<text x="569" y="386" font-size="15" font-weight="400" fill="#667789" text-anchor="start">加权 BCE，真实标签只进 loss</text>
+<polyline points="947,325 947,331 704,331 704,339" fill="none" stroke="#8795a4" stroke-width="1.8"  stroke-linejoin="round" marker-end="url(#fwd)"/>
+<polyline points="835,339 835,334 1020,334 1020,325" fill="none" stroke="#b74649" stroke-width="2.4" stroke-dasharray="9 6" stroke-linejoin="round" marker-end="url(#grad)"/>
+<rect x="872" y="339" width="309" height="73" rx="8" fill="#e8f1fb" stroke="#8daecc" stroke-width="1.4"/>
+<text x="884" y="363" font-size="18" font-weight="650" fill="#243242" text-anchor="start">认知检索 + 门控融合</text>
+<text x="884" y="386" font-size="15" font-weight="400" fill="#667789" text-anchor="start">R_c：V1两层；F_c：当前＋历史</text>
+<polyline points="623,278 623,286 698,286 698,331 1027,331 1027,339" fill="none" stroke="#8795a4" stroke-width="1.8"  stroke-linejoin="round" marker-end="url(#fwd)"/>
+<rect x="557" y="428" width="304" height="173" rx="8" fill="#fff0da" stroke="#d7a15a" stroke-width="1.4"/>
+<text x="569" y="450" font-size="18" font-weight="700" fill="#a66a21" text-anchor="start">感知库 Mᵖₜ₋₁ · 64 槽</text>
+<rect x="570" y="462" width="14" height="20" rx="2" fill="#f5d4a6" stroke="#8799ac" stroke-width="1"/>
+<rect x="588" y="462" width="14" height="20" rx="2" fill="#f5d4a6" stroke="#8799ac" stroke-width="1"/>
+<rect x="606" y="462" width="14" height="20" rx="2" fill="#f5d4a6" stroke="#8799ac" stroke-width="1"/>
+<rect x="624" y="462" width="14" height="20" rx="2" fill="#f5d4a6" stroke="#8799ac" stroke-width="1"/>
+<rect x="642" y="462" width="14" height="20" rx="2" fill="#f5d4a6" stroke="#8799ac" stroke-width="1"/>
+<rect x="660" y="462" width="14" height="20" rx="2" fill="#f5d4a6" stroke="#8799ac" stroke-width="1"/>
+<rect x="691" y="462" width="44" height="20" rx="3" fill="#e9e1c9" stroke="#b7aa90" stroke-width="1.4"/>
+<text x="741" y="477" font-size="13" font-weight="400" fill="#667789" text-anchor="start">vᵢ  |  qᵢ</text>
+<rect x="570" y="494" width="14" height="20" rx="2" fill="#f5d4a6" stroke="#8799ac" stroke-width="1"/>
+<rect x="588" y="494" width="14" height="20" rx="2" fill="#f5d4a6" stroke="#8799ac" stroke-width="1"/>
+<rect x="606" y="494" width="14" height="20" rx="2" fill="#f5d4a6" stroke="#8799ac" stroke-width="1"/>
+<rect x="624" y="494" width="14" height="20" rx="2" fill="#f5d4a6" stroke="#8799ac" stroke-width="1"/>
+<rect x="642" y="494" width="14" height="20" rx="2" fill="#f5d4a6" stroke="#8799ac" stroke-width="1"/>
+<rect x="660" y="494" width="14" height="20" rx="2" fill="#f5d4a6" stroke="#8799ac" stroke-width="1"/>
+<rect x="691" y="494" width="44" height="20" rx="3" fill="#e9e1c9" stroke="#b7aa90" stroke-width="1.4"/>
+<text x="741" y="509" font-size="13" font-weight="400" fill="#667789" text-anchor="start">vᵢ  |  qᵢ</text>
+<rect x="570" y="526" width="14" height="20" rx="2" fill="#f5d4a6" stroke="#8799ac" stroke-width="1"/>
+<rect x="588" y="526" width="14" height="20" rx="2" fill="#f5d4a6" stroke="#8799ac" stroke-width="1"/>
+<rect x="606" y="526" width="14" height="20" rx="2" fill="#f5d4a6" stroke="#8799ac" stroke-width="1"/>
+<rect x="624" y="526" width="14" height="20" rx="2" fill="#f5d4a6" stroke="#8799ac" stroke-width="1"/>
+<rect x="642" y="526" width="14" height="20" rx="2" fill="#f5d4a6" stroke="#8799ac" stroke-width="1"/>
+<rect x="660" y="526" width="14" height="20" rx="2" fill="#f5d4a6" stroke="#8799ac" stroke-width="1"/>
+<rect x="691" y="526" width="44" height="20" rx="3" fill="#e9e1c9" stroke="#b7aa90" stroke-width="1.4"/>
+<text x="741" y="541" font-size="13" font-weight="400" fill="#667789" text-anchor="start">…  qᵢ</text>
+<text x="569" y="575" font-size="14" font-weight="400" fill="#243242" text-anchor="start">每槽 vᵢ:243×256 + qᵢ + 时间/计数</text>
+<text x="569" y="593" font-size="14" font-weight="400" fill="#a66a21" text-anchor="start">压缩距离 0.8 dᵥ + 0.2 d_q</text>
+<rect x="872" y="428" width="309" height="173" rx="8" fill="#fff0da" stroke="#d7a15a" stroke-width="1.4"/>
+<text x="884" y="450" font-size="18" font-weight="700" fill="#a66a21" text-anchor="start">认知库 Mᶜₜ₋₁ · 64 槽</text>
+<rect x="885" y="466" width="20" height="30" rx="2" fill="#f5d4a6" stroke="#8799ac" stroke-width="1"/>
+<rect x="909" y="466" width="20" height="30" rx="2" fill="#f5d4a6" stroke="#8799ac" stroke-width="1"/>
+<rect x="933" y="466" width="20" height="30" rx="2" fill="#f5d4a6" stroke="#8799ac" stroke-width="1"/>
+<rect x="957" y="466" width="20" height="30" rx="2" fill="#f5d4a6" stroke="#8799ac" stroke-width="1"/>
+<rect x="981" y="466" width="20" height="30" rx="2" fill="#f5d4a6" stroke="#8799ac" stroke-width="1"/>
+<rect x="1005" y="466" width="20" height="30" rx="2" fill="#f5d4a6" stroke="#8799ac" stroke-width="1"/>
+<rect x="1029" y="466" width="20" height="30" rx="2" fill="#f5d4a6" stroke="#8799ac" stroke-width="1"/>
+<rect x="1053" y="466" width="20" height="30" rx="2" fill="#f5d4a6" stroke="#8799ac" stroke-width="1"/>
+<text x="885" y="520" font-size="15" font-weight="400" fill="#243242" text-anchor="start">每槽 c̃ᵢ:2048；独立余弦合并</text>
+<text x="885" y="545" font-size="14" font-weight="400" fill="#667789" text-anchor="start">两个库的槽号不要求对齐</text>
+<text x="885" y="574" font-size="14" font-weight="400" fill="#a66a21" text-anchor="start">历史值无梯度；读端投影可训练</text>
+<polyline points="1027,428 1027,412" fill="none" stroke="#8795a4" stroke-width="1.8"  stroke-linejoin="round" marker-end="url(#fwd)"/>
+<rect x="1023" y="302" width="150" height="25" rx="4" fill="#ffffff" stroke="#9eb2c7" stroke-width="1.4"/>
+<text x="1098" y="319" font-size="13" font-weight="650" fill="#2c639e" text-anchor="middle">Cₜ:2048</text>
+<polyline points="1181,376 1190,376 1190,315 1173,315" fill="none" stroke="#8795a4" stroke-width="1.8"  stroke-linejoin="round" marker-end="url(#fwd)"/>
+<rect x="557" y="620" width="624" height="70" rx="8" fill="#fffaf1" stroke="#d7a15a" stroke-width="1.4"/>
+<text x="569" y="642" font-size="17" font-weight="650" fill="#a66a21" text-anchor="start">决策结束：先读后写，detach 后写入；满库合并相邻槽</text>
+<text x="569" y="664" font-size="14" font-weight="400" fill="#667789" text-anchor="start">写 vₜ、qₜ、c̃ₜ；ŝₜ 递推至下一时刻；跨窗口保持，跨 episode / env reset</text>
+<polyline points="707,620 707,601" fill="none" stroke="#a66a21" stroke-width="1.8" stroke-dasharray="3 6" stroke-linejoin="round" marker-end="url(#write)"/>
+<polyline points="1027,620 1027,601" fill="none" stroke="#a66a21" stroke-width="1.8" stroke-dasharray="3 6" stroke-linejoin="round" marker-end="url(#write)"/>
+<rect x="565" y="598" width="145" height="25" rx="4" fill="#ffffff" stroke="#9eb2c7" stroke-width="1.4"/>
+<text x="637.5" y="615" font-size="13" font-weight="650" fill="#2c639e" text-anchor="middle">vₜ,qₜ,c̃ₜ</text>
+<rect x="1213" y="120" width="912" height="595" rx="12" fill="#ffffff" stroke="#c7d2dd" stroke-width="1.4"/>
+<rect x="1226" y="133" width="34" height="34" rx="6" fill="#263e58" stroke="#263e58" stroke-width="1.4"/>
+<text x="1243" y="156" font-size="19" font-weight="700" fill="#ffffff" text-anchor="middle">3</text>
+<text x="1271" y="157" font-size="22" font-weight="700" fill="#243242" text-anchor="start">任务 × 自由度联合检索（每个真实决策一次）</text>
+<rect x="1230" y="174" width="430" height="90" rx="8" fill="#e8f1fb" stroke="#8daecc" stroke-width="1.4"/>
+<text x="1242" y="198" font-size="18" font-weight="650" fill="#243242" text-anchor="start">本体 Token Bₜʲ</text>
+<text x="1242" y="221" font-size="15" font-weight="400" fill="#667789" text-anchor="start">qₜʲ + eⱼ（ID16/类型/轴/范围）+ zₜ:128</text>
+<text x="1242" y="241" font-size="15" font-weight="400" fill="#667789" text-anchor="start">共享 MLP → 256；B方案附加基座系 FK</text>
+<rect x="1675" y="174" width="433" height="90" rx="8" fill="#e8f1fb" stroke="#8daecc" stroke-width="1.4"/>
+<text x="1687" y="198" font-size="18" font-weight="650" fill="#243242" text-anchor="start">历史 Key / Value 编码</text>
+<text x="1687" y="221" font-size="15" font-weight="400" fill="#667789" text-anchor="start">Kᵢ = Gₖ(v̄ᵢ,qᵢ):256；Vᵢ = Eᵥ(v̄ᵢ,qᵢ):256</text>
+<text x="1687" y="241" font-size="15" font-weight="400" fill="#667789" text-anchor="start">槽内视觉均值摘要；历史数据 detach</text>
+<rect x="1239" y="274" width="16" height="23" rx="2" fill="#b7d1ee" stroke="#8799ac" stroke-width="1"/>
+<rect x="1260" y="274" width="16" height="23" rx="2" fill="#b7d1ee" stroke="#8799ac" stroke-width="1"/>
+<rect x="1281" y="274" width="16" height="23" rx="2" fill="#b7d1ee" stroke="#8799ac" stroke-width="1"/>
+<rect x="1302" y="274" width="16" height="23" rx="2" fill="#b7d1ee" stroke="#8799ac" stroke-width="1"/>
+<rect x="1323" y="274" width="16" height="23" rx="2" fill="#b7d1ee" stroke="#8799ac" stroke-width="1"/>
+<rect x="1344" y="274" width="16" height="23" rx="2" fill="#b7d1ee" stroke="#8799ac" stroke-width="1"/>
+<rect x="1365" y="274" width="16" height="23" rx="2" fill="#b7d1ee" stroke="#8799ac" stroke-width="1"/>
+<rect x="1386" y="274" width="16" height="23" rx="2" fill="#b7d1ee" stroke="#8799ac" stroke-width="1"/>
+<rect x="1407" y="274" width="16" height="23" rx="2" fill="#b7d1ee" stroke="#8799ac" stroke-width="1"/>
+<text x="1438" y="291" font-size="15" font-weight="400" fill="#243242" text-anchor="start">B：23×256</text>
+<rect x="1514" y="273" width="138" height="25" rx="4" fill="#ffffff" stroke="#9eb2c7" stroke-width="1.4"/>
+<text x="1583" y="290" font-size="13" font-weight="650" fill="#2c639e" text-anchor="middle">Bₜ</text>
+<rect x="1687" y="274" width="16" height="23" rx="2" fill="#f5d4a6" stroke="#8799ac" stroke-width="1"/>
+<rect x="1708" y="274" width="16" height="23" rx="2" fill="#f5d4a6" stroke="#8799ac" stroke-width="1"/>
+<rect x="1729" y="274" width="16" height="23" rx="2" fill="#f5d4a6" stroke="#8799ac" stroke-width="1"/>
+<rect x="1750" y="274" width="16" height="23" rx="2" fill="#f5d4a6" stroke="#8799ac" stroke-width="1"/>
+<rect x="1771" y="274" width="16" height="23" rx="2" fill="#f5d4a6" stroke="#8799ac" stroke-width="1"/>
+<rect x="1792" y="274" width="16" height="23" rx="2" fill="#f5d4a6" stroke="#8799ac" stroke-width="1"/>
+<rect x="1813" y="274" width="16" height="23" rx="2" fill="#f5d4a6" stroke="#8799ac" stroke-width="1"/>
+<rect x="1834" y="274" width="16" height="23" rx="2" fill="#f5d4a6" stroke="#8799ac" stroke-width="1"/>
+<rect x="1855" y="274" width="16" height="23" rx="2" fill="#f5d4a6" stroke="#8799ac" stroke-width="1"/>
+<text x="1888" y="291" font-size="15" font-weight="400" fill="#243242" text-anchor="start">K,V：64×256</text>
+<rect x="1230" y="312" width="430" height="87" rx="8" fill="#e8f1fb" stroke="#8daecc" stroke-width="1.4"/>
+<text x="1242" y="336" font-size="18" font-weight="650" fill="#243242" text-anchor="start">自由度 Query：Gq(Bʲ,C,v̄ₜ)</text>
+<text x="1242" y="359" font-size="15" font-weight="400" fill="#667789" text-anchor="start">Q:23×256；QKᵀ/√256</text>
+<text x="1242" y="379" font-size="15" font-weight="400" fill="#667789" text-anchor="start">Sbody:23×64；LN 后点积</text>
+<rect x="1675" y="312" width="433" height="87" rx="8" fill="#e8f1fb" stroke="#8daecc" stroke-width="1.4"/>
+<text x="1687" y="336" font-size="18" font-weight="650" fill="#243242" text-anchor="start">共享任务评分</text>
+<text x="1687" y="359" font-size="15" font-weight="400" fill="#667789" text-anchor="start">Wc C 与 Wv v̄ᵢ 投影至256；点积/√256</text>
+<text x="1687" y="379" font-size="15" font-weight="400" fill="#667789" text-anchor="start">Stask:1×64，广播到23行</text>
+<polyline points="1439,297 1439,312" fill="none" stroke="#8795a4" stroke-width="1.8"  stroke-linejoin="round" marker-end="url(#fwd)"/>
+<polyline points="1890,297 1890,312" fill="none" stroke="#8795a4" stroke-width="1.8"  stroke-linejoin="round" marker-end="url(#fwd)"/>
+<polyline points="1675,342 1660,342" fill="none" stroke="#8795a4" stroke-width="1.8"  stroke-linejoin="round" marker-end="url(#fwd)"/>
+<text x="1663" y="334" font-size="14" font-weight="600" fill="#8795a4" text-anchor="start">K</text>
+<rect x="1230" y="422" width="878" height="66" rx="8" fill="#e8f1fb" stroke="#8daecc" stroke-width="1.4"/>
+<text x="1242" y="446" font-size="18" font-weight="650" fill="#243242" text-anchor="start">P = softmaxᵢ(Stask + λ Sbody)  ·  λ=1.0</text>
+<text x="1242" y="469" font-size="15" font-weight="400" fill="#667789" text-anchor="start">mask无效槽；沿历史列 i 归一；L=0时不做 softmax</text>
+<polyline points="1445,399 1445,422" fill="none" stroke="#8795a4" stroke-width="1.8"  stroke-linejoin="round" marker-end="url(#fwd)"/>
+<polyline points="1890,399 1890,422" fill="none" stroke="#8795a4" stroke-width="1.8"  stroke-linejoin="round" marker-end="url(#fwd)"/>
+<rect x="1242" y="501" width="28" height="17" rx="1" fill="#ffedd3" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1273" y="501" width="28" height="17" rx="1" fill="#f6d8a9" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1304" y="501" width="28" height="17" rx="1" fill="#e9bd80" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1335" y="501" width="28" height="17" rx="1" fill="#d89f57" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1366" y="501" width="28" height="17" rx="1" fill="#ffedd3" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1397" y="501" width="28" height="17" rx="1" fill="#f6d8a9" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1428" y="501" width="28" height="17" rx="1" fill="#e9bd80" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1459" y="501" width="28" height="17" rx="1" fill="#ffedd3" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1490" y="501" width="28" height="17" rx="1" fill="#f6d8a9" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1521" y="501" width="28" height="17" rx="1" fill="#e9bd80" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1242" y="521" width="28" height="17" rx="1" fill="#e9bd80" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1273" y="521" width="28" height="17" rx="1" fill="#ffedd3" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1304" y="521" width="28" height="17" rx="1" fill="#f6d8a9" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1335" y="521" width="28" height="17" rx="1" fill="#d89f57" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1366" y="521" width="28" height="17" rx="1" fill="#f6d8a9" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1397" y="521" width="28" height="17" rx="1" fill="#e9bd80" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1428" y="521" width="28" height="17" rx="1" fill="#ffedd3" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1459" y="521" width="28" height="17" rx="1" fill="#f6d8a9" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1490" y="521" width="28" height="17" rx="1" fill="#d89f57" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1521" y="521" width="28" height="17" rx="1" fill="#f6d8a9" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1242" y="541" width="28" height="17" rx="1" fill="#f6d8a9" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1273" y="541" width="28" height="17" rx="1" fill="#d89f57" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1304" y="541" width="28" height="17" rx="1" fill="#f6d8a9" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1335" y="541" width="28" height="17" rx="1" fill="#d89f57" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1366" y="541" width="28" height="17" rx="1" fill="#f6d8a9" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1397" y="541" width="28" height="17" rx="1" fill="#d89f57" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1428" y="541" width="28" height="17" rx="1" fill="#f6d8a9" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1459" y="541" width="28" height="17" rx="1" fill="#d89f57" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1490" y="541" width="28" height="17" rx="1" fill="#f6d8a9" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1521" y="541" width="28" height="17" rx="1" fill="#d89f57" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1242" y="561" width="28" height="17" rx="1" fill="#ffedd3" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1273" y="561" width="28" height="17" rx="1" fill="#e9bd80" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1304" y="561" width="28" height="17" rx="1" fill="#f6d8a9" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1335" y="561" width="28" height="17" rx="1" fill="#d89f57" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1366" y="561" width="28" height="17" rx="1" fill="#f6d8a9" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1397" y="561" width="28" height="17" rx="1" fill="#ffedd3" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1428" y="561" width="28" height="17" rx="1" fill="#e9bd80" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1459" y="561" width="28" height="17" rx="1" fill="#f6d8a9" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1490" y="561" width="28" height="17" rx="1" fill="#d89f57" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1521" y="561" width="28" height="17" rx="1" fill="#f6d8a9" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1242" y="581" width="28" height="17" rx="1" fill="#e9bd80" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1273" y="581" width="28" height="17" rx="1" fill="#f6d8a9" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1304" y="581" width="28" height="17" rx="1" fill="#ffedd3" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1335" y="581" width="28" height="17" rx="1" fill="#d89f57" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1366" y="581" width="28" height="17" rx="1" fill="#e9bd80" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1397" y="581" width="28" height="17" rx="1" fill="#f6d8a9" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1428" y="581" width="28" height="17" rx="1" fill="#ffedd3" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1459" y="581" width="28" height="17" rx="1" fill="#e9bd80" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1490" y="581" width="28" height="17" rx="1" fill="#f6d8a9" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1521" y="581" width="28" height="17" rx="1" fill="#ffedd3" stroke="#bac8d7" stroke-width="0.7"/>
+<text x="1242" y="616" font-size="16" font-weight="650" fill="#243242" text-anchor="start">P：23×64（示意截取）</text>
+<text x="1581" y="545" font-size="33" font-weight="650" fill="#243242" text-anchor="middle">×</text>
+<rect x="1610" y="506" width="17" height="25" rx="2" fill="#f5d4a6" stroke="#8799ac" stroke-width="1"/>
+<rect x="1632" y="506" width="17" height="25" rx="2" fill="#f5d4a6" stroke="#8799ac" stroke-width="1"/>
+<rect x="1654" y="506" width="17" height="25" rx="2" fill="#f5d4a6" stroke="#8799ac" stroke-width="1"/>
+<rect x="1676" y="506" width="17" height="25" rx="2" fill="#f5d4a6" stroke="#8799ac" stroke-width="1"/>
+<rect x="1698" y="506" width="17" height="25" rx="2" fill="#f5d4a6" stroke="#8799ac" stroke-width="1"/>
+<rect x="1720" y="506" width="17" height="25" rx="2" fill="#f5d4a6" stroke="#8799ac" stroke-width="1"/>
+<rect x="1742" y="506" width="17" height="25" rx="2" fill="#f5d4a6" stroke="#8799ac" stroke-width="1"/>
+<text x="1610" y="551" font-size="16" font-weight="600" fill="#243242" text-anchor="start">V：64×256</text>
+<text x="1790" y="545" font-size="32" font-weight="650" fill="#243242" text-anchor="middle">=</text>
+<rect x="1820" y="506" width="17" height="25" rx="2" fill="#f5d4a6" stroke="#8799ac" stroke-width="1"/>
+<rect x="1842" y="506" width="17" height="25" rx="2" fill="#f5d4a6" stroke="#8799ac" stroke-width="1"/>
+<rect x="1864" y="506" width="17" height="25" rx="2" fill="#f5d4a6" stroke="#8799ac" stroke-width="1"/>
+<rect x="1886" y="506" width="17" height="25" rx="2" fill="#f5d4a6" stroke="#8799ac" stroke-width="1"/>
+<rect x="1908" y="506" width="17" height="25" rx="2" fill="#f5d4a6" stroke="#8799ac" stroke-width="1"/>
+<rect x="1930" y="506" width="17" height="25" rx="2" fill="#f5d4a6" stroke="#8799ac" stroke-width="1"/>
+<rect x="1952" y="506" width="17" height="25" rx="2" fill="#f5d4a6" stroke="#8799ac" stroke-width="1"/>
+<rect x="1974" y="506" width="17" height="25" rx="2" fill="#f5d4a6" stroke="#8799ac" stroke-width="1"/>
+<rect x="1996" y="506" width="17" height="25" rx="2" fill="#f5d4a6" stroke="#8799ac" stroke-width="1"/>
+<rect x="2018" y="506" width="17" height="25" rx="2" fill="#f5d4a6" stroke="#8799ac" stroke-width="1"/>
+<text x="1820" y="551" font-size="16" font-weight="600" fill="#243242" text-anchor="start">m：23×256</text>
+<rect x="1230" y="635" width="878" height="55" rx="8" fill="#fffaf1" stroke="#d7a15a" stroke-width="1.4"/>
+<text x="1243" y="657" font-size="18" font-weight="650" fill="#a66a21" text-anchor="start">缓存：Bₜ、Cₜ、mₜ    →    当前决策内所有生成步骤共享</text>
+<text x="1243" y="679" font-size="14" font-weight="400" fill="#667789" text-anchor="start">每个自由度对应一行 P 和一个读出 mʲ；历史槽不按机构预分组。</text>
+<polyline points="1960,555 1960,635" fill="none" stroke="#8795a4" stroke-width="1.8"  stroke-linejoin="round" marker-end="url(#fwd)"/>
+<rect x="1230" y="138" width="142" height="25" rx="4" fill="#ffffff" stroke="#9eb2c7" stroke-width="1.4"/>
+<text x="1301" y="155" font-size="13" font-weight="650" fill="#2c639e" text-anchor="middle">qₜ,zₜ,eⱼ</text>
+<rect x="1450" y="138" width="147" height="25" rx="4" fill="#ffffff" stroke="#9eb2c7" stroke-width="1.4"/>
+<text x="1523.5" y="155" font-size="13" font-weight="650" fill="#2c639e" text-anchor="middle">Cₜ,v̄ₜ</text>
+<rect x="1675" y="138" width="145" height="25" rx="4" fill="#ffffff" stroke="#9eb2c7" stroke-width="1.4"/>
+<text x="1747.5" y="155" font-size="13" font-weight="650" fill="#2c639e" text-anchor="middle">历史 Mᵖ</text>
+<rect x="557" y="138" width="190" height="25" rx="4" fill="#ffffff" stroke="#9eb2c7" stroke-width="1.4"/>
+<text x="652" y="155" font-size="13" font-weight="650" fill="#2c639e" text-anchor="middle">cₜ,v̄ₜ,ŝₜ₋₁</text>
+<text x="2107" y="709" font-size="14" font-weight="500" fill="#667789" text-anchor="end">P / Q / K / V 的梯度来自 FM；不是对历史写入/合并索引反传</text>
+<rect x="35" y="735" width="2090" height="595" rx="12" fill="#ffffff" stroke="#c7d2dd" stroke-width="1.4"/>
+<rect x="48" y="748" width="34" height="34" rx="6" fill="#263e58" stroke="#263e58" stroke-width="1.4"/>
+<text x="65" y="771" font-size="19" font-weight="700" fill="#ffffff" text-anchor="middle">4</text>
+<text x="93" y="772" font-size="22" font-weight="700" fill="#243242" text-anchor="start">动作生成、自由度对应融合与损失反传</text>
+<text x="52" y="797" font-size="16" font-weight="400" fill="#667789" text-anchor="start">训练：每个决策采样一次噪声 ε 和生成时间 τ；推理：从噪声开始约4步积分（不重复检索）。</text>
+<rect x="52" y="813" width="432" height="76" rx="8" fill="#f0f3f6" stroke="#a4afb9" stroke-width="1.4"/>
+<text x="64" y="837" font-size="18" font-weight="650" fill="#243242" text-anchor="start">Flow Matching 输入 Xₜ,τ</text>
+<text x="64" y="860" font-size="15" font-weight="400" fill="#667789" text-anchor="start">训练：示教动作 A + ε → X，目标 Y</text>
+<text x="64" y="880" font-size="15" font-weight="400" fill="#667789" text-anchor="start">推理：初始 ε / 上一步 X；原模型时间约定</text>
+<rect x="62" y="898" width="19" height="14" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="84" y="898" width="19" height="14" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="106" y="898" width="19" height="14" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="128" y="898" width="19" height="14" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="150" y="898" width="19" height="14" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="172" y="898" width="19" height="14" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="194" y="898" width="19" height="14" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="216" y="898" width="19" height="14" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="238" y="898" width="19" height="14" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="62" y="915" width="19" height="14" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="84" y="915" width="19" height="14" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="106" y="915" width="19" height="14" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="128" y="915" width="19" height="14" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="150" y="915" width="19" height="14" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="172" y="915" width="19" height="14" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="194" y="915" width="19" height="14" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="216" y="915" width="19" height="14" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="238" y="915" width="19" height="14" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="62" y="932" width="19" height="14" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="84" y="932" width="19" height="14" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="106" y="932" width="19" height="14" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="128" y="932" width="19" height="14" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="150" y="932" width="19" height="14" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="172" y="932" width="19" height="14" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="194" y="932" width="19" height="14" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="216" y="932" width="19" height="14" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="238" y="932" width="19" height="14" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="62" y="949" width="19" height="14" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="84" y="949" width="19" height="14" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="106" y="949" width="19" height="14" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="128" y="949" width="19" height="14" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="150" y="949" width="19" height="14" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="172" y="949" width="19" height="14" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="194" y="949" width="19" height="14" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="216" y="949" width="19" height="14" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="238" y="949" width="19" height="14" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="62" y="966" width="19" height="14" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="84" y="966" width="19" height="14" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="106" y="966" width="19" height="14" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="128" y="966" width="19" height="14" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="150" y="966" width="19" height="14" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="172" y="966" width="19" height="14" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="194" y="966" width="19" height="14" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="216" y="966" width="19" height="14" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="238" y="966" width="19" height="14" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<text x="277" y="924" font-size="15" font-weight="600" fill="#243242" text-anchor="start">X：50×128</text>
+<text x="277" y="948" font-size="14" font-weight="400" fill="#667789" text-anchor="start">有效动作列：23</text>
+<rect x="52" y="984" width="432" height="89" rx="8" fill="#f0f3f6" stroke="#a4afb9" stroke-width="1.4"/>
+<text x="64" y="1008" font-size="18" font-weight="650" fill="#243242" text-anchor="start">原始 GR00T 动作专家 DiT₀</text>
+<text x="64" y="1031" font-size="15" font-weight="400" fill="#667789" text-anchor="start">输入：完整原 VLM 条件 O + qₜ + X + τ</text>
+<text x="64" y="1051" font-size="15" font-weight="400" fill="#667789" text-anchor="start">输出 u₀：50×128；Stage2全部冻结</text>
+<polyline points="267,961 267,984" fill="none" stroke="#8795a4" stroke-width="1.8"  stroke-linejoin="round" marker-end="url(#fwd)"/>
+<rect x="62" y="965" width="137" height="25" rx="4" fill="#ffffff" stroke="#9eb2c7" stroke-width="1.4"/>
+<text x="130.5" y="982" font-size="13" font-weight="650" fill="#2c639e" text-anchor="middle">O / qₜ</text>
+<rect x="52" y="1090" width="432" height="75" rx="8" fill="#f0f3f6" stroke="#a4afb9" stroke-width="1.4"/>
+<text x="64" y="1114" font-size="18" font-weight="650" fill="#243242" text-anchor="start">Gather：有效动作列</text>
+<text x="64" y="1137" font-size="15" font-weight="400" fill="#667789" text-anchor="start">X[:,j] 与 u₀[:,j] 各50；N=23；不碰padding</text>
+<polyline points="267,1073 267,1090" fill="none" stroke="#8795a4" stroke-width="1.8"  stroke-linejoin="round" marker-end="url(#fwd)"/>
+<rect x="509" y="813" width="385" height="92" rx="8" fill="#e8f1fb" stroke="#8daecc" stroke-width="1.4"/>
+<text x="521" y="837" font-size="18" font-weight="650" fill="#243242" text-anchor="start">动作 Token 编码 Eₐ（共享）</text>
+<text x="521" y="860" font-size="15" font-weight="400" fill="#667789" text-anchor="start">[X[:,j], u₀[:,j], Bʲ, τ编码32]</text>
+<text x="521" y="880" font-size="15" font-weight="400" fill="#667789" text-anchor="start">隐宽256 → Jʲ:256</text>
+<rect x="509" y="785" width="170" height="25" rx="4" fill="#ffffff" stroke="#9eb2c7" stroke-width="1.4"/>
+<text x="594" y="802" font-size="13" font-weight="650" fill="#2c639e" text-anchor="middle">Bₜ:23×256</text>
+<polyline points="484,1127 496,1127 496,859 509,859" fill="none" stroke="#8795a4" stroke-width="1.8"  stroke-linejoin="round" marker-end="url(#fwd)"/>
+<rect x="521" y="915" width="17" height="25" rx="2" fill="#b7d1ee" stroke="#8799ac" stroke-width="1"/>
+<rect x="543" y="915" width="17" height="25" rx="2" fill="#b7d1ee" stroke="#8799ac" stroke-width="1"/>
+<rect x="565" y="915" width="17" height="25" rx="2" fill="#b7d1ee" stroke="#8799ac" stroke-width="1"/>
+<rect x="587" y="915" width="17" height="25" rx="2" fill="#b7d1ee" stroke="#8799ac" stroke-width="1"/>
+<rect x="609" y="915" width="17" height="25" rx="2" fill="#b7d1ee" stroke="#8799ac" stroke-width="1"/>
+<rect x="631" y="915" width="17" height="25" rx="2" fill="#b7d1ee" stroke="#8799ac" stroke-width="1"/>
+<rect x="653" y="915" width="17" height="25" rx="2" fill="#b7d1ee" stroke="#8799ac" stroke-width="1"/>
+<rect x="675" y="915" width="17" height="25" rx="2" fill="#b7d1ee" stroke="#8799ac" stroke-width="1"/>
+<rect x="697" y="915" width="17" height="25" rx="2" fill="#b7d1ee" stroke="#8799ac" stroke-width="1"/>
+<rect x="719" y="915" width="17" height="25" rx="2" fill="#b7d1ee" stroke="#8799ac" stroke-width="1"/>
+<text x="749" y="932" font-size="15" font-weight="650" fill="#243242" text-anchor="start">J：23×256</text>
+<rect x="509" y="957" width="385" height="91" rx="8" fill="#e8f1fb" stroke="#8daecc" stroke-width="1.4"/>
+<text x="521" y="981" font-size="18" font-weight="650" fill="#243242" text-anchor="start">对应融合 MLPf（共享）</text>
+<text x="521" y="1004" font-size="15" font-weight="400" fill="#667789" text-anchor="start">concat(Jʲ,mʲ,Cₜ)：256+256+2048</text>
+<text x="521" y="1024" font-size="15" font-weight="400" fill="#667789" text-anchor="start">隐宽256 → Fʲ:256</text>
+<polyline points="701,940 701,957" fill="none" stroke="#8795a4" stroke-width="1.8"  stroke-linejoin="round" marker-end="url(#fwd)"/>
+<rect x="509" y="1058" width="174" height="25" rx="4" fill="#ffffff" stroke="#9eb2c7" stroke-width="1.4"/>
+<text x="596" y="1075" font-size="13" font-weight="650" fill="#2c639e" text-anchor="middle">mₜ:23×256</text>
+<rect x="704" y="1058" width="190" height="25" rx="4" fill="#ffffff" stroke="#9eb2c7" stroke-width="1.4"/>
+<text x="799" y="1075" font-size="13" font-weight="650" fill="#2c639e" text-anchor="middle">Cₜ:2048</text>
+<polyline points="596,1058 596,1048" fill="none" stroke="#8795a4" stroke-width="1.8"  stroke-linejoin="round" marker-end="url(#fwd)"/>
+<polyline points="799,1058 799,1048" fill="none" stroke="#8795a4" stroke-width="1.8"  stroke-linejoin="round" marker-end="url(#fwd)"/>
+<rect x="521" y="1100" width="17" height="26" rx="2" fill="#b7d1ee" stroke="#8799ac" stroke-width="1"/>
+<rect x="543" y="1100" width="17" height="26" rx="2" fill="#b7d1ee" stroke="#8799ac" stroke-width="1"/>
+<rect x="565" y="1100" width="17" height="26" rx="2" fill="#b7d1ee" stroke="#8799ac" stroke-width="1"/>
+<rect x="587" y="1100" width="17" height="26" rx="2" fill="#b7d1ee" stroke="#8799ac" stroke-width="1"/>
+<rect x="609" y="1100" width="17" height="26" rx="2" fill="#b7d1ee" stroke="#8799ac" stroke-width="1"/>
+<rect x="631" y="1100" width="17" height="26" rx="2" fill="#b7d1ee" stroke="#8799ac" stroke-width="1"/>
+<rect x="653" y="1100" width="17" height="26" rx="2" fill="#b7d1ee" stroke="#8799ac" stroke-width="1"/>
+<rect x="675" y="1100" width="17" height="26" rx="2" fill="#b7d1ee" stroke="#8799ac" stroke-width="1"/>
+<rect x="697" y="1100" width="17" height="26" rx="2" fill="#b7d1ee" stroke="#8799ac" stroke-width="1"/>
+<rect x="719" y="1100" width="17" height="26" rx="2" fill="#b7d1ee" stroke="#8799ac" stroke-width="1"/>
+<text x="749" y="1118" font-size="15" font-weight="650" fill="#243242" text-anchor="start">F：23×256</text>
+<polyline points="701,1048 701,1053 695,1053 695,1098" fill="none" stroke="#8795a4" stroke-width="1.8"  stroke-linejoin="round" marker-end="url(#fwd)"/>
+<rect x="919" y="813" width="427" height="352" rx="8" fill="#f8fbff" stroke="#a2bbd3" stroke-width="1.4"/>
+<text x="931" y="837" font-size="18" font-weight="700" fill="#2c639e" text-anchor="start">协同交互 · 同一分支三种配置</text>
+<rect x="934" y="852" width="397" height="75" rx="8" fill="#e8f1fb" stroke="#8daecc" stroke-width="1.4"/>
+<text x="946" y="876" font-size="18" font-weight="650" fill="#243242" text-anchor="start">A · topology（首选）</text>
+<text x="946" y="899" font-size="15" font-weight="400" fill="#667789" text-anchor="start">局部硬掩码 G → 全局注意力；各1层</text>
+<rect x="934" y="937" width="397" height="65" rx="8" fill="#e8f1fb" stroke="#8daecc" stroke-width="1.4"/>
+<text x="946" y="961" font-size="18" font-weight="650" fill="#243242" text-anchor="start">B · fk</text>
+<text x="946" y="984" font-size="15" font-weight="400" fill="#667789" text-anchor="start">B输入含FK；仅1层全局注意力</text>
+<rect x="934" y="1012" width="397" height="65" rx="8" fill="#e8f1fb" stroke="#8daecc" stroke-width="1.4"/>
+<text x="946" y="1036" font-size="18" font-weight="650" fill="#243242" text-anchor="start">C · none</text>
+<text x="946" y="1059" font-size="15" font-weight="400" fill="#667789" text-anchor="start">不加FK/拓扑；仅1层全局注意力</text>
+<text x="933" y="1103" font-size="14" font-weight="400" fill="#667789" text-anchor="start">4头 ×64；pre-LN，FFN512，残差</text>
+<rect x="933" y="1115" width="17" height="25" rx="2" fill="#b7d1ee" stroke="#8799ac" stroke-width="1"/>
+<rect x="955" y="1115" width="17" height="25" rx="2" fill="#b7d1ee" stroke="#8799ac" stroke-width="1"/>
+<rect x="977" y="1115" width="17" height="25" rx="2" fill="#b7d1ee" stroke="#8799ac" stroke-width="1"/>
+<rect x="999" y="1115" width="17" height="25" rx="2" fill="#b7d1ee" stroke="#8799ac" stroke-width="1"/>
+<rect x="1021" y="1115" width="17" height="25" rx="2" fill="#b7d1ee" stroke="#8799ac" stroke-width="1"/>
+<rect x="1043" y="1115" width="17" height="25" rx="2" fill="#b7d1ee" stroke="#8799ac" stroke-width="1"/>
+<rect x="1065" y="1115" width="17" height="25" rx="2" fill="#b7d1ee" stroke="#8799ac" stroke-width="1"/>
+<rect x="1087" y="1115" width="17" height="25" rx="2" fill="#b7d1ee" stroke="#8799ac" stroke-width="1"/>
+<rect x="1109" y="1115" width="17" height="25" rx="2" fill="#b7d1ee" stroke="#8799ac" stroke-width="1"/>
+<rect x="1131" y="1115" width="17" height="25" rx="2" fill="#b7d1ee" stroke="#8799ac" stroke-width="1"/>
+<text x="1161" y="1132" font-size="15" font-weight="650" fill="#243242" text-anchor="start">F̂:23×256</text>
+<polyline points="894,1114 906,1114 906,887 919,887" fill="none" stroke="#8795a4" stroke-width="1.8"  stroke-linejoin="round" marker-end="url(#fwd)"/>
+<rect x="1369" y="813" width="344" height="91" rx="8" fill="#e8f1fb" stroke="#8daecc" stroke-width="1.4"/>
+<text x="1381" y="837" font-size="18" font-weight="650" fill="#243242" text-anchor="start">修正输出 Wₒ</text>
+<text x="1381" y="860" font-size="15" font-weight="400" fill="#667789" text-anchor="start">共享 Linear 256→50，零初始化</text>
+<text x="1381" y="880" font-size="15" font-weight="400" fill="#667789" text-anchor="start">Δu：23个50维列 → 50×23</text>
+<polyline points="1346,1132 1357,1132 1357,859 1369,859" fill="none" stroke="#8795a4" stroke-width="1.8"  stroke-linejoin="round" marker-end="url(#fwd)"/>
+<rect x="1378" y="915" width="23" height="15" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1404" y="915" width="23" height="15" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1430" y="915" width="23" height="15" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1456" y="915" width="23" height="15" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1482" y="915" width="23" height="15" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1508" y="915" width="23" height="15" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1534" y="915" width="23" height="15" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1560" y="915" width="23" height="15" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1378" y="933" width="23" height="15" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1404" y="933" width="23" height="15" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1430" y="933" width="23" height="15" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1456" y="933" width="23" height="15" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1482" y="933" width="23" height="15" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1508" y="933" width="23" height="15" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1534" y="933" width="23" height="15" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1560" y="933" width="23" height="15" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1378" y="951" width="23" height="15" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1404" y="951" width="23" height="15" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1430" y="951" width="23" height="15" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1456" y="951" width="23" height="15" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1482" y="951" width="23" height="15" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1508" y="951" width="23" height="15" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1534" y="951" width="23" height="15" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1560" y="951" width="23" height="15" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1378" y="969" width="23" height="15" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1404" y="969" width="23" height="15" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1430" y="969" width="23" height="15" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1456" y="969" width="23" height="15" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1482" y="969" width="23" height="15" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1508" y="969" width="23" height="15" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1534" y="969" width="23" height="15" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1560" y="969" width="23" height="15" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1378" y="987" width="23" height="15" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1404" y="987" width="23" height="15" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1430" y="987" width="23" height="15" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1456" y="987" width="23" height="15" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1482" y="987" width="23" height="15" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1508" y="987" width="23" height="15" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1534" y="987" width="23" height="15" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<rect x="1560" y="987" width="23" height="15" rx="1" fill="#dce8f6" stroke="#bac8d7" stroke-width="0.7"/>
+<text x="1602" y="939" font-size="14" font-weight="600" fill="#243242" text-anchor="start">Δu有效列</text>
+<rect x="1369" y="1001" width="344" height="67" rx="8" fill="#e8f1fb" stroke="#8daecc" stroke-width="1.4"/>
+<text x="1381" y="1025" font-size="18" font-weight="650" fill="#243242" text-anchor="start">Scatter + 历史有效门</text>
+<text x="1381" y="1048" font-size="15" font-weight="400" fill="#667789" text-anchor="start">50×128，padding为0；全空历史直接旁路</text>
+<polyline points="1541,996 1541,1001" fill="none" stroke="#8795a4" stroke-width="1.8"  stroke-linejoin="round" marker-end="url(#fwd)"/>
+<rect x="1369" y="1090" width="344" height="75" rx="8" fill="#edf8f4" stroke="#91b7aa" stroke-width="1.4"/>
+<text x="1381" y="1118" font-size="23" font-weight="700" fill="#257065" text-anchor="start">u = u₀ + Δu</text>
+<text x="1381" y="1144" font-size="15" font-weight="400" fill="#667789" text-anchor="start">50×128 · 原动作定义不变</text>
+<polyline points="1541,1068 1541,1090" fill="none" stroke="#8795a4" stroke-width="1.8"  stroke-linejoin="round" marker-end="url(#fwd)"/>
+<polyline points="484,1031 491,1031 491,1180 1541,1180 1541,1165" fill="none" stroke="#8795a4" stroke-width="1.8"  stroke-linejoin="round" marker-end="url(#fwd)"/>
+<text x="650" y="1175" font-size="14" font-weight="600" fill="#8795a4" text-anchor="start">u₀ 原分支旁路（冻结）</text>
+<rect x="1737" y="813" width="370" height="105" rx="8" fill="#e8f1fb" stroke="#8daecc" stroke-width="1.4"/>
+<text x="1749" y="837" font-size="18" font-weight="650" fill="#243242" text-anchor="start">训练：LFM（有效元素 mask）</text>
+<text x="1749" y="860" font-size="15" font-weight="400" fill="#667789" text-anchor="start">仅32个监督步及有效23列</text>
+<text x="1749" y="880" font-size="15" font-weight="400" fill="#667789" text-anchor="start">LFM = mean((u − Y)²)</text>
+<text x="1749" y="900" font-size="15" font-weight="400" fill="#667789" text-anchor="start">L = LFM + λs Lstate</text>
+<rect x="1737" y="942" width="370" height="96" rx="8" fill="#f0f3f6" stroke="#a4afb9" stroke-width="1.4"/>
+<text x="1749" y="966" font-size="18" font-weight="650" fill="#243242" text-anchor="start">推理：积分更新 X</text>
+<text x="1749" y="989" font-size="15" font-weight="400" fill="#667789" text-anchor="start">约4步；B/C/m缓存不变</text>
+<text x="1749" y="1009" font-size="15" font-weight="400" fill="#667789" text-anchor="start">最终动作块50×128</text>
+<rect x="1737" y="1060" width="370" height="105" rx="8" fill="#f0f3f6" stroke="#a4afb9" stroke-width="1.4"/>
+<text x="1749" y="1084" font-size="18" font-weight="650" fill="#243242" text-anchor="start">执行 + 下一决策</text>
+<text x="1749" y="1107" font-size="15" font-weight="400" fill="#667789" text-anchor="start">执行前8步（30Hz）</text>
+<text x="1749" y="1127" font-size="15" font-weight="400" fill="#667789" text-anchor="start">当前观测仅写记忆一次</text>
+<text x="1749" y="1147" font-size="15" font-weight="400" fill="#667789" text-anchor="start">episode终止清空所有状态</text>
+<polyline points="1713,1127 1724,1127 1724,868 1737,868" fill="none" stroke="#8795a4" stroke-width="1.8"  stroke-linejoin="round" marker-end="url(#fwd)"/>
+<polyline points="1713,1127 1724,1127 1724,990 1737,990" fill="none" stroke="#8795a4" stroke-width="1.8"  stroke-linejoin="round" marker-end="url(#fwd)"/>
+<polyline points="1921,1038 1921,1060" fill="none" stroke="#257065" stroke-width="1.8" stroke-dasharray="7 5" stroke-linejoin="round" marker-end="url(#loop)"/>
+<polyline points="1921,942 1921,930 2114,930 2114,781 267,781 267,813" fill="none" stroke="#257065" stroke-width="1.8" stroke-dasharray="7 5" stroke-linejoin="round" marker-end="url(#loop)"/>
+<text x="1510" y="776" font-size="14" font-weight="600" fill="#257065" text-anchor="start">推理未结束：X 下一生成步</text>
+<polyline points="2070,1165 2070,1193 1666,1193" fill="none" stroke="#a66a21" stroke-width="1.8" stroke-dasharray="3 6" stroke-linejoin="round" marker-end="url(#write)"/>
+<text x="1707" y="1187" font-size="14" font-weight="600" fill="#a66a21" text-anchor="start">下一决策：写库、更新 ŝ</text>
+<rect x="52" y="1205" width="2055" height="103" rx="8" fill="#fff8f8" stroke="#d6a2a3" stroke-width="1.4"/>
+<text x="64" y="1229" font-size="18" font-weight="700" fill="#b74649" text-anchor="start">训练反向传播（Stage 2）</text>
+<text x="64" y="1254" font-size="17" font-weight="600" fill="#b74649" text-anchor="start">LFM → Δu → Wₒ → 协同交互 → F → J / B 与 m / C → Q,K,V / 认知检索 / 视觉压缩 / 状态增强 fθ</text>
+<text x="64" y="1278" font-size="16" font-weight="400" fill="#b74649" text-anchor="start">Lstate → gφ → fθ / 当前视觉压缩；上一预测和历史槽 detach；gφ 不通过 detached 上一预测接收未来 FM 梯度。</text>
+<text x="64" y="1298" font-size="15" font-weight="400" fill="#667789" text-anchor="start">冻结 Eagle / 原 DiT₀ / 原投影：参数不更新；零输出初始化使首次 FM 先更新 Wₒ，后续检查上游梯度；硬合并索引不反传。</text>
+<polyline points="2027,918 2027,1205" fill="none" stroke="#b74649" stroke-width="2.4" stroke-dasharray="9 6" stroke-linejoin="round" marker-end="url(#grad)"/>
+<polyline points="1542,1205 1542,1165" fill="none" stroke="#b74649" stroke-width="2.4" stroke-dasharray="9 6" stroke-linejoin="round" marker-end="url(#grad)"/>
+<polyline points="1131,1205 1131,1165" fill="none" stroke="#b74649" stroke-width="2.4" stroke-dasharray="9 6" stroke-linejoin="round" marker-end="url(#grad)"/>
+<polyline points="700,1205 700,1129" fill="none" stroke="#b74649" stroke-width="2.4" stroke-dasharray="9 6" stroke-linejoin="round" marker-end="url(#grad)"/>
+<rect x="35" y="1346" width="2090" height="78" rx="9" fill="#ffffff" stroke="#c7d2dd" stroke-width="1.4"/>
+<text x="52" y="1370" font-size="17" font-weight="700" fill="#243242" text-anchor="start">训练策略</text>
+<text x="175" y="1370" font-size="18" font-weight="400" fill="#243242" text-anchor="start">Stage1：通用 GR00T → 无记忆动作专家 6000步；Stage2：共同 step6000 → A/B/C 各3000步（首轮A）</text>
+<text x="52" y="1395" font-size="16" font-weight="400" fill="#667789" text-anchor="start">说明：方块为 token / 张量示意，不代表实际逐元素绘制；训练阶段仅一次速度场预测；完整参数、标签门禁与评估规则见 V2.1 实施协议。</text></svg>
