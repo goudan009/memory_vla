@@ -11,6 +11,7 @@ def helpers():
     names = {'identity', 'verify_calibrated_weight'}
     nodes = [n for n in tree.body if isinstance(n, ast.FunctionDef) and n.name in names]
     env = {'source_digest': lambda: 'source',
+           'parallel': SimpleNamespace(world_size=lambda: 1),
            'hash_file': lambda p: hashlib.sha256(p.read_bytes()).hexdigest()}
     exec(compile(ast.Module(body=nodes, type_ignores=[]), str(path), 'exec'), env)
     return env

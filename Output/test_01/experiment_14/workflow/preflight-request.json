@@ -1,0 +1,9 @@
+{
+  "version":"v2.1","task":40,"stage":"stage1",
+  "run_id":"v2.1__test01__exp14__run001__preflight001",
+  "dataset":"/nvme3/data_wyh/datasets/b1k2025_groot_task40_v1_200",
+  "checkpoint":"/nvme3/huggingface/train_model/GR00T/GR00T-N1.6-3B",
+  "labels":"/nvme3/data_wyh/datasets/v2_1_task40_labels/task40_labels.parquet",
+  "gpus":[0,1,2,3],"preflight_only":true,"enqueue":true,
+  "notes":"V2.1 confirmed recipe; disposable real four-A100 engineering preflight, archive evidence then purge dedicated outputs."
+}

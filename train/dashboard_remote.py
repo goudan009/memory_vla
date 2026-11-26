@@ -196,6 +196,8 @@ def fusion_contract():
 
 
 def prepare(request):
+    if request.get('version') == 'v2.1':
+        return v21_backend().prepare(request)
     allowed = {'task', 'tasks', 'task_name', 'dataset', 'split', 'checkpoint', 'gpus', 'validation_gpu',
                'arm', 'steps', 'global_windows_per_step', 'microbatch', 'seed', 'learning_rate', 'share_existing', 'version',
                'method', 'method_description', 'validation_enabled', 'validation_percent', 'enqueue',
@@ -559,6 +561,8 @@ def materialize_dataset(plan, output):
 
 
 def start(request):
+    if request.get('version') == 'v2.1':
+        return v21_backend().start(request, request_digest)
     plan = prepare(request)
     if plan.get('experiment') and not plan['fusion_training']['ready']:
         raise ValueError(plan['fusion_training']['reason'])
@@ -911,6 +915,8 @@ def fork_resume(root, arm, info, version, gpus):
 
 
 def resume(request, controller_source):
+    if v21_backend().owns(request):
+        return v21_backend().resume(request)
     root,arm=job_root(request)
     # Serialize independently of the HTTP process so retries cannot submit twice.
     with (TRAINING/'.gpu_queue.lock').open('a') as lock:
@@ -1185,6 +1191,8 @@ def jobs():
     for root in sorted(roots, key=lambda p:p.name, reverse=True):
         if root.is_symlink():
             continue
+        if read_json(root/'config/web_launch.json',{}).get('version') == 'v2.1':
+            continue
         plan = recorded_plan(root)
         split = read_json(root/'config/data_split.json',{})
         aggregate = read_json(root/'status.json',{})
@@ -1238,7 +1246,7 @@ def jobs():
                 can_cancel=bool(queue and queue['cancellable'] and state.get('status') == 'queued'),
                 can_stop=not state.get('training_complete',False) and len(plan.get('commands',{}))==1
                     and status in ('training','running')))
-    return dict(jobs=result)
+    return dict(jobs=result+v21_backend().jobs())
 
 
 def initial_weights(root, arm, config):
@@ -1340,6 +1348,8 @@ def training_parameters(root, arm, config):
 
 
 def detail(request):
+    if v21_backend().owns(request):
+        return v21_backend().detail(request)
     root, arm = job_root(request)
     resume_profile=read_json(root/'config/web_resume_latest.json', {})
     profile_after=resume_profile.get('resume_step', 0) if resume_profile.get('engineering_source_digest') else 0
@@ -1419,6 +1429,8 @@ def detail(request):
 
 
 def stop(request):
+    if v21_backend().owns(request):
+        return v21_backend().stop(request)
     root, arm = job_root(request)
     plan=recorded_plan(root)
     if len(plan['commands'])!=1:
@@ -1447,6 +1459,8 @@ def stop(request):
 
 
 def delete(request):
+    if v21_backend().owns(request):
+        return v21_backend().delete(request)
     root, arm = job_root(request)
     delete_files = request.get('delete_files', False)
     if type(delete_files) is not bool:
@@ -1477,6 +1491,11 @@ def delete(request):
             raise ValueError('回收目录异常或已存在同名记录，未移动训练目录')
         root.rename(target)
         return dict(control, output=job['output'], trash_path=str(target))
+
+
+def v21_backend():
+    from v21_workbench import Backend
+    return Backend(globals())
 
 
 if __name__=='__main__':

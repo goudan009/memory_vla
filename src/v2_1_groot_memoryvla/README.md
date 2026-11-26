@@ -46,7 +46,7 @@ python -m v2_1_groot_memoryvla.train --stage memory --prior topology \
 2. Stage1 获批并有效完成后，A/B/C（D 可选）真实短测：零残差/empty/gamma0 一致；冻结权重不变；确认有效标签、梯度、参数变化和峰值显存。
 3. 真实 checkpoint 保存、完整进程重载、断点重跑对照；多环境 reset 和 episode key 不串库；真实仿真接口单回合 smoke。
 4. 工作台 backend 注册、代码同步与 preview 检查，确保显式选 V2.1 才路由新入口，不破坏 V1；现有 shell 入口支持 --source-version v2.1。
-5. 用户确认后才正式训练、验证和闭环评估；不要自动在 A100/4090/A6000 上启动任务。
+5. 用户于2026-11-27已确认通用GR00T、180/20和原V2.1配方：A100四卡真实预检通过后直接正式训练，执行记录见 Output/test_01/experiment_14。闭环评估沿用已确认协议与工作台。
 
 离线 diagnose.py 在训练完成后运行，固定验证集 20 条 × 每条 5 个预定锚点；无合格冲突 donor 的点仅记录 normal/empty，不伪造 wrong。状态真值只用于标签监督/离线指标或选 donor，绝不输入推理模型。gamma=0 不计算原始 residual，相关诊断记 null。
 

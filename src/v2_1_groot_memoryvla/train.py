@@ -1,10 +1,10 @@
-"""Single-GPU chronological training. Explicit --execute plus preflight required.
+"""Chronological single/multi-GPU training. Explicit --execute plus preflight required.
 
 Stage1 / continued: original action expert only; memory: frozen entire base.
 No automatic launch, no implicit V1 memory fallback. Resume restores the exact
 optimizer, schedule cursor, RNG and detached runtime; real-server validation is required.
 """
-import argparse,copy,json,hashlib,random
+import argparse,copy,json,hashlib,random,time,signal
 from pathlib import Path
 import numpy as np
 import torch
@@ -15,11 +15,29 @@ from .model.integration import Integrated
 from .data.windows import Windows,make_split,schedule,fit_statistics,TAG
 from v1_groot_memoryvla.experiment.first_training import seeded
 from .loading import load_base
+from . import distributed as parallel
 from v1_groot_memoryvla.model.gr00t_n1d6.processing_gr00t_n1d6 import Gr00tN1d6Processor
 
+_stop_requested=False
+def request_stop(*_):
+    global _stop_requested
+    _stop_requested=True
+
+def stopping(args,step):
+    control=args.output/"stop.json"
+    target=json.loads(control.read_text()).get("stop_after_step",step) if control.exists() else None
+    return _stop_requested or (target is not None and step>=int(target))
+
+def status(args,state,step,**extra):
+    jsonwrite(args.output/"status.json",dict(status=state,step=step,total_steps=args.steps,
+              training_complete=state=="completed",world_size=parallel.world_size(),**extra))
+
 def jsonwrite(p,x):
+    if parallel.rank()!=0:return
     p.parent.mkdir(parents=True,exist_ok=True)
-    p.write_text(json.dumps(x,indent=2,ensure_ascii=False)+"\n")
+    pending=p.with_name(p.name+".pending")
+    pending.write_text(json.dumps(x,indent=2,ensure_ascii=False)+"\n")
+    pending.replace(p)
 def hash_file(p):
     h=hashlib.sha256()
     with open(p,"rb") as f:
@@ -30,6 +48,18 @@ def base_hash(base):
     for name,p in base.named_parameters():
         h.update(name.encode());h.update(p.detach().cpu().contiguous().reshape(-1).view(torch.uint8).numpy().tobytes())
     return h.hexdigest()
+def tensor_tree_hash(value):
+    h=hashlib.sha256()
+    def visit(x):
+        if torch.is_tensor(x):
+            h.update(str((x.dtype,tuple(x.shape))).encode())
+            h.update(x.detach().cpu().contiguous().reshape(-1).view(torch.uint8).numpy().tobytes())
+        elif isinstance(x,dict):
+            for k in sorted(x,key=str):h.update(str(k).encode());visit(x[k])
+        elif isinstance(x,(list,tuple)):
+            for v in x:visit(v)
+        else:h.update(repr(x).encode())
+    visit(value);return h.hexdigest()
 def initialize(args,resume=None):
     seeded(args.seed)
     split=json.loads((args.output/'data_split.json').read_text()) if resume else (make_split(args.dataset,args.seed) if args.split is None else json.loads(args.split.read_text()))
@@ -77,7 +107,10 @@ def initialize(args,resume=None):
 def groups(ds,pair,seed,labels):
     out=[]
     for k in pair:
-        seeded(seed+k);g=ds.get_group(k,sampling_seed=seed+k)
+        seeded(seed+k)
+        transform=ds.processor.train_image_transform
+        if hasattr(transform,"set_random_seed"):transform.set_random_seed(seed+k)
+        g=ds.get_group(k,sampling_seed=seed+k)
         g["target"],g["quality"]=labels.get(g["episode"],g["frame_indices"])
         out.append(g)
     return out
@@ -96,6 +129,7 @@ def run_update(ds,pair,seed,base,model,labels,pos,args,optimizer=None,calibrate=
     if optimizer is not None:optimizer.zero_grad(set_to_none=True)
     fm_total=0.;state_total=0.
     fgr=sgr=None
+    ordinal=0
     if calibrate:
         shared=list(model.memory.enhance.parameters())
         fgr=[None]*len(shared);sgr=[None]*len(shared)
@@ -103,6 +137,8 @@ def run_update(ds,pair,seed,base,model,labels,pos,args,optimizer=None,calibrate=
     for g in gs:
         for a in range(0,len(g["steps"]),args.microbatch):
             b=min(a+args.microbatch,len(g["steps"]))
+            owned=ordinal%parallel.world_size()==parallel.rank();ordinal+=1
+            if model is None and not owned:continue
             inputs=ds.processor.collator(g["steps"][a:b])["inputs"]
             bk,act=base.prepare_input(inputs)
             seeded(seed+g["group_id"]*100+a)
@@ -118,6 +154,9 @@ def run_update(ds,pair,seed,base,model,labels,pos,args,optimizer=None,calibrate=
                         timesteps=g["timesteps"][a:b],sequence_start=g["episode_start"] and a==0,
                         sequence_end=g["episode_end"] and b==len(g["steps"]))
                     cache=model.prepare_cache(feat,bk["input_ids"],torch.from_numpy(g["raw_q"][a:b]).cuda(),context)
+                    # All replicas advance identical detached memory; only the
+                    # owner contributes this decision's gradients and metrics.
+                    if not owned:continue
                     # Reset action RNG after all memory computation.
                     seeded(seed+g["group_id"]*100+a)
                     output=model.loss_from_features(feat,act,cache)
@@ -140,6 +179,7 @@ def run_update(ds,pair,seed,base,model,labels,pos,args,optimizer=None,calibrate=
             fm_total+=float(fm.detach());state_total+=float(state.detach())
     if optimizer is not None:
         params=[p for g in optimizer.param_groups for p in g["params"]]
+        parallel.sum_gradients(params)
         gn=float(torch.nn.utils.clip_grad_norm_(params,1.,error_if_nonfinite=True))
         optimizer.step()
     else:gn=0.
@@ -152,7 +192,15 @@ def run_update(ds,pair,seed,base,model,labels,pos,args,optimizer=None,calibrate=
              action=model.refinement.action,fusion=model.refinement.fusion,global_blocks=model.refinement.global_blocks,output=model.refinement.output,
              **({"local":model.refinement.local} if model.refinement.local is not None else {})).items():
             module_grads[name]=norm([p.grad for p in module.parameters()])
-    return dict(module_grads=module_grads,fm=fm_total,state=state_total,grad_norm=gn,state_counts=stats,
+    totals=parallel.sum_tensor(torch.tensor([fm_total,state_total],device=pos.device,dtype=torch.float64)).tolist()
+    flat=parallel.sum_tensor(torch.tensor([stats[n] for n in args.states],device=pos.device,dtype=torch.int64)).cpu().tolist()
+    stats=dict(zip(args.states,flat))
+    if calibrate:
+        for grads in (fgr,sgr):
+            for i,p in enumerate(shared):
+                if grads[i] is None:grads[i]=torch.zeros_like(p,dtype=torch.float32)
+                parallel.sum_tensor(grads[i])
+    return dict(module_grads=module_grads,fm=totals[0],state=totals[1],grad_norm=gn,state_counts=stats,
                 fm_shared_grad=norm(fgr) if calibrate else None,state_shared_grad=norm(sgr) if calibrate else None,
                 action_elements=units,state_elements=counts.cpu().tolist())
 
@@ -204,6 +252,7 @@ def validate(ds,base,model,labels,pos,args,step):
 def identity(args):
     return {k:getattr(args,k) for k in ("stage","prior","fusion_layers","states","seed","microbatch","lr","weak_weight")} | {
         "requested_state_weight":getattr(args,"requested_state_weight",args.state_weight),
+        "world_size":parallel.world_size(),
         "calibration_reference_sha256":hash_file(args.calibration_reference) if args.calibration_reference is not None else None,
         "source_digest":source_digest(),"label_sha256":hash_file(args.labels),
         "initial_checkpoint":str(args.checkpoint.resolve()),"dataset":str(args.dataset.resolve())}
@@ -213,7 +262,10 @@ def verify_calibrated_weight(gate,args):
         raise ValueError("preflight calibrated state weight mismatch")
 
 def save(args,base,model,processor,split,lo,hi,step,initial_hash,opt):
-    final=args.output/"checkpoints"/f"step-{step:06d}"
+    ranks=parallel.gather({"runtime":export_runtime(model),"rng":rng_state()})
+    if parallel.rank()!=0:
+        parallel.barrier();return
+    final=args.output/"checkpoints"/f"{args.checkpoint_prefix}__step{step:06d}"
     dest=final.with_name(final.name+".partial")
     if final.exists():raise FileExistsError(final)
     dest.mkdir(parents=True,exist_ok=False)
@@ -238,9 +290,11 @@ def save(args,base,model,processor,split,lo,hi,step,initial_hash,opt):
     jsonwrite(dest/"v2_1_run.json",dict(stage=args.stage,step=step,base_initial_hash=initial_hash,lambda_s=args.state_weight,
                                        label_sha256=hash_file(args.labels),prior=args.prior,states=args.states,seed=args.seed))
     torch.save({"identity":identity(args),"step":step,"optimizer":opt.state_dict(),"runtime":export_runtime(model),
-                "rng":rng_state(),"lambda_s":args.state_weight,"base_initial_hash":initial_hash},dest/"training_state.pt")
-    jsonwrite(dest/"COMPLETE.json",{"step":step,"source_digest":source_digest()})
+                "rng":rng_state(),"ranks":ranks,"world_size":parallel.world_size(),"lambda_s":args.state_weight,"base_initial_hash":initial_hash},dest/"training_state.pt")
+    jsonwrite(dest/"COMPLETE.json",{"step":step,"world_size":parallel.world_size(),"source_digest":source_digest()})
     dest.rename(final)
+    jsonwrite(args.output/"checkpoints/latest.json",dict(step=step,path=str(final),world_size=parallel.world_size()))
+    parallel.barrier()
 
 def main():
     p=argparse.ArgumentParser(__doc__)
@@ -255,6 +309,7 @@ def main():
     p.add_argument("--resume",type=Path,help="Completed checkpoint from this same output run (trusted local file)")
     p.add_argument("--execute",action="store_true");p.add_argument("--preflight-only",action="store_true")
     p.add_argument("--accept-preflight",type=Path,help="Required signed-off local preflight evidence for formal run")
+    p.add_argument("--checkpoint-prefix",default="v2.1__test01__exp14__run001")
     args=p.parse_args()
     # Preserve the requested configuration while calibration/resume changes the effective loss.
     args.requested_state_weight=args.state_weight
@@ -264,6 +319,8 @@ def main():
     spec={k:str(v) if isinstance(v,Path) else v for k,v in vars(args).items()}
     print(json.dumps(spec,indent=2))
     if not args.execute:return
+    parallel.setup()
+    signal.signal(signal.SIGTERM,request_stop);signal.signal(signal.SIGINT,request_stop)
     if args.stage=="stage1" and (args.checkpoint/"v2_1_stage1.json").exists():raise ValueError("Stage1 must start from generic GR00T, not an existing Stage1 result")
     if args.resume and args.preflight_only:raise ValueError('resume is not a disposable preflight')
     if not args.preflight_only and not args.resume:
@@ -271,7 +328,8 @@ def main():
         gate=json.loads(args.accept_preflight.read_text())
         if not gate.get("passed") or gate.get("identity")!=identity(args):
             raise SystemExit("preflight evidence mismatch")
-    if not torch.cuda.is_available() or torch.cuda.device_count()!=1:raise SystemExit("select one GPU explicitly")
+    if not torch.cuda.is_available():raise SystemExit("CUDA required")
+    if parallel.world_size()==1 and torch.cuda.device_count()!=1:raise SystemExit("select one GPU or launch torchrun")
     saved=None
     if args.resume:
         if args.resume.resolve().parent!=(args.output/"checkpoints").resolve() or not (args.resume/"COMPLETE.json").is_file():
@@ -281,7 +339,9 @@ def main():
         if saved["identity"]!=identity(args) or not 0<=saved["step"]<args.steps:
             raise ValueError("resume configuration/source or budget mismatch")
         args.state_weight=float(saved["lambda_s"])
-    else:args.output.mkdir(parents=True,exist_ok=False)
+    elif parallel.rank()==0:args.output.mkdir(parents=True,exist_ok=False)
+    parallel.barrier()
+    status(args,"initializing",0)
     split,proc,tr,val,labels,pos,base,model,lo,hi=initialize(args,args.resume)
     if saved is not None:
         verify_calibrated_weight(saved,args)
@@ -308,7 +368,9 @@ def main():
         verify_calibrated_weight(gate,args)
     if args.preflight_only:
         from .preflight import equivalence
-        initial_equiv=equivalence(base,model,tr,args.output/'initial',args.seed)
+        initial_equiv=equivalence(base,model,tr,args.output/f'rank-{parallel.rank()}'/'initial',args.seed)
+        trainable_initial=tensor_tree_hash({n:p for n,p in (model or base).named_parameters() if p.requires_grad})
+        backbone_initial=base_hash(base.backbone)
         # Disposable actual optimization; separate run, never promoted to checkpoint.
         before={k:p.detach().cpu().clone() for k,p in model.named_parameters() if p.requires_grad} if model is not None else {}
         opt=optimizer_for(base,model,args)
@@ -319,13 +381,46 @@ def main():
         updated={k:bool(not torch.equal(before[k],p.detach().cpu())) for k,p in model.named_parameters() if k in before} if model is not None else {}
         module_names=set().union(*(r['module_grads'] for r in rows))
         missing_gradient=[n for n in sorted(module_names) if not any(np.isfinite(r['module_grads'].get(n,0.)) and r['module_grads'].get(n,0.)>0 for r in rows[1:])]
-        trained_equiv=equivalence(base,model,tr,args.output/'trained',args.seed)
-        jsonwrite(args.output/"preflight.json",dict(passed=all(np.isfinite(r["grad_norm"]) and r["grad_norm"]>0 for r in rows) and unchanged is not False and not missing_gradient and (bool(any(updated.values())) if model is not None else True),
+        trained_equiv=equivalence(base,model,tr,args.output/f'rank-{parallel.rank()}'/'trained',args.seed)
+        trainable_updated=trainable_initial!=tensor_tree_hash({n:p for n,p in (model or base).named_parameters() if p.requires_grad})
+        backbone_unchanged=backbone_initial==base_hash(base.backbone)
+        # Save a real full-HF checkpoint + optimizer + every rank's runtime/RNG,
+        # then compare the next actual update with a complete independent reload.
+        save(args,base,model,proc,split,lo,hi,3,initial_hash,opt)
+        checkpoint=args.output/'checkpoints'/f'{args.checkpoint_prefix}__step000003'
+        reloaded_state=torch.load(checkpoint/'training_state.pt',map_location='cpu',weights_only=False)
+        full_hash=base_hash(base)
+        _,next_pair=next(seq)
+        expected_row=run_update(tr,next_pair,args.seed+300000,base,model,labels,pos,args,opt)
+        expected_weights=tensor_tree_hash((model or base).state_dict())
+        expected_optimizer=tensor_tree_hash(opt.state_dict())
+        expected_runtime=tensor_tree_hash(export_runtime(model))
+        # Release the first model before rebuilding to keep the diagnostic's
+        # peak memory bounded by the normal training footprint.
+        del before,opt,model,base
+        import gc
+        gc.collect();torch.cuda.empty_cache()
+        _,proc,tr,val,labels,pos,base,model,lo,hi=initialize(args,checkpoint)
+        full_reload=base_hash(base)==full_hash
+        opt=optimizer_for(base,model,args);opt.load_state_dict(reloaded_state['optimizer'])
+        local=reloaded_state['ranks'][parallel.rank()]
+        import_runtime(model,local['runtime']);restore_rng(local['rng'])
+        replay_row=run_update(tr,next_pair,args.seed+300000,base,model,labels,pos,args,opt)
+        resume_equal=(expected_weights==tensor_tree_hash((model or base).state_dict()) and
+                      expected_optimizer==tensor_tree_hash(opt.state_dict()) and
+                      expected_runtime==tensor_tree_hash(export_runtime(model)))
+        if not full_reload or not resume_equal:raise RuntimeError('full HF reload / next optimizer update mismatch')
+        ranks_match=len(set(parallel.gather(tensor_tree_hash((model or base).state_dict()))))==1
+        jsonwrite(args.output/"preflight.json",dict(passed=all(np.isfinite(r["grad_norm"]) and r["grad_norm"]>0 for r in rows) and unchanged is not False and not missing_gradient and trainable_updated and backbone_unchanged and ranks_match and full_reload and resume_equal,
+                   full_hf_reload_matches=full_reload,strict_resume_next_update_matches=resume_equal,
+                   trainable_parameters_updated=trainable_updated,backbone_unchanged=backbone_unchanged,
+                   world_size=parallel.world_size(),replicated_weights_match=ranks_match,resume_reference=expected_row,resume_reloaded=replay_row,
                    initial_equivalence=initial_equiv,trained_equivalence=trained_equiv,updated_parameters=updated,missing_gradient=missing_gradient,
                    stage=args.stage,prior=args.prior,rows=rows,base_unchanged=unchanged,
                    label_sha256=hash_file(args.labels),checkpoint=str(args.checkpoint.resolve()),states=args.states,
                    microbatch=args.microbatch,fusion_layers=args.fusion_layers,source_digest=source_digest(),
                    identity=identity(args),lambda_s=args.state_weight,split=split,base_initial_hash=initial_hash))
+        status(args,"completed",3)
         return
     opt=optimizer_for(base,model,args);seq=stream(tr,args.seed)
     if saved is None:
@@ -334,16 +429,28 @@ def main():
         jsonwrite(args.output/"validation-000000.json",validate(val,base,model,labels,pos,args,0))
     else:
         start=int(saved["step"])
-        opt.load_state_dict(saved["optimizer"]);import_runtime(model,saved["runtime"]);restore_rng(saved["rng"])
+        opt.load_state_dict(saved["optimizer"])
+        local=saved.get("ranks",[saved])[parallel.rank()]
+        import_runtime(model,local["runtime"]);restore_rng(local["rng"])
         for _ in range(start):next(seq)
     for step in range(start+1,args.steps+1):
+        began=time.monotonic()
+        status(args,"training",step-1)
         epoch,pair=next(seq);r=run_update(tr,pair,args.seed+(step-1)*100000,base,model,labels,pos,args,opt)
-        r.update(step=step,epoch=epoch,windows=pair)
-        with (args.output/"metrics.jsonl").open("a") as f:f.write(json.dumps(r)+"\n")
-        print(json.dumps(r),flush=True)
-        if step%1000==0 or step==args.steps:
+        r.update(step=step,epoch=epoch,windows=pair,seconds=time.monotonic()-began,
+                 world_size=parallel.world_size(),decisions=sum(len(tr.frame_indices(i)) for i in pair),
+                 peak_allocated_gib=torch.cuda.max_memory_allocated()/2**30,lr=args.lr)
+        if parallel.rank()==0:
+            with (args.output/"metrics.jsonl").open("a") as f:f.write(json.dumps(r)+"\n")
+            print(json.dumps(r),flush=True)
+        stop=bool(parallel.sum_tensor(torch.tensor(int(stopping(args,step)),device=pos.device)).item())
+        if step%1000==0 or step==args.steps or stop:
             if model is not None and base_hash(base)!=initial_hash:raise RuntimeError("frozen base changed")
             save(args,base,model,proc,split,lo,hi,step,initial_hash,opt)
+        if stop and step<args.steps:
+            status(args,"stopped",step);parallel.barrier();return
         if step%(3000 if args.stage=="stage1" else 1000)==0 or step==args.steps:
             jsonwrite(args.output/f"validation-{step:06d}.json",validate(val,base,model,labels,pos,args,step))
+        status(args,"training",step)
+    status(args,"completed",args.steps)
 if __name__=="__main__":main()

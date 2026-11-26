@@ -15,7 +15,7 @@ from run_identity import identity_bundle
 PROJECT = '/nvme3/projects/memory_vla'
 LIVE = PROJECT + '/deployments/web_live'
 SKIP = {'.venv', '__pycache__', '.pytest_cache', '.git', '.ruff_cache'}
-SYNC_TREES = ['src/v1_groot_memoryvla', 'src/v2_groot_memoryvla', 'src/v3_bodymemory',
+SYNC_TREES = ['src/v1_groot_memoryvla', 'src/v2_groot_memoryvla', 'src/v2_1_groot_memoryvla', 'src/v3_bodymemory',
               'baselines/groot_n1d6', 'train', 'scripts', 'configs', 'evaluation/scripts', 'evaluation/sim', 'evaluation/configs']
 
 
@@ -71,7 +71,16 @@ class TrainingManager:
                        device_label=self.label, single_gpu=self.device.get('single_gpu', False))
         if resume_controller is not None:
             request['resume_controller']=resume_controller
-        code = identity_bundle() + 'REQUEST = ' + repr(request) + chr(10) + (self.root/'train/dashboard_remote.py').read_text()
+        # Ship the lightweight V2.1 backend with this RPC, including the first
+        # preview before the new source tree has been synchronized remotely.
+        backend_path = self.root/'train/v21_workbench.py'
+        if not backend_path.is_file():
+            backend_path = Path(__file__).with_name('v21_workbench.py')
+        backend = backend_path.read_text()
+        bundle = ('import sys, types\n_v21_module = types.ModuleType("v21_workbench")\n'
+                  'sys.modules["v21_workbench"] = _v21_module\n'
+                  'exec('+repr(backend)+', _v21_module.__dict__)\n')
+        code = identity_bundle() + bundle + 'REQUEST = ' + repr(request) + chr(10) + (self.root/'train/dashboard_remote.py').read_text()
         return json.loads(self._ssh('python3 -', code, timeout=60))
 
     def manifest(self):
