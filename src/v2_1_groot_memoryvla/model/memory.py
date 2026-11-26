@@ -123,7 +123,9 @@ class Memory(nn.Module):
         mode=context.get("history_mode","normal")
         if mode not in ("normal","empty","wrong","other_episode") or (self.training and mode!="normal"):
             raise ValueError("invalid history control")
-        if context.get("sequence_start"):self.reset(list(set(keys)))
+        if context.get("sequence_start"):
+            if times[0]!=0:raise ValueError('episode start must begin at t=0')
+            self.reset(list(set(keys)))
         donors=context.get("donor_keys")
         if mode in ("wrong","other_episode"):
             if donors is None or len(donors)!=len(keys):raise ValueError("explicit matched donor keys required")
@@ -134,7 +136,10 @@ class Memory(nn.Module):
         cs=[];ms=[];act=[];ls=[];scores=[]
         norm=lambda x:F.layer_norm(x.float(),(x.shape[-1],))
         for i,(k,t) in enumerate(zip(keys,times)):
+            if t!=self.banks.last.get(k,-1)+1:
+                raise ValueError('decision clock gap or missing episode reset')
             p,old,prev=reads[i] if reads is not None else self.banks.read(k,t,empty=mode=="empty")
+            if reads is not None and t>0 and not (p or old):raise ValueError('wrong-history donor has no eligible prefix')
             pv=c.new_zeros(len(self.cfg.states)) if prev is None else prev.to(c.dtype)
             cv=c[i]+self.enhance(torch.cat((c[i],vbar[i],pv,c.new_tensor([float(prev is not None)]))))
             logits=self.state_head(cv);ct=cv
