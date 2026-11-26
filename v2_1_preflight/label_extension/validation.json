@@ -1,0 +1,1912 @@
+{
+  "passed": true,
+  "episodes": 200,
+  "frames": 647555,
+  "states": 21,
+  "quality_masks_checked": true,
+  "certified_original_labels_unchanged": true,
+  "weak_never_promoted_to_certified": true,
+  "causal_history_unknown_propagation_checked": true,
+  "original_video_pts_checked": 135,
+  "videos_checked": 15,
+  "images": [
+    {
+      "episode": 400010,
+      "frame": 0,
+      "camera": "head",
+      "pts": 0,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.head/episode_00400010.mp4",
+      "image": "samples/keyframes/400010_00000_head.png",
+      "source_size": [
+        720,
+        720
+      ],
+      "timestamp_s": 0.0
+    },
+    {
+      "episode": 400010,
+      "frame": 2027,
+      "camera": "head",
+      "pts": 1037824,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.head/episode_00400010.mp4",
+      "image": "samples/keyframes/400010_02027_head.png",
+      "source_size": [
+        720,
+        720
+      ],
+      "timestamp_s": 67.56666666666666
+    },
+    {
+      "episode": 400010,
+      "frame": 2067,
+      "camera": "head",
+      "pts": 1058304,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.head/episode_00400010.mp4",
+      "image": "samples/keyframes/400010_02067_head.png",
+      "source_size": [
+        720,
+        720
+      ],
+      "timestamp_s": 68.9
+    },
+    {
+      "episode": 400010,
+      "frame": 2441,
+      "camera": "head",
+      "pts": 1249792,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.head/episode_00400010.mp4",
+      "image": "samples/keyframes/400010_02441_head.png",
+      "source_size": [
+        720,
+        720
+      ],
+      "timestamp_s": 81.36666666666666
+    },
+    {
+      "episode": 400010,
+      "frame": 2640,
+      "camera": "head",
+      "pts": 1351680,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.head/episode_00400010.mp4",
+      "image": "samples/keyframes/400010_02640_head.png",
+      "source_size": [
+        720,
+        720
+      ],
+      "timestamp_s": 88.0
+    },
+    {
+      "episode": 400010,
+      "frame": 2680,
+      "camera": "head",
+      "pts": 1372160,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.head/episode_00400010.mp4",
+      "image": "samples/keyframes/400010_02680_head.png",
+      "source_size": [
+        720,
+        720
+      ],
+      "timestamp_s": 89.33333333333333
+    },
+    {
+      "episode": 400010,
+      "frame": 2817,
+      "camera": "head",
+      "pts": 1442304,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.head/episode_00400010.mp4",
+      "image": "samples/keyframes/400010_02817_head.png",
+      "source_size": [
+        720,
+        720
+      ],
+      "timestamp_s": 93.9
+    },
+    {
+      "episode": 400010,
+      "frame": 2857,
+      "camera": "head",
+      "pts": 1462784,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.head/episode_00400010.mp4",
+      "image": "samples/keyframes/400010_02857_head.png",
+      "source_size": [
+        720,
+        720
+      ],
+      "timestamp_s": 95.23333333333333
+    },
+    {
+      "episode": 400010,
+      "frame": 0,
+      "camera": "left_wrist",
+      "pts": 0,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.left_wrist/episode_00400010.mp4",
+      "image": "samples/keyframes/400010_00000_left_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 0.0
+    },
+    {
+      "episode": 400010,
+      "frame": 2027,
+      "camera": "left_wrist",
+      "pts": 1037824,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.left_wrist/episode_00400010.mp4",
+      "image": "samples/keyframes/400010_02027_left_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 67.56666666666666
+    },
+    {
+      "episode": 400010,
+      "frame": 2067,
+      "camera": "left_wrist",
+      "pts": 1058304,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.left_wrist/episode_00400010.mp4",
+      "image": "samples/keyframes/400010_02067_left_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 68.9
+    },
+    {
+      "episode": 400010,
+      "frame": 2441,
+      "camera": "left_wrist",
+      "pts": 1249792,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.left_wrist/episode_00400010.mp4",
+      "image": "samples/keyframes/400010_02441_left_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 81.36666666666666
+    },
+    {
+      "episode": 400010,
+      "frame": 2640,
+      "camera": "left_wrist",
+      "pts": 1351680,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.left_wrist/episode_00400010.mp4",
+      "image": "samples/keyframes/400010_02640_left_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 88.0
+    },
+    {
+      "episode": 400010,
+      "frame": 2680,
+      "camera": "left_wrist",
+      "pts": 1372160,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.left_wrist/episode_00400010.mp4",
+      "image": "samples/keyframes/400010_02680_left_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 89.33333333333333
+    },
+    {
+      "episode": 400010,
+      "frame": 2817,
+      "camera": "left_wrist",
+      "pts": 1442304,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.left_wrist/episode_00400010.mp4",
+      "image": "samples/keyframes/400010_02817_left_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 93.9
+    },
+    {
+      "episode": 400010,
+      "frame": 2857,
+      "camera": "left_wrist",
+      "pts": 1462784,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.left_wrist/episode_00400010.mp4",
+      "image": "samples/keyframes/400010_02857_left_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 95.23333333333333
+    },
+    {
+      "episode": 400010,
+      "frame": 0,
+      "camera": "right_wrist",
+      "pts": 0,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.right_wrist/episode_00400010.mp4",
+      "image": "samples/keyframes/400010_00000_right_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 0.0
+    },
+    {
+      "episode": 400010,
+      "frame": 2027,
+      "camera": "right_wrist",
+      "pts": 1037824,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.right_wrist/episode_00400010.mp4",
+      "image": "samples/keyframes/400010_02027_right_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 67.56666666666666
+    },
+    {
+      "episode": 400010,
+      "frame": 2067,
+      "camera": "right_wrist",
+      "pts": 1058304,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.right_wrist/episode_00400010.mp4",
+      "image": "samples/keyframes/400010_02067_right_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 68.9
+    },
+    {
+      "episode": 400010,
+      "frame": 2441,
+      "camera": "right_wrist",
+      "pts": 1249792,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.right_wrist/episode_00400010.mp4",
+      "image": "samples/keyframes/400010_02441_right_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 81.36666666666666
+    },
+    {
+      "episode": 400010,
+      "frame": 2640,
+      "camera": "right_wrist",
+      "pts": 1351680,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.right_wrist/episode_00400010.mp4",
+      "image": "samples/keyframes/400010_02640_right_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 88.0
+    },
+    {
+      "episode": 400010,
+      "frame": 2680,
+      "camera": "right_wrist",
+      "pts": 1372160,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.right_wrist/episode_00400010.mp4",
+      "image": "samples/keyframes/400010_02680_right_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 89.33333333333333
+    },
+    {
+      "episode": 400010,
+      "frame": 2817,
+      "camera": "right_wrist",
+      "pts": 1442304,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.right_wrist/episode_00400010.mp4",
+      "image": "samples/keyframes/400010_02817_right_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 93.9
+    },
+    {
+      "episode": 400010,
+      "frame": 2857,
+      "camera": "right_wrist",
+      "pts": 1462784,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.right_wrist/episode_00400010.mp4",
+      "image": "samples/keyframes/400010_02857_right_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 95.23333333333333
+    },
+    {
+      "episode": 400020,
+      "frame": 0,
+      "camera": "head",
+      "pts": 0,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.head/episode_00400020.mp4",
+      "image": "samples/keyframes/400020_00000_head.png",
+      "source_size": [
+        720,
+        720
+      ],
+      "timestamp_s": 0.0
+    },
+    {
+      "episode": 400020,
+      "frame": 2560,
+      "camera": "head",
+      "pts": 1310720,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.head/episode_00400020.mp4",
+      "image": "samples/keyframes/400020_02560_head.png",
+      "source_size": [
+        720,
+        720
+      ],
+      "timestamp_s": 85.33333333333333
+    },
+    {
+      "episode": 400020,
+      "frame": 2600,
+      "camera": "head",
+      "pts": 1331200,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.head/episode_00400020.mp4",
+      "image": "samples/keyframes/400020_02600_head.png",
+      "source_size": [
+        720,
+        720
+      ],
+      "timestamp_s": 86.66666666666667
+    },
+    {
+      "episode": 400020,
+      "frame": 2997,
+      "camera": "head",
+      "pts": 1534464,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.head/episode_00400020.mp4",
+      "image": "samples/keyframes/400020_02997_head.png",
+      "source_size": [
+        720,
+        720
+      ],
+      "timestamp_s": 99.9
+    },
+    {
+      "episode": 400020,
+      "frame": 3308,
+      "camera": "head",
+      "pts": 1693696,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.head/episode_00400020.mp4",
+      "image": "samples/keyframes/400020_03308_head.png",
+      "source_size": [
+        720,
+        720
+      ],
+      "timestamp_s": 110.26666666666667
+    },
+    {
+      "episode": 400020,
+      "frame": 3348,
+      "camera": "head",
+      "pts": 1714176,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.head/episode_00400020.mp4",
+      "image": "samples/keyframes/400020_03348_head.png",
+      "source_size": [
+        720,
+        720
+      ],
+      "timestamp_s": 111.6
+    },
+    {
+      "episode": 400020,
+      "frame": 3385,
+      "camera": "head",
+      "pts": 1733120,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.head/episode_00400020.mp4",
+      "image": "samples/keyframes/400020_03385_head.png",
+      "source_size": [
+        720,
+        720
+      ],
+      "timestamp_s": 112.83333333333333
+    },
+    {
+      "episode": 400020,
+      "frame": 3425,
+      "camera": "head",
+      "pts": 1753600,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.head/episode_00400020.mp4",
+      "image": "samples/keyframes/400020_03425_head.png",
+      "source_size": [
+        720,
+        720
+      ],
+      "timestamp_s": 114.16666666666667
+    },
+    {
+      "episode": 400020,
+      "frame": 0,
+      "camera": "left_wrist",
+      "pts": 0,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.left_wrist/episode_00400020.mp4",
+      "image": "samples/keyframes/400020_00000_left_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 0.0
+    },
+    {
+      "episode": 400020,
+      "frame": 2560,
+      "camera": "left_wrist",
+      "pts": 1310720,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.left_wrist/episode_00400020.mp4",
+      "image": "samples/keyframes/400020_02560_left_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 85.33333333333333
+    },
+    {
+      "episode": 400020,
+      "frame": 2600,
+      "camera": "left_wrist",
+      "pts": 1331200,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.left_wrist/episode_00400020.mp4",
+      "image": "samples/keyframes/400020_02600_left_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 86.66666666666667
+    },
+    {
+      "episode": 400020,
+      "frame": 2997,
+      "camera": "left_wrist",
+      "pts": 1534464,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.left_wrist/episode_00400020.mp4",
+      "image": "samples/keyframes/400020_02997_left_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 99.9
+    },
+    {
+      "episode": 400020,
+      "frame": 3308,
+      "camera": "left_wrist",
+      "pts": 1693696,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.left_wrist/episode_00400020.mp4",
+      "image": "samples/keyframes/400020_03308_left_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 110.26666666666667
+    },
+    {
+      "episode": 400020,
+      "frame": 3348,
+      "camera": "left_wrist",
+      "pts": 1714176,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.left_wrist/episode_00400020.mp4",
+      "image": "samples/keyframes/400020_03348_left_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 111.6
+    },
+    {
+      "episode": 400020,
+      "frame": 3385,
+      "camera": "left_wrist",
+      "pts": 1733120,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.left_wrist/episode_00400020.mp4",
+      "image": "samples/keyframes/400020_03385_left_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 112.83333333333333
+    },
+    {
+      "episode": 400020,
+      "frame": 3425,
+      "camera": "left_wrist",
+      "pts": 1753600,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.left_wrist/episode_00400020.mp4",
+      "image": "samples/keyframes/400020_03425_left_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 114.16666666666667
+    },
+    {
+      "episode": 400020,
+      "frame": 0,
+      "camera": "right_wrist",
+      "pts": 0,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.right_wrist/episode_00400020.mp4",
+      "image": "samples/keyframes/400020_00000_right_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 0.0
+    },
+    {
+      "episode": 400020,
+      "frame": 2560,
+      "camera": "right_wrist",
+      "pts": 1310720,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.right_wrist/episode_00400020.mp4",
+      "image": "samples/keyframes/400020_02560_right_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 85.33333333333333
+    },
+    {
+      "episode": 400020,
+      "frame": 2600,
+      "camera": "right_wrist",
+      "pts": 1331200,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.right_wrist/episode_00400020.mp4",
+      "image": "samples/keyframes/400020_02600_right_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 86.66666666666667
+    },
+    {
+      "episode": 400020,
+      "frame": 2997,
+      "camera": "right_wrist",
+      "pts": 1534464,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.right_wrist/episode_00400020.mp4",
+      "image": "samples/keyframes/400020_02997_right_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 99.9
+    },
+    {
+      "episode": 400020,
+      "frame": 3308,
+      "camera": "right_wrist",
+      "pts": 1693696,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.right_wrist/episode_00400020.mp4",
+      "image": "samples/keyframes/400020_03308_right_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 110.26666666666667
+    },
+    {
+      "episode": 400020,
+      "frame": 3348,
+      "camera": "right_wrist",
+      "pts": 1714176,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.right_wrist/episode_00400020.mp4",
+      "image": "samples/keyframes/400020_03348_right_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 111.6
+    },
+    {
+      "episode": 400020,
+      "frame": 3385,
+      "camera": "right_wrist",
+      "pts": 1733120,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.right_wrist/episode_00400020.mp4",
+      "image": "samples/keyframes/400020_03385_right_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 112.83333333333333
+    },
+    {
+      "episode": 400020,
+      "frame": 3425,
+      "camera": "right_wrist",
+      "pts": 1753600,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.right_wrist/episode_00400020.mp4",
+      "image": "samples/keyframes/400020_03425_right_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 114.16666666666667
+    },
+    {
+      "episode": 403000,
+      "frame": 0,
+      "camera": "head",
+      "pts": 0,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.head/episode_00403000.mp4",
+      "image": "samples/keyframes/403000_00000_head.png",
+      "source_size": [
+        720,
+        720
+      ],
+      "timestamp_s": 0.0
+    },
+    {
+      "episode": 403000,
+      "frame": 1796,
+      "camera": "head",
+      "pts": 919552,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.head/episode_00403000.mp4",
+      "image": "samples/keyframes/403000_01796_head.png",
+      "source_size": [
+        720,
+        720
+      ],
+      "timestamp_s": 59.86666666666667
+    },
+    {
+      "episode": 403000,
+      "frame": 1836,
+      "camera": "head",
+      "pts": 940032,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.head/episode_00403000.mp4",
+      "image": "samples/keyframes/403000_01836_head.png",
+      "source_size": [
+        720,
+        720
+      ],
+      "timestamp_s": 61.2
+    },
+    {
+      "episode": 403000,
+      "frame": 2094,
+      "camera": "head",
+      "pts": 1072128,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.head/episode_00403000.mp4",
+      "image": "samples/keyframes/403000_02094_head.png",
+      "source_size": [
+        720,
+        720
+      ],
+      "timestamp_s": 69.8
+    },
+    {
+      "episode": 403000,
+      "frame": 2372,
+      "camera": "head",
+      "pts": 1214464,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.head/episode_00403000.mp4",
+      "image": "samples/keyframes/403000_02372_head.png",
+      "source_size": [
+        720,
+        720
+      ],
+      "timestamp_s": 79.06666666666666
+    },
+    {
+      "episode": 403000,
+      "frame": 2412,
+      "camera": "head",
+      "pts": 1234944,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.head/episode_00403000.mp4",
+      "image": "samples/keyframes/403000_02412_head.png",
+      "source_size": [
+        720,
+        720
+      ],
+      "timestamp_s": 80.4
+    },
+    {
+      "episode": 403000,
+      "frame": 2477,
+      "camera": "head",
+      "pts": 1268224,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.head/episode_00403000.mp4",
+      "image": "samples/keyframes/403000_02477_head.png",
+      "source_size": [
+        720,
+        720
+      ],
+      "timestamp_s": 82.56666666666666
+    },
+    {
+      "episode": 403000,
+      "frame": 2517,
+      "camera": "head",
+      "pts": 1288704,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.head/episode_00403000.mp4",
+      "image": "samples/keyframes/403000_02517_head.png",
+      "source_size": [
+        720,
+        720
+      ],
+      "timestamp_s": 83.9
+    },
+    {
+      "episode": 403000,
+      "frame": 0,
+      "camera": "left_wrist",
+      "pts": 0,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.left_wrist/episode_00403000.mp4",
+      "image": "samples/keyframes/403000_00000_left_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 0.0
+    },
+    {
+      "episode": 403000,
+      "frame": 1796,
+      "camera": "left_wrist",
+      "pts": 919552,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.left_wrist/episode_00403000.mp4",
+      "image": "samples/keyframes/403000_01796_left_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 59.86666666666667
+    },
+    {
+      "episode": 403000,
+      "frame": 1836,
+      "camera": "left_wrist",
+      "pts": 940032,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.left_wrist/episode_00403000.mp4",
+      "image": "samples/keyframes/403000_01836_left_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 61.2
+    },
+    {
+      "episode": 403000,
+      "frame": 2094,
+      "camera": "left_wrist",
+      "pts": 1072128,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.left_wrist/episode_00403000.mp4",
+      "image": "samples/keyframes/403000_02094_left_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 69.8
+    },
+    {
+      "episode": 403000,
+      "frame": 2372,
+      "camera": "left_wrist",
+      "pts": 1214464,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.left_wrist/episode_00403000.mp4",
+      "image": "samples/keyframes/403000_02372_left_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 79.06666666666666
+    },
+    {
+      "episode": 403000,
+      "frame": 2412,
+      "camera": "left_wrist",
+      "pts": 1234944,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.left_wrist/episode_00403000.mp4",
+      "image": "samples/keyframes/403000_02412_left_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 80.4
+    },
+    {
+      "episode": 403000,
+      "frame": 2477,
+      "camera": "left_wrist",
+      "pts": 1268224,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.left_wrist/episode_00403000.mp4",
+      "image": "samples/keyframes/403000_02477_left_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 82.56666666666666
+    },
+    {
+      "episode": 403000,
+      "frame": 2517,
+      "camera": "left_wrist",
+      "pts": 1288704,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.left_wrist/episode_00403000.mp4",
+      "image": "samples/keyframes/403000_02517_left_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 83.9
+    },
+    {
+      "episode": 403000,
+      "frame": 0,
+      "camera": "right_wrist",
+      "pts": 0,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.right_wrist/episode_00403000.mp4",
+      "image": "samples/keyframes/403000_00000_right_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 0.0
+    },
+    {
+      "episode": 403000,
+      "frame": 1796,
+      "camera": "right_wrist",
+      "pts": 919552,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.right_wrist/episode_00403000.mp4",
+      "image": "samples/keyframes/403000_01796_right_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 59.86666666666667
+    },
+    {
+      "episode": 403000,
+      "frame": 1836,
+      "camera": "right_wrist",
+      "pts": 940032,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.right_wrist/episode_00403000.mp4",
+      "image": "samples/keyframes/403000_01836_right_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 61.2
+    },
+    {
+      "episode": 403000,
+      "frame": 2094,
+      "camera": "right_wrist",
+      "pts": 1072128,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.right_wrist/episode_00403000.mp4",
+      "image": "samples/keyframes/403000_02094_right_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 69.8
+    },
+    {
+      "episode": 403000,
+      "frame": 2372,
+      "camera": "right_wrist",
+      "pts": 1214464,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.right_wrist/episode_00403000.mp4",
+      "image": "samples/keyframes/403000_02372_right_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 79.06666666666666
+    },
+    {
+      "episode": 403000,
+      "frame": 2412,
+      "camera": "right_wrist",
+      "pts": 1234944,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.right_wrist/episode_00403000.mp4",
+      "image": "samples/keyframes/403000_02412_right_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 80.4
+    },
+    {
+      "episode": 403000,
+      "frame": 2477,
+      "camera": "right_wrist",
+      "pts": 1268224,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.right_wrist/episode_00403000.mp4",
+      "image": "samples/keyframes/403000_02477_right_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 82.56666666666666
+    },
+    {
+      "episode": 403000,
+      "frame": 2517,
+      "camera": "right_wrist",
+      "pts": 1288704,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.right_wrist/episode_00403000.mp4",
+      "image": "samples/keyframes/403000_02517_right_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 83.9
+    },
+    {
+      "episode": 400450,
+      "frame": 0,
+      "camera": "head",
+      "pts": 0,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.head/episode_00400450.mp4",
+      "image": "samples/keyframes/400450_00000_head.png",
+      "source_size": [
+        720,
+        720
+      ],
+      "timestamp_s": 0.0
+    },
+    {
+      "episode": 400450,
+      "frame": 1772,
+      "camera": "head",
+      "pts": 907264,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.head/episode_00400450.mp4",
+      "image": "samples/keyframes/400450_01772_head.png",
+      "source_size": [
+        720,
+        720
+      ],
+      "timestamp_s": 59.06666666666667
+    },
+    {
+      "episode": 400450,
+      "frame": 1812,
+      "camera": "head",
+      "pts": 927744,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.head/episode_00400450.mp4",
+      "image": "samples/keyframes/400450_01812_head.png",
+      "source_size": [
+        720,
+        720
+      ],
+      "timestamp_s": 60.4
+    },
+    {
+      "episode": 400450,
+      "frame": 2069,
+      "camera": "head",
+      "pts": 1059328,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.head/episode_00400450.mp4",
+      "image": "samples/keyframes/400450_02069_head.png",
+      "source_size": [
+        720,
+        720
+      ],
+      "timestamp_s": 68.96666666666667
+    },
+    {
+      "episode": 400450,
+      "frame": 2102,
+      "camera": "head",
+      "pts": 1076224,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.head/episode_00400450.mp4",
+      "image": "samples/keyframes/400450_02102_head.png",
+      "source_size": [
+        720,
+        720
+      ],
+      "timestamp_s": 70.06666666666666
+    },
+    {
+      "episode": 400450,
+      "frame": 2394,
+      "camera": "head",
+      "pts": 1225728,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.head/episode_00400450.mp4",
+      "image": "samples/keyframes/400450_02394_head.png",
+      "source_size": [
+        720,
+        720
+      ],
+      "timestamp_s": 79.8
+    },
+    {
+      "episode": 400450,
+      "frame": 2434,
+      "camera": "head",
+      "pts": 1246208,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.head/episode_00400450.mp4",
+      "image": "samples/keyframes/400450_02434_head.png",
+      "source_size": [
+        720,
+        720
+      ],
+      "timestamp_s": 81.13333333333334
+    },
+    {
+      "episode": 400450,
+      "frame": 2609,
+      "camera": "head",
+      "pts": 1335808,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.head/episode_00400450.mp4",
+      "image": "samples/keyframes/400450_02609_head.png",
+      "source_size": [
+        720,
+        720
+      ],
+      "timestamp_s": 86.96666666666667
+    },
+    {
+      "episode": 400450,
+      "frame": 2649,
+      "camera": "head",
+      "pts": 1356288,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.head/episode_00400450.mp4",
+      "image": "samples/keyframes/400450_02649_head.png",
+      "source_size": [
+        720,
+        720
+      ],
+      "timestamp_s": 88.3
+    },
+    {
+      "episode": 400450,
+      "frame": 0,
+      "camera": "left_wrist",
+      "pts": 0,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.left_wrist/episode_00400450.mp4",
+      "image": "samples/keyframes/400450_00000_left_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 0.0
+    },
+    {
+      "episode": 400450,
+      "frame": 1772,
+      "camera": "left_wrist",
+      "pts": 907264,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.left_wrist/episode_00400450.mp4",
+      "image": "samples/keyframes/400450_01772_left_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 59.06666666666667
+    },
+    {
+      "episode": 400450,
+      "frame": 1812,
+      "camera": "left_wrist",
+      "pts": 927744,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.left_wrist/episode_00400450.mp4",
+      "image": "samples/keyframes/400450_01812_left_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 60.4
+    },
+    {
+      "episode": 400450,
+      "frame": 2069,
+      "camera": "left_wrist",
+      "pts": 1059328,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.left_wrist/episode_00400450.mp4",
+      "image": "samples/keyframes/400450_02069_left_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 68.96666666666667
+    },
+    {
+      "episode": 400450,
+      "frame": 2102,
+      "camera": "left_wrist",
+      "pts": 1076224,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.left_wrist/episode_00400450.mp4",
+      "image": "samples/keyframes/400450_02102_left_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 70.06666666666666
+    },
+    {
+      "episode": 400450,
+      "frame": 2394,
+      "camera": "left_wrist",
+      "pts": 1225728,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.left_wrist/episode_00400450.mp4",
+      "image": "samples/keyframes/400450_02394_left_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 79.8
+    },
+    {
+      "episode": 400450,
+      "frame": 2434,
+      "camera": "left_wrist",
+      "pts": 1246208,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.left_wrist/episode_00400450.mp4",
+      "image": "samples/keyframes/400450_02434_left_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 81.13333333333334
+    },
+    {
+      "episode": 400450,
+      "frame": 2609,
+      "camera": "left_wrist",
+      "pts": 1335808,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.left_wrist/episode_00400450.mp4",
+      "image": "samples/keyframes/400450_02609_left_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 86.96666666666667
+    },
+    {
+      "episode": 400450,
+      "frame": 2649,
+      "camera": "left_wrist",
+      "pts": 1356288,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.left_wrist/episode_00400450.mp4",
+      "image": "samples/keyframes/400450_02649_left_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 88.3
+    },
+    {
+      "episode": 400450,
+      "frame": 0,
+      "camera": "right_wrist",
+      "pts": 0,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.right_wrist/episode_00400450.mp4",
+      "image": "samples/keyframes/400450_00000_right_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 0.0
+    },
+    {
+      "episode": 400450,
+      "frame": 1772,
+      "camera": "right_wrist",
+      "pts": 907264,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.right_wrist/episode_00400450.mp4",
+      "image": "samples/keyframes/400450_01772_right_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 59.06666666666667
+    },
+    {
+      "episode": 400450,
+      "frame": 1812,
+      "camera": "right_wrist",
+      "pts": 927744,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.right_wrist/episode_00400450.mp4",
+      "image": "samples/keyframes/400450_01812_right_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 60.4
+    },
+    {
+      "episode": 400450,
+      "frame": 2069,
+      "camera": "right_wrist",
+      "pts": 1059328,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.right_wrist/episode_00400450.mp4",
+      "image": "samples/keyframes/400450_02069_right_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 68.96666666666667
+    },
+    {
+      "episode": 400450,
+      "frame": 2102,
+      "camera": "right_wrist",
+      "pts": 1076224,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.right_wrist/episode_00400450.mp4",
+      "image": "samples/keyframes/400450_02102_right_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 70.06666666666666
+    },
+    {
+      "episode": 400450,
+      "frame": 2394,
+      "camera": "right_wrist",
+      "pts": 1225728,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.right_wrist/episode_00400450.mp4",
+      "image": "samples/keyframes/400450_02394_right_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 79.8
+    },
+    {
+      "episode": 400450,
+      "frame": 2434,
+      "camera": "right_wrist",
+      "pts": 1246208,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.right_wrist/episode_00400450.mp4",
+      "image": "samples/keyframes/400450_02434_right_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 81.13333333333334
+    },
+    {
+      "episode": 400450,
+      "frame": 2609,
+      "camera": "right_wrist",
+      "pts": 1335808,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.right_wrist/episode_00400450.mp4",
+      "image": "samples/keyframes/400450_02609_right_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 86.96666666666667
+    },
+    {
+      "episode": 400450,
+      "frame": 2649,
+      "camera": "right_wrist",
+      "pts": 1356288,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.right_wrist/episode_00400450.mp4",
+      "image": "samples/keyframes/400450_02649_right_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 88.3
+    },
+    {
+      "episode": 400640,
+      "frame": 0,
+      "camera": "head",
+      "pts": 0,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.head/episode_00400640.mp4",
+      "image": "samples/keyframes/400640_00000_head.png",
+      "source_size": [
+        720,
+        720
+      ],
+      "timestamp_s": 0.0
+    },
+    {
+      "episode": 400640,
+      "frame": 1799,
+      "camera": "head",
+      "pts": 921088,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.head/episode_00400640.mp4",
+      "image": "samples/keyframes/400640_01799_head.png",
+      "source_size": [
+        720,
+        720
+      ],
+      "timestamp_s": 59.96666666666667
+    },
+    {
+      "episode": 400640,
+      "frame": 1839,
+      "camera": "head",
+      "pts": 941568,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.head/episode_00400640.mp4",
+      "image": "samples/keyframes/400640_01839_head.png",
+      "source_size": [
+        720,
+        720
+      ],
+      "timestamp_s": 61.3
+    },
+    {
+      "episode": 400640,
+      "frame": 1995,
+      "camera": "head",
+      "pts": 1021440,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.head/episode_00400640.mp4",
+      "image": "samples/keyframes/400640_01995_head.png",
+      "source_size": [
+        720,
+        720
+      ],
+      "timestamp_s": 66.5
+    },
+    {
+      "episode": 400640,
+      "frame": 2120,
+      "camera": "head",
+      "pts": 1085440,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.head/episode_00400640.mp4",
+      "image": "samples/keyframes/400640_02120_head.png",
+      "source_size": [
+        720,
+        720
+      ],
+      "timestamp_s": 70.66666666666667
+    },
+    {
+      "episode": 400640,
+      "frame": 2153,
+      "camera": "head",
+      "pts": 1102336,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.head/episode_00400640.mp4",
+      "image": "samples/keyframes/400640_02153_head.png",
+      "source_size": [
+        720,
+        720
+      ],
+      "timestamp_s": 71.76666666666667
+    },
+    {
+      "episode": 400640,
+      "frame": 2155,
+      "camera": "head",
+      "pts": 1103360,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.head/episode_00400640.mp4",
+      "image": "samples/keyframes/400640_02155_head.png",
+      "source_size": [
+        720,
+        720
+      ],
+      "timestamp_s": 71.83333333333333
+    },
+    {
+      "episode": 400640,
+      "frame": 2160,
+      "camera": "head",
+      "pts": 1105920,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.head/episode_00400640.mp4",
+      "image": "samples/keyframes/400640_02160_head.png",
+      "source_size": [
+        720,
+        720
+      ],
+      "timestamp_s": 72.0
+    },
+    {
+      "episode": 400640,
+      "frame": 2193,
+      "camera": "head",
+      "pts": 1122816,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.head/episode_00400640.mp4",
+      "image": "samples/keyframes/400640_02193_head.png",
+      "source_size": [
+        720,
+        720
+      ],
+      "timestamp_s": 73.1
+    },
+    {
+      "episode": 400640,
+      "frame": 2195,
+      "camera": "head",
+      "pts": 1123840,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.head/episode_00400640.mp4",
+      "image": "samples/keyframes/400640_02195_head.png",
+      "source_size": [
+        720,
+        720
+      ],
+      "timestamp_s": 73.16666666666667
+    },
+    {
+      "episode": 400640,
+      "frame": 2414,
+      "camera": "head",
+      "pts": 1235968,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.head/episode_00400640.mp4",
+      "image": "samples/keyframes/400640_02414_head.png",
+      "source_size": [
+        720,
+        720
+      ],
+      "timestamp_s": 80.46666666666667
+    },
+    {
+      "episode": 400640,
+      "frame": 2454,
+      "camera": "head",
+      "pts": 1256448,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.head/episode_00400640.mp4",
+      "image": "samples/keyframes/400640_02454_head.png",
+      "source_size": [
+        720,
+        720
+      ],
+      "timestamp_s": 81.8
+    },
+    {
+      "episode": 400640,
+      "frame": 0,
+      "camera": "left_wrist",
+      "pts": 0,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.left_wrist/episode_00400640.mp4",
+      "image": "samples/keyframes/400640_00000_left_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 0.0
+    },
+    {
+      "episode": 400640,
+      "frame": 1799,
+      "camera": "left_wrist",
+      "pts": 921088,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.left_wrist/episode_00400640.mp4",
+      "image": "samples/keyframes/400640_01799_left_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 59.96666666666667
+    },
+    {
+      "episode": 400640,
+      "frame": 1839,
+      "camera": "left_wrist",
+      "pts": 941568,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.left_wrist/episode_00400640.mp4",
+      "image": "samples/keyframes/400640_01839_left_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 61.3
+    },
+    {
+      "episode": 400640,
+      "frame": 1995,
+      "camera": "left_wrist",
+      "pts": 1021440,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.left_wrist/episode_00400640.mp4",
+      "image": "samples/keyframes/400640_01995_left_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 66.5
+    },
+    {
+      "episode": 400640,
+      "frame": 2120,
+      "camera": "left_wrist",
+      "pts": 1085440,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.left_wrist/episode_00400640.mp4",
+      "image": "samples/keyframes/400640_02120_left_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 70.66666666666667
+    },
+    {
+      "episode": 400640,
+      "frame": 2153,
+      "camera": "left_wrist",
+      "pts": 1102336,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.left_wrist/episode_00400640.mp4",
+      "image": "samples/keyframes/400640_02153_left_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 71.76666666666667
+    },
+    {
+      "episode": 400640,
+      "frame": 2155,
+      "camera": "left_wrist",
+      "pts": 1103360,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.left_wrist/episode_00400640.mp4",
+      "image": "samples/keyframes/400640_02155_left_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 71.83333333333333
+    },
+    {
+      "episode": 400640,
+      "frame": 2160,
+      "camera": "left_wrist",
+      "pts": 1105920,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.left_wrist/episode_00400640.mp4",
+      "image": "samples/keyframes/400640_02160_left_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 72.0
+    },
+    {
+      "episode": 400640,
+      "frame": 2193,
+      "camera": "left_wrist",
+      "pts": 1122816,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.left_wrist/episode_00400640.mp4",
+      "image": "samples/keyframes/400640_02193_left_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 73.1
+    },
+    {
+      "episode": 400640,
+      "frame": 2195,
+      "camera": "left_wrist",
+      "pts": 1123840,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.left_wrist/episode_00400640.mp4",
+      "image": "samples/keyframes/400640_02195_left_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 73.16666666666667
+    },
+    {
+      "episode": 400640,
+      "frame": 2414,
+      "camera": "left_wrist",
+      "pts": 1235968,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.left_wrist/episode_00400640.mp4",
+      "image": "samples/keyframes/400640_02414_left_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 80.46666666666667
+    },
+    {
+      "episode": 400640,
+      "frame": 2454,
+      "camera": "left_wrist",
+      "pts": 1256448,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.left_wrist/episode_00400640.mp4",
+      "image": "samples/keyframes/400640_02454_left_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 81.8
+    },
+    {
+      "episode": 400640,
+      "frame": 0,
+      "camera": "right_wrist",
+      "pts": 0,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.right_wrist/episode_00400640.mp4",
+      "image": "samples/keyframes/400640_00000_right_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 0.0
+    },
+    {
+      "episode": 400640,
+      "frame": 1799,
+      "camera": "right_wrist",
+      "pts": 921088,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.right_wrist/episode_00400640.mp4",
+      "image": "samples/keyframes/400640_01799_right_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 59.96666666666667
+    },
+    {
+      "episode": 400640,
+      "frame": 1839,
+      "camera": "right_wrist",
+      "pts": 941568,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.right_wrist/episode_00400640.mp4",
+      "image": "samples/keyframes/400640_01839_right_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 61.3
+    },
+    {
+      "episode": 400640,
+      "frame": 1995,
+      "camera": "right_wrist",
+      "pts": 1021440,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.right_wrist/episode_00400640.mp4",
+      "image": "samples/keyframes/400640_01995_right_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 66.5
+    },
+    {
+      "episode": 400640,
+      "frame": 2120,
+      "camera": "right_wrist",
+      "pts": 1085440,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.right_wrist/episode_00400640.mp4",
+      "image": "samples/keyframes/400640_02120_right_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 70.66666666666667
+    },
+    {
+      "episode": 400640,
+      "frame": 2153,
+      "camera": "right_wrist",
+      "pts": 1102336,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.right_wrist/episode_00400640.mp4",
+      "image": "samples/keyframes/400640_02153_right_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 71.76666666666667
+    },
+    {
+      "episode": 400640,
+      "frame": 2155,
+      "camera": "right_wrist",
+      "pts": 1103360,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.right_wrist/episode_00400640.mp4",
+      "image": "samples/keyframes/400640_02155_right_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 71.83333333333333
+    },
+    {
+      "episode": 400640,
+      "frame": 2160,
+      "camera": "right_wrist",
+      "pts": 1105920,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.right_wrist/episode_00400640.mp4",
+      "image": "samples/keyframes/400640_02160_right_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 72.0
+    },
+    {
+      "episode": 400640,
+      "frame": 2193,
+      "camera": "right_wrist",
+      "pts": 1122816,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.right_wrist/episode_00400640.mp4",
+      "image": "samples/keyframes/400640_02193_right_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 73.1
+    },
+    {
+      "episode": 400640,
+      "frame": 2195,
+      "camera": "right_wrist",
+      "pts": 1123840,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.right_wrist/episode_00400640.mp4",
+      "image": "samples/keyframes/400640_02195_right_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 73.16666666666667
+    },
+    {
+      "episode": 400640,
+      "frame": 2414,
+      "camera": "right_wrist",
+      "pts": 1235968,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.right_wrist/episode_00400640.mp4",
+      "image": "samples/keyframes/400640_02414_right_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 80.46666666666667
+    },
+    {
+      "episode": 400640,
+      "frame": 2454,
+      "camera": "right_wrist",
+      "pts": 1256448,
+      "time_base": "1/15360",
+      "source": "/nvme3/projects/memory_vla/assets/datasets/b1k2025/videos/task-0040/observation.images.rgb.right_wrist/episode_00400640.mp4",
+      "image": "samples/keyframes/400640_02454_right_wrist.png",
+      "source_size": [
+        480,
+        480
+      ],
+      "timestamp_s": 81.8
+    }
+  ],
+  "panels": [
+    "samples/multiview_400010.png",
+    "samples/multiview_400020.png",
+    "samples/multiview_403000.png",
+    "samples/multiview_400450.png",
+    "samples/multiview_400640.png"
+  ],
+  "limitation": "Multiview samples are spot checks; no whole-dataset manual visual certification or original-asset predicate runtime validation."
+}

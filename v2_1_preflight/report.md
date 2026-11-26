@@ -1,5 +1,7 @@
 # V2.1 开发前数据与机器人调查报告
 
+最新Task40标签扩展见 [label_extension/report.md](label_extension/report.md)：新增几何/抓取弱标签、历史事件及统一掩码。本报告以下保留v001调查结论；根目录标签为原认证基线，最新统一标签位于`label_extension/task40_labels.parquet`。
+
 调查日期：2026-11-26。范围：用户提供的六项任务；仅数据、资产和接口验证，无训练、无模型修改。设计文件为 `docs/v2/2.1.html`、`2.1.md`、`2.1-protocol.md`、`notation.md`，哈希见 [version_manifest.json](samples/version_manifest.json)。
 
 已取得200条、647,555帧示教的可认证记录状态，完整82维本体与23维动作映射、真实USD运动链，以及300次末端FK对照。`door_open`、`started`、熟爆米花粒子存在可导出；`bag_grasped`、`bag_inside` 全部保留未知。后两项没有满足认证条件，不能据此宣称四个目标标签全部就绪。

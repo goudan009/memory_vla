@@ -1,5 +1,7 @@
 # 调查复现说明
 
+Task40新增弱标签与历史事件的独立复现顺序见 [label_extension/reproduce.md](../label_extension/reproduce.md)。原脚本及根目录标签保留v001认证基线，新标签在`label_extension/`，不由下列v001命令生成。
+
 这些脚本生成本次交付物，不改模型，不训练。完整重提取依赖原始数据与真实资产；仅阅读报告、标签、运动链和源码副本不需要加载Isaac。
 
 ## 已使用的环境与外部依赖

@@ -1,5 +1,22 @@
 # 运行进度
 
+## v002：原始资产检索与标签扩展
+
+计划`workflow/plan-v002.json`已先提交（286f9be），本轮新增数据目录`label_extension/`，不修改模型、不训练、不启动仿真、不影响既有实验。
+
+| 计划节点 | 状态 | 实际证据 |
+| --- | --- | --- |
+| asset_recovery | 部分完成 | 找回官方历史3.7.0rc23两个对象资产；与本地3.7.2rc1全部网格/关节物理属性相同；仍未匹配原记录哈希，身份不认证 |
+| geometry | 数值实现完成、严格认证未完成 | 源码语义重算200条Inside候选；原方法体600次对照全一致；182822弱正/463533弱负/1200未知；没有冒充原始实时谓词 |
+| grasp | 弱标签完成 | 原始物体/双EEF轨迹、夹爪开度和三视角抽查；修正实际非对称手指接触漏检；125435弱正/515088弱负/7032未知；200条都有弱正区段，AG真值仍缺失 |
+| unified_labels | 已完成 | 21状态，逐状态quality/valid/certified_valid/weak_valid，独立masks文件；历史事件前缀聚合及episode重置；角色/阈值配置与通用API |
+| audit | 已完成（范围见报告） | 全量主键/掩码/统计/原认证标签不变/历史未知传播；5条15路原始视频关键帧与PTS，含Inside回退与抓取漏检案例；具体数量见validation.json |
+| delivery | 已完成本地封装校验 | `label_extension/report.md`、schema、标签、掩码、统计、样例、源码与复现脚本；独立v002下载包逐文件摘要校验通过，GitHub入口为同仓库`v2.1-preflight-task40-labels-v002` Release，旧Release保留 |
+
+本轮CPU脚本未提交新工作台GPU作业。原始资产与解密数据隔离在`/nvme3/datasets/task40_asset_recovery/`；公开交付只含摘要及轻量派生几何，无密钥或解密美术。严格认证不足是已记录缺口；`_valid`包含弱标签，严格监督使用`_certified_valid`。
+
+## v001：原调查封存记录
+
 > 当前动作：调查、证据归档及交付封存；验收结果见report.md与samples/package_validation.json。
 > 完成量：6项均有交付；状态清单与四状态标签部分完成，其余按报告注明范围完成。200条/647555帧，82状态/23动作，300次FK对照。
 > Agent Session：Codex /root（工具未暴露会话ID）

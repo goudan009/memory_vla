@@ -1,0 +1,67 @@
+{
+  "sources": [
+    {
+      "original": "/nvme3/projects/GR00T/BEHAVIOR-1K-task-progress/OmniGibson/omnigibson/object_states/inside.py",
+      "bundle": "source_evidence/object_states/inside.py",
+      "sha256": "a9e6f21c019e47867078dc13f40ab0d65b9623828bafdb758d81ece53bc0ccc0"
+    },
+    {
+      "original": "/nvme3/projects/GR00T/BEHAVIOR-1K-task-progress/OmniGibson/omnigibson/object_states/contains.py",
+      "bundle": "source_evidence/object_states/contains.py",
+      "sha256": "6f04d1852f03065fb2107af7a04dbc612df680398bad71aebc87189fad03bc95"
+    },
+    {
+      "original": "/nvme3/projects/GR00T/BEHAVIOR-1K-task-progress/OmniGibson/omnigibson/object_states/open_state.py",
+      "bundle": "source_evidence/object_states/open_state.py",
+      "sha256": "ec19a0a866ba12631736d99ef57326e1d4f986873ee4d4855ded9c0231e3ff95"
+    },
+    {
+      "original": "/nvme3/projects/GR00T/BEHAVIOR-1K-task-progress/OmniGibson/omnigibson/object_states/toggle.py",
+      "bundle": "source_evidence/object_states/toggle.py",
+      "sha256": "67d84ff5dcaa27e74820f4a7d99e4aff0e9269371281f977a6aa2fd39bce4068"
+    },
+    {
+      "original": "/nvme3/projects/GR00T/BEHAVIOR-1K-task-progress/OmniGibson/omnigibson/robots/manipulation_robot.py",
+      "bundle": "source_evidence/robots/manipulation_robot.py",
+      "sha256": "af1e0245078a69a67368be4e70af4f5b79190c7d7dcff4fe9be210da1c39b0ba"
+    },
+    {
+      "original": "/nvme3/projects/GR00T/BEHAVIOR-1K-task-progress/OmniGibson/omnigibson/prims/geom_prim.py",
+      "bundle": "source_evidence/prims/geom_prim.py",
+      "sha256": "5555dd4719502378516288c37253a4ad35440bebdfa5a9a4598217c5ddcdd6ce"
+    },
+    {
+      "original": "/nvme3/projects/GR00T/BEHAVIOR-1K-task-progress/OmniGibson/omnigibson/prims/rigid_prim.py",
+      "bundle": "source_evidence/prims/rigid_prim.py",
+      "sha256": "1132946e860e9ee1581189b101c98857f86c034fbeaf99dcdf9a443ce9646a1a"
+    },
+    {
+      "original": "/nvme3/projects/GR00T/BEHAVIOR-1K-task-progress/OmniGibson/omnigibson/objects/usd_object.py",
+      "bundle": "source_evidence/objects/usd_object.py",
+      "sha256": "fd1db2c27a78329db70d8beeb3a534a5abcd8fb368a7cb8947d2efafe4aae3ad"
+    },
+    {
+      "original": "/nvme3/projects/GR00T/BEHAVIOR-1K-task-progress/OmniGibson/omnigibson/utils/asset_utils.py",
+      "bundle": "source_evidence/utils/asset_utils.py",
+      "sha256": "47b4586ede13a02336b70ddd7684940544bdc64777b07d3ff98af251fa73ac0e"
+    }
+  ],
+  "inside_candidate_change_distribution": {
+    "1": 169,
+    "3": 27,
+    "5": 4
+  },
+  "grasp_candidate_change_distribution": {
+    "2": 200
+  },
+  "no_positive_grasp_episodes": [],
+  "same_models_scales_and_expected_hashes_all200": true,
+  "expected_hashes": {
+    "bag": [
+      "8f40ea1093f6c42f4a837128a11e80ee"
+    ],
+    "microwave": [
+      "d4f14541ccd2e3716e66022ef7a71ae6"
+    ]
+  }
+}

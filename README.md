@@ -12,6 +12,7 @@
 | 配环境、跑评估、看结果 | [运行环境](env/README.md)、[评估使用说明](evaluation/README.md)、[正式评估协议](evaluation/evaluation.md) |
 | 查基线和当前实现 | [GR00T 基线](baselines/groot_n1d6/README.md)、[V1](src/v1_groot_memoryvla/README.md)、[记忆融合源码](src/v1_groot_memoryvla/model/memory/fusion.py) |
 | 看架构和设计依据 | [文档索引](docs/README.md)、[V1 架构与设计依据](docs/v1/README.md)、[V2.1 方案](docs/v2/2.1.html)、[工作台设计](docs/workbench/README.md) |
+| V2.1数据、机器人拓扑与Task40状态标签 | [开发前调查](v2_1_preflight/README.md)、[最新标签扩展](v2_1_preflight/label_extension/README.md) |
 | 查论文稿、旧诊断和命令 | [论文与研究笔记](paper/README.md)、[历史归档](docs/archive/README.md) |
 
 版本专用说明随源码放在 `src/<版本>/`；当前协作规则见 [AGENTS.md](AGENTS.md)。实时作业和设备状态以工作台为准。

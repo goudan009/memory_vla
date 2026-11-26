@@ -1,0 +1,309 @@
+{
+  "version": "task40_label_extension_v002",
+  "primary_key": [
+    "episode_index",
+    "frame_index"
+  ],
+  "frames": 647555,
+  "episodes": 200,
+  "timestamp": "timestamp_s = frame_index / 30; observation/state before action",
+  "value_dtype": "nullable boolean",
+  "quality_dtype": "uint8",
+  "quality_codes": {
+    "0": "unknown",
+    "1": "certified recorded/source predicate",
+    "2": "weak inference"
+  },
+  "mask_semantics": {
+    "_valid": "quality>0; includes weak; NOT a strict certification mask",
+    "_certified_valid": "quality==1; strict certified targets only",
+    "_weak_valid": "quality==2; explicit weak targets only"
+  },
+  "unknown": "Value is null; quality=0; all three masks false. Never fill null with false without preserving mask.",
+  "derived_logic": "Three-valued logic, quality follows sufficient evidence. Certified false conjunct can certify a false composite despite weak/unknown other terms.",
+  "history": "Causal OR of prefix; known false only if entire prefix known false. Certified true witness overrides earlier weak/unknown. No across-episode carry.",
+  "states": [
+    {
+      "name": "door_open",
+      "meaning": "当前Open门谓词：j_link_0 > 0.07853977382183075 rad；阈值±1e-5未知",
+      "implementation": "recorded_joint_plus_og_open",
+      "columns": [
+        "door_open",
+        "door_open_quality",
+        "door_open_valid",
+        "door_open_certified_valid",
+        "door_open_weak_valid"
+      ]
+    },
+    {
+      "name": "started",
+      "meaning": "当前ToggledOn；沿用原认证±8帧未知边界；不是历史启动",
+      "implementation": "recorded_toggled_on",
+      "columns": [
+        "started",
+        "started_quality",
+        "started_valid",
+        "started_certified_valid",
+        "started_weak_valid"
+      ]
+    },
+    {
+      "name": "cooked_popcorn_exists",
+      "meaning": "当前cooked__popcorn系统粒子数>0；不是完整任务成功",
+      "implementation": "recorded_system_count",
+      "columns": [
+        "cooked_popcorn_exists",
+        "cooked_popcorn_exists_quality",
+        "cooked_popcorn_exists_valid",
+        "cooked_popcorn_exists_certified_valid",
+        "cooked_popcorn_exists_weak_valid"
+      ]
+    },
+    {
+      "name": "raw_popcorn_exists",
+      "meaning": "当前popcorn系统粒子数>0",
+      "implementation": "recorded_system_count",
+      "columns": [
+        "raw_popcorn_exists",
+        "raw_popcorn_exists_quality",
+        "raw_popcorn_exists_valid",
+        "raw_popcorn_exists_certified_valid",
+        "raw_popcorn_exists_weak_valid"
+      ]
+    },
+    {
+      "name": "bag_inside",
+      "meaning": "袋世界碰撞AABB中心位于微波炉fillable容器凸体；资产原始身份未认证；边界±2mm未知",
+      "implementation": "geometry_weak",
+      "columns": [
+        "bag_inside",
+        "bag_inside_quality",
+        "bag_inside_valid",
+        "bag_inside_certified_valid",
+        "bag_inside_weak_valid"
+      ]
+    },
+    {
+      "name": "bag_grasped_left",
+      "meaning": "左EEF共同运动+相对位姿稳定+夹爪开度的因果弱抓取；含有证据的静止保持",
+      "implementation": "grasp_motion_weak",
+      "columns": [
+        "bag_grasped_left",
+        "bag_grasped_left_quality",
+        "bag_grasped_left_valid",
+        "bag_grasped_left_certified_valid",
+        "bag_grasped_left_weak_valid"
+      ]
+    },
+    {
+      "name": "bag_grasped_right",
+      "meaning": "右EEF共同运动+相对位姿稳定+夹爪开度的因果弱抓取；含有证据的静止保持",
+      "implementation": "grasp_motion_weak",
+      "columns": [
+        "bag_grasped_right",
+        "bag_grasped_right_quality",
+        "bag_grasped_right_valid",
+        "bag_grasped_right_certified_valid",
+        "bag_grasped_right_weak_valid"
+      ]
+    },
+    {
+      "name": "bag_grasped",
+      "meaning": "左右弱抓取的三值OR；不等于辅助抓取约束真值",
+      "implementation": "bag_grasped_left OR bag_grasped_right",
+      "columns": [
+        "bag_grasped",
+        "bag_grasped_quality",
+        "bag_grasped_valid",
+        "bag_grasped_certified_valid",
+        "bag_grasped_weak_valid"
+      ]
+    },
+    {
+      "name": "door_closed",
+      "meaning": "当前NOT door_open；不另设闭门物理阈值",
+      "implementation": "NOT door_open",
+      "columns": [
+        "door_closed",
+        "door_closed_quality",
+        "door_closed_valid",
+        "door_closed_certified_valid",
+        "door_closed_weak_valid"
+      ]
+    },
+    {
+      "name": "door_ever_opened",
+      "meaning": "从本episode frame0到当前曾观察到门打开；不追溯采集前历史",
+      "implementation": "EVER door_open",
+      "columns": [
+        "door_ever_opened",
+        "door_ever_opened_quality",
+        "door_ever_opened_valid",
+        "door_ever_opened_certified_valid",
+        "door_ever_opened_weak_valid"
+      ]
+    },
+    {
+      "name": "bag_ever_inside",
+      "meaning": "从frame0到当前曾有Inside弱正例；不会升级为认证",
+      "implementation": "EVER bag_inside",
+      "columns": [
+        "bag_ever_inside",
+        "bag_ever_inside_quality",
+        "bag_ever_inside_valid",
+        "bag_ever_inside_certified_valid",
+        "bag_ever_inside_weak_valid"
+      ]
+    },
+    {
+      "name": "bag_ever_grasped",
+      "meaning": "从frame0到当前曾有抓取弱正例",
+      "implementation": "EVER bag_grasped",
+      "columns": [
+        "bag_ever_grasped",
+        "bag_ever_grasped_quality",
+        "bag_ever_grasped_valid",
+        "bag_ever_grasped_certified_valid",
+        "bag_ever_grasped_weak_valid"
+      ]
+    },
+    {
+      "name": "microwave_ever_started",
+      "meaning": "从frame0到当前曾有有效开机真值",
+      "implementation": "EVER started",
+      "columns": [
+        "microwave_ever_started",
+        "microwave_ever_started_quality",
+        "microwave_ever_started_valid",
+        "microwave_ever_started_certified_valid",
+        "microwave_ever_started_weak_valid"
+      ]
+    },
+    {
+      "name": "cooked_popcorn_ever_observed",
+      "meaning": "从frame0到当前曾观察到熟粒子",
+      "implementation": "EVER cooked_popcorn_exists",
+      "columns": [
+        "cooked_popcorn_ever_observed",
+        "cooked_popcorn_ever_observed_quality",
+        "cooked_popcorn_ever_observed_valid",
+        "cooked_popcorn_ever_observed_certified_valid",
+        "cooked_popcorn_ever_observed_weak_valid"
+      ]
+    },
+    {
+      "name": "door_reclosed_after_open",
+      "meaning": "本episode曾开门且当前门关闭；当前复合状态",
+      "implementation": "door_ever_opened AND door_closed",
+      "columns": [
+        "door_reclosed_after_open",
+        "door_reclosed_after_open_quality",
+        "door_reclosed_after_open_valid",
+        "door_reclosed_after_open_certified_valid",
+        "door_reclosed_after_open_weak_valid"
+      ]
+    },
+    {
+      "name": "door_ever_reclosed_after_open",
+      "meaning": "曾满足开门后关闭；单调历史事件",
+      "implementation": "EVER door_reclosed_after_open",
+      "columns": [
+        "door_ever_reclosed_after_open",
+        "door_ever_reclosed_after_open_quality",
+        "door_ever_reclosed_after_open_valid",
+        "door_ever_reclosed_after_open_certified_valid",
+        "door_ever_reclosed_after_open_weak_valid"
+      ]
+    },
+    {
+      "name": "bag_inside_with_door_closed",
+      "meaning": "当前Inside候选且门关闭",
+      "implementation": "bag_inside AND door_closed",
+      "columns": [
+        "bag_inside_with_door_closed",
+        "bag_inside_with_door_closed_quality",
+        "bag_inside_with_door_closed_valid",
+        "bag_inside_with_door_closed_certified_valid",
+        "bag_inside_with_door_closed_weak_valid"
+      ]
+    },
+    {
+      "name": "bag_released_inside_candidate",
+      "meaning": "当前Inside候选且弱抓取为false；不能等同真实释放/支撑",
+      "implementation": "bag_inside AND NOT bag_grasped",
+      "columns": [
+        "bag_released_inside_candidate",
+        "bag_released_inside_candidate_quality",
+        "bag_released_inside_candidate_valid",
+        "bag_released_inside_candidate_certified_valid",
+        "bag_released_inside_candidate_weak_valid"
+      ]
+    },
+    {
+      "name": "microwave_on_with_closed_door",
+      "meaning": "当前开关为on且门关闭；不等于热源实际运行",
+      "implementation": "started AND door_closed",
+      "columns": [
+        "microwave_on_with_closed_door",
+        "microwave_on_with_closed_door_quality",
+        "microwave_on_with_closed_door_valid",
+        "microwave_on_with_closed_door_certified_valid",
+        "microwave_on_with_closed_door_weak_valid"
+      ]
+    },
+    {
+      "name": "microwave_on_with_open_door",
+      "meaning": "当前开关为on且门打开；本数据所有帧可认证为false",
+      "implementation": "started AND door_open",
+      "columns": [
+        "microwave_on_with_open_door",
+        "microwave_on_with_open_door_quality",
+        "microwave_on_with_open_door_valid",
+        "microwave_on_with_open_door_certified_valid",
+        "microwave_on_with_open_door_weak_valid"
+      ]
+    },
+    {
+      "name": "bag_inside_while_on",
+      "meaning": "当前Inside候选且开关为on",
+      "implementation": "bag_inside AND started",
+      "columns": [
+        "bag_inside_while_on",
+        "bag_inside_while_on_quality",
+        "bag_inside_while_on_valid",
+        "bag_inside_while_on_certified_valid",
+        "bag_inside_while_on_weak_valid"
+      ]
+    }
+  ],
+  "preserved_numerical_fields": [
+    "microwave_door_joint_rad",
+    "microwave_temperature_c",
+    "bag_temperature_c",
+    "cooked_popcorn_particle_count",
+    "raw_popcorn_particle_count"
+  ],
+  "extra_evidence_fields": {
+    "inside_geometry_margin_m": "signed inward distance in metres; abs<=0.002 unknown",
+    "grasp_{left,right}_distance_m": "EEF origin to bag root world distance, metres",
+    "grasp_{left,right}_relative_error_m": "max relative-position deviation from current frame over past 10-frame window",
+    "grasp_{left,right}_relative_error_rad": "max relative-orientation deviation over past window",
+    "grasp_{left,right}_{bag,eef}_motion_m": "endpoint displacement over past window",
+    "grasp_{left,right}_reason": {
+      "0": "insufficient evidence",
+      "1": "co-motion witness",
+      "2": "hold witnessed relative transform",
+      "3": "far weak negative",
+      "4": "both fingers open weak negative"
+    }
+  },
+  "not_certified_or_unavailable": [
+    "original asset exact identity",
+    "AG runtime attachment/grasp",
+    "contact/support/OnTop countertop",
+    "full BDDL Contains/Real success",
+    "actual heat-source activity"
+  ],
+  "raw_outcomes": "raw_reward/raw_terminated/raw_truncated[t] are POST-action t outcomes; not observation-t physical predicate labels.",
+  "reusable_api": "../scripts/label_api.py; per-task role/asset/coordinate adapters and config remain explicit"
+}

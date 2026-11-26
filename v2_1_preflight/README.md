@@ -1,5 +1,7 @@
 # V2.1 开发前调查交付
 
+最新标签入口：[Task40扩展v002](label_extension/README.md)，包含21状态、认证/弱/未知分级、历史事件、独立掩码及多视角样例。请读取`label_extension/task40_labels.parquet`；下列根目录标签保留原认证基线。
+
 [调查报告](report.md)记录200条Task40示教、647555帧、真实机器人运动链、82维本体/23维动作映射和V1/历史V2源码接口。结论区分已验证、接口定义及不可恢复的信息。
 
 完整交付包与SHA256位于同仓库的 [V2.1 Preflight Release](https://github.com/goudan009/memory_vla/releases/tag/v2.1-preflight-2026-11-26)。当前目录保留可浏览的全部交付文件；压缩包不重复放入Git历史。

@@ -1,0 +1,55 @@
+{
+  "assets": [
+    {
+      "role": "bag",
+      "category": "popcorn_bag",
+      "model": "hdcpqg",
+      "expected_encrypted_usd_md5": "8f40ea1093f6c42f4a837128a11e80ee",
+      "recovered_version": "3.7.0rc23",
+      "historical_encrypted_usdz_md5": "9569364eb30989dbf57079d5aaf47543",
+      "current_encrypted_usd_md5": "c3c3fc108cc259127e8a5781cf04ef9b",
+      "expected_hash_found": false,
+      "historical_plaintext_usd_sha256": "4ba4e9148557df80dec1117ecc52406aa88e4fc68466cb778ff87bf4a449f1a9",
+      "current_plaintext_usd_sha256": "2bc669f370ce8c7aaf5b661a236b9b23f65c0146052c94c047dfc6b870dccb18",
+      "historical_physics_geometry_sha256": "a6ac8412de146c5e4308cd47c55a3da716a1d81c48fc5c6614d505f4678aff3b",
+      "current_physics_geometry_sha256": "a6ac8412de146c5e4308cd47c55a3da716a1d81c48fc5c6614d505f4678aff3b",
+      "all_mesh_world_vertices_faces_and_joint_physics_equal": true,
+      "collision_hull_max_difference_m": {
+        "base_link": 0.0,
+        "label": 0.0
+      },
+      "container_count": 1,
+      "private_historical_path": "/nvme3/datasets/task40_asset_recovery/015e37a26823a110fedb6a0c3d943f573de00ffe/objects/popcorn_bag/hdcpqg/usd/private_unpacked/hdcpqg.usd",
+      "private_current_path": "/nvme3/datasets/task40_asset_recovery/current_private/hdcpqg.usd"
+    },
+    {
+      "role": "microwave",
+      "category": "microwave",
+      "model": "hjjxmi",
+      "expected_encrypted_usd_md5": "d4f14541ccd2e3716e66022ef7a71ae6",
+      "recovered_version": "3.7.0rc23",
+      "historical_encrypted_usdz_md5": "1c436aa95229f915ece875507858027e",
+      "current_encrypted_usd_md5": "5c2589635156d13380562f613e84785f",
+      "expected_hash_found": false,
+      "historical_plaintext_usd_sha256": "4f8bf80b47e2462841fcb62e08e7ebe86ca98bcd0d9d4694a7dc3e39fa524ae6",
+      "current_plaintext_usd_sha256": "9e629cb0fa5d252ebf75b43c9144f0c269efe2e47fd1038a66de25a772e6d905",
+      "historical_physics_geometry_sha256": "a9e728c2e8525982725e652808fcd7e1a670ef202b7ce69f807e035b6e62d591",
+      "current_physics_geometry_sha256": "a9e728c2e8525982725e652808fcd7e1a670ef202b7ce69f807e035b6e62d591",
+      "all_mesh_world_vertices_faces_and_joint_physics_equal": true,
+      "collision_hull_max_difference_m": {
+        "base_link": 0.0,
+        "link_0": 0.0,
+        "glass": 0.0
+      },
+      "container_count": 1,
+      "private_historical_path": "/nvme3/datasets/task40_asset_recovery/015e37a26823a110fedb6a0c3d943f573de00ffe/objects/microwave/hjjxmi/usd/private_unpacked/hjjxmi.usd",
+      "private_current_path": "/nvme3/datasets/task40_asset_recovery/current_private/hjjxmi.usd"
+    }
+  ],
+  "volume_within_base_collision_convex_hull_max_plane_violation_m": -0.009818397256021183,
+  "outer_aabb_gate_redundancy_proved_for_recovered_geometry": true,
+  "geometry_source": "official historical 3.7.0rc23 and local 3.7.2rc1; neither encrypted USD hash matches original recording",
+  "certification": "blocked_original_asset_identity; derived Inside candidate must remain weak",
+  "key_or_decrypted_artwork_published": false,
+  "simulation_started": false
+}

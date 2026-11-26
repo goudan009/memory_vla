@@ -1,0 +1,26 @@
+{
+  "episode": 400450,
+  "issue": "Requiring both independent fingers below 0.04m rejects asymmetric contacts even with strong observed co-motion.",
+  "before_rule": "max(finger_positions) < 0.04m",
+  "final_rule": "min(finger_positions) < 0.04m; all distance/motion/relative-pose checks retained",
+  "carry_witness": {
+    "frame": 2069,
+    "right_fingers_m": [0.042051512748003006, 0.0000014374019201568444],
+    "bag_motion_past10_m": 0.138,
+    "eef_motion_past10_m": 0.139,
+    "relative_position_error_m_rounded": 0.0001,
+    "before": "unknown",
+    "final": "weak_positive",
+    "original_head_frame": "keyframes/400450_02069_head.png",
+    "original_right_wrist_frame": "keyframes/400450_02069_right_wrist.png"
+  },
+  "release_counterexample": {
+    "frame": 2609,
+    "right_fingers_m": [0.04975280538201332, 0.04974888637661934],
+    "bag_motion_past10_m_rounded": 0.0,
+    "eef_motion_past10_m_rounded": 0.042,
+    "relative_position_error_m_rounded": 0.0425,
+    "final": "weak_negative"
+  },
+  "scope": "A real-data regression check for weak-label evidence, not a runtime-grasp certification. Images are original decoded video frames."
+}

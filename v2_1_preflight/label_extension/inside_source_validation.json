@@ -1,0 +1,5425 @@
+{
+  "passed": true,
+  "kind": "unchanged_source_methods_with_geometry_adapters_not_live_simulation",
+  "comparisons": 600,
+  "matches": 600,
+  "valid_comparisons": 424,
+  "valid_matches": 424,
+  "source_files": [
+    {
+      "path": "/nvme3/projects/GR00T/BEHAVIOR-1K-task-progress/OmniGibson/omnigibson/object_states/inside.py",
+      "sha256": "a9e6f21c019e47867078dc13f40ab0d65b9623828bafdb758d81ece53bc0ccc0"
+    },
+    {
+      "path": "/nvme3/projects/GR00T/BEHAVIOR-1K-task-progress/OmniGibson/omnigibson/prims/geom_prim.py",
+      "sha256": "5555dd4719502378516288c37253a4ad35440bebdfa5a9a4598217c5ddcdd6ce"
+    },
+    {
+      "path": "/nvme3/projects/GR00T/BEHAVIOR-1K-task-progress/OmniGibson/omnigibson/prims/rigid_prim.py",
+      "sha256": "1132946e860e9ee1581189b101c98857f86c034fbeaf99dcdf9a443ce9646a1a"
+    }
+  ],
+  "limitation": "Does not establish original asset identity, PhysX pose agreement, contacts or rendering consistency; no simulator started.",
+  "results": [
+    {
+      "episode": 400010,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.273956537246704,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400010,
+      "frame": 2659,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.0005136920372024179,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400010,
+      "frame": 3878,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08602038025856018,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400020,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2602672576904297,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400020,
+      "frame": 3327,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0015385274309664965,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400020,
+      "frame": 4397,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0844947099685669,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400030,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2989400625228882,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400030,
+      "frame": 2614,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0017570893978700042,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400030,
+      "frame": 3463,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08530136197805405,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400040,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2733567953109741,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400040,
+      "frame": 2576,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0001757095305947587,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400040,
+      "frame": 3540,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08814027160406113,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400050,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.1877977848052979,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400050,
+      "frame": 2843,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.00043536198791116476,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400050,
+      "frame": 3821,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08570379763841629,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400060,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.3404269218444824,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400060,
+      "frame": 2485,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -6.753933848813176e-05,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400060,
+      "frame": 3339,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08673359453678131,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400070,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.3212904930114746,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400070,
+      "frame": 2186,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.001884705270640552,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400070,
+      "frame": 2936,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.087405264377594,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400080,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.238155484199524,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400080,
+      "frame": 2885,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.0015148224774748087,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400080,
+      "frame": 3784,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08647405356168747,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400090,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2508131265640259,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400090,
+      "frame": 2363,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.9280476408312097e-05,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400090,
+      "frame": 2975,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0853622779250145,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400100,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2517123222351074,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400100,
+      "frame": 3674,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -5.9425503422971815e-05,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400100,
+      "frame": 4852,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08813068270683289,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400110,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.3159278631210327,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400110,
+      "frame": 2854,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0006552289123646915,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400110,
+      "frame": 3730,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08580499142408371,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400120,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.197840690612793,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400120,
+      "frame": 2393,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0003736793005373329,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400120,
+      "frame": 3390,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08634170144796371,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400130,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.251542329788208,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400130,
+      "frame": 2087,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -8.142030128510669e-05,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400130,
+      "frame": 3284,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08362290263175964,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400140,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.316806435585022,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400140,
+      "frame": 3027,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0007268004701472819,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400140,
+      "frame": 4049,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08387615531682968,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400150,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.1958168745040894,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400150,
+      "frame": 2513,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.0015319526428356767,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400150,
+      "frame": 3455,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08818495273590088,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400160,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2584842443466187,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400160,
+      "frame": 1865,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.00014700772590003908,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400160,
+      "frame": 2809,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08798521757125854,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400170,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.3045271635055542,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400170,
+      "frame": 2068,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.0016831508837640285,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400170,
+      "frame": 3261,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08455618470907211,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400180,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2464395761489868,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400180,
+      "frame": 2133,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.0027061684522777796,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400180,
+      "frame": 3134,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08826051652431488,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400190,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2928944826126099,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400190,
+      "frame": 2746,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.002201831666752696,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400190,
+      "frame": 3624,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08362291008234024,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400200,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2437543869018555,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400200,
+      "frame": 1676,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 9.245885303243995e-05,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400200,
+      "frame": 2726,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0864042192697525,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400210,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2684974670410156,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400210,
+      "frame": 2535,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.0006511503597721457,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400210,
+      "frame": 3669,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0856722816824913,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400220,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.163972020149231,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400220,
+      "frame": 2242,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.00032078014919534326,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400220,
+      "frame": 3199,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08630551397800446,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400230,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.3191580772399902,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400230,
+      "frame": 2089,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.00012029673962388188,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400230,
+      "frame": 3050,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08875325322151184,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400240,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.1848180294036865,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400240,
+      "frame": 2044,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.0007610213360749185,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400240,
+      "frame": 2878,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0865200087428093,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400250,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.1420327425003052,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400250,
+      "frame": 2982,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -2.9819835617672652e-05,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400250,
+      "frame": 3978,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08362317085266113,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400260,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.325953483581543,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400260,
+      "frame": 2445,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -7.313621608773246e-05,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400260,
+      "frame": 3424,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08818395435810089,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400270,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2676221132278442,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400270,
+      "frame": 1771,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.0008369953138753772,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400270,
+      "frame": 2736,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08581002056598663,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400280,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.196549415588379,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400280,
+      "frame": 1954,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0004885413800366223,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400280,
+      "frame": 2916,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08455606549978256,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400290,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.1898837089538574,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400290,
+      "frame": 2538,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.0010413925629109144,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400290,
+      "frame": 3774,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08362288028001785,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400300,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.1645760536193848,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400300,
+      "frame": 2357,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.0007581123500131071,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400300,
+      "frame": 3369,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08560823649168015,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400310,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.3495817184448242,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400310,
+      "frame": 3266,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0010278539266437292,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400310,
+      "frame": 4313,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08362352848052979,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400320,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2850080728530884,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400320,
+      "frame": 2255,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.001184225780889392,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400320,
+      "frame": 3174,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08763091266155243,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400330,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.091422438621521,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400330,
+      "frame": 2953,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0009933860274031758,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400330,
+      "frame": 3807,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08387613296508789,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400340,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.1825406551361084,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400340,
+      "frame": 2129,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.00038091413443908095,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400340,
+      "frame": 2989,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08879763633012772,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400350,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.1783478260040283,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400350,
+      "frame": 2551,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0018578460440039635,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400350,
+      "frame": 3479,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0865023136138916,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400360,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2997020483016968,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400360,
+      "frame": 1967,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0005697977030649781,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400360,
+      "frame": 2934,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08467473089694977,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400370,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2607837915420532,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400370,
+      "frame": 1923,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.0014894477790221572,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400370,
+      "frame": 3139,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08647170662879944,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400380,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.295397162437439,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400380,
+      "frame": 2813,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.001090566860511899,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400380,
+      "frame": 3895,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08728199452161789,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400390,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.3035309314727783,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400390,
+      "frame": 3047,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.0012034898390993476,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400390,
+      "frame": 4128,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08821503818035126,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400400,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2608721256256104,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400400,
+      "frame": 2662,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.0009247374255210161,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400400,
+      "frame": 3631,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08683402091264725,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400410,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.3109397888183594,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400410,
+      "frame": 1790,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.001802803948521614,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400410,
+      "frame": 2712,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08373162150382996,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400420,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2567225694656372,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400420,
+      "frame": 2940,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.002125511644408107,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400420,
+      "frame": 3894,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08558724075555801,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400430,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.256287932395935,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400430,
+      "frame": 2113,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.00017612868396099657,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400430,
+      "frame": 2928,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08432967960834503,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400440,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.1282652616500854,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400440,
+      "frame": 1510,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.0021414728835225105,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400440,
+      "frame": 2377,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08771445602178574,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400450,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.327553629875183,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400450,
+      "frame": 2628,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0018536867573857307,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400450,
+      "frame": 3536,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08801237493753433,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400460,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.152909517288208,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400460,
+      "frame": 2310,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0018653057049959898,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400460,
+      "frame": 3383,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08873685449361801,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400480,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2176059484481812,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400480,
+      "frame": 2320,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0011731673730537295,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400480,
+      "frame": 3082,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08624012023210526,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400490,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.358988881111145,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400490,
+      "frame": 2571,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0018531152745708823,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400490,
+      "frame": 3466,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08797113597393036,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400500,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.19525945186615,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400500,
+      "frame": 2095,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.00032539942185394466,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400500,
+      "frame": 3176,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08738083392381668,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400510,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2218364477157593,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400510,
+      "frame": 1942,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.0014009058941155672,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400510,
+      "frame": 3026,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08671731501817703,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400520,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2144007682800293,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400520,
+      "frame": 2453,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0003049364604521543,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400520,
+      "frame": 3294,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0836227536201477,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400530,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.3251925706863403,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400530,
+      "frame": 3263,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.00026994585641659796,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400530,
+      "frame": 4220,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08663854748010635,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400540,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.1901845932006836,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400540,
+      "frame": 2274,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0018061483278870583,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400540,
+      "frame": 3546,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08645139634609222,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400550,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.258428692817688,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400550,
+      "frame": 2113,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0002483203134033829,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400550,
+      "frame": 3085,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08438946306705475,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400560,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.1792562007904053,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400560,
+      "frame": 2487,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0002585232141427696,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400560,
+      "frame": 3487,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08845765143632889,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400570,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.1242109537124634,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400570,
+      "frame": 2340,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0014118847902864218,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400570,
+      "frame": 3263,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08592087775468826,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400580,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2513879537582397,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400580,
+      "frame": 2101,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0010317823616787791,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400580,
+      "frame": 3148,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08781077712774277,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400600,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2817533016204834,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400600,
+      "frame": 2152,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.0014521849807351828,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400600,
+      "frame": 3258,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08814426511526108,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400610,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2933571338653564,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400610,
+      "frame": 2225,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.00016390187374781817,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400610,
+      "frame": 3157,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08523542433977127,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400620,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.31244957447052,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400620,
+      "frame": 1548,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0036413613706827164,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400620,
+      "frame": 2170,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08362297713756561,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400640,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2222291231155396,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400640,
+      "frame": 2431,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.0006631233845837414,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400640,
+      "frame": 3079,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08590582758188248,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400660,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2229526042938232,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400660,
+      "frame": 2400,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.00035991170443594456,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400660,
+      "frame": 3465,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08362232893705368,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400670,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.3282825946807861,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400670,
+      "frame": 2127,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0002121031138813123,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400670,
+      "frame": 3377,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08830807358026505,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400680,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.327624797821045,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400680,
+      "frame": 1977,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.0003009196661878377,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400680,
+      "frame": 2931,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08618544042110443,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400690,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.3534183502197266,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400690,
+      "frame": 2156,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.002627061679959297,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400690,
+      "frame": 3088,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08868955820798874,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400700,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2308506965637207,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400700,
+      "frame": 2529,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0009496227139607072,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400700,
+      "frame": 3552,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08834557235240936,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400710,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.1666771173477173,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400710,
+      "frame": 2094,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.002393933478742838,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400710,
+      "frame": 3019,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08830467611551285,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400720,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2057968378067017,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400720,
+      "frame": 2746,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.0010249095503240824,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400720,
+      "frame": 3709,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08618133515119553,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400730,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.1384272575378418,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400730,
+      "frame": 2170,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.0009101651958189905,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400730,
+      "frame": 3193,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08644438534975052,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400740,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2903646230697632,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400740,
+      "frame": 3002,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -2.687540472834371e-06,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400740,
+      "frame": 4035,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0886610671877861,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400750,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.1208494901657104,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400750,
+      "frame": 2300,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0018022145377472043,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400750,
+      "frame": 3111,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08831244707107544,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400760,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2432070970535278,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400760,
+      "frame": 1980,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.000373429007595405,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400760,
+      "frame": 2900,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08502151072025299,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400780,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2911970615386963,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400780,
+      "frame": 1957,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.003183739259839058,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400780,
+      "frame": 2691,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08813178539276123,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400790,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2082356214523315,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400790,
+      "frame": 1877,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 9.262689104616584e-07,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400790,
+      "frame": 2786,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08817243576049805,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400800,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.1703983545303345,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400800,
+      "frame": 1746,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.00026344784419052303,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400800,
+      "frame": 2646,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08758402615785599,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400810,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2241486310958862,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400810,
+      "frame": 2152,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0005006688879802823,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400810,
+      "frame": 2969,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08886116743087769,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400820,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.308332085609436,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400820,
+      "frame": 2074,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0006802193820476532,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400820,
+      "frame": 3091,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08362305909395218,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400830,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.1711053848266602,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400830,
+      "frame": 1972,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0009785612346604466,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400830,
+      "frame": 2936,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08589265495538712,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400840,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.1813422441482544,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400840,
+      "frame": 2398,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.001220201957039535,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400840,
+      "frame": 3329,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0881824865937233,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400850,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2776538133621216,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400850,
+      "frame": 2002,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0006747076404280961,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400850,
+      "frame": 2991,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0878843367099762,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400860,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2176661491394043,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400860,
+      "frame": 1893,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0009260643855668604,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400860,
+      "frame": 2715,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08721437305212021,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400870,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2573182582855225,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400870,
+      "frame": 2959,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.003062247531488538,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400870,
+      "frame": 4068,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08641480654478073,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400880,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.175697684288025,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400880,
+      "frame": 2161,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.0013972684973850846,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400880,
+      "frame": 2936,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08701714873313904,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400890,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.1530907154083252,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400890,
+      "frame": 1885,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 4.7098652430577204e-05,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400890,
+      "frame": 2814,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08640213310718536,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400900,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2877954244613647,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400900,
+      "frame": 1887,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.00021131531684659421,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400900,
+      "frame": 2700,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08804164081811905,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400910,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.1782925128936768,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400910,
+      "frame": 2067,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.0012618143809959292,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400910,
+      "frame": 2890,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08656829595565796,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400920,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2337085008621216,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400920,
+      "frame": 1787,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0006829435587860644,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400920,
+      "frame": 2613,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0851246565580368,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400930,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.284570574760437,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400930,
+      "frame": 1620,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0009145060903392732,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400930,
+      "frame": 2435,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0842427983880043,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400940,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.1407742500305176,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400940,
+      "frame": 1768,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0002831263991538435,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400940,
+      "frame": 2435,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08614854514598846,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400950,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.270930290222168,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400950,
+      "frame": 2292,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 9.144165960606188e-05,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400950,
+      "frame": 3190,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08846599608659744,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400960,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2000339031219482,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400960,
+      "frame": 2166,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.00016529447748325765,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400960,
+      "frame": 3041,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08628475666046143,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400970,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.219423770904541,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400970,
+      "frame": 2134,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.0024621763732284307,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400970,
+      "frame": 3018,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08825576305389404,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400990,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2810041904449463,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 400990,
+      "frame": 2632,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.0002811552258208394,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 400990,
+      "frame": 3441,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08625376969575882,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401000,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2833069562911987,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401000,
+      "frame": 3008,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.00036910129711031914,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 401000,
+      "frame": 4457,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08816792070865631,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401010,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.3693910837173462,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401010,
+      "frame": 2361,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.00024013539950829,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 401010,
+      "frame": 3159,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0858994722366333,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401020,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2725008726119995,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401020,
+      "frame": 1964,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.00010501423093955964,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 401020,
+      "frame": 2889,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0864797830581665,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401030,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.232631802558899,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401030,
+      "frame": 2047,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.001902201329357922,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 401030,
+      "frame": 2987,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08405538648366928,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401040,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.316373348236084,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401040,
+      "frame": 2457,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.00027834667707793415,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 401040,
+      "frame": 3116,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08240000903606415,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401050,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.142676830291748,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401050,
+      "frame": 2402,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.0018808434251695871,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 401050,
+      "frame": 3144,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08426354080438614,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401060,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.1870158910751343,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401060,
+      "frame": 1886,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.0006747164879925549,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 401060,
+      "frame": 2691,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08771075308322906,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401080,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2492796182632446,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401080,
+      "frame": 2519,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.002960721729323268,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401080,
+      "frame": 3306,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08826376497745514,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401090,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.1531635522842407,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401090,
+      "frame": 2433,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.0021247207187116146,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401090,
+      "frame": 3139,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08424247056245804,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401100,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.306801676750183,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401100,
+      "frame": 2113,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.00016986680566333234,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 401100,
+      "frame": 2879,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08772136270999908,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401110,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.140310287475586,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401110,
+      "frame": 2690,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.00030154603882692754,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 401110,
+      "frame": 3548,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08362313359975815,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401120,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.1989251375198364,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401120,
+      "frame": 2198,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.00035824585938826203,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 401120,
+      "frame": 2936,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08200165629386902,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401130,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2404333353042603,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401130,
+      "frame": 2447,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -9.137847519014031e-05,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 401130,
+      "frame": 3275,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08594276756048203,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401140,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2608466148376465,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401140,
+      "frame": 1806,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.002153597539290786,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401140,
+      "frame": 2570,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08803059160709381,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401150,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2330504655838013,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401150,
+      "frame": 2068,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.00013034712173976004,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 401150,
+      "frame": 2920,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08830060809850693,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401160,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.22703218460083,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401160,
+      "frame": 2570,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.0009254997130483389,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 401160,
+      "frame": 3481,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0848257765173912,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401200,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2240774631500244,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401200,
+      "frame": 2774,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.0018907292978838086,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 401200,
+      "frame": 3632,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08878996223211288,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401220,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.3244503736495972,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401220,
+      "frame": 2373,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.00030311060254462063,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 401220,
+      "frame": 3279,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08815521001815796,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401230,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.1573832035064697,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401230,
+      "frame": 2081,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0014490302419289947,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 401230,
+      "frame": 2925,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08755593746900558,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401240,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2103731632232666,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401240,
+      "frame": 2946,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.000692779547534883,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 401240,
+      "frame": 3786,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08649347722530365,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401250,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.215481162071228,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401250,
+      "frame": 3178,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.0006833425140939653,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 401250,
+      "frame": 4144,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08645881712436676,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401260,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2755153179168701,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401260,
+      "frame": 1470,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.00020499656966421753,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 401260,
+      "frame": 2168,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08362340182065964,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401270,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2168503999710083,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401270,
+      "frame": 2374,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.00019185298879165202,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 401270,
+      "frame": 3104,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08670422434806824,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401280,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.3506593704223633,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401280,
+      "frame": 2582,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0012327664298936725,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 401280,
+      "frame": 3396,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08501963317394257,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401290,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2138476371765137,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401290,
+      "frame": 2039,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0013482911745086312,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 401290,
+      "frame": 2842,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08857438713312149,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401300,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2660365104675293,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401300,
+      "frame": 2432,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.00025069518596865237,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 401300,
+      "frame": 3200,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08539234101772308,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401310,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.284009337425232,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401310,
+      "frame": 2534,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.00010758687858469784,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 401310,
+      "frame": 3320,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08396335691213608,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401320,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.250960350036621,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401320,
+      "frame": 2224,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.000750626961234957,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 401320,
+      "frame": 3018,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08363337814807892,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401340,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2499312162399292,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401340,
+      "frame": 1984,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.0002263274072902277,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 401340,
+      "frame": 2725,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0856894925236702,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401350,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2309250831604004,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401350,
+      "frame": 1778,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.0006913463003002107,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 401350,
+      "frame": 2478,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08563551306724548,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401360,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.334153413772583,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401360,
+      "frame": 2234,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.0025206408463418484,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401360,
+      "frame": 2956,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08830497413873672,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401370,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.1636855602264404,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401370,
+      "frame": 1757,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.0011285205837339163,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 401370,
+      "frame": 2591,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08706878125667572,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401380,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2588497400283813,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401380,
+      "frame": 2923,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.00010576732165645808,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 401380,
+      "frame": 3744,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08411218225955963,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401390,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2693246603012085,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401390,
+      "frame": 2177,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.0005549565539695323,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 401390,
+      "frame": 3073,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08519154787063599,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401400,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2921303510665894,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401400,
+      "frame": 2792,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0005678507150150836,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 401400,
+      "frame": 3547,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08826346695423126,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401410,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2582744359970093,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401410,
+      "frame": 2128,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0024058609269559383,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401410,
+      "frame": 3003,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08434975892305374,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401420,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2168101072311401,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401420,
+      "frame": 2678,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.0019353757379576564,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 401420,
+      "frame": 3495,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08394136279821396,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401430,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.1997876167297363,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401430,
+      "frame": 2005,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.00020533765200525522,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 401430,
+      "frame": 3038,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08416171371936798,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401450,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.1827480792999268,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401450,
+      "frame": 2148,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.00287363538518548,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401450,
+      "frame": 3086,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08387599885463715,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401460,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2089927196502686,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401460,
+      "frame": 2494,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0012832091888412833,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 401460,
+      "frame": 3349,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08524051308631897,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401470,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.21453857421875,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401470,
+      "frame": 2563,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.0004990502493456006,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 401470,
+      "frame": 3367,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08801586925983429,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401480,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.248260498046875,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401480,
+      "frame": 2218,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0015884967288002372,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 401480,
+      "frame": 3356,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08464888483285904,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401490,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2137234210968018,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401490,
+      "frame": 2423,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.0017670667730271816,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 401490,
+      "frame": 3447,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08627233654260635,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401500,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2991207838058472,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401500,
+      "frame": 2016,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0010329725919291377,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 401500,
+      "frame": 2826,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08632943034172058,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401510,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.323958396911621,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401510,
+      "frame": 1862,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.0030631169211119413,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401510,
+      "frame": 2726,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08469852805137634,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401520,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.227160930633545,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401520,
+      "frame": 3009,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.0009771852055564523,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 401520,
+      "frame": 3966,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08549892902374268,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401530,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2758818864822388,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401530,
+      "frame": 2211,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.000465203047497198,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 401530,
+      "frame": 2998,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08671131730079651,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401540,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.194337248802185,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401540,
+      "frame": 2293,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.00041286865598522127,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 401540,
+      "frame": 3198,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0888945534825325,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401560,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.161378026008606,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401560,
+      "frame": 1580,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0008977848920039833,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 401560,
+      "frame": 2215,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08692706376314163,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401580,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.200964093208313,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401580,
+      "frame": 1347,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.00047831368283368647,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 401580,
+      "frame": 1887,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08513340353965759,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401650,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2588087320327759,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401650,
+      "frame": 1277,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.0023683838080614805,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401650,
+      "frame": 2094,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08864464610815048,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401710,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.3098812103271484,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401710,
+      "frame": 1477,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.001710336422547698,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 401710,
+      "frame": 2253,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08818047493696213,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401860,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.251949429512024,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401860,
+      "frame": 1410,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.0031359712593257427,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401860,
+      "frame": 2088,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08824647963047028,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401880,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2322458028793335,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401880,
+      "frame": 1624,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0027796756476163864,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401880,
+      "frame": 2208,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08423324674367905,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401910,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.3538272380828857,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401910,
+      "frame": 1931,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 7.87533717812039e-05,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 401910,
+      "frame": 2727,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08825651556253433,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401950,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.1885485649108887,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 401950,
+      "frame": 1281,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.0005281823687255383,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 401950,
+      "frame": 2090,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08890505135059357,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402010,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.144134521484375,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402010,
+      "frame": 1944,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.001422037254087627,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 402010,
+      "frame": 2589,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08402387797832489,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402190,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.1772369146347046,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402190,
+      "frame": 1195,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.0010061492212116718,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 402190,
+      "frame": 1866,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08370085805654526,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402230,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.1529966592788696,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402230,
+      "frame": 1795,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0003955352585762739,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 402230,
+      "frame": 2352,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08720468729734421,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402340,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.243303894996643,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402340,
+      "frame": 1344,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.0017475461354479194,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 402340,
+      "frame": 1877,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08853093534708023,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402470,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2926760911941528,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402470,
+      "frame": 2035,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.0019357430282980204,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 402470,
+      "frame": 2924,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08362877368927002,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402500,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2585699558258057,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402500,
+      "frame": 1072,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.003681102069094777,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402500,
+      "frame": 1583,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08843487501144409,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402510,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2306180000305176,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402510,
+      "frame": 2146,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.00017663413018453866,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 402510,
+      "frame": 3094,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08684252947568893,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402520,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.193381667137146,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402520,
+      "frame": 3128,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0007439560140483081,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 402520,
+      "frame": 4253,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08542554080486298,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402530,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.1571810245513916,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402530,
+      "frame": 2462,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0007310067885555327,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 402530,
+      "frame": 3630,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0875292643904686,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402550,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.1956794261932373,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402550,
+      "frame": 2852,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.0013292785733938217,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 402550,
+      "frame": 3818,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08539542555809021,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402560,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.343373417854309,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402560,
+      "frame": 3070,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.0003112269041594118,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 402560,
+      "frame": 4159,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08824388682842255,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402570,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2396323680877686,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402570,
+      "frame": 2552,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.0001318289723712951,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 402570,
+      "frame": 3581,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08530841767787933,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402580,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.1199908256530762,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402580,
+      "frame": 3245,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.0019919618498533964,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 402580,
+      "frame": 4434,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08393596857786179,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402590,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2785903215408325,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402590,
+      "frame": 2663,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.0012937847059220076,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 402590,
+      "frame": 3744,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0882922038435936,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402600,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.1976855993270874,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402600,
+      "frame": 2294,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -9.783955465536565e-05,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 402600,
+      "frame": 3382,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08437777310609818,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402610,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.1777423620224,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402610,
+      "frame": 2516,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.00036805859417654574,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 402610,
+      "frame": 3827,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08551564812660217,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402620,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.3666627407073975,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402620,
+      "frame": 2835,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.0012446048203855753,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 402620,
+      "frame": 4113,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08864665031433105,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402630,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.14340078830719,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402630,
+      "frame": 2461,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.00023922236869111657,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 402630,
+      "frame": 3481,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08829950541257858,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402640,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.1493011713027954,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402640,
+      "frame": 2158,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 4.4319960579741746e-05,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 402640,
+      "frame": 3584,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08518465608358383,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402650,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.1520637273788452,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402650,
+      "frame": 2369,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0007198587991297245,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 402650,
+      "frame": 3553,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08825290948152542,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402660,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.3309085369110107,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402660,
+      "frame": 2720,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0012670622672885656,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 402660,
+      "frame": 3868,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08830203115940094,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402670,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.3100076913833618,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402670,
+      "frame": 3438,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.0007050304557196796,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 402670,
+      "frame": 4697,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08826272934675217,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402680,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.1467458009719849,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402680,
+      "frame": 2892,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.0009337083902209997,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 402680,
+      "frame": 4129,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08660341799259186,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402710,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2410337924957275,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402710,
+      "frame": 2169,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.0010201464174315333,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 402710,
+      "frame": 3318,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0856420025229454,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402720,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2013789415359497,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402720,
+      "frame": 2171,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.0015394114889204502,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 402720,
+      "frame": 3468,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08412665128707886,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402740,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.305485725402832,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402740,
+      "frame": 2724,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.0007845573127269745,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 402740,
+      "frame": 3964,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08590447902679443,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402750,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.298296332359314,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402750,
+      "frame": 2821,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.0012550988467410207,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 402750,
+      "frame": 3999,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08822797238826752,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402760,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.3454160690307617,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402760,
+      "frame": 3209,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -8.502161654178053e-05,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 402760,
+      "frame": 4324,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08625321835279465,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402770,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2791413068771362,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402770,
+      "frame": 2899,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0002664646599441767,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 402770,
+      "frame": 4078,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08580116927623749,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402780,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.247900128364563,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402780,
+      "frame": 3140,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.0004203928401693702,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 402780,
+      "frame": 4069,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08365017175674438,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402790,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2448251247406006,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402790,
+      "frame": 2085,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.0009515872225165367,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 402790,
+      "frame": 3084,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08549456298351288,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402800,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2184110879898071,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402800,
+      "frame": 2440,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.00015492706734221429,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 402800,
+      "frame": 3321,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08387560397386551,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402810,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.246592402458191,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402810,
+      "frame": 2475,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.0007466736133210361,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 402810,
+      "frame": 3416,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08362279832363129,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402820,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.158048152923584,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402820,
+      "frame": 2711,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.00023711561516392976,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 402820,
+      "frame": 3693,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08883059024810791,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402830,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.3219295740127563,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402830,
+      "frame": 2307,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.00015547960356343538,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 402830,
+      "frame": 3177,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08364741504192352,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402840,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.238844394683838,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402840,
+      "frame": 2579,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.003293595276772976,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402840,
+      "frame": 3494,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08825629949569702,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402850,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.1533899307250977,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402850,
+      "frame": 2780,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0016919299960136414,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 402850,
+      "frame": 3638,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08404428511857986,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402860,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2728313207626343,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402860,
+      "frame": 2677,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0009046715567819774,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 402860,
+      "frame": 3384,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08642951399087906,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402870,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.158583402633667,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402870,
+      "frame": 2679,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0006515634013339877,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 402870,
+      "frame": 3532,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08362223953008652,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402880,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.1453183889389038,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402880,
+      "frame": 1565,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -5.311860513756983e-05,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 402880,
+      "frame": 2384,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0885881632566452,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402900,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.1562457084655762,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402900,
+      "frame": 2368,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.00011284580978099257,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 402900,
+      "frame": 3378,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08526083827018738,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402910,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2929822206497192,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402910,
+      "frame": 2401,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.000843544490635395,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 402910,
+      "frame": 3245,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08732026815414429,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402920,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.1194307804107666,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402920,
+      "frame": 2490,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.0006415748503059149,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 402920,
+      "frame": 3453,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08747858554124832,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402930,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2772160768508911,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402930,
+      "frame": 2174,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0008736727177165449,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 402930,
+      "frame": 2978,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08387577533721924,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402940,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.3328050374984741,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402940,
+      "frame": 2082,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0002130483480868861,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 402940,
+      "frame": 2808,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08553309738636017,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402950,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.306550145149231,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402950,
+      "frame": 2272,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.0019702597055584192,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 402950,
+      "frame": 3221,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08362289518117905,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402960,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2229622602462769,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402960,
+      "frame": 1822,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0024751971941441298,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402960,
+      "frame": 2551,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.0881669670343399,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402970,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.2765434980392456,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402970,
+      "frame": 2083,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.0020708495285362005,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402970,
+      "frame": 2797,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08387620747089386,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402980,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.3171850442886353,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402980,
+      "frame": 2367,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.0003940060851164162,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 402980,
+      "frame": 3067,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08367281407117844,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402990,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.1663814783096313,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 402990,
+      "frame": 2760,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -0.00013034006406087428,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 402990,
+      "frame": 3631,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08690357953310013,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 403000,
+      "frame": 0,
+      "source_method_result": false,
+      "cpu_candidate": false,
+      "margin_m": -1.1652181148529053,
+      "quality": 2,
+      "equal": true
+    },
+    {
+      "episode": 403000,
+      "frame": 2496,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.001493394491262734,
+      "quality": 0,
+      "equal": true
+    },
+    {
+      "episode": 403000,
+      "frame": 3172,
+      "source_method_result": true,
+      "cpu_candidate": true,
+      "margin_m": 0.08699129521846771,
+      "quality": 2,
+      "equal": true
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "task_id": 40,
+  "roles": {"bag": "popcorn__bag.n.01_1", "microwave": "microwave.n.02_1", "robot": "agent.n.01_1"},
+  "expected_models": {"bag": "hdcpqg", "microwave": "hjjxmi"},
+  "inside_boundary_unknown_m": 0.002,
+  "eef_indices_state82": {"left": [39, 46], "right": [69, 76]},
+  "finger_indices_state82": {"left": [46, 48], "right": [76, 78]},
+  "grasp": {
+    "closed_rule": "at_least_one_finger_below_threshold; motion and relative-pose witness still required",
+    "motion_window_frames": 10,
+    "closed_finger_m": 0.04,
+    "open_finger_m": 0.047,
+    "near_distance_m": 0.26,
+    "far_distance_m": 0.30,
+    "min_motion_m": 0.012,
+    "relative_error_m": 0.012,
+    "relative_error_rad": 0.16,
+    "hold_relative_error_m": 0.025,
+    "hold_relative_error_rad": 0.30
+  },
+  "quality": {"0": "unknown", "1": "certified_recorded_or_source_predicate", "2": "weak_inference"}
+}

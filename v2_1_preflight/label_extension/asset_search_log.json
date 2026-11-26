@@ -1,0 +1,17 @@
+{
+  "purpose": "Attempt recovery of the exact recording assets without replacing the shared runtime dataset",
+  "recording": {"og_dataset":"1.2.0rc21","omnigibson":"3.7.0-alpha","git":"4788e6dd4245aa1a0080687124ebba90aedd2602"},
+  "local_search": {"roots":["/nvme3","/data"],"finding":"Only the current encrypted USD object assets were found; no exact original archive identified. Temporary cache search did not recover original object USDs."},
+  "official_repo":"https://huggingface.co/datasets/behavior-1k/zipped-datasets",
+  "historical_api_checks": [
+    {"revision":"015e37a26823a110fedb6a0c3d943f573de00ffe","result":"Recovered the two relevant objects from behavior-1k-assets.zip; VERSION3.7.0rc23"},
+    {"revision":"df866ea1f11c0defc544660d39c2e28c2928e1ac","result":"API listing has behavior-1k-assets.zip size33078084691, same size as recovered archive; not independently extracted"},
+    {"revision":"98e9a0c8cc4ed91ba6f87c58725839079345ca0a","result":"API listing has behavior-1k-assets.zip size33078084691; not independently extracted"},
+    {"revision":"8e8cc448c84e10f712bb570476a6f451aa901a58","result":"API listing adds og_dataset.zip size31280662307, later renamed3.7.2rc1; historical original remains listed"}
+  ],
+  "transport":"Direct huggingface.co timed out in this environment; hf-mirror.com official-repo mirror and resolved range responses worked",
+  "identity_result":"Exact expected encrypted USD hashes not found. Historical/local plaintext differ in serialization but all transformed mesh vertices/faces and joint physics signatures match. Equality of these versions does not establish equality with the missing original version.",
+  "all200_expected_hash_and_scale_check":"source_and_order_evidence.json and episode_evidence.json",
+  "not_exhaustive":"Other private backups or an upstream archive not indexed here may still contain the original assets.",
+  "no_shared_asset_replacement":true
+}

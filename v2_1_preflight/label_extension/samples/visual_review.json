@@ -1,0 +1,13 @@
+{
+  "reviewer": "Codex /root visual spot-check of original decoded multiview images",
+  "scope": "Five episode panels, each with head/left_wrist/right_wrist; this is qualitative alignment evidence, not strict grasp/Inside certification.",
+  "findings": [
+    {"episode":400010,"frames":[2027,2067,2441,2640,2680,2817,2857],"observation":"Head/right wrist show bag lifted and transported with right hand, entering open microwave, then hand separating from bag. Left wrist mostly shows its own gripper and floor. Near initial lift the label remains unknown; before/after geometric entry samples agree qualitatively."},
+    {"episode":400020,"frames":[2560,2600,2995,3308,3348,3385,3425],"observation":"Head/right wrist support right-hand carry and progressive insertion. At the later release samples camera occlusion prevents a precise runtime grasp boundary. Weak/unknown semantics retained."},
+    {"episode":403000,"frames":[1796,1836,2092,2372,2412,2477,2517],"observation":"Carry is visible, then bag rotates and hand approaches/repositions in microwave opening. Several insertion views are occluded. A geometrically positive Inside label means AABB center in volume, not full-bag containment."},
+    {"episode":400450,"frames":[1772,1812,2069,2120,2394,2434,2609,2649],"observation":"Right-hand carry at2069 confirms the initial both-fingers-closed rule missed an asymmetric contact. Final at-least-one-finger rule labels carry weak-positive. At2609/2649 the jaws are open and relative motion changed; contact/pushing is possible and does not certify a runtime grasp. No manual positive backfill added."},
+    {"episode":400640,"frames":[1799,1839,2110,2153,2155,2170,2193,2195,2414,2464],"observation":"Bag manipulation at the cavity opening includes small movements around the entry boundary. Images do not resolve millimetre center-volume crossings; candidate Inside retreats are retained rather than forced monotonic."}
+  ],
+  "final_validation": "../validation.json records 135 PTS-checked frames from 15 source videos; panels and source PNGs preserve original pixels before montage scaling.",
+  "no_manual_framewise_ground_truth_claimed": true
+}

@@ -1,0 +1,43 @@
+{
+  "repo": "behavior-1k/zipped-datasets",
+  "revision": "015e37a26823a110fedb6a0c3d943f573de00ffe",
+  "archive": "behavior-1k-assets.zip",
+  "archive_metadata": {
+    "type": "file",
+    "oid": "090fd474ff7ab73278bf241664a1857b171f1ae8",
+    "size": 33078084691,
+    "lfs": {
+      "oid": "1a6bc7d3bfea30ab18d90b2a48477e2f72105a62ce991bfb6ca157b8e705cfa0",
+      "size": 33078084691,
+      "pointerSize": 136
+    },
+    "xetHash": "a1530712a8c7da254b76c341d26113a7adce5b386de2b7e97723139b53eaf506",
+    "path": "behavior-1k-assets.zip"
+  },
+  "official_url": "https://huggingface.co/datasets/behavior-1k/zipped-datasets/resolve/015e37a26823a110fedb6a0c3d943f573de00ffe/behavior-1k-assets.zip",
+  "transport": "hf-mirror.com; ZIP CRC validated, members hashed; original expected encrypted MD5 separately checked",
+  "transferred_bytes": 14032756,
+  "members": [
+    {
+      "member": "VERSION",
+      "local_path": "/nvme3/datasets/task40_asset_recovery/015e37a26823a110fedb6a0c3d943f573de00ffe/VERSION",
+      "bytes": 10,
+      "md5": "bd19f26385a340acf33089cc2dd0c8cf",
+      "sha256": "da30e8d3b5c6f4de5214d3018820a6177ca10b0ef57755de3f50f18c3d08065a"
+    },
+    {
+      "member": "objects/microwave/hjjxmi/usd/hjjxmi.usdz.encrypted",
+      "local_path": "/nvme3/datasets/task40_asset_recovery/015e37a26823a110fedb6a0c3d943f573de00ffe/objects/microwave/hjjxmi/usd/hjjxmi.usdz.encrypted",
+      "bytes": 5728292,
+      "md5": "1c436aa95229f915ece875507858027e",
+      "sha256": "d40c987083b9bb0399514e5d2c548a064c0235f4699167ebc7e842987624c9b3"
+    },
+    {
+      "member": "objects/popcorn_bag/hdcpqg/usd/hdcpqg.usdz.encrypted",
+      "local_path": "/nvme3/datasets/task40_asset_recovery/015e37a26823a110fedb6a0c3d943f573de00ffe/objects/popcorn_bag/hdcpqg/usd/hdcpqg.usdz.encrypted",
+      "bytes": 7331788,
+      "md5": "9569364eb30989dbf57079d5aaf47543",
+      "sha256": "ffe504e2b329afd94ed5b76b23ee81c5b58fbf765165cd9c5d02f7fe5ecb74c3"
+    }
+  ]
+}
