@@ -1,0 +1,15 @@
+{
+  "goal": "尝试修复 Task40 重置时非任务家具可能进入可变恢复基准的问题，并在真实仿真复测。",
+  "created_at": "2026-11-24",
+  "author": "Codex",
+  "parent_plan": "plan-v004.json",
+  "reason": "原实现位姿扰动6/6重置、三回合短闭环均恢复正确，原长测触发条件尚未复现；短闭环中实际被推移约25厘米的厨房椅也恢复。代码已确认25个稳定物理步后会无条件把非任务家具当前状态保存为后续恢复基准。使用明确标注的稳定阶段位移注入检验此缺口，避免将其冒充原长测根因；修复只固定非任务场景基准，保留当前实例TRO、机器人和任务物体。",
+  "mainline": ["settle_fault_control", "repair_reset", "simulation_regression", "policy_retest", "reset_acceptance"],
+  "nodes": [
+    {"id": "settle_fault_control", "title": "稳定阶段基准污染对照", "after": [], "parallel_with": [], "acceptance": "在原实现真实仿真中，在稳定阶段保存基准前人为改变厨房椅位姿，证明该位姿会进入基准并在零动作重置后遗留；明确标为故障注入，不能冒充历史触发原因。"},
+    {"id": "repair_reset", "title": "非任务场景基准固定", "after": ["settle_fault_control"], "parallel_with": [], "acceptance": "保留构造完成后的干净全场景副本，保存实例时只更新任务物体、机器人和实例元数据，非任务家具从干净基准恢复；接入既有评估factory，不改训练模型。"},
+    {"id": "simulation_regression", "title": "家具恢复真实回归", "after": ["repair_reset"], "parallel_with": [], "acceptance": "同一注入条件修复后3/3恢复通过，并完成厨房家具倾倒/实际机器人接触后的恢复检查，保留截图与误差。"},
+    {"id": "policy_retest", "title": "修复后同权重短闭环", "after": ["simulation_regression"], "parallel_with": [], "acceptance": "再次复用run005 step006000，实例0/1/4、seed0 sequence、chunk8，每回合240动作，共3调试回合；核对实际启用修复与每回合零动作桌椅正常。"},
+    {"id": "reset_acceptance", "title": "家具恢复修复验收", "after": ["policy_retest"], "parallel_with": [], "acceptance": "交付补丁、已完成工作台作业、真实仿真对照与图像。明确原长评估触发点尚未直接重现，短调试不替代10回合完整任务成绩。"}
+  ]
+}

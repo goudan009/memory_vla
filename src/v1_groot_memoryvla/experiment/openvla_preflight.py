@@ -9,6 +9,36 @@ from .first_training import cache_sequence, restore, seeded, slice_features, sna
 from .task21_formal import atomic_json
 
 
+@torch.no_grad()
+def reload_forward(model, processor, dataset, group_indices, output):
+    """Exp13 checkpoint check: one causal group, no history interventions."""
+    model.eval()
+    was_training = processor.training
+    processor.eval()
+    try:
+        target = cache_sequence(model, processor, dataset, group_indices[0], 4)
+        model.memory.reset()
+        with torch.autocast("cuda", dtype=torch.bfloat16):
+            for index, timestep in enumerate(target["timesteps"]):
+                conditioned = model.memory(slice_features(target["features"], index, index + 1),
+                    target["input_ids"][index:index + 1].cuda(),
+                    dict(mode="stream", episode_keys=["reload-check"], timesteps=[timestep]))
+            inputs = slice_features(target["actions"], index, index + 1)
+            seeded(42)
+            loss = model.action_head(conditioned, inputs)["loss"]
+            seeded(42)
+            prediction = model.action_head.get_action(conditioned, inputs)["action_pred"]
+        if not torch.isfinite(loss) or not torch.isfinite(prediction).all():
+            raise RuntimeError("Non-finite checkpoint verification forward")
+        atomic_json(output, dict(episode=target["episode"], frame_indices=target["frame_indices"],
+            timesteps=target["timesteps"], seed=42, action_shape=list(prediction.shape),
+            finite=True, purpose="checkpoint reload verification"))
+        return prediction.float().cpu()
+    finally:
+        model.memory.reset()
+        processor.train() if was_training else processor.eval()
+
+
 def difference(left, right):
     delta = (left.float() - right.float()).abs()
     return dict(mae=float(delta.mean()), maximum=float(delta.max()),

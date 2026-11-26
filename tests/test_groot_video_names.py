@@ -111,7 +111,8 @@ class TinyBehavior(gym.Env):
         if task_id == 40:
             self._task = self.task = SimpleNamespace(_termination_config={}, _info={'done':{'success':False}})
             self._current_step = 0
-            self.scene = SimpleNamespace(objects=[])
+            self.scene = SimpleNamespace(objects=[], _initial_file={
+                'state': {'registry': {'object_registry': {}}}})
             self.robots = []
     def reset(self, **kwargs):
         self._instance_idx_pointer = (self._instance_idx_pointer + 1) % 2
@@ -119,6 +120,10 @@ class TinyBehavior(gym.Env):
         if task_id == 40:
             self._current_step = 0
         self.observation = {"video.front": np.zeros((16, 16, 3), dtype=np.uint8)}
+        if task_id == 40:
+            self.observation.update({f'video.observation.images.rgb.{camera}_256_256':
+                np.zeros((16, 16, 3), dtype=np.uint8)
+                for camera in ('head', 'left_wrist', 'right_wrist')})
         return self.observation, {}
     def step(self, action):
         self.steps += 1

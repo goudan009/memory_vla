@@ -53,52 +53,40 @@
   }
 
   function renderList(names) {
-    const groups = new Map();
-    for (const id of names) {
-      const directory = testDirectory(id);
-      if (!groups.has(directory)) groups.set(directory, []);
-      groups.get(directory).push(id);
-    }
-    const activeDirectory = experiment ? testDirectory(experiment) : groups.keys().next().value;
-    const versions = byId('agent-experiment-versions');
+    const list = byId('agent-experiment-list');
     const signature = JSON.stringify(names);
     if (catalogSignature !== signature) {
-      catalogSignature = signature;
-      versions.replaceChildren(...Array.from(groups, ([directory, ids]) => {
-        const version = 'V' + Number(directory.slice('test_'.length));
-        const button = text('button', version + ' · ' + directory);
-        button.type = 'button';
-        button.dataset.directory = directory;
-        button.setAttribute('aria-controls', 'agent-experiment-list');
-        button.onclick = () => {
-          if (experiment && testDirectory(experiment) === directory) return;
-          selectExperiment(ids.at(-1));
-        };
-        return button;
-      }));
-    }
-    for (const button of versions.children) {
-      button.setAttribute('aria-pressed', String(button.dataset.directory === activeDirectory));
-    }
-
-    const visible = groups.get(activeDirectory) || [];
-    const list = byId('agent-experiment-list');
-    if (Array.from(list.children, button => button.dataset.experiment).join() !== visible.join()) {
-      list.replaceChildren(...visible.map(id => {
-        const button = text('button', id.split('/').at(-1));
-        button.type = 'button';
-        button.dataset.experiment = id;
-        button.onclick = () => selectExperiment(id);
-        return button;
-      }));
-    }
-    byId('agent-experiment-count').textContent = visible.length + ' 个实验';
-    for (const button of list.children) {
-      const selected = button.dataset.experiment === experiment;
-      if (selected && button.getAttribute('aria-pressed') !== 'true' && list.scrollWidth > list.clientWidth) {
-        list.scrollLeft += button.getBoundingClientRect().left - list.getBoundingClientRect().left;
+      const groups = new Map();
+      for (const id of names) {
+        const directory = testDirectory(id);
+        if (!groups.has(directory)) groups.set(directory, []);
+        groups.get(directory).push(id);
       }
-      button.setAttribute('aria-pressed', String(selected));
+      const activeDirectory = experiment ? testDirectory(experiment) : groups.keys().next().value;
+      const openFolders = new Map(Array.from(list.children, folder => [folder.dataset.directory, folder.open]));
+      list.replaceChildren(...Array.from(groups, ([directory, ids]) => {
+        const folder = text('details', '', 'version-group');
+        folder.dataset.directory = directory;
+        folder.open = openFolders.get(directory) ?? (directory === activeDirectory);
+        const version = 'V' + Number(directory.slice('test_'.length));
+        const summary = text('summary', version + ' · ' + directory);
+        summary.append(text('small', ids.length + ' 个实验'));
+        const contents = text('div', '', 'agent-version-experiments');
+        for (const id of ids) {
+          const button = text('button', id.split('/').at(-1));
+          button.type = 'button';
+          button.dataset.experiment = id;
+          button.onclick = () => selectExperiment(id);
+          contents.append(button);
+        }
+        folder.append(summary, contents);
+        return folder;
+      }));
+      catalogSignature = signature;
+    }
+    byId('agent-experiment-count').textContent = names.length + ' 个实验';
+    for (const button of list.querySelectorAll('button[data-experiment]')) {
+      button.setAttribute('aria-pressed', String(button.dataset.experiment === experiment));
     }
   }
 

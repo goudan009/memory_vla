@@ -7,8 +7,10 @@ from .history_dataset import HistoryDataset
 
 
 class EpisodeWindows(HistoryDataset):
-    def __init__(self, dataset, processor, episode_ids, seed=42, episode_tasks=None, group_size=32):
-        super().__init__([dataset], processor, group_size=group_size, history_stride=8, seed=seed)
+    def __init__(self, dataset, processor, episode_ids, seed=42, episode_tasks=None, group_size=32,
+                 history_sampling="contiguous"):
+        super().__init__([dataset], processor, group_size=group_size, history_stride=8, seed=seed,
+                         history_sampling=history_sampling)
         selected = set(episode_ids)
         self.task_by_episode = {e: episode_tasks[e] for e in selected} if episode_tasks else {}
         self.is_multitask = len(set(self.task_by_episode.values())) > 1
@@ -20,12 +22,13 @@ class EpisodeWindows(HistoryDataset):
         self.position = {i: p for indices in self.by_episode.values() for p, i in enumerate(indices)}
         self.parquet_cache = {}
 
-    def __getitem__(self, index):
+    def get_group(self, index, sampling_seed=None):
         key = self.groups[index][:2]
-        if key not in self.parquet_cache:
-            self.parquet_cache[key] = self.loaders[key[0]]._load_parquet_data(key[1])
-        self._cached_episode, self._cached_low_dim = key, self.parquet_cache[key]
-        result = super().__getitem__(index)
+        if self.history_sampling == "contiguous":
+            if key not in self.parquet_cache:
+                self.parquet_cache[key] = self.loaders[key[0]]._load_parquet_data(key[1])
+            self._cached_episode, self._cached_low_dim = key, self.parquet_cache[key]
+        result = super().get_group(index, sampling_seed)
         eid = self.groups[index][1]
         result.update(episode=eid, window=self.position[index],
             episode_start=self.position[index] == 0,

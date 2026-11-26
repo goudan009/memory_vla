@@ -24,6 +24,30 @@ BANKS = ("perceptual", "cognitive")
 SCHEMA_VERSION = 1
 
 
+def _event_view(bank, key):
+    if not hasattr(bank, 'event_states'):
+        return {}
+    return {'v2_events': {
+        'event_states': {key: bank.event_states[key].cpu().tolist()} if key in bank.event_states else {},
+        'event_slots': {key: sorted(bank.event_slots[key])} if key in bank.event_slots else {},
+        'eviction_count': {key: bank.eviction_count[key]} if key in bank.eviction_count else {},
+    }}
+
+
+def _restore_events(bank, saved):
+    """V2 hysteresis and retention are part of memory, including frozen probes."""
+    if not hasattr(bank, 'event_states'):
+        if 'v2_events' in saved:
+            raise ValueError('V2 runtime cannot be installed into a V1 memory bank')
+        return
+    if 'v2_events' not in saved:
+        raise ValueError('V2 restore requires complete event runtime; rebuild its own prefix')
+    events = saved['v2_events']
+    bank.event_states = {k: torch.tensor(v, dtype=torch.int8) for k, v in events['event_states'].items()}
+    bank.event_slots = {k: set(v) for k, v in events['event_slots'].items()}
+    bank.eviction_count = dict(events['eviction_count'])
+
+
 def _pack(value):
     buffer = io.BytesIO()
     torch.save(value, buffer)
@@ -80,6 +104,7 @@ def _view(state, key):
     for name in BANKS:
         bank = getattr(state.memory, name)
         result[name] = {
+            **_event_view(bank, key),
             "capacity": bank.capacity,
             "bank": {key: list(bank.bank[key])} if key in bank.bank else {},
             "last_written": {key: bank.last_written[key]} if key in bank.last_written else {},
@@ -396,6 +421,9 @@ def _frozen_state(state, snapshot, rng, device):
     banks = [getattr(state.memory, name) for name in BANKS]
     slots = state.slots
     original = [(bank.bank, bank.last_written, bank.merge_count) for bank in banks]
+    # Keep all live sessions, not just the frozen stream, for rollback.
+    event_objects = [(bank, bank.event_states, bank.event_slots, bank.eviction_count)
+                     for bank in banks if hasattr(bank, 'event_states')]
     rng_before = capture_rng()
     observations = [
         (module, attr, vars(module).get(attr), attr in vars(module))
@@ -412,12 +440,15 @@ def _frozen_state(state, snapshot, rng, device):
                          for key, rows in saved["bank"].items()}
             bank.last_written = dict(saved["last_written"])
             bank.merge_count = dict(saved["merge_count"])
+            _restore_events(bank, saved)
         _restore_rng(rng)
         yield
     finally:
         state.slots = slots
         for bank, (rows, last, merges) in zip(banks, original):
             bank.bank, bank.last_written, bank.merge_count = rows, last, merges
+        for bank, states, slots_before, evictions in event_objects:
+            bank.event_states, bank.event_slots, bank.eviction_count = states, slots_before, evictions
         for module, attr, value, existed in observations:
             if existed:
                 setattr(module, attr, value)
@@ -455,6 +486,9 @@ class Task40Instrumentation:
         if any(slot != key[:2] or cursor[0] != key for slot, cursor in original_slots.items()):
             raise ValueError("Restore requires a dedicated worker without another live session")
         original_banks, restored_banks = [], []
+        original_events = [(bank, bank.event_states, bank.event_slots, bank.eviction_count)
+                           for bank in (getattr(state.memory, n) for n in BANKS)
+                           if hasattr(bank, 'event_states')]
         clock = {"key": list(key), "decision": decision}
         for name in BANKS:
             bank = getattr(state.memory, name)
@@ -484,6 +518,8 @@ class Task40Instrumentation:
             state.slots = dict(saved["slots"])
             for (bank, *_), restored in zip(original_banks, restored_banks):
                 bank.bank, bank.last_written, bank.merge_count = restored
+            for name in BANKS:
+                _restore_events(getattr(state.memory, name), saved[name])
             _restore_rng(target_rng)
             # Digest the installed snapshot format rather than an archive's original ZIP container.
             installed = self.snapshot(session)
@@ -494,6 +530,8 @@ class Task40Instrumentation:
             state.slots = original_slots
             for bank, rows, last_written, merge_count in original_banks:
                 bank.bank, bank.last_written, bank.merge_count = rows, last_written, merge_count
+            for bank, states, slots_before, evictions in original_events:
+                bank.event_states, bank.event_slots, bank.eviction_count = states, slots_before, evictions
             _restore_rng(original_rng)
             raise
 
@@ -561,6 +599,12 @@ class Task40Instrumentation:
                 bank.reset([key, old_key])
                 for field in ("bank", "last_written", "merge_count"):
                     getattr(bank, field).update(previous[name][field])
+                if hasattr(bank, 'event_states'):
+                    saved_events = previous[name]['v2_events']
+                    bank.event_states.update({k: torch.tensor(v, dtype=torch.int8)
+                                              for k, v in saved_events['event_states'].items()})
+                    bank.event_slots.update({k: set(v) for k, v in saved_events['event_slots'].items()})
+                    bank.eviction_count.update(saved_events['eviction_count'])
             _restore_rng(rng)
             raise
         return response

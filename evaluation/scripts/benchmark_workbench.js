@@ -28,6 +28,28 @@ function benchmarkMetrics(reports) {
     }
   }
   for(const {data:d} of reports) {
+    if(d.category==='exploratory_validation') {
+      html += '<div class="bench-note">V2 真实物理标签单轮验证训练；Loss 与权重重载只验收训练链路，不等于闭环效果。</div>';
+      html += benchmarkTable(['优化步数','显存峰值 GiB','冻结参数','完整重载最大差异'],
+        [[d.steps,benchmarkNumber(d.peak_cuda_gib),d.frozen_parameters_unchanged?'保持原值':'待核对',
+          benchmarkNumber(Math.max(...Object.values(d.full_reload_max_abs||{})))]]);
+    }
+    if(d.label_names?.includes('started') && d.episodes) {
+      html += '<div class="bench-note">官方ToggledOn记录：'+(d.labels_certified?'started字段已认证':'解析完成，字段认证待执行')+'；本阶段不更新模型。</div>';
+      html += benchmarkTable(['已导出示教','有效正帧','有效负帧','unknown帧'],
+        [[d.episodes.length,...['positive_valid','negative_valid','unknown'].map(k=>d.episodes.reduce((s,e)=>s+(e[k]||0),0))]]);
+    }
+    if(d.episodes?.some(e=>e.label_names)) {
+      html += '<div class="bench-note">官方示教物理状态回放审计；标签尚未认证用于训练，模型更新步数为 0。</div>';
+      html += benchmarkTable(['示教','观测数','状态一致性','Open / Inside / On 正帧'],
+        d.episodes.map(e=>[e.episode,e.observation_count,e.passed?'通过':'未通过',(e.positive_counts||[]).join(' / ')]));
+    }
+    if(d.category==='engineering_smoke' && d.labels) {
+      html += '<div class="bench-note">V2 训练链路自检：状态标签为人工测试值，仅验证梯度、更新与重载，不代表任务状态学习或闭环效果。</div>';
+      html += benchmarkTable(['优化步数','显存峰值 GiB','冻结动作专家','重载最大差异'],
+        [[d.steps,benchmarkNumber(d.peak_cuda_gib),d.frozen_action_head_unchanged?'保持原值':'待核对',
+          benchmarkNumber(Math.max(...Object.values(d.reload_max_abs||{})))]]);
+    }
     if(d.type==='unit') html += '<h3>代码回归</h3>'+benchmarkTable(['测试数','失败','错误','跳过'],[[d.tests,d.failures,d.errors,d.skipped]]);
     if(d.results?.layernorm) {
       html += '<h3>真实 EOS 认知检索</h3>'+benchmarkTable(['检索实现','查询次数','饱和比例','最早一帧权重','Q 梯度中位数'],
@@ -153,7 +175,7 @@ if(typeof module!=='undefined' && module.exports) module.exports={benchmarkMetri
   }
   function renderList(){
     const filter=el('bench-search').value.toLowerCase();
-    const visible=jobs.filter(j=>benchmark==='b1k'?['network','action'].includes(j.kind):benchmark==='libero'?j.kind.startsWith('libero'):false)
+    const visible=jobs.filter(j=>benchmark==='b1k'?['network','action','v2_training_smoke','v2_label_audit','v2_state_decode','v2_labels_export','v2_train'].includes(j.kind):benchmark==='libero'?j.kind.startsWith('libero'):false)
       .filter(j=>(j.title+' '+(j.config.notes||'')+' '+j.id).toLowerCase().includes(filter));
     if(!visible.some(j=>j.id===selectedId)){selectedId=visible[0]?.id||null;detail=null;}
     el('bench-run-count').textContent=visible.length+' 条';

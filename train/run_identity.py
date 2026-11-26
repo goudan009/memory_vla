@@ -5,10 +5,12 @@ import re
 
 NAMING_SCHEMA = 'groot-runs-v2'
 EXPERIMENT_12_RUN = re.compile(r'v1__test01__exp12__run(?!000)[0-9]{3}')
+EXPERIMENT_13_RUN = re.compile(r'v1__test01__exp13__run(?!000)[0-9]{3}')
+CANONICAL_RUN = re.compile(r'v1__test01__exp(?:12|13)__run(?!000)[0-9]{3}')
 
 
 def checkpoint_step(name, run):
-    if EXPERIMENT_12_RUN.fullmatch(run):
+    if CANONICAL_RUN.fullmatch(run):
         match = re.fullmatch(re.escape(run) + r'__step([0-9]{6})', name)
     else:
         match = re.fullmatch(r'step-([0-9]+)', name)
@@ -52,7 +54,7 @@ def training_identity(root, arm, task=None):
     parsed = re.search(r'_train([0-9]+)$', root.name)
     legacy = re.search(r'_r([0-9]+)$', root.name)
     number = launch.get('train_number') or (int(parsed[1]) if parsed else int(legacy[1]) if legacy else 1)
-    if EXPERIMENT_12_RUN.fullmatch(root.name):
+    if CANONICAL_RUN.fullmatch(root.name):
         version, number = 'V_1', int(root.name[-3:])
     manifest = read_identity_json(root/'config/source_manifest.json') or launch.get('source_manifest') or {}
     process = read_identity_json(root/'config/web_process.json')
@@ -61,6 +63,8 @@ def training_identity(root, arm, task=None):
     locations = read_identity_json(root/'config/remote_locations.json')
     source = (process.get('source') or launch.get('source') or extension.get('source') or config.get('source') or
               locations.get('memory_source' if arm == 'memory_v1' else 'baseline_controller_source') or locations.get('source'))
+    if source:
+        manifest = read_identity_json(Path(source)/'web_source_manifest.json') or manifest
     # Historical IDs retain their real directory name. Never manufacture a
     # new training ID for an old paired run or overwrite its original records.
     return dict(version=version, method=method, train_number=number, training_id=root.name,
@@ -78,7 +82,7 @@ def reserve_training(training_root, deployments, version, task, method):
     if trash.is_dir() and not trash.is_symlink():
         run_dirs.extend(trash.iterdir())
     for path in run_dirs:
-        if path.is_dir() and not path.is_symlink() and not EXPERIMENT_12_RUN.fullmatch(path.name):
+        if path.is_dir() and not path.is_symlink() and not CANONICAL_RUN.fullmatch(path.name):
             for arm in ('baseline', 'memory_v1'):
                 if not (path/arm).is_dir() and not (path/'config/web_launch.json').is_file():
                     continue

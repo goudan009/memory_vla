@@ -53,6 +53,8 @@ def resolve_finetuning(values):
 
 
 def add_finetuning_options(parser):
+    parser.add_argument('--fsdp-accumulation', choices=('shard_each', 'retain'), default='shard_each',
+                        help='Engineering policy: retain full parameters/gradients until the final microbatch')
     parser.add_argument('--fine-tuning-mode', choices=MODES, default='action_full',
                         help='action_full: frozen Eagle; full: all components; custom: component switches; lora: low-rank adapters')
     for name in COMPONENTS:

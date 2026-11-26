@@ -129,7 +129,8 @@ def test_no_validation_launch_keeps_checkpoints_without_starting_validator(tmp_p
         def poll(self):return 0
     monkeypatch.setattr(launcher,'busy_gpus',lambda allowed:set())
     monkeypatch.setattr(launcher.subprocess,'Popen',lambda argv,**kw:launched.append(argv) or Completed())
-    monkeypatch.setattr(launcher,'plot',lambda output:None)
+    from v1_groot_memoryvla.experiment import launch_task21_formal
+    monkeypatch.setattr(launch_task21_formal,'plot',lambda output:None)
     launcher.launch(args)
     assert len(launched)==1
     assert '--no-validation' in launched[0] and '--train-only' not in launched[0]

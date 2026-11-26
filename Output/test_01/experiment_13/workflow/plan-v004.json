@@ -1,0 +1,15 @@
+{
+  "goal": "按用户授权单独修复Task26原始数据并完成200示教转换，核对全50任务10000示教可用；训练继续等待用户确认。",
+  "created_at": "2026-11-24",
+  "author": "Codex",
+  "parent_plan": "plan-v003.json",
+  "reason": "用户明确先修Task26，必要时重新下载。将输入修复提前到训练确认之前，不启动GPU预检或正式训练。",
+  "mainline": ["diagnose", "recover", "convert", "verify", "training_confirmation"],
+  "nodes": [
+    {"id": "diagnose", "title": "Task26损坏与来源核对", "after": [], "parallel_with": [], "acceptance": "确认损坏范围、截断/完整副本、官方来源版本和现有转换状态。"},
+    {"id": "recover", "title": "恢复完整原始文件", "after": ["diagnose"], "parallel_with": [], "acceptance": "只恢复确切损坏文件，必要时从官方来源重下载；保留坏文件和来源证据，校验官方大小/hash及Parquet可读性。"},
+    {"id": "convert", "title": "工作台转换Task26", "after": ["recover"], "parallel_with": [], "acceptance": "通过既有工作台数据准备入口完成Task26全200示教三相机转换，不改变示教数量或方法。"},
+    {"id": "verify", "title": "全50任务数据验收", "after": ["convert"], "parallel_with": [], "acceptance": "工作台50/50就绪，Task26元数据/动作/三相机200条对应；训练preview通过或如实指出剩余缺口，不调用训练start。"},
+    {"id": "training_confirmation", "title": "训练继续等待确认", "after": ["verify"], "parallel_with": [], "acceptance": "交付修复证据，训练仍未开始；后续GPU预检及正式训练等待用户确认原配置。"}
+  ]
+}

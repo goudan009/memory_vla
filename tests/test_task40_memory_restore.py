@@ -130,3 +130,31 @@ def test_failed_rng_install_rolls_back_existing_state(worker):
     with pytest.raises(RuntimeError, match="RNG state"):
         restore(**(payload | {"memory": trace.pack_memory(snapshot), "rng": malformed_rng}))
     assert extension.snapshot(SESSION) == before
+
+
+def test_v2_event_runtime_survives_snapshot_delta_restore_and_rollback(worker):
+    rpc, extension = worker
+    bank = extension.state.memory.cognitive
+    bank.event_states, bank.event_slots, bank.eviction_count = {}, {}, {}
+    payload = request()
+    saved = trace.unpack_memory(payload['memory'])
+    saved['cognitive']['v2_events'] = dict(event_states={KEY: [1]}, event_slots={KEY: [2]},
+                                         eviction_count={KEY: 7})
+    payload['memory'] = trace.pack_memory(saved)
+    rpc['task40_restore_memory'](**payload)
+    assert bank.event_states[KEY].dtype == torch.int8
+    assert bank.event_states[KEY].tolist() == [1]
+    assert bank.event_slots[KEY] == {2} and bank.eviction_count[KEY] == 7
+    before = trace._view(extension.state, KEY)
+    bank.event_states[KEY] = torch.tensor([0], dtype=torch.int8)
+    bank.event_slots[KEY] = set()
+    after = trace._view(extension.state, KEY)
+    delta = trace._pack(trace._make_delta(before, after, KEY))
+    reconstructed = trace.apply_memory_delta(trace._cpu_snapshot(before), delta)
+    assert reconstructed['cognitive']['v2_events'] == after['cognitive']['v2_events']
+    snapshot_before = extension.snapshot(SESSION)
+    python, numpy, _cpu, cuda = trace._unpack_rng(payload['rng'])
+    bad_rng = trace.pack_rng((python, numpy, torch.zeros(1, dtype=torch.uint8), cuda))
+    with pytest.raises(RuntimeError, match='RNG state'):
+        rpc['task40_restore_memory'](**(payload | {'rng': bad_rng}))
+    assert extension.snapshot(SESSION) == snapshot_before

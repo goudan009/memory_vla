@@ -1,0 +1,15 @@
+{
+  "goal": "修复 Task40 非任务家具恢复基准污染，并经真实物理对照和原双环境入口复测。",
+  "created_at": "2026-11-24",
+  "author": "Codex",
+  "parent_plan": "plan-v005.json",
+  "reason": "原实现稳定窗口故障注入0/3恢复，固定基准后同条件3/3恢复；原实现强接触3/3恢复，历史长评估触发过程仍未直接重现。实际工作台使用spawn双环境，各worker须独立安装修复。把既定3回合短闭环由single1改为用户原single2入口，实例仍为0/1/4且各自seed仍为0/1/2、chunk8、每回合240动作；用同一次既定短测验证两个真实worker，而不新增训练或改正式历史结果。",
+  "mainline": ["settle_fault_control", "repair_reset", "simulation_regression", "policy_retest", "reset_acceptance"],
+  "nodes": [
+    {"id": "settle_fault_control", "title": "稳定阶段基准污染对照", "after": [], "parallel_with": [], "acceptance": "原实现真实仿真在保存前注入厨房椅倾倒，明确区分故障注入和历史触发原因。已完成20261124-205028-2df3f94c，0/3恢复。"},
+    {"id": "repair_reset", "title": "非任务场景基准固定", "after": ["settle_fault_control"], "parallel_with": [], "acceptance": "冻结构造完成后的非任务物体状态；实例保存保留机器人、TRO、系统、元数据；每个spawn worker在首次reset前安装；其他任务不变。修复提交ff717ac、464ea19。"},
+    {"id": "simulation_regression", "title": "家具恢复真实回归", "after": ["repair_reset"], "parallel_with": [], "acceptance": "同条件注入修复后3/3恢复，并完成修复后真实机器人推动餐桌120动作、连续3次重置回归；归档图像和位姿误差。"},
+    {"id": "policy_retest", "title": "修复后同权重短闭环", "after": ["simulation_regression"], "parallel_with": [], "acceptance": "复用run005 step006000及端口5557；single2双环境，实例0/1/4对应seed0/1/2、chunk8、每回合240动作，共3调试回合。核对两个worker各自启用不可变基准、全部回合零动作桌椅正常及记忆重置；保留录像。"},
+    {"id": "reset_acceptance", "title": "家具恢复修复验收", "after": ["policy_retest"], "parallel_with": [], "acceptance": "交付补丁、已完成工作台作业、真实仿真对照和图像。明确原长评估触发点尚未直接重现，3回合短测不替代10回合正式成绩。"}
+  ]
+}

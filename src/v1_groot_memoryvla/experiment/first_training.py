@@ -135,6 +135,8 @@ def get_training_group(dataset, index, augmentation_seed=None):
         transform = processor.train_image_transform
         if hasattr(transform, "set_random_seed"):
             transform.set_random_seed(augmentation_seed)
+    if getattr(dataset, "history_sampling", "contiguous") == "random_ordered":
+        return dataset.get_group(index, sampling_seed=augmentation_seed)
     return dataset[index]
 
 

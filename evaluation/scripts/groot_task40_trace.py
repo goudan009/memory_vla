@@ -15,11 +15,24 @@ def serializable(value):
     return value
 
 
+def read_furniture(env):
+    result = {}
+    for obj in env.scene.objects:
+        if any(word in obj.category for word in ('chair', 'table')):
+            position, orientation = obj.get_position_orientation()
+            result[obj.name] = dict(category=obj.category,
+                position=serializable(position), orientation=serializable(orientation),
+                linear_velocity=serializable(obj.get_linear_velocity()),
+                angular_velocity=serializable(obj.get_angular_velocity()))
+    return result
+
+
 def read_state(env, states):
     objects = env.scene.objects
     microwaves = [x for x in objects if x.category == "microwave"]
     bags = [x for x in objects if x.category == "popcorn_bag"]
-    row = {"microwaves": {}, "popcorn": {}, "grasped": {}, "grasp_modes": {}, "grasp_states": {}, "robots": {}}
+    row = {"microwaves": {}, "popcorn": {}, "grasped": {}, "grasp_modes": {}, "grasp_states": {}, "robots": {},
+           "furniture": read_furniture(env)}
     for obj in microwaves:
         row["microwaves"][obj.name] = {
             name: bool(obj.states[states[name]].get_value())
@@ -65,6 +78,30 @@ def append_trace(env, path, identity, steps):
         stream.write(json.dumps(record) + "\n")
 
 
+def append_reset_trace(env, root, identity, gpu_index, observation, boundary='after_reset'):
+    """Record furniture and the returned cameras before the first policy action."""
+    from PIL import Image
+
+    furniture = read_furniture(env)
+    root.mkdir(parents=True, exist_ok=True)
+    prefix = f"reset_gpu{gpu_index}_env{identity['env_idx']}_episode{identity['episode_number']}"
+    images = {}
+    for camera in (() if observation is None else ('head', 'left_wrist', 'right_wrist')):
+        name = prefix+'_'+camera+'.png'
+        rgb = observation[f'video.observation.images.rgb.{camera}_256_256']
+        if rgb.ndim == 4:
+            rgb = rgb[-1]  # MultiStepWrapper includes the observation history axis.
+        Image.fromarray(rgb).save(root/name)
+        images[camera] = name
+    saved = env.scene._initial_file['state']['registry']['object_registry']
+    baseline = {name: serializable(saved[name]['root_link']) for name in furniture if name in saved}
+    record = dict(identity, boundary=boundary, action_steps=0 if observation is not None else None,
+                  furniture=furniture, reset_baseline=baseline, images=images,
+                  background_baseline_fixed=hasattr(env.scene, '_groot_background_baseline'))
+    with (root/f"scene_reset_gpu{gpu_index}_env{identity['env_idx']}.jsonl").open('a') as stream:
+        stream.write(json.dumps(record)+'\n')
+
+
 def append_action(path, identity, start, end, action):
     import omnigibson as og
     record = dict(identity, schema_version=1, action_start=start, action_end=end,
@@ -87,6 +124,9 @@ def save_policy_input(directory, observation):
 def install_video_trace(env, root, identity, gpu_index):
     """Observe actual encoded frames without changing camera images or stepping."""
     import omnigibson as og
+    native = env
+    while native is not None and '_task' not in vars(native):
+        native = vars(native).get('env')
     current = env
     while current is not None:
         state = vars(current)
@@ -106,6 +146,8 @@ def install_video_trace(env, root, identity, gpu_index):
                 record = dict(identity, schema_version=1, recording_id=recording_id,
                     frame_index=frame_index, action_steps=current.step_count-1,
                     sim_time_s=float(og.sim.current_time), video_fps=recorder.fps)
+                if native is not None:
+                    record['furniture'] = read_furniture(native)
                 result = original(image, *args, **kwargs)
                 with path.open('a') as stream:
                     stream.write(json.dumps(record)+'\n')

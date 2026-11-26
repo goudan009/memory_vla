@@ -22,6 +22,7 @@ from groot_web_launch import LaunchManager, TASK40_DEFAULT_EXPERIMENT, TASK40_NE
 from groot_inference_launch import InferenceManager
 import vlm_diagnosis
 import experiment_registry
+from registry_storage import StorageService, clean_path
 import b1k_metrics
 import task_stage_diagnostics
 import vlm_stage_diagnosis
@@ -254,6 +255,7 @@ class Handler(BaseHTTPRequestHandler):
     benchmark_manager = None
     evaluation_record = None
     agent_experiment_root = EVALUATION_ROOT.parent / 'Output'
+    storage_service = None
     task40_launch_lock = threading.Lock()
 
     def _evaluation_for(self, device='local', run=None):
@@ -319,7 +321,7 @@ class Handler(BaseHTTPRequestHandler):
         key = request.get("key")
         if not isinstance(key, str) or len(key) > 2048:
             raise ValueError("台账记录标识不正确")
-        current = experiment_registry.cached()
+        current = self._registry_data()
         if not any(item.get("kind") in {"eval", "dataset", "weights"} and item.get("id") == key
                    for item in current.get("items", [])):
             raise ValueError("找不到对应台账记录，请先重新扫描")
@@ -347,6 +349,37 @@ class Handler(BaseHTTPRequestHandler):
             temp.write_text(json.dumps(annotations, ensure_ascii=False, indent=2))
             os.replace(temp, REGISTRY_ANNOTATIONS)
         return annotations
+
+    def _storage(self):
+        if type(self).storage_service is None:
+            project = EVALUATION_ROOT.parent
+            type(self).storage_service = StorageService(project, load_workbench_devices(project), experiment_registry.cached)
+        return type(self).storage_service
+
+    def _registry_data(self, force=False):
+        data = dict(experiment_registry.cached(force=force))
+        registered = {(item['host'],clean_path(item['path'])):item for item in self._storage().registered()}
+        rows = []
+        for item in data.get('items', []):
+            key = (item.get('host'),clean_path(item.get('path')))
+            custom = registered.pop(key, {}) if item.get('kind') in ('dataset','weights') else {}
+            rows.append({**item, **custom})
+        data['items'] = rows + list(registered.values())
+        return data
+
+    def _storage_write(self):
+        origin = self.headers.get('Origin')
+        if origin and urlparse(origin).netloc != self.headers.get('Host'):
+            raise ValueError('请从本工作台提交修改')
+        length = int(self.headers.get('Content-Length', '0'))
+        if not 0 < length <= 16384:
+            raise ValueError('资源操作请求长度不正确')
+        payload = json.loads(self.rfile.read(length))
+        if not isinstance(payload, dict):
+            raise ValueError('资源操作请求应为 JSON 对象')
+        if payload.get('action') not in ('register', 'mkdir', 'trash', 'restore'):
+            raise ValueError('未知的资源操作')
+        return self._storage().request(payload.pop('host', '4090'), payload)
 
     def _launch_post(self, route):
         manager = (self.benchmark_manager if route.startswith('/api/benchmarks/') else
@@ -602,6 +635,12 @@ class Handler(BaseHTTPRequestHandler):
         if route in ('/api/vlm/stages/review', '/api/vlm/stages/batch', '/api/vlm/stages/diagnose'):
             self._stage_review()
             return
+        if route == '/api/registry/storage':
+            try:
+                self._json(self._storage_write())
+            except (ValueError, OSError, TypeError, subprocess.SubprocessError) as error:
+                self._json({'error':str(error)}, 400)
+            return
         if route == "/api/registry/annotations":
             try:
                 self._json(self._save_registry_annotation())
@@ -632,7 +671,7 @@ class Handler(BaseHTTPRequestHandler):
         if route == "/api/vlm/batch":
             self._vlm_batch()
             return
-        if route in ('/api/benchmarks/preview', '/api/benchmarks/start', '/api/benchmarks/stop'):
+        if route in ('/api/benchmarks/preview', '/api/benchmarks/start', '/api/benchmarks/stop', '/api/benchmarks/delete'):
             self._launch_post(route)
             return
         if route in ("/api/launch/preview", "/api/launch/start", "/api/launch/pause", "/api/launch/delete", "/api/launch/restore-stop", "/api/inference/preview", "/api/inference/start", "/api/inference/stop",
@@ -889,6 +928,28 @@ class Handler(BaseHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(body)
             return
+        if route == '/registry_storage.js':
+            body = Path(__file__).with_name('registry_storage.js').read_bytes()
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/javascript; charset=utf-8')
+            self.send_header('Content-Length', str(len(body)))
+            self.send_header('Cache-Control', 'no-store')
+            self.end_headers()
+            self.wfile.write(body)
+            return
+        if route == '/api/registry/storage':
+            query = {k:v[0] for k,v in parse_qs(urlparse(self.path).query).items()}
+            try:
+                action = query.get('action','browse')
+                if action == 'hosts':
+                    self._json({'hosts':self._storage().hosts()})
+                elif action in ('browse','disks','size'):
+                    self._json(self._storage().request(query.pop('host','4090'), query))
+                else:
+                    raise ValueError('未知的资源查询')
+            except (ValueError, OSError, subprocess.SubprocessError) as error:
+                self._json({'error':str(error)}, 400)
+            return
         if route == "/api/registry/annotations":
             try:
                 self._json(json.loads(REGISTRY_ANNOTATIONS.read_text()))
@@ -911,7 +972,7 @@ class Handler(BaseHTTPRequestHandler):
                 return
             query = {k: v[0] for k, v in parse_qs(urlparse(self.path).query).items()}
             try:
-                self._json(experiment_registry.cached(force=query.get("force") == "1"))
+                self._json(self._registry_data(force=query.get("force") == "1"))
             except Exception as error:
                 self._json({"error": str(error)}, 500)
             return

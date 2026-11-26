@@ -17,7 +17,6 @@
 | [Test 01 / Exp 11](test_01/experiment_11/README.md) | 旧残差 V1 续训与闭环诊断 | [任务](test_01/experiment_11/task.md) · [报告](test_01/experiment_11/report.md) |
 | [Test 01 / Exp 12](test_01/experiment_12/README.md) | 作者 MemoryVLA 方法适配与 Task40 验证 | [任务](test_01/experiment_12/task.md) · 未封存 |
 | [Test 01 / Exp 13](test_01/experiment_13/README.md) | B1K 全 50 任务 V1 基线 | [任务](test_01/experiment_13/task.md) · 未封存 |
-| [Test 02 / Exp 01](test_02/experiment_01/README.md) | V2 任务状态记忆探索 | [任务](test_02/experiment_01/task.md) · 未封存 |
 
 报告中以路径标注的本地证据不在 GitHub 发布范围。原始产物、进度、指标、训练配置、权重及视频均留在实验存储。已纳入 Git 的版本化工作流计划沿用仓库协作规则。
 

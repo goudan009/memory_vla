@@ -1,0 +1,14 @@
+{
+  "goal": "在v006已完成同run恢复的基础上消除加速后暴露的视频预取等待，交付连续多步吞吐。",
+  "created_at": "2026-11-25",
+  "parent_plan": "plan-v006.json",
+  "reason": "四卡预检完成，正式run001已从34步恢复；但连续36-39步15.34/18.02/21.79/19.26秒，CPU预取等待2.66/5.26/9.14/6.61秒。须提高工程数据并发后再验收稳态。",
+  "invariants": ["同一run001及完整optimizer/RNG/采样游标", "4xA100", "Batch256=4x8x8", "原50任务10000条与seed42", "20k预算与2k保存周期", "不排队或抢占其他作业"],
+  "mainline": ["preserve_progress", "prefetch_change", "resume_measure", "archive_patrol"],
+  "nodes": [
+    {"id": "preserve_progress", "after": [], "parallel_with": [], "acceptance": "经工作台再次在optimizer边界保存完整断点，保留34步原始断点与恢复证据。"},
+    {"id": "prefetch_change", "after": ["preserve_progress"], "parallel_with": [], "acceptance": "retain策略每rank CPU loader由2增加到4；组顺序、每组seed、显式CPU-only处理不变，相关采样/恢复测试通过。"},
+    {"id": "resume_measure", "after": ["prefetch_change"], "parallel_with": [], "acceptance": "工作台preview后记录新工程源码并同run恢复；四rank真实步数增长、有限loss及全局256决策；至少连续10个暖机后step记录耗时和资源。"},
+    {"id": "archive_patrol", "after": ["resume_measure"], "parallel_with": [], "acceptance": "临时工程作业已从工作台移除，checkpoint容量足够；更新计划/进度/manifest/报告、持久两分钟只读巡检，记录实测提升与连续/夜间时间口径。"}
+  ]
+}

@@ -5,9 +5,20 @@ import argparse
 
 TRAINING_PROTOCOL = "memoryvla_direct_tail_qknorm_v3"
 OPENVLA_PROTOCOL = "memoryvla_openvla_b1k_v1"
+EXP13_PROTOCOL = "memoryvla_openvla_b1k_group16_raw_v2"
+
+
+def training_protocol(args):
+    if getattr(args, "memory_conditioning", "residual") != "openvla":
+        if getattr(args, "history_sampling", "contiguous") != "contiguous":
+            raise ValueError("Random ordered sampling requires openvla conditioning")
+        return TRAINING_PROTOCOL
+    return EXP13_PROTOCOL if getattr(args, "history_sampling", "contiguous") == "random_ordered" else OPENVLA_PROTOCOL
 
 
 def add_memory_training_options(parser):
+    parser.add_argument("--history-sampling", choices=("contiguous", "random_ordered"), default="contiguous",
+                        help="Exp13: sample 16 distinct same-Episode stride8 decision frames, then sort")
     parser.add_argument("--optimizer-eps", type=float, default=1e-8,
                         help="AdamW denominator epsilon; saved and checked on resume")
     parser.add_argument("--memory-cognitive-residual-projection", action=argparse.BooleanOptionalAction, default=False,
@@ -28,7 +39,8 @@ def add_memory_training_options(parser):
 
 
 def memory_training_argv(args):
-    return ["--optimizer-eps", str(getattr(args, "optimizer_eps", 1e-8)),
+    return ["--history-sampling", getattr(args, "history_sampling", "contiguous"),
+            "--optimizer-eps", str(getattr(args, "optimizer_eps", 1e-8)),
             "--memory-cognitive-residual-projection" if getattr(args, "memory_cognitive_residual_projection", False)
             else "--no-memory-cognitive-residual-projection",
             "--memory-cognitive-residual-scope", getattr(args, "memory_cognitive_residual_scope", "eos"),

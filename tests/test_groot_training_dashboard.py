@@ -96,6 +96,163 @@ def test_exp12_preview_and_worker_keep_locked_batch(remote, monkeypatch):
 
 
 @pytest.fixture
+def exp13(remote, monkeypatch):
+    sources = []
+    for task in range(50):
+        dataset = remote.PROJECT / f"data/task{task}"
+        split = dataset / "preparation/data_split.json"
+        ids = list(range(task * 1000, task * 1000 + 200))
+        remote.atomic_json(dataset / "meta/info.json", {})
+        remote.atomic_json(split, dict(task=task, seed=42, train=ids[:180], validation=ids[180:]))
+        sources.append(dict(task=task, dataset=str(dataset), split=str(split)))
+    monkeypatch.setattr(remote, "catalog", lambda: dict(datasets=sources))
+    monkeypatch.setattr(remote, "BASE_CHECKPOINT", Path(remote.request["checkpoint"]))
+    return dict(remote.request, tasks=list(range(50)), task_name="b1k50", arm="memory_v1",
+        version="V_1", run_id="v1__test01__exp13__run001", steps=20000, gpus=[0, 1, 2, 3],
+        validation_enabled=False, global_windows_per_step=16, microbatch=4, memory_length=16,
+        memory_conditioning="openvla", memory_cognitive_qk_norm="none", history_sampling="random_ordered",
+        learning_rate=2e-5, weight_decay=0., fine_tuning_mode="full", gradient_checkpointing=True)
+
+
+def test_exp13_preview_uses_all_demos_batch256_and_forwards_sampling(remote, exp13, tmp_path):
+    from v1_groot_memoryvla.experiment.launch_task21_ddp import command
+    plan = remote.prepare(exp13)
+    assert plan["train_episodes"] == 10000 and plan["validation_episodes"] == 0
+    assert all(len(s["train"]) == 200 and not s["validation"] for s in plan["split_value"]["per_task"].values())
+    assert plan["global_decisions"] == 256 and plan["gradient_accumulation_steps"] == 16
+    assert plan["memory_update_fused"] is False and plan["checkpoint_interval"] == 2000
+    assert plan["training_protocol"] == remote.EXP13_PROTOCOL and not plan["enqueue"]
+    assert plan["run_name"] == exp13["run_id"] and not remote.TRAINING.exists()
+    worker = command(SimpleNamespace(**dict(plan, dataset=str(tmp_path / "merged"), output=tmp_path,
+        async_validation_gpu=None, train_only=False, paired=False, no_validation=True)), "memory_v1", plan["gpus"])
+    assert worker[worker.index("--history-sampling") + 1] == "random_ordered"
+    assert worker[worker.index("--global-windows-per-step") + 1] == "16"
+    assert "--nproc-per-node=4" in worker and "--no-validation" in worker
+    outer = remote.command(plan, ROOT, tmp_path)
+    assert outer[outer.index("--history-sampling") + 1] == "random_ordered"
+    split = tmp_path / "config/data_split.json"
+    remote.atomic_json(split, plan["split_value"])
+    # Exercise both shell and launcher parsing; --dry-run never constructs a model.
+    outer += ["--dry-run"]
+    outer[outer.index("--python-path") + 1] = sys.executable
+    dry = subprocess.run(outer, text=True, capture_output=True)
+    assert dry.returncode == 0, dry.stderr
+    preview = json.loads(dry.stdout)
+    assert preview["global_decisions_per_step"] == 256
+    assert preview["training_protocol"] == remote.EXP13_PROTOCOL
+    assert preview["history_sampling"] == "random_ordered"
+
+
+@pytest.mark.parametrize("changes", [dict(global_windows_per_step=8), dict(gpus=[0, 1]),
+    dict(checkpoint="/wrong/base"), dict(tasks=[40]), dict(enqueue=True), dict(steps=6000)])
+def test_exp13_rejects_changed_baseline_before_any_start(remote, exp13, changes):
+    with pytest.raises(ValueError, match="Exp13"):
+        remote.prepare(dict(exp13, **changes))
+    assert not remote.TRAINING.exists()
+
+
+def test_exp13_missing_task_is_a_real_preview_blocker(remote, exp13, monkeypatch):
+    sources = remote.catalog()["datasets"]
+    monkeypatch.setattr(remote, "catalog", lambda: dict(datasets=[s for s in sources if s["task"] != 26]))
+    with pytest.raises(ValueError, match="Task26"):
+        remote.prepare(exp13)
+    assert not remote.TRAINING.exists()
+
+
+def test_exp13_retain_policy_reaches_public_worker(remote, exp13, tmp_path):
+    from v1_groot_memoryvla.experiment.launch_task21_ddp import command
+    plan = remote.prepare(dict(exp13, fsdp_accumulation='retain'))
+    assert plan['sharding'] == 'SHARD_GRAD_OP'
+    assert plan['global_decisions'] == 256 and plan['microbatch'] == 4
+    outer = remote.command(plan, ROOT, tmp_path)
+    assert outer[outer.index('--fsdp-accumulation')+1] == 'retain'
+    worker = command(SimpleNamespace(**dict(plan, output=tmp_path, async_validation_gpu=None,
+        train_only=False, paired=False, no_validation=True)), 'memory_v1', plan['gpus'])
+    assert worker[worker.index('--fsdp-accumulation')+1] == 'retain'
+    retained = remote.prepare(dict(exp13, fsdp_accumulation='retain', gradient_checkpointing=False))
+    assert '--no-gradient-checkpointing' in remote.command(retained, ROOT, tmp_path)
+    larger=remote.prepare(dict(exp13, fsdp_accumulation='retain', microbatch=8))
+    assert larger['gradient_accumulation_steps']==8 and larger['global_decisions']==256
+
+
+def test_exp13_resume_at_budget_uses_complete_shards_and_same_run(remote, tmp_path, monkeypatch):
+    root = remote.TRAINING / "v1__test01__exp13__run001"
+    source = tmp_path / "snapshot"
+    for name in ("train/run_groot_train.sh", "src/v1_groot_memoryvla/experiment/task21_ddp.py"):
+        path = source / name
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.touch()
+    saved = root / "memory_v1/checkpoints" / f"{root.name}__step020000"
+    remote.atomic_json(saved / "config.json", {})
+    (saved / "model.safetensors").touch()
+    remote.atomic_json(saved / "COMPLETE.json", dict(step=20000, world_size=4))
+    remote.atomic_json(saved / "training_state/scheduler.json", {})
+    for rank in range(4):
+        for prefix in ("optimizer_rank", "latest_rank"):
+            (saved / f"training_state/{prefix}-{rank:03d}.pt").touch()
+    remote.atomic_json(root / "config/web_launch.json", dict(source=str(source), argv=["bash", "launcher"],
+        gpus=[0, 1, 2, 3], validation_enabled=False, steps=20000, microbatch=4))
+    remote.atomic_json(root / "config/ddp_launch.json", dict(commands={"memory_v1": dict(argv=["python", "worker"])}))
+    remote.atomic_json(root / "memory_v1/status.json", dict(status="completed", step=20000))
+    remote.atomic_json(root / "memory_v1/config/ddp.json", dict(training_protocol=remote.EXP13_PROTOCOL,
+        world_size=4, seed=42, global_windows_per_step=16, steps=20000, no_validation=True))
+    remote.atomic_json(root / "memory_v1/checkpoints/latest.json", dict(step=20000, path=str(saved),
+        world_size=4, seed=42, global_windows_per_step=16))
+    info = remote.resume_info(root, "memory_v1")
+    assert info["available"] and not info["fixed_budget"] and info["min_steps"] == 22000
+    assert info['checkpoint_interval_editable'] and info['default_checkpoint_interval'] == 1000
+    monkeypatch.setattr(remote, "live_run_processes", lambda root: [])
+    monkeypatch.setattr(remote, "validate_resume", lambda *args: None)
+    preview = remote.resume(dict(run=root.name, arm="memory_v1", steps=40000, preview=True), None)
+    assert preview["run"] == root.name and preview["resume_step"] == 20000 and preview["steps"] == 40000
+    assert preview['checkpoint_interval'] == 1000
+    assert remote.resume(dict(run=root.name, arm='memory_v1', steps=40000,
+        checkpoint_interval=2000, preview=True), None)['checkpoint_interval'] == 2000
+    for invalid in (0, -1000, 500, 1500, True, '1000'):
+        with pytest.raises(ValueError, match='保存间隔'):
+            remote.resume(dict(run=root.name, arm='memory_v1', steps=40000,
+                checkpoint_interval=invalid, preview=True), None)
+    remote.atomic_json(remote.LIVE/'web_source_manifest.json', dict(digest='new-engineering-source'))
+    migration = dict(run=root.name, arm='memory_v1', steps=40000, preview=True,
+        fsdp_accumulation='retain', engineering_source_digest='new-engineering-source')
+    assert remote.resume(migration, None)['fsdp_accumulation'] == 'retain'
+    assert remote.resume(dict(migration, gradient_checkpointing=False), None)['gradient_checkpointing'] is False
+    assert not (root/'config/web_resumes').exists(), 'Preview must not create a revision'
+    with pytest.raises(ValueError, match='digest mismatch'):
+        remote.resume(dict(migration, engineering_source_digest='stale'), None)
+    with pytest.raises(ValueError, match="同一run"):
+        remote.resume(dict(run=root.name, arm="memory_v1", steps=40000, branch_version="V_2", preview=True), None)
+    original_config=(root/'memory_v1/config/ddp.json').read_bytes()
+    (root/'logs').mkdir()
+    monkeypatch.setattr(remote.subprocess, 'Popen', lambda *a, **kw: SimpleNamespace(pid=999999))
+    changed=remote.resume(dict(migration, preview=False, gradient_checkpointing=False, microbatch=8), 'controller code')
+    spec=remote.read_json(root/'config/web_resume_latest.json')
+    assert changed['run']==root.name and spec['resume_step']==20000
+    assert spec['source'] != str(source) and Path(spec['source']).is_dir()
+    assert remote.training_identity(root, 'memory_v1')['source_digest']=='new-engineering-source'
+    assert spec['worker_argv'][spec['worker_argv'].index('--fsdp-accumulation')+1]=='retain'
+    assert '--no-gradient-checkpointing' in spec['worker_argv']
+    assert spec['worker_argv'][spec['worker_argv'].index('--microbatch')+1]=='8'
+    assert spec['checkpoint_interval'] == 1000
+    assert spec['worker_argv'][spec['worker_argv'].index('--checkpoint-interval')+1] == '1000'
+    assert (root/'memory_v1/config/ddp.json').read_bytes()==original_config
+    remote.atomic_json(root/'memory_v1/status.json', dict(status='completed', step=20000))
+    subsequent=remote.resume(dict(run=root.name, arm='memory_v1', steps=40000, preview=True), None)
+    assert subsequent['source']==spec['source'] and subsequent['fsdp_accumulation']=='retain'
+    assert subsequent['gradient_checkpointing'] is False
+    assert subsequent['microbatch']==8
+    assert subsequent['checkpoint_interval'] == 1000
+    assert remote.resume_info(root, 'memory_v1')['default_checkpoint_interval'] == 1000
+    assert remote.recorded_plan(root)['checkpoint_interval'] == 1000
+    parameters=remote.training_parameters(root, 'memory_v1', remote.read_json(root/'memory_v1/config/ddp.json'))['values']
+    assert parameters['microbatch']==8 and parameters['gradient_accumulation_steps']==8
+    assert parameters['sharding']=='SHARD_GRAD_OP' and parameters['gradient_checkpointing'] is False
+    assert parameters['checkpoint_interval'] == 1000
+    (saved / "training_state/optimizer_rank-003.pt").unlink()
+    assert not remote.resume_info(root, "memory_v1")["available"]
+
+
+@pytest.fixture
 def exp10(remote):
     split = Path(remote.request['split'])
     remote.atomic_json(split, dict(task=40, seed=42, train=list(reversed(range(180))),
@@ -460,6 +617,9 @@ def resumable_job(remote, monkeypatch, validation=False):
 
 def test_resume_reuses_snapshot_optimizer_seed_batch_and_output(remote,monkeypatch):
     root=resumable_job(remote,monkeypatch)
+    with pytest.raises(ValueError, match='仅支持'):
+        remote.resume(dict(run=root.name, arm='baseline', steps=3000, checkpoint_interval=2000,
+            preview=True), controller_source=None)
     remote.atomic_json(root/'metrics/stop_training.json',dict(stop_after_step=2000))
     row=remote.jobs()['jobs'][0]
     assert row['resume']['available'] and row['resume']['step']==2000
@@ -616,9 +776,10 @@ def test_detail_weighted_loss_and_only_completed_checkpoints(remote):
     assert len(result['checkpoints'])==1 and result['checkpoints'][0]['step']==1000
 
 
-def test_detail_publishes_canonical_checkpoints_only_after_save(remote):
+@pytest.mark.parametrize("experiment", [12, 13])
+def test_detail_publishes_canonical_checkpoints_only_after_save(remote, experiment):
     root = make_job(remote)
-    canonical = root.with_name('v1__test01__exp12__run001')
+    canonical = root.with_name(f'v1__test01__exp{experiment}__run001')
     root.rename(canonical)
     checkpoints = canonical/'baseline/checkpoints'
     saved = checkpoints/f'{canonical.name}__step002000'
@@ -705,6 +866,11 @@ def test_training_timing_counts_optimizer_loops_and_uses_recent_fifty_steps(remo
     assert timing['remaining_steps']==100 and timing['eta_seconds']==3550
     remote.atomic_json(root/'metrics/stop_training.json',dict(stop_after_step=100))
     assert remote.detail(dict(run=root.name,arm='baseline'))['timing']['eta_seconds']==1420
+    remote.atomic_json(root/'config/web_resume_latest.json', dict(
+        arm='baseline', resume_step=55, engineering_source_digest='new-policy', checkpoint='/saved'))
+    timing=remote.detail(dict(run=root.name,arm='baseline'))['timing']
+    assert timing['elapsed_seconds']==1830 and timing['recent_samples']==5
+    assert timing['recent_mean_step_seconds']==58 and timing['eta_seconds']==2320
 
 
 def test_training_timing_does_not_invent_missing_history_or_waiting_eta(remote):

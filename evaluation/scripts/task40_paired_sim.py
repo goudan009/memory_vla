@@ -541,6 +541,15 @@ def main(args):
             audit.update(reset_accumulation_called=reset_accumulation, render_controls=render_controls)
         write_json(folder / 'restore.json', audit)
         np.savez_compressed(folder / 'first_raw_restored.npz', **restored_input)
+        if targeted and args.require_exact_restore_rgb:
+            comparisons = audit['observation_correspondence']
+            valid = all(comparisons[key]['exact'] for key in CAMERA_KEYS)
+            write_json(folder / 'restore_validity.json', {
+                'valid': valid, 'rule': 'exact original RGB at the restored physical boundary',
+                'reason': None if valid else 'INVALID_RESTORE_RGB',
+                'cameras': {key: comparisons[key] for key in CAMERA_KEYS}})
+            if not valid:
+                raise RuntimeError('INVALID_RESTORE_RGB: paired original RGB could not be reproduced')
         if targeted and not all(blocking_readbacks):
             raise RuntimeError('Isaac Sim render barrier changed during directed restore')
         assert max((*position.values(), *rotation.values(), *joints.values())) < 1e-2 and controllers
@@ -1194,6 +1203,7 @@ def parse_args(argv=None):
         'failure_73012_d28:anchor_73012_A_normal:28'])
     parser.add_argument('--min-hinge-excursion', type=float, default=0.005)
     parser.add_argument('--rebuild-policy-history', action='store_true')
+    parser.add_argument('--require-exact-restore-rgb', action='store_true')
     parser.add_argument('--official-policy', action='store_true')
     args = parser.parse_args(argv)
     if args.post_event_action_chunks < 0:

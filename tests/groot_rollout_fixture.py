@@ -42,12 +42,18 @@ class UnevenEnv(TinyEnv):
         return super().reset(**kwargs)
 
     def step(self, action):
+        import os
         self.steps += 1
         # First partition has one-step episodes, second has three-step episodes.
         ended = self.steps >= (1 if self._instance_indices_this_env[0] == 0 else 3)
-        return np.zeros(1, dtype=np.float32), 0, ended, False, {
+        info = {
             'success': [True], 'valid': [True], 'task_progress': [75.0], 'rewards': [0],
         }
+        if os.environ.get('GROOT_TEST_OMIT_VALID') == '1':
+            info.pop('valid')  # A debug cap can end before the native task emits validity.
+        if ended and os.environ.get('GROOT_TEST_INVALID_TERMINAL') == '1':
+            info['valid'] = [False]
+        return np.zeros(1, dtype=np.float32), 0, ended, False, info
 
 
 def create_uneven_env(env_name, env_idx, total_n_envs, wrapper_configs):

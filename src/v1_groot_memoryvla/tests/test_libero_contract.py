@@ -19,6 +19,7 @@ def test_visual_grids_keep_camera_and_batch_identity(cameras):
     backbone=EagleBackbone.__new__(EagleBackbone)
     torch.nn.Module.__init__(backbone)
     backbone.model=FakeEagle(); backbone.return_visual_features=True; backbone.eval()
+    backbone.return_preprojected_vision=False
     ids=torch.full((batch,cameras*grid+2),99);ids[:,-2:]=1
     result=backbone(dict(input_ids=ids,attention_mask=torch.ones_like(ids),pixel_values=[torch.zeros(3,252,252)]*(batch*cameras)))
     assert torch.equal(result.visual_features,visual.reshape(batch,cameras,grid,dim))

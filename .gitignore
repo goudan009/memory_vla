@@ -15,6 +15,7 @@ references/upstream/
 # Local resource links and large assets are machine-specific.
 /checkpoints/behavior_50t_checkpoint
 /checkpoints/groot_n1d6_behavior1k/
+/checkpoints/v1__test01__exp11__step006000/
 /.cache/
 /assets/simulation/
 /assets/datasets/

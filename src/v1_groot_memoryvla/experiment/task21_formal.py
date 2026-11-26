@@ -320,7 +320,8 @@ def initialize(args, checkpoint=None):
     episode_tasks = validate_split(split)
     openvla = getattr(args, "memory_conditioning", "residual") == "openvla"
     train = EpisodeWindows(args.dataset, processor, split["train"], episode_tasks=episode_tasks,
-                           group_size=16 if openvla else 32)
+                           group_size=16 if openvla else 32, seed=args.seed,
+                           history_sampling=getattr(args, "history_sampling", "contiguous"))
     validation = EpisodeWindows(args.dataset, eval_processor, split["validation"], episode_tasks=episode_tasks)
     # The async step-0 job also passes a checkpoint explicitly, but that is
     # still the original GR00T model: build the same new adapter as training.

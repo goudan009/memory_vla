@@ -124,6 +124,7 @@ def command(args, arm, gpus):
         "--checkpoint-interval", "2000" if openvla else "1000"]
     result += memory_training_argv(args)
     result += finetuning_argv(args)
+    result += ['--fsdp-accumulation', getattr(args, 'fsdp_accumulation', 'shard_each')]
     result += fusion_argv(fusion_options(vars(args)))
     if args.async_validation_gpu is not None:
         result.append("--async-validation")
@@ -140,7 +141,7 @@ def command(args, arm, gpus):
 
 def launch(args):
     from .finetuning_options import resolve_finetuning
-    from .memory_training_options import OPENVLA_PROTOCOL, TRAINING_PROTOCOL
+    from .memory_training_options import OPENVLA_PROTOCOL, EXP13_PROTOCOL, TRAINING_PROTOCOL, training_protocol
     from v1_groot_memoryvla.data.episode_split import validate_split
 
     fusion = fusion_options(vars(args))
@@ -153,8 +154,7 @@ def launch(args):
             raise ValueError("Exp10 state loss requires one training GPU and a verified state panel")
     fine_tuning = resolve_finetuning(args)
     openvla = getattr(args, "memory_conditioning", "residual") == "openvla"
-    if openvla:
-        args.training_protocol = OPENVLA_PROTOCOL
+    args.training_protocol = training_protocol(args)
     if not math.isfinite(getattr(args, 'weight_decay', .01)) or getattr(args, 'weight_decay', .01) < 0:
         raise ValueError('weight_decay must be finite and nonnegative')
     if not math.isfinite(getattr(args, 'max_grad_norm', 1.)) or getattr(args, 'max_grad_norm', 1.) <= 0:
@@ -182,7 +182,10 @@ def launch(args):
         "checkpoint_interval": 2000 if openvla else 1000, "async_validation_gpu": args.async_validation_gpu,
         "validation_enabled": not getattr(args, "no_validation", False),
         "baseline_validation_gpu": args.baseline_validation_gpu,
-        "training_protocol": OPENVLA_PROTOCOL if openvla else TRAINING_PROTOCOL,
+        "training_protocol": args.training_protocol,
+        "history_sampling": getattr(args, "history_sampling", "contiguous"),
+        **(dict(memory_update_fused=False, history_stride=8, group_size=16)
+           if args.training_protocol == EXP13_PROTOCOL else {}),
         "memory_conditioning": getattr(args, "memory_conditioning", "residual"),
         "memory_residual_readout": getattr(args, "memory_residual_readout", "delta"),
         "memory_cognitive_residual_projection": getattr(args, "memory_cognitive_residual_projection", False),
@@ -317,7 +320,11 @@ def main():
     p.add_argument("--resume-step", type=int, default=0)
     args = p.parse_args()
     if args.memory_conditioning == "openvla":
-        assert args.steps in (2, 6000) and not args.train_only and args.no_validation
+        if args.history_sampling == "random_ordered":
+            assert args.steps == 2 or args.steps >= 20000 and args.steps % 2000 == 0
+        else:
+            assert args.steps in (2, 6000)
+        assert not args.train_only and args.no_validation
     elif args.experiment is None:
         assert (args.train_only and args.steps > 0 and not args.paired) or (args.steps >= 1000 and args.steps % 1000 == 0)
     assert args.global_windows_per_step >= 1

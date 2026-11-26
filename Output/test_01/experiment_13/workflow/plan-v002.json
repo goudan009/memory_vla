@@ -1,0 +1,14 @@
+{
+  "goal": "先审计当前V1与MemoryVLA论文及作者源码的一致性，为用户新要求的纯净GR00T基座、50任务10000条示教、首轮20000步且每2000步可续训存档形成可审阅方案。",
+  "created_at": "2026-11-24",
+  "author": "Codex",
+  "parent_plan": "plan-v001.json",
+  "reason": "用户明确要求先检查当前V1。旧计划为B1K已微调基座与Batch128，不能代表新要求。本版先做只读审计，不创建训练任务或改变方法。论文与作者默认实现的写入语义有分歧，方法选择说明并确认后再锁定训练计划；不以旧Exp12总验收标记代替本次实际代码检查。",
+  "mainline": ["code_audit", "input_audit", "reviewable_recipe", "method_confirmation"],
+  "nodes": [
+    {"id": "code_audit", "title": "V1论文与源码审计", "after": [], "parallel_with": [], "acceptance": "比对论文方法与训练附录、锁定作者commit的实际源码和当前调用链；区分一致、作者源码与论文分歧、GR00T适配及训练入口限制。"},
+    {"id": "input_audit", "title": "纯净基座与50任务数据核对", "after": ["code_audit"], "parallel_with": [], "acceptance": "核查纯净3B权重身份与分片hash、50任务准备状态、损坏文件、四卡当前资源和续训能力；缺失不能冒充就绪。"},
+    {"id": "reviewable_recipe", "title": "形成可审阅训练方案", "after": ["input_audit"], "parallel_with": [], "acceptance": "报告给出初始化继承与新增模块、10000示教使用、论文Batch256与优化器设置、GR00T动作适配、20000步/2000存档和延长预算续训需改的具体位置。"},
+    {"id": "method_confirmation", "title": "确认方法差异后锁定执行", "after": ["reviewable_recipe"], "parallel_with": [], "acceptance": "按robot-vla-experiment-ops的先说明后确认规则解决论文/作者默认写入语义与GR00T必要适配，再更新任务书与训练执行计划；本次审计期间不启动长训。"}
+  ]
+}

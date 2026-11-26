@@ -19,7 +19,10 @@ import time
 if '__file__' in globals():
     sys.path.insert(0, str(Path(__file__).resolve().parent))
 from run_identity import NAMING_SCHEMA, method_name, training_base, training_identity, reserve_training
-from run_identity import EXPERIMENT_12_RUN, checkpoint_step
+from run_identity import EXPERIMENT_12_RUN, EXPERIMENT_13_RUN, CANONICAL_RUN, checkpoint_step
+
+OPENVLA_PROTOCOL = 'memoryvla_openvla_b1k_v1'
+EXP13_PROTOCOL = 'memoryvla_openvla_b1k_group16_raw_v2'
 
 # This RPC is also executed as source over SSH, without importing the model stack.
 import importlib.util
@@ -60,7 +63,7 @@ def run_name(version, task, arm):
 
 
 def display_name(root, arm, task):
-    if EXPERIMENT_12_RUN.fullmatch(root.name):
+    if CANONICAL_RUN.fullmatch(root.name):
         return root.name
     identity = training_identity(root, arm, task)
     return training_base(identity['version'],identity['task_id'],identity['method'])+'_train%02d'%identity['train_number'] if identity['task_id'] is not None else root.name
@@ -160,7 +163,7 @@ def catalog():
         if root.is_symlink() or step is None:
             continue
         arm=file.parents[2].name
-        if EXPERIMENT_12_RUN.fullmatch(root.name):
+        if CANONICAL_RUN.fullmatch(root.name):
             latest = read_json(root/arm/'checkpoints/latest.json',{}).get('step',0)
             if step > latest:
                 continue
@@ -196,10 +199,10 @@ def prepare(request):
     allowed = {'task', 'tasks', 'task_name', 'dataset', 'split', 'checkpoint', 'gpus', 'validation_gpu',
                'arm', 'steps', 'global_windows_per_step', 'microbatch', 'seed', 'learning_rate', 'share_existing', 'version',
                'method', 'method_description', 'validation_enabled', 'validation_percent', 'enqueue',
-               'memory_length', 'memory_conditioning', 'memory_residual_readout', 'memory_cognitive_qk_norm', 'image_augmentation', 'fine_tuning_mode',
+               'memory_length', 'memory_conditioning', 'memory_residual_readout', 'memory_cognitive_qk_norm', 'image_augmentation', 'fine_tuning_mode', 'history_sampling',
                'validation_interval', 'disable_early_stopping', 'notes', 'lora_targets', 'lora_rank', 'lora_alpha',
                'lora_dropout', 'llm_last_n_layers', 'gradient_checkpointing', 'weight_decay', 'max_grad_norm',
-               'optimizer_eps', 'memory_cognitive_residual_projection', 'memory_cognitive_residual_scope', 'run_id',
+               'optimizer_eps', 'memory_cognitive_residual_projection', 'memory_cognitive_residual_scope', 'run_id', 'fsdp_accumulation',
                'experiment', 'fusion_variant', 'fusion_dit_layers', 'fusion_state_lambda', 'fusion_state_panel',
                *('freeze_' + name for name in FINETUNING_COMPONENTS)}
     if not isinstance(request, dict) or set(request)-allowed:
@@ -209,6 +212,13 @@ def prepare(request):
         contract = fusion_contract()
         fusion = contract.fusion_options(dict(request, checkpoint=_path(request.get('checkpoint'), '权重')))
     openvla = request.get('memory_conditioning') == 'openvla'
+    history_sampling = request.get('history_sampling', 'contiguous')
+    if history_sampling not in ('contiguous', 'random_ordered') or (history_sampling != 'contiguous' and not openvla):
+        raise ValueError('随机有序采样要求openvla记忆接入')
+    exp13 = openvla and history_sampling == 'random_ordered'
+    accumulation = request.get('fsdp_accumulation', 'shard_each')
+    if accumulation not in ('shard_each', 'retain') or accumulation != 'shard_each' and not exp13:
+        raise ValueError('FSDP retain accumulation requires Exp13')
     tuning_request = request
     if fusion:
         tuning_request = dict(fine_tuning_mode='custom', **{'freeze_' + name: True for name in FINETUNING_COMPONENTS})
@@ -277,11 +287,14 @@ def prepare(request):
     name_base=training_base(version,task_label,method)
     run_id = request.get('run_id')
     if 'run_id' in request:
-        if (not openvla or version != 'V_1' or method != 'memory' or task_label != 40
-                or not isinstance(run_id, str) or not EXPERIMENT_12_RUN.fullmatch(run_id)):
-            raise ValueError('Experiment 12 训练标识须使用 v1__test01__exp12__run001 格式')
+        pattern = EXPERIMENT_13_RUN if exp13 else EXPERIMENT_12_RUN
+        if (not openvla or version != 'V_1' or method != 'memory' or (not exp13 and task_label != 40)
+                or not isinstance(run_id, str) or not pattern.fullmatch(run_id)):
+            raise ValueError('训练标识须使用 v1__test01__exp13__run001（新随机分组）或exp12对应格式')
         if (TRAINING/run_id).exists() or (TRAINING/'.trash'/run_id).exists() or (PROJECT/'deployments'/run_id).exists():
             raise ValueError('该训练标识已存在，请从原作业续跑')
+    elif exp13:
+        raise ValueError('Exp13须显式指定规范run_id训练标识')
     if not fusion and not openvla and (request['steps'] < 1000 or request['steps'] % 1000):
         raise ValueError('当前保存周期为1000，请填写1000的整数倍步数')
     if not 1 <= request['global_windows_per_step'] <= 180 or request['global_windows_per_step'] % len(gpus):
@@ -313,7 +326,7 @@ def prepare(request):
     if not re.fullmatch(r'[A-Za-z0-9_]{1,100}', name):
         raise ValueError('任务名格式不正确')
     checkpoint = _path(request.get('checkpoint'), '权重')
-    if openvla and (
+    if openvla and not exp13 and (
         fusion or tasks != [40] or request['arm'] != 'memory_v1' or checkpoint.resolve() != OFFICIAL.resolve()
         or len(gpus) != 4 or request['global_windows_per_step'] != 8 or request['microbatch'] not in (1, 2, 4)
         or request['steps'] not in (2, 6000) or request['seed'] != 42 or lr != 2e-5
@@ -324,6 +337,21 @@ def prepare(request):
     ):
         raise ValueError('Exp12 requires official B1K Task40, four ranks, eight 16-decision groups, '
                          'full fine-tuning, 16 slots, no QK norm, and the locked optimizer and seed')
+    if exp13 and (
+        fusion or tasks != list(range(50)) or request['arm'] != 'memory_v1'
+        or checkpoint.resolve() != BASE_CHECKPOINT.resolve()
+        or len(gpus) != 4 or request['global_windows_per_step'] != 16 or request['microbatch'] not in (1, 2, 4, 8, 16)
+        or not (request['steps'] == 2 or request['steps'] >= 20000 and request['steps'] % 2000 == 0)
+        or request['seed'] != 42 or lr != 2e-5 or weight_decay != 0. or optimizer_eps != 1e-8 or max_grad_norm != 1.
+        or validation_enabled or memory_length != 16 or request.get('memory_cognitive_qk_norm') != 'none'
+        or not image_augmentation
+        or fine_tuning['fine_tuning_mode'] != 'full' or fine_tuning['llm_last_n_layers']
+        or any(fine_tuning['freeze_' + name] for name in FINETUNING_COMPONENTS)
+        or request.get('enqueue', False)
+    ):
+        raise ValueError('Exp13 requires clean GR00T-N1.6-3B, all 50 tasks, four ranks, '
+                         'sixteen ordered random groups (Batch256), full fine-tuning, '
+                         'the locked optimizer, 20000+ steps (or 2-step preflight), and direct start')
     known = catalog()['datasets']
     sources=[]
     splits={}
@@ -374,11 +402,15 @@ def prepare(request):
         train_episodes_per_task=200-count,validation_episodes_per_task=count,
         validation_enabled=validation_enabled,episode_tasks=mapping,per_task=splits)
     split.update(task=tasks[0]) if len(tasks)==1 else split.update(tasks=tasks,task_sampling='equal task cycle')
+    if exp13:
+        split['task_sampling'] = 'uniform Episode groups; 200 demos per task'
     if fusion:
         split = explicit_split
     if not (checkpoint/'config.json').is_file() or not PYTHON.is_file():
         raise ValueError('数据集、checkpoint或目标设备 Python 环境不存在')
     saved_config = read_json(checkpoint/'config.json')
+    if exp13 and saved_config.get('memory_enabled'):
+        raise ValueError('Exp13必须从无新增记忆的官方通用底座开始')
     if fusion and not saved_config.get('memory_enabled'):
         raise ValueError('Exp10 initialization must be a MemoryVLA checkpoint')
     if 'memory_conditioning' not in request and saved_config.get('memory_enabled'):
@@ -432,9 +464,11 @@ def prepare(request):
         train_episodes=len(train),validation_episodes=len(validation),enqueue=request.get('enqueue',False),
         share_existing=request.get('share_existing',False),steps=request['steps'],
         global_windows_per_step=request['global_windows_per_step'], global_decisions=(16 if openvla else 32)*request['global_windows_per_step'],
-        **(dict(gradient_accumulation_steps=32//request['microbatch'], scheduler='constant',
-                warmup_steps=0, sharding='FULL_SHARD',
-                training_protocol='memoryvla_openvla_b1k_v1') if openvla else {}),
+        **(dict(gradient_accumulation_steps=(16 * request['global_windows_per_step'] // len(gpus))//request['microbatch'], scheduler='constant',
+                warmup_steps=0, sharding='SHARD_GRAD_OP' if accumulation == 'retain' else 'FULL_SHARD',
+                training_protocol=EXP13_PROTOCOL if exp13 else OPENVLA_PROTOCOL,
+                memory_update_fused=False) if openvla else {}),
+        history_sampling=history_sampling, fsdp_accumulation=accumulation,
         microbatch=request['microbatch'], seed=request['seed'], learning_rate=lr, existing_pids=existing,
         memory_length=memory_length, memory_conditioning=memory_conditioning,
         memory_residual_readout=memory_residual_readout, image_augmentation=image_augmentation,
@@ -456,6 +490,7 @@ def command(plan, source, output):
         value = output/'config/data_split.json' if key=='split' else plan[key]
         result += ['--'+key.replace('_','-'), str(value)]
     result += ['--output', str(output), '--gpus', ','.join(map(str,plan['gpus']))]
+    result += ['--fsdp-accumulation', plan.get('fsdp_accumulation', 'shard_each')]
     for key, value in resolve_finetuning(plan).items():
         flag = key.replace('_', '-')
         result += [('--' if value else '--no-') + flag] if type(value) is bool else ['--' + flag, str(value)]
@@ -465,6 +500,7 @@ def command(plan, source, output):
                '--memory-cognitive-residual-projection' if plan.get('memory_cognitive_residual_projection', False)
                else '--no-memory-cognitive-residual-projection']
     result += ['--memory-length', str(plan.get('memory_length', 64)),
+               '--history-sampling', plan.get('history_sampling', 'contiguous'),
                '--memory-conditioning', plan.get('memory_conditioning', 'residual'),
                '--memory-residual-readout', plan.get('memory_residual_readout', 'delta'),
                '--memory-cognitive-qk-norm', plan.get('memory_cognitive_qk_norm', 'layernorm'),
@@ -617,6 +653,9 @@ def job_root(request):
 def recorded_plan(root):
     plan = read_json(root/'config/ddp_launch.json')
     if plan:
+        resumed = read_json(root/'config/web_resume_latest.json', {})
+        if resumed.get('arm') in plan.get('commands', {}) and 'checkpoint_interval' in resumed:
+            plan['checkpoint_interval'] = resumed['checkpoint_interval']
         return plan
     launch = read_json(root/'config/web_launch.json', {})
     return dict(steps_each=launch.get('steps'), commands={launch['arm']:
@@ -675,7 +714,8 @@ def resume_info(root, arm):
         checkpoint=Path(latest.get('path',''))
         index=read_json(checkpoint/'model.safetensors.index.json',{})
         weights=set(index.get('weight_map',{}).values()) or {'model.safetensors'}
-        openvla=config.get('training_protocol')=='memoryvla_openvla_b1k_v1'
+        openvla=config.get('training_protocol') in (OPENVLA_PROTOCOL, EXP13_PROTOCOL)
+        locked_budget=config.get('training_protocol') == OPENVLA_PROTOCOL
         state_dir=checkpoint/'training_state' if openvla else root/arm/'checkpoints'
         optimizer_files=([state_dir/f'optimizer_rank-{r:03d}.pt' for r in range(config.get('world_size',0))]
                          if openvla else [state_dir/'latest_optimizer.pt'])
@@ -683,6 +723,7 @@ def resume_info(root, arm):
                *[state_dir/f'latest_rank-{r:03d}.pt' for r in range(config.get('world_size',0))],
                *([state_dir/'scheduler.json'] if openvla else []),
                checkpoint/'config.json',*[checkpoint/name for name in weights],
+               *([checkpoint/'COMPLETE.json'] if config.get('training_protocol') == EXP13_PROTOCOL else []),
                Path(launch['source'])/'src/v1_groot_memoryvla/experiment/task21_ddp.py',
                Path(launch['source'])/'train/run_groot_train.sh']
         if validation_enabled and validation_gpu is None:
@@ -691,15 +732,23 @@ def resume_info(root, arm):
             info['reason']='模型、优化器、各 rank 状态或原源码快照不完整'
         elif any(latest.get(k)!=config.get(k) for k in ['world_size','seed','global_windows_per_step']):
             info['reason']='断点与原训练配置不匹配'
-        elif openvla and latest['step'] >= config['steps']:
+        elif locked_budget and latest['step'] >= config['steps']:
             info['reason']='Exp12 has reached its locked training budget'
         else:
             previous=read_json(root/'config/web_resume_latest.json',{})
-            minimum=config['steps'] if openvla else 1000*math.ceil(max(config['steps'],latest['step']+1)/1000)
-            info.update(available=True,checkpoint=str(checkpoint),source=launch['source'],
+            interval=2000 if config.get('training_protocol') == EXP13_PROTOCOL else 1000
+            checkpoint_interval=previous.get('checkpoint_interval', config.get('checkpoint_interval',
+                plan.get('checkpoint_interval', interval)))
+            minimum=config['steps'] if locked_budget else interval*math.ceil(max(config['steps'],latest['step']+1)/interval)
+            info.update(available=True,checkpoint=str(checkpoint),source=previous.get('source', launch['source']),
                 gpus=launch['gpus'],seed=config['seed'],min_steps=minimum,
                 default_steps=max(minimum,previous.get('steps',config['steps'])),
-                validation_enabled=validation_enabled,validation_gpu=validation_gpu, fixed_budget=openvla)
+                validation_enabled=validation_enabled,validation_gpu=validation_gpu, fixed_budget=locked_budget,
+                training_protocol=config.get('training_protocol'), step_interval=interval,
+                checkpoint_interval=checkpoint_interval,
+                checkpoint_interval_editable=config.get('training_protocol') == EXP13_PROTOCOL and not validation_enabled,
+                default_checkpoint_interval=previous.get('checkpoint_interval', 1000)
+                    if config.get('training_protocol') == EXP13_PROTOCOL and not validation_enabled else checkpoint_interval)
     return info
 
 
@@ -717,7 +766,7 @@ config.update(steps=int(sys.argv[4]),resume_step=int(sys.argv[5]))
 args=argparse.Namespace(**config)
 manifest=resume_manifest(args,root/arm,config['world_size'])
 state_dir=root/arm/'checkpoints'
-if config.get('training_protocol') == 'memoryvla_openvla_b1k_v1':
+if config.get('training_protocol') in ('memoryvla_openvla_b1k_v1', 'memoryvla_openvla_b1k_group16_raw_v2'):
     state_dir=Path(manifest['path'])/'training_state'
     scheduler=json.loads((state_dir/'scheduler.json').read_text())
     assert scheduler['last_epoch']==manifest['step'], 'Scheduler step mismatch'
@@ -725,7 +774,7 @@ for rank in range(config['world_size']):
     state=torch.load(state_dir/f'latest_rank-{rank:03d}.pt',map_location='cpu',weights_only=True,mmap=True)
     assert all(state[k]==manifest[k] for k in ('step','epoch','position')), 'rank checkpoint mismatch'
 optimizers=([state_dir/f'optimizer_rank-{rank:03d}.pt' for rank in range(config['world_size'])]
-            if config.get('sharding')=='FULL_SHARD' else [state_dir/'latest_optimizer.pt'])
+            if config.get('training_protocol') in ('memoryvla_openvla_b1k_v1', 'memoryvla_openvla_b1k_group16_raw_v2') else [state_dir/'latest_optimizer.pt'])
 for path in optimizers:
     optimizer=torch.load(path,map_location='cpu',weights_only=True,mmap=True)
     assert optimizer['state'], 'Missing optimizer state'
@@ -879,11 +928,20 @@ def resume(request, controller_source):
             raise ValueError('预检选项必须是开关')
         if type(monitor_interval) is not int or not 0 <= monitor_interval <= 1000:
             raise ValueError('训练监测间隔须为 0–1000 步')
+        checkpoint_interval=request.get('checkpoint_interval', info['default_checkpoint_interval'])
+        if type(checkpoint_interval) is not int or checkpoint_interval <= 0 or checkpoint_interval % 1000:
+            raise ValueError('检查点保存间隔须为1000的正整数倍')
+        if not info['checkpoint_interval_editable'] and checkpoint_interval != info['checkpoint_interval']:
+            raise ValueError('当前仅支持关闭验证的Exp13训练修改检查点保存间隔')
         if monitor_interval and (arm != 'memory_v1' or info['validation_enabled'] or info.get('fixed_budget')):
             raise ValueError('扩展监测目前用于关闭验证的记忆模型训练')
         if info.get('fixed_budget') and (type(steps) is not int or steps != info['min_steps'] or
                 branch_version is not None or request.get('gpus', info['gpus']) != info['gpus']):
             raise ValueError('Exp12 resume preserves the original optimizer budget and four GPU ranks')
+        if info.get('training_protocol') == EXP13_PROTOCOL and (
+                branch_version is not None or request.get('gpus', info['gpus']) != info['gpus']
+                or type(steps) is not int or steps % 2000):
+            raise ValueError('Exp13续训保留同一run和四卡，累计目标步数须为2000的整数倍')
         if branch_version is not None:
             if not isinstance(branch_version, str) or not re.fullmatch(r'V_[0-9]+', branch_version):
                 raise ValueError('独立分支版本请使用 V_1、V_2 等格式')
@@ -898,6 +956,23 @@ def resume(request, controller_source):
         if type(share) is not bool:
             raise ValueError('共卡选项必须是开关')
         launch=read_json(root/'config/web_launch.json')
+        previous=read_json(root/'config/web_resume_latest.json', {})
+        engineering_digest=request.get('engineering_source_digest')
+        accumulation=request.get('fsdp_accumulation', previous.get('fsdp_accumulation', launch.get('fsdp_accumulation', 'shard_each')))
+        checkpointing=request.get('gradient_checkpointing', previous.get('gradient_checkpointing', launch.get('gradient_checkpointing', False)))
+        microbatch=request.get('microbatch', previous.get('microbatch', launch.get('microbatch')))
+        if 'microbatch' in request and (type(microbatch) is not int or microbatch not in (1,2,4,8,16)):
+            raise ValueError('Exp13 microbatch must divide its 16-decision group')
+        if type(checkpointing) is not bool:
+            raise ValueError('gradient_checkpointing must be boolean')
+        if accumulation not in ('shard_each', 'retain'):
+            raise ValueError('Unknown FSDP accumulation policy')
+        if engineering_digest is not None or any(k in request for k in ('fsdp_accumulation','gradient_checkpointing','microbatch')):
+            if info.get('training_protocol') != EXP13_PROTOCOL or branch_version is not None:
+                raise ValueError('Engineering source migration currently requires same-run Exp13')
+            manifest=read_json(LIVE/'web_source_manifest.json', {})
+            if not engineering_digest or manifest.get('digest') != engineering_digest:
+                raise ValueError('Engineering source digest mismatch; preview the synchronized source first')
         gpus=request.get('gpus', info['gpus'])
         if gpus != info['gpus']:
             if branch_version is None or not isinstance(gpus, list) or not gpus or any(
@@ -917,7 +992,9 @@ def resume(request, controller_source):
                         steps=steps, resume_step=info['step'], gpus=selected,
                         checkpoint=info['checkpoint'], source=info['source'],
                         training_root=str(TRAINING), free_bytes=shutil.disk_usage(TRAINING).free,
-                        monitor_interval=monitor_interval)
+                        checkpoint_interval=checkpoint_interval,
+                        monitor_interval=monitor_interval, fsdp_accumulation=accumulation, gradient_checkpointing=checkpointing, microbatch=microbatch,
+                        engineering_source_digest=engineering_digest)
         if not controller_source:
             raise ValueError('续跑控制器缺失，请刷新网页后重试')
         if branch_version is not None:
@@ -925,6 +1002,13 @@ def resume(request, controller_source):
             launch=read_json(root/'config/web_launch.json')
         worker=recorded_plan(root)['commands'][arm]['argv']
         worker=replace_option(replace_option(worker,'--steps',steps),'--resume-step',info['step'])
+        if info['checkpoint_interval_editable']:
+            worker=replace_option(worker, '--checkpoint-interval', checkpoint_interval)
+        if info.get('training_protocol') == EXP13_PROTOCOL:
+            worker=replace_option(worker, '--microbatch', microbatch)
+            worker=replace_option(worker, '--fsdp-accumulation', accumulation)
+            worker=replace_option(replace_option(worker, '--gradient-checkpointing'), '--no-gradient-checkpointing')
+            worker.append('--gradient-checkpointing' if checkpointing else '--no-gradient-checkpointing')
         worker[0]=str(PYTHON)
         argv=replace_option(launch['argv'],'--allow-service-pids',multiple=True)
         argv=replace_option(replace_option(argv,'--steps',steps),'--resume-step',info['step'])
@@ -932,11 +1016,26 @@ def resume(request, controller_source):
         parent=root/'config/web_resumes';parent.mkdir(exist_ok=True)
         number=max([int(p.name.split('-')[-1]) for p in parent.glob('resume-*') if p.is_dir()]+[0])+1
         attempt=parent/f'resume-{number:03d}';attempt.mkdir()
-        spec=dict(run=root.name,arm=arm,source=info['source'],output=str(root),gpus=gpus,
+        source=info['source']
+        if engineering_digest:
+            source=str(PROJECT/'deployments'/f'{root.name}__resume{number:03d}')
+            shutil.copytree(LIVE, source, symlinks=True)
+            atomic_json(attempt/'engineering_revision.json', dict(
+                previous_source=info['source'], source=source, source_digest=engineering_digest,
+                previous_fsdp_accumulation=previous.get('fsdp_accumulation', launch.get('fsdp_accumulation', 'shard_each')),
+                fsdp_accumulation=accumulation, optimizer_layout='same world size, wrap policy and original parameter order',
+                gradient_checkpointing=checkpointing,
+                microbatch=microbatch,
+                original_scientific_config=str(root/arm/'config/ddp.json')))
+        # Preserve the most recent engineering policy on ordinary future resumes.
+        argv=[str(item).replace(info['source'], source) for item in argv]
+        spec=dict(run=root.name,arm=arm,source=source,output=str(root),gpus=gpus,
             steps=steps,resume_step=info['step'],checkpoint=info['checkpoint'],argv=argv,worker_argv=worker,
             validation_enabled=info['validation_enabled'],existing_pids=occupied,
             requested_at=datetime.datetime.now().isoformat(),attempt=str(attempt),
-            monitor_interval=monitor_interval)
+            checkpoint_interval=checkpoint_interval,
+            monitor_interval=monitor_interval, fsdp_accumulation=accumulation, gradient_checkpointing=checkpointing, microbatch=microbatch,
+            engineering_source_digest=engineering_digest or previous.get('engineering_source_digest'))
         atomic_json(attempt/'request.json',spec)
         (attempt/'controller.py').write_text(controller_source)
         # Preserve the old stop request, status and any uncheckpointed metrics.
@@ -973,7 +1072,9 @@ def resume(request, controller_source):
                 else: file.write_bytes(content)
             raise
         job=dict(read_json(root/'config/web_process.json',{}),run=root.name,arm=arm,pid=proc.pid,
-            status='resuming',source=info['source'],output=str(root),resume_step=info['step'],steps=steps,attempt=str(attempt))
+            status='resuming',source=source,output=str(root),resume_step=info['step'],steps=steps,attempt=str(attempt),
+            source_digest=engineering_digest or previous.get('engineering_source_digest') or launch.get('source_manifest',{}).get('digest'),
+            command=shlex.join(argv if info['validation_enabled'] else worker))
         atomic_json(root/'config/web_process.json',job)
         atomic_json(root/'config/web_resume_latest.json',spec)
         return job
@@ -1190,8 +1291,9 @@ def training_parameters(root, arm, config):
     if config: sources.append(str(root/arm/'config/ddp.json'))
     numeric={'steps':int,'global_windows_per_step':int,'microbatch':int,'seed':int,'learning_rate':float,
              'memory_length':int,'checkpoint_interval':int,'lora_rank':int,'lora_alpha':float,'lora_dropout':float,
-             'llm_last_n_layers':int,'weight_decay':float,'max_grad_norm':float,'optimizer_eps':float}
+             'llm_last_n_layers':int,'weight_decay':float,'max_grad_norm':float,'optimizer_eps':float,'dataloader_workers':int}
     fields=[*numeric,'memory_conditioning','memory_residual_readout','memory_cognitive_qk_norm','dataset','checkpoint','training_protocol','frozen_eagle',
+            'history_sampling','memory_update_fused','gradient_accumulation_steps','scheduler','warmup_steps','sharding','fsdp_accumulation',
             'memory_cognitive_residual_projection','memory_cognitive_residual_scope',
             'image_augmentation','disable_early_stopping','fine_tuning_mode','validation_interval','lora_targets',
             'gradient_checkpointing', *('freeze_' + name for name in FINETUNING_COMPONENTS)]
@@ -1220,6 +1322,16 @@ def training_parameters(root, arm, config):
         train_episodes=len(split['train']) if 'train' in split else None,
         validation_episodes=len(split['validation']) if 'validation' in split else None)
     resume=read_json(root/'config/web_resume_latest.json',{})
+    if resume.get('arm')==arm and config.get('training_protocol') == EXP13_PROTOCOL:
+        for key in ('microbatch','gradient_checkpointing','fsdp_accumulation','checkpoint_interval'):
+            if key in resume: values[key]=resume[key]
+        if resume:
+            sources.append(str(root/'config/web_resume_latest.json'))
+            values['sharding']='SHARD_GRAD_OP' if values.get('fsdp_accumulation')=='retain' else 'FULL_SHARD'
+            values['gradient_accumulation_steps']=64//values['microbatch']
+            runtime=read_json(root/arm/f"config/runtime-step-{resume['resume_step']:06d}.json", {})
+            if 'dataloader_workers' in runtime:
+                values['dataloader_workers']=runtime['dataloader_workers']
     state=read_json(root/arm/'status.json',{})
     values['original_steps']=values.get('steps')
     values['steps']=state.get('total_steps',resume.get('steps',values.get('steps')))
@@ -1229,6 +1341,8 @@ def training_parameters(root, arm, config):
 
 def detail(request):
     root, arm = job_root(request)
+    resume_profile=read_json(root/'config/web_resume_latest.json', {})
+    profile_after=resume_profile.get('resume_step', 0) if resume_profile.get('engineering_source_digest') else 0
     blocks, epochs, validation, loss_series = [], {}, [], []
     group = []
     recent_seconds = deque(maxlen=50)
@@ -1251,7 +1365,8 @@ def detail(request):
             if last_seconds is not None:
                 train_seconds += last_seconds
                 timed_steps += 1
-                recent_seconds.append(last_seconds)
+                if row['step'] > profile_after:
+                    recent_seconds.append(last_seconds)
             count=row.get('global_decisions',1)
             loss_series.append([row['step'],row['loss'],1])
             epoch=epochs.setdefault(row['epoch'],dict(epoch=row['epoch']+1,steps=0,count=0,total=0.,first=row['step']))
@@ -1292,6 +1407,7 @@ def detail(request):
         timed_steps=timed_steps, last_step_seconds=last_seconds,
         mean_step_seconds=train_seconds/timed_steps if timed_steps else None,
         recent_mean_step_seconds=recent_mean, recent_samples=len(recent_seconds), recent_window=50,
+        profile_after_step=profile_after,
         remaining_steps=0 if complete else remaining_steps, eta_seconds=eta)
     return dict(run=root.name,arm=arm,curve=blocks,loss_series=loss_series,epochs=means,validation=validation,checkpoints=checkpoints,
         timing=timing, initial_weights=initial_weights(root,arm,config),

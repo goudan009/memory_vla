@@ -359,6 +359,13 @@ def record_episode_env(factory, outdir, env_idx):
                 return self.idle_observation, {}
             self.episode_seed = episode_seed(getattr(self, "episode_count", 0))
             seed_rng(self.episode_seed)
+            previous_native = vars(self).get('native_env')
+            if (os.environ.get('GROOT_TASK40_TRACE') == '1' and previous_native is not None
+                    and writer.metadata['task_id'] == 40):
+                from groot_task40_trace import append_reset_trace
+                trace_root = Path(writer.metadata.get('public_output_dir') or writer.outdir) / 'stages'
+                append_reset_trace(previous_native, trace_root, self.runtime_identity,
+                                   writer.metadata.get('gpu_index', 0), None, boundary='before_reset')
             reset_started = time.perf_counter()
             result = self.env.reset(**kwargs)
             self.reset_duration_s = time.perf_counter() - reset_started
@@ -404,10 +411,12 @@ def record_episode_env(factory, outdir, env_idx):
             write_json(writer.outdir / f"runtime_env{env_idx}.json", self.runtime_identity)
             if (os.environ.get('GROOT_TASK40_TRACE') == '1' and self.native_env is not None
                     and writer.metadata['task_id'] == 40):
-                from groot_task40_trace import install_video_trace
+                from groot_task40_trace import install_video_trace, append_reset_trace
                 trace_root = Path(writer.metadata.get('public_output_dir') or writer.outdir) / 'stages'
                 install_video_trace(self.env, trace_root, self.runtime_identity,
                                     writer.metadata.get('gpu_index', 0))
+                append_reset_trace(self.native_env, trace_root, self.runtime_identity,
+                                   writer.metadata.get('gpu_index', 0), result[0])
             self.preview.reset(self.runtime_identity)
             self.preview.publish(result[0], action_steps=0, outer_steps=0)
             return result
@@ -417,7 +426,10 @@ def record_episode_env(factory, outdir, env_idx):
                 # A completed slot must not wrap its instance list while other
                 # slots finish. Do not step/reset the simulator or emit results.
                 return self.idle_observation, 0.0, False, False, {
-                    "success": [False], "valid": [True],
+                    # No episode ends here. Adding valid would create a key
+                    # with a missing/None value for active debug episodes,
+                    # which have not yet emitted native task validity.
+                    "success": [False],
                     "task_progress": [self.idle_progress], "rewards": [],
                 }
             step_started = time.perf_counter()
@@ -530,7 +542,15 @@ def record_episode_env(factory, outdir, env_idx):
             finally:
                 self.preview.close()
 
-    return RecordingEnv(factory())
+    environment = factory()
+    current = environment
+    while current is not None:
+        if vars(current).get('task_name') == 'make_microwave_popcorn':
+            from groot_scene_reset import install_scene_reset
+            install_scene_reset(current)
+            break
+        current = vars(current).get('env')
+    return RecordingEnv(environment)
 
 
 def get_active_writer():

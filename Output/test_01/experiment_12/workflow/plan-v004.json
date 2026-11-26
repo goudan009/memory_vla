@@ -1,0 +1,16 @@
+{
+  "goal": "定位并修复用户报告的 Task40 跨回合倒置桌椅，使用真实边界证据确定是否需要修改 reset。",
+  "created_at": "2026-11-24",
+  "author": "Codex",
+  "reason": "原实现工作台作业20261124-201939-bc12bc0c对花园椅连续三次倾倒重置通过；尚不支持此前全场景基准污染猜测。扩大到用户路径上的厨房四椅一桌，并在原模型短闭环中加入动作零步截图；不得把未复现故障称为已修复。",
+  "parent_plan": "plan-v003.json",
+  "mainline": ["reproduce_reset", "policy_boundary_control", "repair_reset", "simulation_regression", "policy_retest", "reset_acceptance"],
+  "nodes": [
+    {"id": "reproduce_reset", "title": "桌椅重置故障复现", "after": [], "parallel_with": [], "acceptance": "真实厨房四椅一桌连续三次人为倾倒，检查原实现全部桌椅 restore、基准写回和零动作返回边界。"},
+    {"id": "policy_boundary_control", "title": "原权重重置边界对照", "after": ["reproduce_reset"], "parallel_with": [], "acceptance": "相同run005 step006000权重，实例0/1/4、seed sequence0、chunk8，每回合240动作调试，记录动作前桌椅位姿与三相机截图，区分重置遗留与开局新碰撞；不修改模型。"},
+    {"id": "repair_reset", "title": "全场景恢复修复", "after": ["policy_boundary_control"], "parallel_with": [], "acceptance": "以复现证据实施最小修复；若原 reset 恢复正确，按实际出错层修复，明确证据与边界，不盲改物理/模型配方。"},
+    {"id": "simulation_regression", "title": "桌椅连续重置验收", "after": ["repair_reset"], "parallel_with": [], "acceptance": "真实厨房桌椅连续三次倾倒后恢复，记录零动作画面与位姿误差。"},
+    {"id": "policy_retest", "title": "同权重短闭环复测", "after": ["simulation_regression"], "parallel_with": [], "acceptance": "需要修改实际仿真恢复时，按同一控制配置复测三回合；仅记录补齐且控制已通过时引用控制结果，避免无意义重复。"},
+    {"id": "reset_acceptance", "title": "家具恢复修复验收", "after": ["policy_retest"], "parallel_with": [], "acceptance": "归档原实现、最小变更、工作台作业与真实截图；如仍无法定位，明确未修复并保留足够证据继续调查。"}
+  ]
+}

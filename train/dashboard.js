@@ -90,6 +90,8 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
   const versionOpen = new Map(), taskOpen = new Map();
   const jobVersion = job => job?.version || (job?.name || job?.run || '').match(/^(V_\d+)(?:_|$)/)?.[1] || '未标版本';
   const jobTask = job => job?.task ?? job?.task_id ?? (job?.run || '').match(/(?:^|_)task(\d+)(?:_|$)/)?.[1] ?? '未知';
+  const jobTasks = job => (Array.isArray(job?.tasks) ? job.tasks : String(jobTask(job)).split('_')).map(String);
+  const taskLabel = job => jobTasks(job).length > 1 ? '联合训练 · ' + jobTasks(job).length + ' 个任务' : 'Task ' + jobTask(job);
   const jobMethod = job => job.method || (job.arm === 'baseline' ? 'baseline' : 'memory');
   const methodLabel = method => ({baseline:'Baseline',memory:'Memory',official:'Official'}[method] || method);
   const methodOrder = method => ({baseline:0,memory:1,official:2}[method] ?? 3);
@@ -181,7 +183,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
     const method = el('train-method').value.trim() || (el('train-arm').value === 'baseline' ? 'Baseline' : 'Memory');
     el('train-submit-summary').innerHTML = '<strong>' + esc(el('train-version').value || '未填版本') + ' · ' + esc(method) +
       ' · ' + (el('train-steps').value ? esc(el('train-steps').value) + ' 步' : '待设置训练步数') + '</strong>' +
-      esc(data.length ? data.map(d => 'Task' + d.task).join(' / ') : '未选任务') + ' · ' +
+      esc(data.length ? data.length + ' 个任务 · ' + data.slice(0,3).map(d => 'Task' + d.task).join(' / ') + (data.length>3?' 等':'') : '未选任务') + ' · ' +
       esc(gpus.length ? 'GPU ' + gpus.join(', ') : '未选训练 GPU');
     el('train-submit').textContent = el('train-enqueue').checked ? '加入训练队列' : '启动训练';
   }
@@ -220,6 +222,8 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
     el('train-pane-info').querySelectorAll('details[open]').forEach(panel => { panel.open = false; });
     el('train-detail-title').textContent = job?.name || chosen?.run || '训练详情';
     el('train-detail-subtitle').textContent = '';
+    el('train-detail-tasks').hidden = true;
+    el('train-detail-tasks').open = false;
     el('train-detail-gpu').textContent = '正在读取 '+deviceLabel()+' 记录…';
     el('train-detail-status').textContent = '';
     el('train-detail-loading').hidden = false;
@@ -264,13 +268,15 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
     el('train-prepare-data').disabled=!selected.some(data=>!data.ready && data.can_prepare && !['queued','starting','converting','syncing'].includes(data.preparation?.status));
     el('train-prepare-data').hidden=!selected.some(data=>!data.ready);
     el('train-task-count').textContent = '已选 ' + selected.length + ' 个';
+    el('train-task-selection-summary').textContent = '已选 ' + selected.length + ' 个任务 · 展开管理';
     el('train-task-selection').innerHTML = selected.map(data => '<button type="button" data-remove-task="' + esc(data.task) + '" aria-label="移除 Task ' + esc(data.task) + '">Task ' + esc(data.task) + ' ×</button>').join('') || '<span class="train-hint">勾选任务即可联合训练，无需按住 Ctrl。</span>';
     el('train-task-selection').querySelectorAll('[data-remove-task]').forEach(button => button.onclick = () =>
       selectTasks(data => selected.some(d => d.task === data.task) && String(data.task) !== button.dataset.removeTask));
     const selectedIds = new Set(selected.map(data => data.task));
     el('train-task-list').querySelectorAll('[data-task-index]').forEach(input => { input.checked = selectedIds.has(options.datasets[Number(input.dataset.taskIndex)].task); });
     const queue = options?.dataset_queue;
-    el('train-data-status').textContent = selected.map(data=>'Task'+data.task+' '+(data.ready?'已就绪':stateName(data.preparation?.status))).join(' · ')+
+    el('train-data-status').textContent = selected.length + ' 个任务 · 已就绪 ' + selected.filter(data=>data.ready).length +
+      (selected.some(data=>!data.ready)?' · 待准备 ' + selected.filter(data=>!data.ready).length:'') +
       (queue?.status === 'preparing' ? ' · 全部数据准备：' + queue.ready_tasks.length + '/50，当前 Task' + queue.current_task + '，视频 ' + (queue.current_videos || 0) + '/600' : '') +
       selected.filter(data=>data.preparation?.error).map(data=>' · Task'+data.task+' '+data.preparation.error).join('');
     updateRecommendation();
@@ -363,7 +369,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
     const stateGroups = {active:['training','running','submitted','initializing','starting','validating','resuming'],
       queued:['queued','waiting_for_gpus','waiting_for_four_runs'],complete:['complete','completed'],failed:['failed','stopped']};
     const visible = jobs.map((job,i)=>({job,i})).filter(({job}) => (!stateGroups[filter] || stateGroups[filter].includes(job.status)) &&
-      (!search || [job.name,job.run,jobVersion(job),'task'+jobTask(job),jobMethod(job),job.training_id,job.notes].join(' ').toLowerCase().includes(search)));
+      (!search || [job.name,job.run,jobVersion(job),...jobTasks(job).map(task=>'task'+task),taskLabel(job),jobMethod(job),job.training_id,job.notes].join(' ').toLowerCase().includes(search)));
     el('train-count').textContent = (filtering ? visible.length + ' / ' : '') + jobs.length + ' 条';
     const versions = new Map();
     visible.forEach(({job,i}) => {
@@ -389,7 +395,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
       records.sort(({job:a},{job:b}) => methodOrder(jobMethod(a))-methodOrder(jobMethod(b)) ||
         jobMethod(a).localeCompare(jobMethod(b)) || (b.train_number || 1)-(a.train_number || 1) || b.run.localeCompare(a.run,undefined,{numeric:true}));
       return '<details class="train-task-group" data-train-task="' + esc(key) + '"' + (expanded ? ' open' : '') + '>' +
-        '<summary>Task ' + esc(task) + '<small>' + records.length + ' 条</small></summary><div class="train-task-runs">' +
+        '<summary><span class="train-task-label">' + esc(taskLabel(records[0].job)) + '</span><small>' + records.length + ' 条</small></summary><div class="train-task-runs">' +
         records.map(({job,i}) => {
       const selected = view === 'detail' && chosen?.run === job.run && chosen?.arm === job.arm;
       const progress = Math.max(0, Math.min(100, Number(job.step || 0) / (job.max_steps || 1) * 100));
@@ -433,10 +439,15 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
       el('train-resume-panel').hidden = true;
       el('train-resume-steps').value = resume?.default_steps || '';
       el('train-resume-steps').min = resume?.min_steps || 1000;
+      el('train-resume-steps').step = resume?.step_interval || 1000;
+      el('train-resume-checkpoint-interval').value = resume?.default_checkpoint_interval || resume?.checkpoint_interval || 1000;
       el('train-resume-share').checked = false;
       el('train-resume-message').textContent = '';
     }
     if (!resume?.available) el('train-resume-panel').hidden = true;
+    el('train-resume-checkpoint-field').hidden = !resume?.checkpoint_interval_editable;
+    el('train-resume-checkpoint-note').hidden = !resume?.checkpoint_interval_editable;
+    el('train-resume-checkpoint-interval').disabled = jobActionBusy || !resume?.checkpoint_interval_editable;
     el('train-resume-submit').disabled = jobActionBusy || !resume?.available;
     el('train-resume-summary').textContent = resume?.available ?
       '第 ' + resume.step + ' 步断点 · GPU ' + resume.gpus.join(',') + ' · Seed ' + resume.seed +
@@ -462,18 +473,21 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
     const resume = currentJob()?.resume, total = Number(el('train-resume-steps').value);
     el('train-resume-budget').textContent = resume?.available ?
       '总步数包含已完成的 ' + resume.step + ' 步；还将训练 ' + Math.max(0,total-resume.step) +
-      ' 步。总步数至少 ' + resume.min_steps + '，按 1000 步递增。' : '';
+      ' 步。总步数至少 ' + resume.min_steps + '，按 ' + (resume.step_interval || 1000) + ' 步递增。' : '';
   }
   async function resumeTraining(event) {
     event.preventDefault();
     const job = currentJob();
     if (!job?.resume?.available || jobActionBusy || !el('train-resume-panel').reportValidity()) return;
     const requested = {...chosen,steps:Number(el('train-resume-steps').value),share_existing:el('train-resume-share').checked};
+    if (job.resume.checkpoint_interval_editable)
+      requested.checkpoint_interval = Number(el('train-resume-checkpoint-interval').value);
     if (!window.confirm('从第 ' + job.resume.step + ' 步续跑至总计 ' + requested.steps + ' 步？\n' +
-      job.name + '\n沿用原训练设置，恢复优化器和采样状态。')) return;
+      job.name + '\n每 ' + (requested.checkpoint_interval || job.checkpoint_interval) + ' 步保存完整检查点。\n恢复优化器和采样状态。')) return;
     jobActionBusy = true; updateJobActions();
     el('train-resume-message').textContent = '正在校验断点和 GPU，完成后启动续跑…';
     try {
+      await api('resume',{...requested,preview:true});
       const result = await api('resume',requested);
       message('续跑已提交：从第 ' + result.resume_step + ' 步恢复，总计 ' + result.steps + ' 步。');
       el('train-resume-panel').hidden = true;
@@ -724,7 +738,10 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
     el('train-detail-notes').hidden = !notes;
     renderRecordedParameters(job);
     el('train-detail-title').textContent = job?.name || chosen.run;
-    el('train-detail-subtitle').textContent = 'Task' + (job?.task ?? job?.task_id ?? '—') + ' · ' + (job?.method || (chosen.arm === 'baseline' ? 'baseline' : 'memory'));
+    el('train-detail-subtitle').textContent = taskLabel(job) + ' · ' + (job?.method || (chosen.arm === 'baseline' ? 'baseline' : 'memory'));
+    const tasks = jobTasks(job);
+    el('train-detail-tasks').hidden = tasks.length < 2;
+    el('train-detail-task-list').textContent = tasks.map(task=>'Task '+task).join(' / ');
     el('train-detail-gpu').textContent = 'GPU ' + (job?.gpus ?? '—') + ' · 每 10 秒刷新';
     el('train-detail-status').innerHTML = stateBadge(job?.status);
     el('train-runtime-note').hidden = !job;

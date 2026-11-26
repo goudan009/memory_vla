@@ -1,0 +1,16 @@
+{
+  "goal": "完成Task40家具恢复修复，并使同权重双环境短闭环正常完成收尾。",
+  "created_at": "2026-11-24",
+  "author": "Codex",
+  "parent_plan": "plan-v006.json",
+  "reason": "家具注入与真实接触回归均3/3恢复，2032c3c443b2也产出3/3有效240动作回合、零动作家具正常和3份录像，但作业末尾EVAL_INVALID_EPISODE失败。已通过真实Gym spawn轻量夹具在sequence/fixed/random三模式复现：debug回合尚无native valid字段，已完成槽位却在idle响应加入valid=True，汇总据此将另一槽位缺失值None误判无效。移除idle无物理意义的valid字段，不屏蔽真实invalid；先轻量回归后按同配置重跑，保留失败原作业。",
+  "mainline": ["settle_fault_control", "repair_reset", "simulation_regression", "validity_repair", "policy_retest", "reset_acceptance"],
+  "nodes": [
+    {"id": "settle_fault_control", "title": "稳定阶段基准污染对照", "after": [], "parallel_with": [], "acceptance": "原实现稳定窗口故障注入0/3恢复；明确区分注入和原长测历史原因。20261124-205028-2df3f94c已完成。"},
+    {"id": "repair_reset", "title": "非任务场景基准固定", "after": ["settle_fault_control"], "parallel_with": [], "acceptance": "构造基准不可变，保留TRO/机器人/系统/实例元数据，每个spawn worker启用，其他任务不变。ff717ac、464ea19。"},
+    {"id": "simulation_regression", "title": "家具恢复真实回归", "after": ["repair_reset"], "parallel_with": [], "acceptance": "稳定阶段注入3/3恢复，实际机器人推动餐桌120动作后3/3恢复；20261124-205543-7388d77c、20261124-210054-38b7bae8均已完成。"},
+    {"id": "validity_repair", "title": "双环境短测收尾修复", "after": ["simulation_regression"], "parallel_with": [], "acceptance": "三种seed模式轻量spawn测试修复前失败、修复后正常；既有有效回合与真实invalid拒绝回归通过，不改物理环境、模型或原失败记录。"},
+    {"id": "policy_retest", "title": "修复后同权重短闭环", "after": ["validity_repair"], "parallel_with": [], "acceptance": "原run005 step006000/5557，single2、实例0/1/4对应seed0/1/2、chunk8、每回合240动作，共3回合；两个worker基准标记与零动作桌椅正常、记忆reset、3份录像且工作台终态complete。"},
+    {"id": "reset_acceptance", "title": "家具恢复修复验收", "after": ["policy_retest"], "parallel_with": [], "acceptance": "交付补丁、真实物理对照、终态作业和图像；保留收尾失败记录；原长测历史触发未直接复现，短测不替代10回合正式成绩。"}
+  ]
+}

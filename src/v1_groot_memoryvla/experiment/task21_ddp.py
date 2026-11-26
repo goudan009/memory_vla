@@ -27,14 +27,15 @@ from torch.distributed.algorithms._checkpoint.checkpoint_wrapper import (
 
 from .first_training import cache_sequence, get_training_group, gradient_norms, seeded, slice_features
 from .output import capture_console
-from .memory_training_options import add_memory_training_options, OPENVLA_PROTOCOL, TRAINING_PROTOCOL
+from .memory_training_options import (add_memory_training_options, OPENVLA_PROTOCOL,
+                                      EXP13_PROTOCOL, TRAINING_PROTOCOL, training_protocol)
 from .finetuning_options import add_finetuning_options, resolve_finetuning
 from .task21_diagnostic import append_record, head_hash
 from .task21_formal import (atomic_json, initialize, memory_runtime,
                             restore_memory_runtime, save_model, validate, window_context, supervision_count, ACTION_SLICES)
 from .task40_fusion_check import check_fusion
 from .task40_state_training import LABEL_NAMES, Task40StateHead, forward_state_only, load_state_panel
-from .openvla_preflight import forward_panel
+from .openvla_preflight import forward_panel, reload_forward
 
 # Values indicate availability of verified-state supervision. Both action-only
 # paths run a real-checkpoint preflight before entering the optimization loop.
@@ -44,7 +45,13 @@ EXP10_FUSION_TRAINING = {"gated_eos": True, "dit_attention": True}
 def resume_manifest(args, root, world):
     manifest = json.loads((root / "checkpoints/latest.json").read_text())
     original = json.loads((root / "config/ddp.json").read_text())
-    assert resolve_finetuning(original) == resolve_finetuning(args), 'Fine-tuning/freeze/LoRA configuration changed'
+    original_tuning, current_tuning = resolve_finetuning(original), resolve_finetuning(args)
+    if original.get('training_protocol') == EXP13_PROTOCOL:
+        # Activation recomputation changes memory/compute only. The workbench
+        # records its explicit source migration, while freeze/LoRA stay locked.
+        original_tuning.pop('gradient_checkpointing')
+        current_tuning.pop('gradient_checkpointing')
+    assert original_tuning == current_tuning, 'Fine-tuning/freeze/LoRA configuration changed'
     for key, default in [('weight_decay', .01), ('max_grad_norm', 1.), ('optimizer_eps', 1e-8)]:
         assert original.get(key, default) == getattr(args, key, default), key
     if hasattr(args, "training_protocol"):
@@ -55,17 +62,28 @@ def resume_manifest(args, root, world):
         assert original.get("memory_cognitive_residual_projection", False) == getattr(args, "memory_cognitive_residual_projection", False)
         assert original.get("memory_cognitive_residual_scope", "eos") == getattr(args, "memory_cognitive_residual_scope", "eos")
         assert original.get("memory_residual_readout", "delta") == getattr(args, "memory_residual_readout", "delta"), "memory_residual_readout"
+        assert original.get("history_sampling", "contiguous") == getattr(args, "history_sampling", "contiguous"), "history_sampling"
+    if original.get("training_protocol") == EXP13_PROTOCOL:
+        for key, path in (("data_split_sha256", root.parent / "config/data_split.json"),
+                          ("episode_metadata_sha256", Path(args.dataset) / "meta/episodes.jsonl")):
+            assert original[key] == hashlib.sha256(path.read_bytes()).hexdigest(), key
     assert manifest["step"] == args.resume_step
     for key, value in (("world_size", world), ("seed", args.seed),
                        ("global_windows_per_step", args.global_windows_per_step)):
         assert manifest[key] == original[key] == value, key
     for key in ("dataset", "checkpoint", "arm", "microbatch", "learning_rate"):
+        if key == 'microbatch' and original.get('training_protocol') == EXP13_PROTOCOL:
+            assert args.microbatch in (1, 2, 4, 8, 16)
+            continue
         assert original[key] == (str(getattr(args, key)) if isinstance(getattr(args, key), Path)
                                   else getattr(args, key)), key
     assert args.steps >= original["steps"] and args.steps > manifest["step"], "steps"
     if original.get("training_protocol") == OPENVLA_PROTOCOL:
         assert args.steps == original["steps"], "Keep the original Experiment 12 training budget"
     assert Path(manifest["path"]).is_dir()
+    if original.get("training_protocol") == EXP13_PROTOCOL:
+        complete = json.loads((Path(manifest["path"]) / "COMPLETE.json").read_text())
+        assert complete["step"] == manifest["step"] and complete["world_size"] == world
     return manifest
 
 
@@ -76,8 +94,19 @@ def restore_rank(model, optimizer, root, manifest, rank, device, scheduler=None,
     for key in ("step", "epoch", "position"):
         assert state[key] == manifest[key], (rank, key)
     optimizer_name = f"optimizer_rank-{rank:03d}.pt" if sharded else "latest_optimizer.pt"
-    optimizer.load_state_dict(torch.load(state_dir / optimizer_name,
-        map_location="cpu", weights_only=True, mmap=True))
+    saved_optimizer = torch.load(state_dir / optimizer_name,
+        map_location="cpu", weights_only=True, mmap=True)
+    # Both FSDP policies use the same flattening, ranks and original parameter
+    # order. Check the local Adam moment layout before accepting a migration.
+    if sharded:
+        assert len(saved_optimizer['param_groups']) == len(optimizer.param_groups)
+        for saved_group, current_group in zip(saved_optimizer['param_groups'], optimizer.param_groups):
+            assert len(saved_group['params']) == len(current_group['params'])
+            for key, parameter in zip(saved_group['params'], current_group['params']):
+                for name in ('exp_avg', 'exp_avg_sq'):
+                    value = saved_optimizer['state'].get(key, {}).get(name)
+                    assert value is None or value.shape == parameter.shape, (rank, key, name, parameter.shape)
+    optimizer.load_state_dict(saved_optimizer)
     # Adam advances a parameter only when it has a gradient. A one-frame
     # episode can update the action head without using either retrieval bank.
     assert all(0 < int(value["step"]) <= manifest["step"] for value in optimizer.state.values())
@@ -163,13 +192,14 @@ class TaskBalancedPlan:
 
 
 class FullGroupPlan:
-    """Shuffle intact upstream-sized groups. Give every rank two real groups."""
+    """Shuffle intact groups; random-ordered datasets have one group per Episode."""
 
     def __init__(self, dataset, global_groups, seed):
         self.global_groups = global_groups
         span = (dataset.group_size - 1) * dataset.history_stride
         self.groups = np.array([i for i, (source, episode, start) in enumerate(dataset.groups)
-            if start + span < dataset.episode_lengths[source, episode]])
+            if getattr(dataset, "history_sampling", "contiguous") == "random_ordered"
+            or start + span < dataset.episode_lengths[source, episode]])
         np.random.default_rng(seed).shuffle(self.groups)
         self.steps = len(self.groups) // global_groups
         if self.steps == 0:
@@ -257,8 +287,8 @@ def backward_windows(ddp, sequences, seeds, global_count, microbatch=4, device="
             active = seq is not None and start < len(seq["timesteps"])
             end = min(start+microbatch, len(seq["timesteps"])) if active else start
             final = slot == len(sequences)-1 and chunk == chunks-1
-            # Reduce-scatter each FSDP microbatch so accumulation retains
-            # only local gradient shards. Optimizer cadence remains unchanged.
+            # shard_each reduces every microbatch; retain keeps full gradients
+            # in no_sync until the final backward. Loss/optimizer cadence match.
             sync = nullcontext() if final or shard_gradients else ddp.no_sync()
             with sync, torch.autocast("cuda", dtype=torch.bfloat16, enabled=device != "cpu"):
                 result = ddp(slice_features(seq["features"], start, end, device) if active else None,
@@ -283,8 +313,8 @@ def checkpoint(model, processor, optimizer, root, args, step, epoch, position, c
                state_head=None, scheduler=None, sharded=None, before_save=None):
     rank, world = dist.get_rank(), dist.get_world_size()
     run = root.parent.name
-    canonical = (getattr(args, "training_protocol", None) == OPENVLA_PROTOCOL
-                 and re.fullmatch(r"v1__test01__exp12__run(?!000)[0-9]{3}", run))
+    canonical = (getattr(args, "training_protocol", None) in (OPENVLA_PROTOCOL, EXP13_PROTOCOL)
+                 and re.fullmatch(r"v1__test01__exp(?:12|13)__run(?!000)[0-9]{3}", run))
     name = f"{run}__step{step:06d}" if canonical else f"step-{step:06d}"
     directory = root / "checkpoints" / name
     tick = time.monotonic()
@@ -330,6 +360,9 @@ def checkpoint(model, processor, optimizer, root, args, step, epoch, position, c
     else:
         dist.monitored_barrier(group=control_group, timeout=timedelta(minutes=10), wait_all_ranks=True)
     if rank == 0:
+        if getattr(args, "training_protocol", None) == EXP13_PROTOCOL:
+            atomic_json(directory / "COMPLETE.json", {"step": step, "world_size": world,
+                "training_protocol": EXP13_PROTOCOL, "rank_states_complete": True})
         atomic_json(root / "checkpoints/latest.json", {"step": step, "epoch": epoch,
             "position": position, "path": str(directory), "world_size": world,
             "global_windows_per_step": args.global_windows_per_step, "seed": args.seed})
@@ -378,11 +411,13 @@ def train(args, control_group=None):
     assert args.global_windows_per_step % world == 0
     assert world <= 20
     openvla = args.memory_conditioning == "openvla"
+    args.training_protocol = training_protocol(args)
     if openvla:
-        assert world == 4 and args.global_windows_per_step == 8 and args.microbatch in (1, 2, 4)
+        expected_groups = 16 if args.training_protocol == EXP13_PROTOCOL else 8
+        assert world == 4 and args.global_windows_per_step == expected_groups
+        assert args.microbatch in ((1, 2, 4, 8, 16) if args.training_protocol == EXP13_PROTOCOL else (1, 2, 4))
         assert args.no_validation and not args.paired and not args.fusion_variant
         assert args.learning_rate == 2e-5 and args.weight_decay == 0.
-        args.training_protocol = OPENVLA_PROTOCOL
     root = args.output / args.arm
     rank_root = root / f"ranks/rank-{rank:03d}"
     for base in (root, rank_root):
@@ -407,12 +442,13 @@ def train(args, control_group=None):
             if not state_panel["splits"][split]["samples"]:
                 raise ValueError(f"Empty Task40 state panel split: {split}")
     preflight = openvla and args.steps == 2
+    preflight_forward = reload_forward if args.training_protocol == EXP13_PROTOCOL else forward_panel
     if preflight and rank == 0:
         initial_plan = FullGroupPlan(dataset, args.global_windows_per_step, args.seed)
         target = int(initial_plan.groups[0])
         donor = next(int(i) for i in initial_plan.groups if dataset.groups[i][:2] != dataset.groups[target][:2])
         panel_indices = (target, donor)
-        forward_panel(model, processor, dataset, panel_indices, root / "metrics/openvla_initial.json")
+        preflight_forward(model, processor, dataset, panel_indices, root / "metrics/openvla_initial.json")
     if openvla:
         dist.monitored_barrier(group=control_group, timeout=timedelta(minutes=10), wait_all_ranks=True)
     core = TrainableStep(model, validation.processor if state_panel else None)
@@ -435,7 +471,10 @@ def train(args, control_group=None):
                        type(model.memory.cognitive.retrieval_blocks[0])}
         block_types.update(type(m) for m in model.backbone.model.vision_model.modules()
                            if type(m).__name__ == "Siglip2EncoderLayer")
-        ddp = FSDP(core, use_orig_params=True, sharding_strategy=ShardingStrategy.FULL_SHARD,
+        retain = getattr(args, 'fsdp_accumulation', 'shard_each') == 'retain'
+        loader_workers = 4 if retain else 2
+        ddp = FSDP(core, use_orig_params=True,
+                   sharding_strategy=ShardingStrategy.SHARD_GRAD_OP if retain else ShardingStrategy.FULL_SHARD,
                    auto_wrap_policy=partial(transformer_auto_wrap_policy, transformer_layer_cls=block_types),
                    mixed_precision=MixedPrecision(param_dtype=torch.bfloat16, reduce_dtype=torch.float32,
                                                   buffer_dtype=torch.float32),
@@ -463,6 +502,15 @@ def train(args, control_group=None):
             sum(len(v) for b in (model.memory.perceptual, model.memory.cognitive)
                 for v in b.bank.values()) if model.memory else 0}), flush=True)
         del state
+        if rank == 0:
+            atomic_json(root / f'config/runtime-step-{start:06d}.json', dict(
+                resume_step=start, fsdp_accumulation=getattr(args, 'fsdp_accumulation', 'shard_each'),
+                sharding=ddp.sharding_strategy.name if openvla else 'DDP',
+                gradient_checkpointing=args.gradient_checkpointing,
+                gradient_accumulation_steps=64//args.microbatch if openvla else None,
+                dataloader_workers=loader_workers if openvla else None,
+                optimizer_layout_verified=True, microbatch=args.microbatch,
+                global_decisions_per_step=16*args.global_windows_per_step if openvla else 32*args.global_windows_per_step))
     multitask = getattr(dataset, "is_multitask", False)
     plan = (FullGroupPlan(dataset, args.global_windows_per_step, args.seed + epoch) if openvla else
             TaskBalancedPlan(dataset, args.global_windows_per_step, args.seed) if multitask else
@@ -475,7 +523,7 @@ def train(args, control_group=None):
         nonlocal reference
         _, _, _, gathered = initialize(args)
         gathered.load_state_dict(state_dict, strict=True)
-        reference = forward_panel(gathered, processor, dataset, panel_indices, root / "metrics/openvla_step2.json")
+        reference = preflight_forward(gathered, processor, dataset, panel_indices, root / "metrics/openvla_step2.json")
         del gathered
         torch.cuda.empty_cache()
     if rank == 0 and not manifest:
@@ -488,11 +536,17 @@ def train(args, control_group=None):
             rank_owner="slot modulo world_size", validation=f"{len(validation.by_episode)} whole independent Episodes",
             budget_note="Keep global_windows_per_step fixed to compare GPU counts; old single-card run used 1")
         if openvla:
-            config.update(gradient_accumulation_steps=32 // args.microbatch,
-                          dataloader_workers=2, scheduler="constant", warmup_steps=0,
-                          sharding="FULL_SHARD", upstream_commit="d732ea9072bc063399ccc817aed74ab172eb50be",
+            config.update(gradient_accumulation_steps=window_size * len(range(rank, args.global_windows_per_step, world)) // args.microbatch,
+                          dataloader_workers=loader_workers, scheduler="constant", warmup_steps=0,
+                          sharding="SHARD_GRAD_OP" if retain else "FULL_SHARD", upstream_commit="d732ea9072bc063399ccc817aed74ab172eb50be",
                           complete_groups=len(plan.groups), gpu_name=torch.cuda.get_device_name())
-        if multitask:
+        if args.training_protocol == EXP13_PROTOCOL:
+            config.update(history_sampling="random_ordered", memory_update_fused=False,
+                task_sampling="uniform Episode groups; equal demos per task; one group per Episode per sampler epoch",
+                history_stride=8, memory_time_unit="original_frame_index // 8", group_size=16,
+                data_split_sha256=hashlib.sha256((args.output / "config/data_split.json").read_bytes()).hexdigest(),
+                episode_metadata_sha256=hashlib.sha256((args.dataset / "meta/episodes.jsonl").read_bytes()).hexdigest())
+        if multitask and not openvla:
             config.update(task_sampling="equal task cycle; chronological complete Episode passes per task",
                           task_steps_per_pass=plan.task_steps, tasks=sorted(plan.tasks))
         config.update(resolve_finetuning(args))
@@ -512,9 +566,10 @@ def train(args, control_group=None):
         dist.barrier()
     else:
         dist.monitored_barrier(group=control_group, timeout=timedelta(minutes=10), wait_all_ranks=True)
-    if manifest and rank == 0 and args.async_validation:
-        atomic_json(root / f"validation_queue/step-{start:06d}.json",
-                    {"step": start, "checkpoint": manifest["path"]})
+    if manifest and rank == 0:
+        if args.async_validation:
+            atomic_json(root / f"validation_queue/step-{start:06d}.json",
+                        {"step": start, "checkpoint": manifest["path"]})
         atomic_json(root / f"config/resume-step-{start:06d}.json", {
             "checkpoint": manifest, "source": str(Path(__file__).resolve()),
             "optimizer_restored": True, "rank_memory_and_cursor_restored": True,
@@ -530,7 +585,7 @@ def train(args, control_group=None):
                     else EpisodePlan(dataset, args.global_windows_per_step, args.seed + epoch))
             group_reader = None
         batch = plan.batch(position)
-        task_progress = plan.progress(position) if multitask else {}
+        task_progress = plan.progress(position) if multitask and not openvla else {}
         count = sum(i is not None for i in batch)
         model.train()
         if not any(p.requires_grad for p in model.backbone.parameters()):
@@ -545,12 +600,12 @@ def train(args, control_group=None):
                 prefetch = SeededTrainingGroups(dataset, plan.rank_groups(position, rank, world, step, args.seed))
                 # Workers decode and transform CPU observations. A dedicated
                 # generator keeps worker initialization out of policy RNG.
-                group_reader = iter(torch.utils.data.DataLoader(prefetch, batch_size=None, num_workers=2,
+                group_reader = iter(torch.utils.data.DataLoader(prefetch, batch_size=None, num_workers=loader_workers,
                     generator=torch.Generator().manual_seed(args.seed + epoch)))
             sequences = [cache_sequence(model, processor, dataset, batch[s], args.microbatch,
                                         group=next(group_reader)) for s in slots]
             if any(len(sequence["timesteps"]) != window_size for sequence in sequences):
-                raise RuntimeError("Incomplete decision group in a fixed 128-sample batch")
+                raise RuntimeError("Incomplete decision group in the fixed global batch")
             for sequence in sequences:
                 # Reproduce upstream group reset across the accumulated chunks.
                 sequence["episode_start"] = sequence["episode_end"] = True
@@ -563,8 +618,8 @@ def train(args, control_group=None):
         # Same virtual slot gets the same RNG stream under one or multiple GPUs.
         grouped = torch.zeros((len(ACTION_SLICES), 2), device="cuda", dtype=torch.float64) if core.fusion else None
         loss = backward_windows(ddp, sequences, seeds, count, args.microbatch, grouped_losses=grouped,
-                                window_size=window_size, shard_gradients=openvla)
-        monitor = not openvla or step == 1 or step % 10 == 0 or step == args.steps
+                                window_size=window_size, shard_gradients=openvla and not retain)
+        monitor = not openvla or step == start + 1 or step % 10 == 0 or step == args.steps
         gradients = gradient_norms(model) if model.memory and monitor else {}
         training_monitor = {}
         if openvla and monitor:
@@ -594,7 +649,7 @@ def train(args, control_group=None):
                     tracked.append((param, index, param.detach().flatten()[index].clone()))
             training_monitor["learning_rate"] = optimizer.param_groups[0]["lr"]
             training_monitor["microbatch"] = args.microbatch
-            training_monitor["gradient_accumulation_steps"] = 32 // args.microbatch
+            training_monitor["gradient_accumulation_steps"] = window_size * len(slots) // args.microbatch
         fusion_gradients = {name: float(parameter.grad.detach().norm()) if parameter.grad is not None else None
                             for name, parameter in core.named_parameters() if parameter.requires_grad} if core.fusion and not openvla else {}
         state_evidence = {}
@@ -652,7 +707,8 @@ def train(args, control_group=None):
         local_decisions = int(decisions)
         dist.all_reduce(decisions)
         if openvla:
-            assert local_decisions == 32 and int(decisions) == 128
+            assert local_decisions == window_size * len(slots)
+            assert int(decisions) == window_size * args.global_windows_per_step
             training_monitor.update(gpu_name=torch.cuda.get_device_name(),
                 gpu_peak_reserved_gib=torch.cuda.max_memory_reserved()/2**30,
                 gradient_norm_after_clip=min(float(norm), max_norm))
@@ -759,7 +815,7 @@ def train(args, control_group=None):
         restore_rank(model, optimizer, root, packet[0], rank, "cuda", scheduler, sharded=True)
         if rank == 0:
             _, _, _, reloaded = initialize(args, path)
-            after = forward_panel(reloaded, processor, dataset, panel_indices, root / "metrics/openvla_reload.json")
+            after = preflight_forward(reloaded, processor, dataset, panel_indices, root / "metrics/openvla_reload.json")
             assert torch.equal(reference, after), "Strict reload changed actions for identical input and RNG"
             atomic_json(root / "metrics/openvla_reload_proof.json",
                         {"action_bitwise_equal": True, "restored_ranks": world, "checkpoint": str(path)})

@@ -1,0 +1,16 @@
+{
+  "goal": "按用户接受的作者原始特征写入和随机有序group16修改训练链路，准备纯净GR00T、50任务10000示教、Batch256、20000步及2000步存档的可审阅配置；用户再次确认前不启动训练。",
+  "created_at": "2026-11-24",
+  "author": "Codex",
+  "parent_plan": "plan-v002.json",
+  "reason": "用户已明确授权按推荐修改代码，并要求列出完整训练信息后等待确认。发布checkpoint确认update_fused=false；不再采用前版审计末尾建议的融合写入。保留Exp12既有协议，新增Exp13显式协议。",
+  "mainline": ["implement", "verify", "review_recipe", "user_confirmation", "input_and_gpu_preflight", "train"],
+  "nodes": [
+    {"id": "implement", "title": "训练代码与Exp13协议适配", "after": [], "parallel_with": [], "acceptance": "同回合决策候选点随机无放回抽16帧并排序，真实时间戳、因果读写和组隔离；固定seed/epoch/group可重现；作者原始特征写入；工作台支持纯净底座、50任务全200示教、Batch256和同run延长预算。"},
+    {"id": "verify", "title": "代码回归与配置预览", "after": ["implement"], "parallel_with": [], "acceptance": "必要采样/因果/可重现/断点续长/工作台回归通过；配置预览不提交训练，保留真实数据缺口。"},
+    {"id": "review_recipe", "title": "完整训练配置待审阅", "after": ["verify"], "parallel_with": [], "acceptance": "列明权重身份、新模块、训练数据与损坏缺口、全量可训练模块、超参数、四卡/有效Batch、原生GR00T差异、checkpoint和严格续训方式；明确GPU预检尚未执行。"},
+    {"id": "user_confirmation", "title": "用户确认启动", "after": ["review_recipe"], "parallel_with": [], "acceptance": "用户确认完整配置前不调用任何训练start/enqueue接口。"},
+    {"id": "input_and_gpu_preflight", "title": "修复输入与四卡真实预检", "after": ["user_confirmation"], "parallel_with": [], "acceptance": "Task26四份数据恢复及转换完成，全50任务10000示教就绪；工作台四卡真实前后向、全量参数更新、完整存档/恢复与空间验收。"},
+    {"id": "train", "title": "四卡正式训练", "after": ["input_and_gpu_preflight"], "parallel_with": [], "acceptance": "用户已确认且预检通过后，经工作台preview直接start同一4xA100同步作业、不排队、不停止其他作业；20000累计optimizer步，每2000步完整存档，支持同run严格续训。"}
+  ]
+}

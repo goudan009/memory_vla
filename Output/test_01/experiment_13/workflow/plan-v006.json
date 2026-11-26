@@ -1,0 +1,15 @@
+{
+  "goal": "按用户授权用更多显存加速同一Exp13四卡训练，保留已完成optimizer进度及科学配方。",
+  "created_at": "2026-11-25",
+  "parent_plan": "plan-v005.json",
+  "reason": "用户要求优化约41.4秒/步的速度，允许单卡70GiB以上显存；不排队，保留其他任务。",
+  "invariants": ["同一run001严格续训", "4xA100同步", "全量微调", "Batch256", "50任务10000条", "原记忆方法与采样", "LR2e-5及原optimizer", "总20000步，每2000步保存"],
+  "mainline": ["safe_pause", "engineering_change", "workbench_measure", "same_run_resume", "handoff"],
+  "nodes": [
+    {"id": "safe_pause", "after": [], "parallel_with": [], "acceptance": "停用旧自动续训动作；经工作台在optimizer边界存完整checkpoint，保留原源码和已有进度。"},
+    {"id": "engineering_change", "after": ["safe_pause"], "parallel_with": [], "acceptance": "依据重复FSDP通信证据实现显式工程选项，保留优化器分片映射，工作台预览与续跑记录源码版本；相关测试通过。"},
+    {"id": "workbench_measure", "after": ["engineering_change"], "parallel_with": [], "acceptance": "经工作台直接四卡工程自检不超过100步，记录速度/峰值/真实参数更新/完整重载，选择稳定且更快的方案；归档并删除临时作业。"},
+    {"id": "same_run_resume", "after": ["workbench_measure"], "parallel_with": [], "acceptance": "原工作台同run恢复全部optimizer/scheduler/RNG/采样游标，真实累计步数继续增长，确认loss有限且无OOM，实测稳态速度。"},
+    {"id": "handoff", "after": ["same_run_resume"], "parallel_with": [], "acceptance": "更新持续监管及资源/磁盘记录，提交证据和记录，报告实际提速与剩余时间。"}
+  ]
+}

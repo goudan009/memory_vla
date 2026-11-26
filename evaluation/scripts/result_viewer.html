@@ -9,7 +9,7 @@
   <link rel="apple-touch-icon" href="/workbench-icon-192.png">
   <title>4090 WYH工作台</title>
   <style>
-    :root { color-scheme:light; --ink:#20312e; --muted:#75827e; --line:#e5ebe8; --green:#087f68; --red:#b54747; --amber:#aa7424; --paper:#f3f6f4; --white:#fff; --soft:#eef7f3; }
+    :root { color-scheme:light; --ink:#20312e; --muted:#75827e; --line:#e5ebe8; --green:#087f68; --red:#b54747; --amber:#aa7424; --paper:#f3f6f4; --white:#fff; --soft:#eef7f3; --panel-pad:20px; }
     * { box-sizing:border-box }
     [hidden] { display:none !important }
     body { margin:0; background:var(--paper); color:var(--ink); font:14px/1.6 system-ui,-apple-system,"Segoe UI","Noto Sans CJK SC",sans-serif; -webkit-font-smoothing:antialiased }
@@ -274,12 +274,8 @@
     .page-nav-link[aria-current="page"] { color:var(--green); background:var(--soft); border-color:#bfded0 }
     body.agent-board #benchmark-selector, body.agent-board #page-results,
     body.agent-board #bench-result-switch, body.agent-board .page-foot { display:none }
-    #agent-experiment-versions { display:flex; gap:6px; padding:10px; overflow-x:auto }
-    #agent-experiment-versions:empty { display:none }
-    #agent-experiment-versions button { flex:0 0 auto; padding:6px 9px; font-size:12px; white-space:nowrap }
-    #agent-experiment-versions button[aria-pressed="true"] { background:var(--soft); border-color:#9bcab8; color:var(--green) }
-    #agent-experiment-list { border:1px solid var(--line); border-radius:9px; overflow:hidden }
-    #agent-experiment-list:empty { display:none }
+    #agent-experiment-list { padding-top:10px }
+    #agent-experiment-list .version-group:has(button[aria-pressed="true"]) > summary { color:var(--green) }
     #agent-experiment-list button { display:block; width:100%; padding:9px 12px; text-align:left; border:0; border-radius:0 }
     #agent-experiment-list button + button { border-top:1px solid var(--line) }
     #agent-experiment-list button[aria-pressed="true"] { background:var(--soft); color:var(--green) }
@@ -338,10 +334,8 @@
     #agent-workflow { margin-bottom:18px }
     @media(max-width:780px) {
       #agent-board { gap:12px }
-      #agent-board .run-list { overflow:visible; scrollbar-gutter:auto }
-      #agent-experiment-list { display:flex; overflow-x:auto; overscroll-behavior-inline:contain }
-      #agent-experiment-list button { flex:0 0 auto; width:auto; white-space:nowrap }
-      #agent-experiment-list button + button { border-top:0; border-left:1px solid var(--line) }
+      #agent-experiment-list { max-height:none; overflow:visible; scrollbar-gutter:auto }
+      #agent-experiment-list .agent-version-experiments { max-height:106px; overflow:auto }
       #agent-progress-record .agent-focus { grid-template-columns:1fr }
       .agent-document { padding:12px 14px }
       .workflow-graph { padding-inline:14px }
@@ -378,6 +372,48 @@
       .episode-table td:last-child { grid-column:1/-1; align-items:flex-start }
       .episode-table td .subtle { font-size:10px }
     }
+    /* Shared content gutters and shrinking rules for live names, paths and status text. */
+    .section-head,.detail-heading,.details,.service-head,.service-body,.launch-fields,
+    .launch-actions,.launch-help,.inline-actions,.agent-document { padding-inline:var(--panel-pad) }
+    .brand,.brand > div,.header-actions,.layout > *,.start-config > *,
+    .detail-heading > *,.section-head > *,.page-intro > *,.service-head > *,
+    .service-title > *,.service-foot > *,.gpu-machine-head > *,
+    .gpu-reading-title > *,.run-card-top > *,.run-card-bottom > *,
+    .launch-job-top > *,.review-actions > *,.workflow-heading > * { min-width:0 }
+    .brand-mark,.status::before { flex-shrink:0 }
+    .header-actions { flex-shrink:0 }
+    .brand h1 { overflow-wrap:anywhere }
+    .section-head,.detail-heading,.page-intro,.service-head,.service-title,.service-foot,
+    .gpu-machine-head,.gpu-reading-title,.launch-job-top,.review-head,.review-actions,
+    .preview-head,.inline-heading,.detail-tabs,.block-title,
+    .run-card-top,.run-card-bottom,.run-annotation { flex-wrap:wrap }
+    .detail-heading > :first-child { flex:1 1 180px }
+    .heading-status { max-width:100%; white-space:normal }
+    .metric strong,.metric small,.fact,.subtle,.section-head,.service-title,.service-foot,
+    .gpu-machine-head,.gpu-reading,.run-card-bottom,.run-annotation,.version-group > summary,
+    .launch-fields label,.inline-heading,.launch-actions,.workflow-heading { overflow-wrap:anywhere }
+    .status,.chip { max-width:100%; flex-shrink:0; white-space:normal; overflow-wrap:anywhere }
+    .review-progress { flex:1 1 140px }
+    .launch-actions .subtle { flex:1 1 180px; min-width:0 }
+    #inference-weight-path > label { padding:0 12px 12px }
+    #page-registry { padding:var(--panel-pad) }
+    #agent-board .agent-document { border:0; border-radius:0; box-shadow:none }
+    .workflow-heading label,.workflow-heading select { min-width:0; max-width:100% }
+    .workflow-heading label { flex-wrap:wrap }
+    @media(max-width:780px) {
+      :root { --panel-pad:16px }
+      main { padding:16px 16px 24px }
+      body > header { padding-inline:16px }
+      .layout,.start-config { gap:16px }
+      .gpu-overview { grid-auto-columns:min(100%,360px) }
+    }
+    @media(max-width:540px) {
+      .brand h1 { white-space:normal }
+      .launch-actions { position:static }
+      .gpu-cards { gap:10px }
+      .preview-switch { white-space:normal }
+      .workflow-graph { padding-inline:10px }
+    }
     @media(prefers-reduced-motion:reduce) { * { transition:none !important } }
   </style>
 </head>
@@ -408,8 +444,7 @@
     <div id="agent-board" class="layout" hidden>
       <section class="run-browser" aria-label="实验目录">
         <div class="section-head"><h2>实验目录</h2><span id="agent-experiment-count" class="subtle"></span></div>
-        <div id="agent-experiment-versions" role="group" aria-label="实验版本"></div>
-        <div class="run-list"><div id="agent-experiment-list"></div></div>
+        <div id="agent-experiment-list" class="run-list"></div>
       </section>
       <section class="detail" aria-label="实验记录">
         <div class="detail-heading"><div><div id="agent-experiment-path" class="subtle">Output</div><h2 id="agent-experiment-title">AI 工作流</h2></div></div>

@@ -1,0 +1,14 @@
+{
+  "goal": "允许用户在训练页为同一50任务训练续跑选择1000步完整checkpoint间隔，由用户自行启动续跑。",
+  "created_at": "2026-11-25",
+  "parent_plan": "plan-v007.json",
+  "reason": "用户明确将Exp13后续保存间隔从2000改为1000步，并要求训练页面可编辑；工作台现已完成6000步。",
+  "invariants": ["同一run001及完整optimizer/RNG/采样游标", "4xA100和Batch256", "原50任务10000条与seed42", "保留原checkpoint和历史记录", "不启动或排队训练，用户自行续跑"],
+  "mainline": ["inspect", "resume_interval", "verify", "handoff"],
+  "nodes": [
+    {"id": "inspect", "after": [], "parallel_with": [], "acceptance": "只读核对真实训练状态、6000步断点及工作台续跑参数传递。"},
+    {"id": "resume_interval", "after": ["inspect"], "parallel_with": [], "acceptance": "训练页续跑面板可编辑保存间隔，Exp13默认1000；preview/命令/续跑记录一致，后续续跑保留选值。"},
+    {"id": "verify", "after": ["resume_interval"], "parallel_with": [], "acceptance": "无GPU回归覆盖1000步保存传递、非法输入、兼容原续跑；在线页面及真实preview验证，不提交训练。"},
+    {"id": "handoff", "after": ["verify"], "parallel_with": [], "acceptance": "归档验证证据并更新任务和进度，告知页面操作和下一次续跑起生效。"}
+  ]
+}

@@ -1,4 +1,4 @@
-"""Atomic same-Episode groups at the online eight-environment-step cadence."""
+"""Atomic same-Episode groups drawn from the online decision clock."""
 
 from pathlib import Path
 
@@ -20,11 +20,15 @@ class HistoryDataset(Dataset):
     """
 
     def __init__(self, dataset_paths, processor, embodiment_tag="behavior_r1_pro",
-                 group_size=16, history_stride=8, video_backend="pyav", seed=42):
+                 group_size=16, history_stride=8, video_backend="pyav", seed=42,
+                 history_sampling="contiguous"):
         self.processor = processor
         self.seed = seed
         self.group_size = group_size
         self.history_stride = history_stride
+        if history_sampling not in ("contiguous", "random_ordered"):
+            raise ValueError("Unknown history sampling policy")
+        self.history_sampling = history_sampling
         self.embodiment_tag = EmbodimentTag(embodiment_tag)
         modalities = processor.modality_configs[embodiment_tag]
         for name in ("video", "state", "language"):
@@ -43,7 +47,10 @@ class HistoryDataset(Dataset):
             for episode in loader.episodes_metadata:
                 end = episode["length"]
                 self.episode_lengths[dataset_index, episode["episode_index"]] = end
-                for start in range(0, end, group_size * history_stride):
+                if history_sampling == "random_ordered" and len(range(0, end, history_stride)) < group_size:
+                    raise ValueError(f"Episode {episode['episode_index']} has fewer than {group_size} decision frames")
+                starts = [0] if history_sampling == "random_ordered" else range(0, end, group_size * history_stride)
+                for start in starts:
                     self.groups.append((dataset_index, episode["episode_index"], start))
         if not self.groups:
             raise ValueError("No observations available for history training")
@@ -62,6 +69,20 @@ class HistoryDataset(Dataset):
         return self.global_stats
 
     def __getitem__(self, index):
+        return self.get_group(index)
+
+    def frame_indices(self, index, sampling_seed=None):
+        dataset_index, episode_id, start = self.groups[index]
+        length = self.episode_lengths[dataset_index, episode_id]
+        if self.history_sampling == "random_ordered":
+            # Use a local generator: worker prefetch and image augmentation must
+            # not affect history selection or reconstruction after a resume.
+            rng = np.random.default_rng(self.seed + index if sampling_seed is None else sampling_seed)
+            candidates = np.arange(0, length, self.history_stride)
+            return np.sort(rng.choice(candidates, self.group_size, replace=False))
+        return np.arange(start, min(start + self.group_size * self.history_stride, length), self.history_stride)
+
+    def get_group(self, index, sampling_seed=None):
         dataset_index, episode_id, start = self.groups[index]
         loader = self.loaders[dataset_index]
         cache_key = (dataset_index, episode_id)
@@ -69,7 +90,7 @@ class HistoryDataset(Dataset):
             self._cached_low_dim = loader._load_parquet_data(episode_id)
             self._cached_episode = cache_key
         length = self.episode_lengths[cache_key]
-        frames = np.arange(start, min(start + self.group_size * self.history_stride, length), self.history_stride)
+        frames = self.frame_indices(index, sampling_seed)
         videos = loader._load_video_data(episode_id, frames)
         steps = []
         for i, frame in enumerate(frames):
@@ -90,10 +111,11 @@ class HistoryDataset(Dataset):
 
 
 class HistoryCollator:
-    def __init__(self, step_collator, group_size=16, history_stride=8):
+    def __init__(self, step_collator, group_size=16, history_stride=8, history_sampling="contiguous"):
         self.step_collator = step_collator
         self.group_size = group_size
         self.history_stride = history_stride
+        self.history_sampling = history_sampling
 
     def __call__(self, groups):
         steps, keys, times, frames, group_ids, lengths = [], [], [], [], [], []
@@ -102,7 +124,11 @@ class HistoryCollator:
             length = len(indices)
             if not 1 <= length <= self.group_size or len(group["steps"]) != length:
                 raise ValueError("Incomplete memory group")
-            if np.diff(indices).tolist() != [self.history_stride] * (length - 1):
+            gaps = np.diff(indices)
+            if self.history_sampling == "random_ordered":
+                if length != self.group_size or np.any(gaps <= 0) or any(i % self.history_stride for i in indices):
+                    raise ValueError("Random history must contain distinct ordered decision frames")
+            elif gaps.tolist() != [self.history_stride] * (length - 1):
                 raise ValueError("History frames must be ordered at the online stride")
             if group["timesteps"] != [f // self.history_stride for f in indices]:
                 raise ValueError("Memory time must count online decisions")

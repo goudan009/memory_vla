@@ -155,11 +155,12 @@ rollout_policy.run_rollout_gymnasium_policy(
 
 @pytest.mark.skipif(not SIM_PYTHON.exists() or not GROOT_REPO.is_dir(), reason="requires simulator Python and GR00T")
 @pytest.mark.parametrize('seed_mode', ['sequence', 'fixed', 'random'])
-@pytest.mark.parametrize('total_episodes', [10, 5])
+@pytest.mark.parametrize('total_episodes', [10, 5, 3])
 def test_async_uneven_workers_stop_at_assigned_quota(tmp_path, seed_mode, total_episodes):
     env = os.environ.copy()
     env['PYTHONPATH'] = os.pathsep.join((str(PROJECT_ROOT / 'scripts'), str(PROJECT_ROOT / 'tests'), str(GROOT_REPO)))
     env['GROOT_TEST_INSTANCE_COUNT'] = str(total_episodes)
+    env['GROOT_TEST_OMIT_VALID'] = '1' if total_episodes == 3 else '0'
     code = r'''
 import json
 import sys
@@ -197,3 +198,35 @@ rollout_policy.run_rollout_gymnasium_policy(
                     if seed_mode == 'random' else list(range(42 + idx, 42 + idx + count)))
         assert [row['seed'] for row in group] == expected
         assert [row['sim_steps'] for row in group] == ([1] * count if idx == 0 else [3] * count)
+
+
+@pytest.mark.skipif(not SIM_PYTHON.exists() or not GROOT_REPO.is_dir(), reason="requires simulator Python and GR00T")
+def test_native_invalid_episode_still_stops_parallel_rollout(tmp_path):
+    environment = {**os.environ,
+        'PYTHONPATH': os.pathsep.join((str(PROJECT_ROOT/'scripts'), str(PROJECT_ROOT/'tests'), str(GROOT_REPO))),
+        'GROOT_TEST_INSTANCE_COUNT': '3', 'GROOT_TEST_INVALID_TERMINAL': '1'}
+    code = r'''
+import json
+import sys
+from pathlib import Path
+from groot_eval_results import install_episode_recording
+from gr00t.eval import rollout_policy as r
+from groot_rollout_fixture import Policy, create_uneven_env
+out = Path(sys.argv[1])
+(out/'run_meta.json').write_text(json.dumps(dict(task_id=21, task_name='tiny', episodes=3,
+    n_envs=2, seed=0, limit_env_episodes=True)))
+install_episode_recording(out)
+r.create_eval_env = create_uneven_env
+try:
+    r.run_rollout_gymnasium_policy('sim_behavior_r1_pro/tiny', Policy(), r.WrapperConfigs(), n_episodes=3, n_envs=2)
+except RuntimeError as error:
+    assert 'EVAL_INVALID_EPISODE' in str(error)
+else:
+    raise AssertionError('Native invalid episode was ignored')
+records = [json.loads(x) for x in (out/'episodes.jsonl').read_text().splitlines()]
+assert len(records) == 1 and records[0]['valid'] is False
+assert records[0]['failure_reason']['code'] == 'invalid_episode'
+'''
+    result = subprocess.run([str(SIM_PYTHON), '-c', code, str(tmp_path)], env=environment,
+                            cwd=GROOT_REPO, capture_output=True, text=True, timeout=60)
+    assert result.returncode == 0, result.stdout + result.stderr

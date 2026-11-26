@@ -1,0 +1,15 @@
+{
+  "goal": "按用户2026-11-25确认的Exp13配方，经既有工作台完成四卡预检并直接启动20000步正式训练。",
+  "created_at": "2026-11-25",
+  "author": "Codex",
+  "parent_plan": "plan-v004.json",
+  "reason": "Task26修复和全50任务验收已完成，用户明确确认原配置并要求通过工作台启动；不排队，不停止其他任务。",
+  "mainline": ["resource_preview", "gpu_preflight", "archive_preflight", "formal_start", "running_acceptance"],
+  "nodes": [
+    {"id": "resource_preview", "title": "工作台资源与配方核对", "after": [], "parallel_with": [], "acceptance": "实时services、options、jobs与四张GPU UUID核对；原配方预览通过，数据10000条，正式run未占用。"},
+    {"id": "gpu_preflight", "title": "四卡真实工程预检", "after": ["resource_preview"], "parallel_with": [], "acceptance": "经工作台独立临时run999执行同配置2步，确认四rank、Batch256、全模块梯度/更新、完整存档和重载一致，测定峰值与存档空间。"},
+    {"id": "archive_preflight", "title": "预检归档与临时作业清理", "after": ["gpu_preflight"], "parallel_with": [], "acceptance": "归档作业ID、成功或失败证据；成功后通过工作台移除临时记录和专属输出，复核资源和正式10份存档空间。"},
+    {"id": "formal_start", "title": "四卡正式训练", "after": ["archive_preflight"], "parallel_with": [], "acceptance": "同一工作台preview后直接start v1__test01__exp13__run001；4xA100、全量微调、20000步、每2000步完整存档，禁止排队或重复提交。"},
+    {"id": "running_acceptance", "title": "启动运行验收与持续监管", "after": ["formal_start"], "parallel_with": [], "acceptance": "核对工作台job和真实optimizer进度、四rank、loss有限与无OOM，记录路径/快照和监管机制；第一份正式存档经工作台暂停恢复验证，同run续训。"}
+  ]
+}

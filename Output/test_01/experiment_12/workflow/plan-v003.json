@@ -1,0 +1,15 @@
+{
+  "goal": "修复并验收 Task40 评估跨回合桌椅遗留；保留原实验计划与原始评估结果。",
+  "created_at": "2026-11-24",
+  "author": "Codex",
+  "reason": "用户明确授权尝试修复后重新测试。此次为已有 Exp12 评估的工程修复，不重新训练、不变更模型或科学配方；旧实验主线见 plan-v002.json。",
+  "parent_plan": "plan-v002.json",
+  "mainline": ["reproduce_reset", "repair_reset", "simulation_regression", "policy_retest", "reset_acceptance"],
+  "nodes": [
+    {"id": "reproduce_reset", "title": "桌椅重置故障复现", "after": [], "parallel_with": [], "acceptance": "通过原工作台运行真实 Task40，故意倾倒桌椅并记录旧 reset 前后位姿、快照及零动作画面；明确失败发生的层。"},
+    {"id": "repair_reset", "title": "全场景恢复修复", "after": ["reproduce_reset"], "parallel_with": [], "acceptance": "只修复场景恢复，保留实例加载和任务物理；回归验证干净场景基准不会被后续物理状态覆盖。"},
+    {"id": "simulation_regression", "title": "桌椅连续重置验收", "after": ["repair_reset"], "parallel_with": [], "acceptance": "在真实仿真中连续三次人为倾倒后 reset，桌椅位置和姿态恢复干净基准，记录零动作画面及误差；通过工作台核对终态。"},
+    {"id": "policy_retest", "title": "同权重短闭环复测", "after": ["simulation_regression"], "parallel_with": [], "acceptance": "复用 v1__test01__exp12__run005__step006000，Task40 实例0、1、4各跑一个短调试回合，chunk8、seed sequence0、录像stride24；记录每回合动作前家具状态，单列调试结果，不替换原正式评估。"},
+    {"id": "reset_acceptance", "title": "家具恢复修复验收", "after": ["policy_retest"], "parallel_with": [], "acceptance": "归档前后对照、代码改动、单元测试和真实工作台作业ID；如仍复现，明确失败证据并继续定位，不将提交或代码通过视为修复完成。"}
+  ]
+}
