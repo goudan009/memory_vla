@@ -39,6 +39,10 @@ if args.gpu_index < 0 or not 1 <= args.port <= 65535:
 checkpoint = args.checkpoint.expanduser().resolve()
 source = args.source_dir.expanduser().resolve()
 python = args.python_path.expanduser().absolute()
+is_v21 = any((checkpoint/name).is_file() for name in ('v2_1.json','v2_1_stage1.json','v2_1_run.json'))
+module = 'v2_1_groot_memoryvla.serve' if is_v21 else 'v1_groot_memoryvla.serve'
+if is_v21 and (args.history_mode != 'normal' or args.task40_diagnostics):
+    parser.error('V2.1正式服务使用normal历史模式和原生RPC，不使用旧Task40诊断入口')
 if checkpoint.parent.name == 'checkpoints':
     default_logs = checkpoint.parents[2] / 'logs'
     checkpoint_label = f'{checkpoint.parents[2].name}_{checkpoint.name}'
@@ -55,10 +59,12 @@ official_restore = (args.task40_diagnostics and args.log_dir is not None
                     and checkpoint.name == 'GR00T-N1.6-BEHAVIOR1k')
 native_trace = (args.task40_diagnostics and args.log_dir is not None
                 and args.log_dir.parent.name == 'experiment_12')
-command = [str(python), '-u', '-m', 'v1_groot_memoryvla.serve',
+command = [str(python), '-u', '-m', module,
            '--model-path', str(checkpoint), '--embodiment-tag', 'BEHAVIOR_R1_PRO',
            '--device', 'cuda', '--host', args.host, '--port', str(args.port),
            '--use-sim-policy-wrapper', '--seed', str(args.seed)]
+if is_v21:
+    command += ['--residual-scale', '1', '--history-mode', 'normal']
 if args.history_mode != 'normal':
     command += ['--history-mode', args.history_mode]
 if args.task40_diagnostics:
@@ -89,6 +95,7 @@ if args.task40_diagnostics:
                    '--anchor', str(archive_root / anchor_entry),
                    '--host', args.host, '--port', str(args.port), '--remote-policy']
 result = dict(gpu_index=args.gpu_index, host=args.host, port=args.port, checkpoint=str(checkpoint),
+              serving_module=module,
               source_dir=str(source), python_path=str(python), seed=args.seed, history_mode=args.history_mode,
               log=str(log), command=shlex.join(command), task40_diagnostics=args.task40_diagnostics,
               task40_trace=args.task40_diagnostics and not official_restore)
@@ -101,7 +108,7 @@ if not args.json:
 if args.dry_run:
     print(json.dumps(dict(result, state='preview'), ensure_ascii=False) if args.json else 'dry-run：未启动服务。')
     raise SystemExit(0)
-for path in (python, source / 'src/v1_groot_memoryvla/serve.py', checkpoint / 'config.json'):
+for path in (python, source / 'src' / Path(*module.split('.')).with_suffix('.py'), checkpoint / 'config.json'):
     if not path.is_file():
         parser.error(f'文件不存在：{path}；请在A100执行或通过参数指定路径')
 if args.task40_diagnostics and not (official_restore or native_trace) and not diagnostic_script.is_file():
@@ -123,6 +130,11 @@ else:
     weights = [path for path in (checkpoint / 'model.safetensors', checkpoint / 'pytorch_model.bin') if path.is_file()]
 if not weights or any(not path.is_file() or path.stat().st_size == 0 for path in weights):
     parser.error(f'权重尚未保存完整：{checkpoint}；等待训练保存完成后再启动推理')
+if is_v21:
+    if not (checkpoint/'COMPLETE.json').is_file():
+        parser.error(f'V2.1权重缺少完成标记：{checkpoint}')
+    if (checkpoint/'v2_1.json').is_file() and not (checkpoint/'v2_1.pt').is_file():
+        parser.error(f'V2.1记忆权重缺失：{checkpoint}')
 # A loading policy has not bound its port yet. Reject another launch for that
 # port too, rather than letting two models race through loading on the GPU.
 for proc in Path('/proc').iterdir():
@@ -131,7 +143,7 @@ for proc in Path('/proc').iterdir():
     try:
         argv = (proc / 'cmdline').read_bytes().decode(errors='replace').rstrip('\0').split('\0')
         if ((('-m' in argv and argv[argv.index('-m') + 1] in
-                ('v1_groot_memoryvla.serve', 'gr00t.eval.run_gr00t_server', 'baselines.groot_n1d6.serve'))
+                ('v1_groot_memoryvla.serve', 'v2_1_groot_memoryvla.serve', 'gr00t.eval.run_gr00t_server', 'baselines.groot_n1d6.serve'))
                 or any(value.endswith('/policy_server_diagnostic.py') or 'run_native_memory_server()' in value
                        or 'run_stateless_server()' in value
                        for value in argv))

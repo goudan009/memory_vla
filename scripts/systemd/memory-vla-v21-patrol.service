@@ -1,0 +1,8 @@
+[Unit]
+Description=V2.1 persistent workbench training and official evaluation chain
+
+[Service]
+Type=oneshot
+WorkingDirectory=/nvme3/projects/memory_vla
+ExecStart=/usr/bin/python3 /nvme3/projects/memory_vla/scripts/v21_overnight.py
+TimeoutStartSec=1200

@@ -40,7 +40,7 @@ def checkpoint_info(checkpoint):
         return dict(version='unversioned', run=root.name, label=root.name+' / '+path.name, source_dir=None)
     identity=training_identity(root,arm)
     run = root.name
-    if not EXPERIMENT_12_RUN.fullmatch(run):
+    if not EXPERIMENT_12_RUN.fullmatch(run) and identity['version'] != 'V_2_1':
         run = training_base(identity['version'],identity['task_id'],identity['method'])+'_train%02d'%identity['train_number']
     return dict(identity,run=run,label=run+' / '+path.name)
 
@@ -82,7 +82,7 @@ def process_info(pid):
                           for value in args[1:4])
         native_trace = any('run_native_memory_server()' in value for value in args[1:4])
         if not Path(args[0]).name.startswith('python') or not (
-            module in ('v1_groot_memoryvla.serve', 'gr00t.eval.run_gr00t_server', 'baselines.groot_n1d6.serve') or
+            module in ('v1_groot_memoryvla.serve', 'v2_1_groot_memoryvla.serve', 'gr00t.eval.run_gr00t_server', 'baselines.groot_n1d6.serve') or
             script.endswith('run_gr00t_server.py') or diagnostic or restore_rng or native_trace or
             (script.endswith('serve.py') and ('groot' in script.lower() or 'memoryvla' in script))):
             return None

@@ -79,6 +79,26 @@ def test_service_preserves_fp32_head_weights(checkpoint):
     assert base.backbone.weight.dtype == torch.bfloat16
 
 
+def test_baseline_service_preserves_fp32_and_rpc_initialization(checkpoint):
+    # Execute the real constructor with external model/processor substitutes.
+    path = Path(__file__).resolve().parents[1] / 'baseline_policy.py'
+    tree = ast.parse(path.read_text())
+    cls = next(n for n in tree.body if isinstance(n, ast.ClassDef))
+    cls.body = [n for n in cls.body if isinstance(n, ast.FunctionDef) and n.name == '__init__']
+    memory_cls = policy_constructor()
+    # Its globals contain the same external substitutes as the memory constructor.
+    env = dict(memory_cls.__init__.__globals__, torch=torch)
+    exec(compile(ast.fix_missing_locations(ast.Module(body=[cls], type_ignores=[])), str(path), 'exec'), env)
+    policy = env['BaselinePolicy'](SimpleNamespace(value='behavior_r1_pro'), checkpoint, device='cpu')
+    assert policy.memory_state is None
+    assert policy.language_key == 'task'
+    assert policy.model.action_head.weight.dtype == torch.float32
+    assert torch.equal(policy.model.action_head.weight,
+                       torch.full_like(policy.model.action_head.weight, .123456791))
+    assert policy.model.backbone.weight.dtype == torch.bfloat16
+    assert not policy.model.training
+
+
 @pytest.mark.parametrize('key', ['missing_keys', 'unexpected_keys', 'mismatched_keys', 'error_msgs'])
 def test_shared_loader_rejects_checkpoint_mismatches(checkpoint, monkeypatch, key):
     from v2_1_groot_memoryvla.loading import load_base

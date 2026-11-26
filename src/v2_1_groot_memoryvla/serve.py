@@ -1,5 +1,7 @@
 """V2.1 dedicated policy service; original V1 service remains unchanged."""
 import argparse
+import json
+from pathlib import Path
 from .config import check_scale
 def main():
     p=argparse.ArgumentParser(__doc__)
@@ -11,7 +13,14 @@ def main():
     p.add_argument("--history-mode",choices=["normal","empty","wrong","other_episode"],default="normal")
     p.add_argument("--seed",type=int,default=42)
     args=p.parse_args();check_scale(args.residual_scale)
-    from .policy import Policy
+    if (Path(args.model_path)/'v2_1.json').is_file():
+        from .policy import Policy
+    else:
+        run_file=Path(args.model_path)/'v2_1_run.json'
+        run=json.loads(run_file.read_text()) if run_file.is_file() else {}
+        if not (Path(args.model_path)/'v2_1_stage1.json').is_file() and run.get('stage')!='continued':
+            p.error('Expected V2.1 memory sidecar or Stage1 lineage metadata')
+        from .baseline_policy import BaselinePolicy as Policy
     from v1_groot_memoryvla.data.embodiment_tags import EmbodimentTag
     from v1_groot_memoryvla.policy.gr00t_policy import Gr00tSimPolicyWrapper
     from v1_groot_memoryvla.policy.server_client import PolicyServer

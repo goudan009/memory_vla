@@ -1,0 +1,11 @@
+[Unit]
+Description=Advance V2.1 workbench training and evaluation every two minutes
+
+[Timer]
+OnBootSec=120s
+OnUnitActiveSec=120s
+AccuracySec=5s
+Unit=memory-vla-v21-patrol.service
+
+[Install]
+WantedBy=timers.target

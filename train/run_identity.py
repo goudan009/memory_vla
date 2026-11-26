@@ -7,10 +7,11 @@ NAMING_SCHEMA = 'groot-runs-v2'
 EXPERIMENT_12_RUN = re.compile(r'v1__test01__exp12__run(?!000)[0-9]{3}')
 EXPERIMENT_13_RUN = re.compile(r'v1__test01__exp13__run(?!000)[0-9]{3}')
 CANONICAL_RUN = re.compile(r'v1__test01__exp(?:12|13)__run(?!000)[0-9]{3}')
+V21_RUN = re.compile(r'v2\.1__test01__exp14__run(?!000)[0-9]{3}(?:__preflight[0-9]{3})?')
 
 
 def checkpoint_step(name, run):
-    if CANONICAL_RUN.fullmatch(run):
+    if CANONICAL_RUN.fullmatch(run) or V21_RUN.fullmatch(run):
         match = re.fullmatch(re.escape(run) + r'__step([0-9]{6})', name)
     else:
         match = re.fullmatch(r'step-([0-9]+)', name)
@@ -56,6 +57,10 @@ def training_identity(root, arm, task=None):
     number = launch.get('train_number') or (int(parsed[1]) if parsed else int(legacy[1]) if legacy else 1)
     if CANONICAL_RUN.fullmatch(root.name):
         version, number = 'V_1', int(root.name[-3:])
+    if V21_RUN.fullmatch(root.name):
+        version = 'V_2_1'
+        number = int(re.search(r'__run([0-9]{3})', root.name)[1])
+        task = launch.get('task', 40)
     manifest = read_identity_json(root/'config/source_manifest.json') or launch.get('source_manifest') or {}
     process = read_identity_json(root/'config/web_process.json')
     extension = read_identity_json(root/'config/extension_5000.json')
