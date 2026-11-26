@@ -1,0 +1,28 @@
+name: V2.1 CPU checks
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'src/v2_1_groot_memoryvla/**'
+      - '.github/workflows/v21-cpu.yml'
+permissions:
+  contents: read
+jobs:
+  core:
+    if: github.head_ref == 'dev/v2.1-implementation'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            src/v2_1_groot_memoryvla
+            src/v1_groot_memoryvla/model/gr00t_n1d6
+          sparse-checkout-cone-mode: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install --index-url https://download.pytorch.org/whl/cpu torch
+      - run: pip install numpy pytest
+      - run: python -m compileall -q src/v2_1_groot_memoryvla
+      - run: PYTHONPATH=src OMP_NUM_THREADS=2 python -m pytest -q src/v2_1_groot_memoryvla/tests
