@@ -1,0 +1,17 @@
+{
+  "created_at": "2026-11-27",
+  "author": "Codex /root",
+  "goal": "按用户睡前授权持久调度V2.1后续训练和官方闭环评估",
+  "reason": "用户明确要求定时任务在离线期间继续训练与评估；将v001仅观察巡检扩展为有依赖的工作台调度",
+  "research_contract": {"base":"GR00T-N1.6-3B","train":180,"validation":20,"seed":42,"stage1_steps":6000,"memory_steps":3000,"continued_steps":3000,"lr":0.00001,"prior":"topology","evaluation_instances":[0,1,2,3,4,5,6,7,8,9],"evaluation_seed":0,"evaluation_seed_mode":"sequence","evaluation_mode":"single1","action_chunk":8},
+  "mainline": ["automation","wait_stage1","memory_gate","memory_train","continued_train","eval","archive"],
+  "nodes": [
+    {"id":"automation","title":"持久工作台调度部署","after":[],"parallel_branches":["training_chain","inference_evaluation_adapter"],"acceptance":"timer可重启；真实工作台查询及dry-run、依赖/去重/失败门禁回归通过；不干扰当前Stage1"},
+    {"id":"wait_stage1","title":"Stage1完整权重就绪","after":["automation"],"acceptance":"原run001累计6000、COMPLETE和训练终态完成"},
+    {"id":"memory_gate","title":"记忆阶段真实预检","after":["wait_stage1"],"acceptance":"run002预检通过残差等价、校准、梯度、冻结与完整恢复；证据归档后清理专属大产物"},
+    {"id":"memory_train","title":"拓扑记忆正式训练","after":["memory_gate"],"acceptance":"run002固定3000步；通过同工作台暂停续跑验收"},
+    {"id":"continued_train","title":"同预算无记忆继续训练","after":["memory_train"],"acceptance":"run003从相同Stage1独立预检后3000步，参数和数据不变；清理其预检大产物"},
+    {"id":"eval","title":"三模型官方闭环评估","after":["continued_train"],"acceptance":"Stage1、拓扑记忆、continued各0-9十个完整有效回合；single1/seed0 sequence/原生终止；固定checkpoint与会话，保留视频/Q/success/progress"},
+    {"id":"archive","title":"结果与资源归档","after":["eval"],"acceptance":"真实完成量与失败原因落盘；回收本任务专属无依赖推理服务；不把提交等同完成"}
+  ]
+}
