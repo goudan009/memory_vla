@@ -12,6 +12,7 @@ if [[ ! -x "$python_path" ]]; then
     python_path="$project_root/envs/n1d6-p0/bin/python"
 fi
 
+source_version=v1
 train_args=()
 show_help=false
 if [[ $# -eq 0 ]]; then
@@ -20,6 +21,9 @@ if [[ $# -eq 0 ]]; then
 fi
 while [[ $# -gt 0 ]]; do
     case "$1" in
+        --source-version)
+            [[ $# -ge 2 ]] || { echo "Missing source version" >&2; exit 2; }
+            source_version="$2"; shift 2 ;;
         --source-dir|--python-path)
             if [[ $# -lt 2 || "$2" == --* ]]; then
                 echo "$1 requires a path" >&2
@@ -33,7 +37,12 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-if [[ ! -f "$source_dir/src/v1_groot_memoryvla/experiment/launch_task21_ddp.py" ]]; then
+case "$source_version" in
+    v1) module=v1_groot_memoryvla.experiment.launch_task21_ddp; entry=src/v1_groot_memoryvla/experiment/launch_task21_ddp.py ;;
+    v2.1) module=v2_1_groot_memoryvla.train; entry=src/v2_1_groot_memoryvla/train.py ;;
+    *) echo "Unknown source version: $source_version" >&2; exit 2 ;;
+esac
+if [[ ! -f "$source_dir/$entry" ]]; then
     echo "Training source missing: $source_dir (use --source-dir)" >&2
     exit 2
 fi
@@ -45,6 +54,8 @@ source_dir="$(cd -- "$source_dir" && pwd)"
 python_path="$(cd -- "$(dirname -- "$python_path")" && pwd)/$(basename -- "$python_path")"
 if $show_help; then
     echo "Usage: train/run_groot_train.sh [--source-dir DIR] [--python-path PYTHON] TRAIN_ARGS"
+    echo "Source version: $source_version"
+    echo "V2.1: --source-version v2.1 --stage stage1|memory|continued (preview unless --execute)"
     echo "Source: $source_dir"
     echo "Python: $python_path"
     echo "--dry-run prints the launch plan without starting training."
@@ -57,4 +68,12 @@ export PYTHONPATH="$source_dir/src${PYTHONPATH:+:$PYTHONPATH}"
 export PYTHONNOUSERSITE=1 PYTHONDONTWRITEBYTECODE=1 NO_ALBUMENTATIONS_UPDATE=1
 export HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 OMP_NUM_THREADS="${OMP_NUM_THREADS:-4}"
 cd -- "$source_dir"
-exec "$python_path" -u -m v1_groot_memoryvla.experiment.launch_task21_ddp "${train_args[@]}"
+if [[ "$source_version" == v2.1 ]]; then
+    args=(); dry=false; execute=false
+    for arg in "${train_args[@]}"; do
+        case "$arg" in --dry-run) dry=true ;; --execute) execute=true; args+=("$arg") ;; *) args+=("$arg") ;; esac
+    done
+    if $dry && $execute; then echo "Cannot combine --dry-run and --execute" >&2; exit 2; fi
+    train_args=("${args[@]}")
+fi
+exec "$python_path" -u -m "$module" "${train_args[@]}"
