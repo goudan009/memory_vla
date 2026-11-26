@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "base": "a2a7b234ecda160d79ee39b1f6b34932e5d40dbc",
+  "goal": "Implement full V2.1 A/B/C with configurable 21-label schema, default 8 core labels and quality-aware BCE, preserving original GR00T; no formal training",
+  "nodes": [
+    {
+      "id": "contracts",
+      "depends": [],
+      "accept": "real mapping, labels, original action paths inspected"
+    },
+    {
+      "id": "core",
+      "depends": [
+        "contracts"
+      ],
+      "accept": "causal banks, cognition, B/Q/K/V, A/B/C, zero-init masked residual and gamma"
+    },
+    {
+      "id": "integration",
+      "depends": [
+        "core"
+      ],
+      "accept": "real model training and Euler interfaces, sequential context, loader and serving"
+    },
+    {
+      "id": "checks",
+      "depends": [
+        "integration"
+      ],
+      "accept": "CPU unit tests and actual environment gates; no silent fallback"
+    },
+    {
+      "id": "handoff",
+      "depends": [
+        "checks"
+      ],
+      "accept": "document remaining real-data/GPU/workbench gates"
+    }
+  ]
+}
