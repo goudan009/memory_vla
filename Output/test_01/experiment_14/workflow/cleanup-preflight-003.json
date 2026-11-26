@@ -1,0 +1,6 @@
+{
+  "run":"v2.1__test01__exp14__run001__preflight003","arm":"baseline",
+  "delete_files":true,"purge_preflight":true,
+  "expected_output":"/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v2.1__test01__exp14__run001__preflight003",
+  "evidence_path":"/nvme3/data_wyh/outputs/memory_vla/v2_1/experiment14/evidence/preflight-passed-003.json"
+}

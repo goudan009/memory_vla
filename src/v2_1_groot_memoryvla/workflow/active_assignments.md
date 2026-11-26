@@ -1,0 +1,12 @@
+# Active assignments 2026-11-27
+
+Shared worktree: /nvme3/projects/memory_vla-v21-review. Read latest user instruction and experiment14 plan. No new research choices. All file edits apply_patch; do not commit (root integrates). Write concise completion evidence here or another workflow file. User approved multiagent review.
+
+## gr00t_review
+Implement existing workbench integration for V2.1 training (dashboard.py SYNC_TREES; dashboard_remote.py delegate prepare/start/jobs/detail/stop/resume/delete for version v2.1 into a new stdlib train/v21_workbench.py as necessary). Keep all V1 existing behavior. Four GPU torchrun trainer v2_1_groot_memoryvla.train; args stage1/memory/continued, generic base, labels, fixed180/20, output, preflight_only, accept_preflight, resume. Existing queue, source snapshots, status, outputs and cleanup must remain visible to same workbench. Coordinate root re launch contract. Implement meaningful CPU tests. Do not submit GPU jobs. Main trainer root owns. Root needs callable TrainingManager prepare/start API via same backend, can reload manager from this tree. Read existing methods before editing. Finish code and report.
+
+## design_review
+Update V2.1 design/protocol/md/html/README docs to user's confirmed choices: generic GR00T-N1.6-3B,180/20; keep current architecture normalization only in retrieval scoring/attention, no added LN in shared MLP. A1004rank engineering preserves global2windows max32 decisions each stride8, microbatch2, LR1e-5 Stage1 6000 memory3000 unchanged. Add explicit V2.1 exception to skill's old V2 convention preserving historical experiments. Review changed docs for consistency. Do not touch trainer/workbench. No commits. Report paths.
+
+## data_review
+Independently inspect data/windows.py, runtime.py and train.py for distributed pitfalls; suggest exact partition preserving chronological per episode memory and loss denominator under4rank with2global windows and microbatch2. Root plans each window's whole chronology owned by slot, while splitting frozen backbone microbatch work across ranks then gathering features; requires all4participate useful compute without extra samples. Assess feasible simpler partition. Inspect remote labels/dataset read-only availability, hashes and existing statistics. Do not modify trainer. You may add meaningful CPU distributed-helper tests once coordinate root. No GPU jobs, no commits. Write findings workflow/distributed_data_review.md.

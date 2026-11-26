@@ -18,10 +18,11 @@ legacy-openpi = ["flax>=0.9", "jax>=0.4", "numpy>=1.24", "einops>=0.7"]
 
 [tool.setuptools.packages.find]
 where   = ["src"]
-include = ["vlamemory", "vlamemory.*", "v1_groot_memoryvla", "v1_groot_memoryvla.*", "v2_groot_memoryvla", "v2_groot_memoryvla.*", "v3_bodymemory", "v3_bodymemory.*"]
+include = ["vlamemory", "vlamemory.*", "v1_groot_memoryvla", "v1_groot_memoryvla.*", "v2_groot_memoryvla", "v2_groot_memoryvla.*", "v3_bodymemory", "v3_bodymemory.*", "v2_1_groot_memoryvla", "v2_1_groot_memoryvla.*"]
 namespaces = false
 
 [tool.setuptools.package-data]
+v2_1_groot_memoryvla = ["*.md", "assets/*.json", "configs/*.json", "workflow/*.json"]
 v2_groot_memoryvla = ["*.md", "configs/*.json"]
 v1_groot_memoryvla = ["README.md", "handoff.md", "LICENSE"]
 "v1_groot_memoryvla.configs" = ["deepspeed/*.json"]

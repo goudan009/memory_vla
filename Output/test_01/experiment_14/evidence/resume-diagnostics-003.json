@@ -1,0 +1,171 @@
+{
+  "full_reload": true,
+  "resume_equal": true,
+  "reload_differences": [],
+  "update_differences": [],
+  "weights_equal": true,
+  "optimizer_equal": true,
+  "runtime_equal": true,
+  "reference": {
+    "input_hashes": [
+      "64160af0dd01ccf64192d63865b0e8222ddb3461a328f10fbd1405d63ea5110f",
+      "1a74eeefee480f205396a4b38c3579030dbb77bb8b250cc41c6b9b1f8ca8f401",
+      "c8e625ad187fce1bfb28e6761bb2558be6ddc704df82f4e62c7c091fade49618",
+      "56f57d2331214a9b67f7742cb685e7f97e78f935308283fa67410abb7d11ae5c",
+      "85d54c50ef31452c1e2ce2108728aca0f66028ec4504c94e4ff60738abb45ae2",
+      "32b76837d33681f2ac2f2f450f4eb078bf115de302b7d209c586a4c0aaa61f02",
+      "3386c88e105330d1ec30041bf2d024dd9472476ba01b49af91d2c7280d089ba3",
+      "d026a6334bdae7b7eef6e680bd02fee584c05f7a9b3b1d25f77f7f1d1870db46"
+    ],
+    "feature_hashes": [
+      "db2c3d36191aa652fc65b62d802a2bb3b04ea310e99c653d24dfc2490d965bbf",
+      "efdab01db8ab60df6d5a93dc32dd78042a0376798cd27e792cd39a790a638e5b",
+      "13512a78dddac78371ab785b853b4ad4c665905c2ea6ff0ed4ea7f7bf1c04103",
+      "3c2110643a2482841d820e342ddcc1f6cbed158ae50905e2837509930e01c6e3",
+      "8722e7326da3e295c9d50cc3c54fb2d7da63c3a18a2ddf9fed81e9a3b4809a8f",
+      "9fd2779c3894c8f3f504e9dc39e5b8391589f8c273f197e1bc4faf544e8b203a",
+      "83e9afe6f4648d4852ce89ae7d5422d6aa27ac227e3fddb7897a2d0786a10360",
+      "6dcd7f46dde058010cdab55a6e03e45946bb59797e5a086e7ac1b2eda36eefbe"
+    ],
+    "module_grads": {},
+    "fm": 0.3236731959041208,
+    "state": 0.0,
+    "grad_norm": 2.530726909637451,
+    "state_counts": {
+      "door_open": [
+        0,
+        0,
+        0
+      ],
+      "door_ever_opened": [
+        0,
+        0,
+        0
+      ],
+      "bag_grasped": [
+        0,
+        0,
+        0
+      ],
+      "bag_inside": [
+        0,
+        0,
+        0
+      ],
+      "bag_ever_grasped": [
+        0,
+        0,
+        0
+      ],
+      "bag_ever_inside": [
+        0,
+        0,
+        0
+      ],
+      "started": [
+        0,
+        0,
+        0
+      ],
+      "cooked_popcorn_exists": [
+        0,
+        0,
+        0
+      ]
+    },
+    "fm_shared_grad": null,
+    "state_shared_grad": null,
+    "action_elements": 47104.0,
+    "state_elements": [
+      64,
+      64,
+      64,
+      64,
+      64,
+      64,
+      64,
+      64
+    ]
+  },
+  "replay": {
+    "input_hashes": [
+      "64160af0dd01ccf64192d63865b0e8222ddb3461a328f10fbd1405d63ea5110f",
+      "1a74eeefee480f205396a4b38c3579030dbb77bb8b250cc41c6b9b1f8ca8f401",
+      "c8e625ad187fce1bfb28e6761bb2558be6ddc704df82f4e62c7c091fade49618",
+      "56f57d2331214a9b67f7742cb685e7f97e78f935308283fa67410abb7d11ae5c",
+      "85d54c50ef31452c1e2ce2108728aca0f66028ec4504c94e4ff60738abb45ae2",
+      "32b76837d33681f2ac2f2f450f4eb078bf115de302b7d209c586a4c0aaa61f02",
+      "3386c88e105330d1ec30041bf2d024dd9472476ba01b49af91d2c7280d089ba3",
+      "d026a6334bdae7b7eef6e680bd02fee584c05f7a9b3b1d25f77f7f1d1870db46"
+    ],
+    "feature_hashes": [
+      "db2c3d36191aa652fc65b62d802a2bb3b04ea310e99c653d24dfc2490d965bbf",
+      "efdab01db8ab60df6d5a93dc32dd78042a0376798cd27e792cd39a790a638e5b",
+      "13512a78dddac78371ab785b853b4ad4c665905c2ea6ff0ed4ea7f7bf1c04103",
+      "3c2110643a2482841d820e342ddcc1f6cbed158ae50905e2837509930e01c6e3",
+      "8722e7326da3e295c9d50cc3c54fb2d7da63c3a18a2ddf9fed81e9a3b4809a8f",
+      "9fd2779c3894c8f3f504e9dc39e5b8391589f8c273f197e1bc4faf544e8b203a",
+      "83e9afe6f4648d4852ce89ae7d5422d6aa27ac227e3fddb7897a2d0786a10360",
+      "6dcd7f46dde058010cdab55a6e03e45946bb59797e5a086e7ac1b2eda36eefbe"
+    ],
+    "module_grads": {},
+    "fm": 0.3236731959041208,
+    "state": 0.0,
+    "grad_norm": 2.530726909637451,
+    "state_counts": {
+      "door_open": [
+        0,
+        0,
+        0
+      ],
+      "door_ever_opened": [
+        0,
+        0,
+        0
+      ],
+      "bag_grasped": [
+        0,
+        0,
+        0
+      ],
+      "bag_inside": [
+        0,
+        0,
+        0
+      ],
+      "bag_ever_grasped": [
+        0,
+        0,
+        0
+      ],
+      "bag_ever_inside": [
+        0,
+        0,
+        0
+      ],
+      "started": [
+        0,
+        0,
+        0
+      ],
+      "cooked_popcorn_exists": [
+        0,
+        0,
+        0
+      ]
+    },
+    "fm_shared_grad": null,
+    "state_shared_grad": null,
+    "action_elements": 47104.0,
+    "state_elements": [
+      64,
+      64,
+      64,
+      64,
+      64,
+      64,
+      64,
+      64
+    ]
+  }
+}

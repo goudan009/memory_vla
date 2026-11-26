@@ -1,0 +1,10 @@
+{
+  "version":"v2.1","task":40,"stage":"stage1",
+  "run_id":"v2.1__test01__exp14__run001",
+  "dataset":"/nvme3/data_wyh/datasets/b1k2025_groot_task40_v1_200",
+  "checkpoint":"/nvme3/huggingface/train_model/GR00T/GR00T-N1.6-3B",
+  "labels":"/nvme3/data_wyh/datasets/v2_1_task40_labels/task40_labels.parquet",
+  "gpus":[0,1,2,3],"preflight_only":false,"enqueue":true,
+  "accept_preflight":"/nvme3/data_wyh/outputs/memory_vla/v2_1/experiment14/evidence/preflight-passed-003.json",
+  "notes":"Confirmed V2.1 Stage1: generic GR00T, 180/20, 6000 updates, original expert; deterministic CUDA and strict four-rank replay passed."
+}

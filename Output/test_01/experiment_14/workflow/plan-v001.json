@@ -1,0 +1,16 @@
+{
+  "created_at": "2026-11-27",
+  "author": "Codex /root",
+  "goal": "按用户确认的V2.1配方完成A100四卡适配、真实工程预检并直接启动正式训练",
+  "reason": "用户明确指定通用GR00T、180/20，保留架构/超参/状态监督，归一化仅检索评分与注意力；替代旧V2实验约定",
+  "research_contract": {"model_version":"v2.1","base":"GR00T-N1.6-3B","train_episodes":180,"validation_episodes":20,"seed":42,"stage1_steps":6000,"memory_steps":3000,"learning_rate":0.00001,"global_windows_per_step":2,"window_decisions":32,"stride":8,"microbatch":2,"state_supervision":"unchanged"},
+  "mainline": ["contract","engineering","cpu","preflight","formal","handoff"],
+  "nodes": [
+    {"id":"contract","title":"锁定V2.1执行约定","after":[],"acceptance":"提交用户确认、起点、数据划分、配方与预检清理规则"},
+    {"id":"engineering","title":"四卡与工作台适配","after":["contract"],"parallel_branches":["distributed_trainer","workbench","documentation"],"acceptance":"四个rank同步参与，同一全局窗口/损失分母，完整checkpoint及工作台暂停续训"},
+    {"id":"cpu","title":"分布式工程回归","after":["engineering"],"acceptance":"单/多rank更新对照、尾窗口与状态mask、严格恢复及既有回归通过"},
+    {"id":"preflight","title":"A100真实运行预检","after":["cpu"],"acceptance":"经工作台preview/start验证真实batch连续更新、冻结与梯度、完整HF重载、暂停恢复；归档证据并删除预检专属大产物"},
+    {"id":"formal","title":"正式训练与持续巡检","after":["preflight"],"acceptance":"预检通过直接启动Stage1 6000步，工作台可见并按原协议继续；记录真实进度及资源"},
+    {"id":"handoff","title":"合并与交付","after":["formal"],"acceptance":"工程门禁通过后合并main，提供GitHub、正式job与产物位置、未完成事项"}
+  ]
+}
