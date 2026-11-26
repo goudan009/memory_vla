@@ -1,0 +1,17 @@
+{
+  "goal": "按用户V2.1开发前调查任务书提取真实数据、资产和接口证据；不训练、不修改模型、不影响现有作业",
+  "created_at": "2026-11-26",
+  "author": "Codex /root",
+  "reason": "用户已明确授权调查、提取和必要接口验证，首版执行计划",
+  "category": "data_interface_investigation",
+  "code_commit": "0d28bc506c3def15b2f76bdbdc0a3ccb1b4567a8",
+  "mainline": ["sources", "data", "mapping", "verification", "delivery"],
+  "nodes": [
+    {"id":"sources","title":"定位设计、数据、资产与运行资源","after":[],"parallel_with":[],"acceptance":"记录实际路径、版本、工作台状态和证据来源"},
+    {"id":"data","title":"状态清单与200条示教标签认证","after":["sources"],"parallel_with":["model"],"acceptance":"逐帧可认证值或明确未知；统计覆盖量、切换和时间对齐；禁止启发式伪标签"},
+    {"id":"model","title":"V1与历史V2实际模型接口","after":["sources"],"parallel_with":["data"],"acceptance":"源码、commit、张量形状及训练推理接入位置可核查"},
+    {"id":"mapping","title":"机器人资产、拓扑和状态动作映射","after":["data"],"parallel_with":["model"],"acceptance":"真实资产全部关节连杆、82维观测、有效动作与填充列可追溯"},
+    {"id":"verification","title":"对齐、状态切换与FK验证","after":["mapping","model"],"parallel_with":[],"acceptance":"真实数值及原始图像；FK误差有实测或说明具体缺口；如需仿真必须先preview并保留现有作业"},
+    {"id":"delivery","title":"汇总验收与打包","after":["verification"],"parallel_with":[],"acceptance":"交付文件、脚本、样例、证据和校验和齐全；逐项标明完成程度及不可获取项"}
+  ]
+}
