@@ -1,0 +1,681 @@
+{
+  "passed": true,
+  "full_hf_reload_matches": true,
+  "strict_resume_next_update_matches": true,
+  "trainable_parameters_updated": true,
+  "backbone_unchanged": true,
+  "world_size": 4,
+  "replicated_weights_match": true,
+  "resume_reference": {
+    "input_hashes": [
+      "64160af0dd01ccf64192d63865b0e8222ddb3461a328f10fbd1405d63ea5110f",
+      "1a74eeefee480f205396a4b38c3579030dbb77bb8b250cc41c6b9b1f8ca8f401",
+      "c8e625ad187fce1bfb28e6761bb2558be6ddc704df82f4e62c7c091fade49618",
+      "56f57d2331214a9b67f7742cb685e7f97e78f935308283fa67410abb7d11ae5c",
+      "85d54c50ef31452c1e2ce2108728aca0f66028ec4504c94e4ff60738abb45ae2",
+      "32b76837d33681f2ac2f2f450f4eb078bf115de302b7d209c586a4c0aaa61f02",
+      "3386c88e105330d1ec30041bf2d024dd9472476ba01b49af91d2c7280d089ba3",
+      "d026a6334bdae7b7eef6e680bd02fee584c05f7a9b3b1d25f77f7f1d1870db46"
+    ],
+    "feature_hashes": [
+      "db2c3d36191aa652fc65b62d802a2bb3b04ea310e99c653d24dfc2490d965bbf",
+      "efdab01db8ab60df6d5a93dc32dd78042a0376798cd27e792cd39a790a638e5b",
+      "13512a78dddac78371ab785b853b4ad4c665905c2ea6ff0ed4ea7f7bf1c04103",
+      "3c2110643a2482841d820e342ddcc1f6cbed158ae50905e2837509930e01c6e3",
+      "8722e7326da3e295c9d50cc3c54fb2d7da63c3a18a2ddf9fed81e9a3b4809a8f",
+      "9fd2779c3894c8f3f504e9dc39e5b8391589f8c273f197e1bc4faf544e8b203a",
+      "83e9afe6f4648d4852ce89ae7d5422d6aa27ac227e3fddb7897a2d0786a10360",
+      "6dcd7f46dde058010cdab55a6e03e45946bb59797e5a086e7ac1b2eda36eefbe"
+    ],
+    "module_grads": {},
+    "fm": 0.3236731959041208,
+    "state": 0.0,
+    "grad_norm": 2.530726909637451,
+    "state_counts": {
+      "door_open": [
+        0,
+        0,
+        0
+      ],
+      "door_ever_opened": [
+        0,
+        0,
+        0
+      ],
+      "bag_grasped": [
+        0,
+        0,
+        0
+      ],
+      "bag_inside": [
+        0,
+        0,
+        0
+      ],
+      "bag_ever_grasped": [
+        0,
+        0,
+        0
+      ],
+      "bag_ever_inside": [
+        0,
+        0,
+        0
+      ],
+      "started": [
+        0,
+        0,
+        0
+      ],
+      "cooked_popcorn_exists": [
+        0,
+        0,
+        0
+      ]
+    },
+    "fm_shared_grad": null,
+    "state_shared_grad": null,
+    "action_elements": 47104.0,
+    "state_elements": [
+      64,
+      64,
+      64,
+      64,
+      64,
+      64,
+      64,
+      64
+    ]
+  },
+  "resume_reloaded": {
+    "input_hashes": [
+      "64160af0dd01ccf64192d63865b0e8222ddb3461a328f10fbd1405d63ea5110f",
+      "1a74eeefee480f205396a4b38c3579030dbb77bb8b250cc41c6b9b1f8ca8f401",
+      "c8e625ad187fce1bfb28e6761bb2558be6ddc704df82f4e62c7c091fade49618",
+      "56f57d2331214a9b67f7742cb685e7f97e78f935308283fa67410abb7d11ae5c",
+      "85d54c50ef31452c1e2ce2108728aca0f66028ec4504c94e4ff60738abb45ae2",
+      "32b76837d33681f2ac2f2f450f4eb078bf115de302b7d209c586a4c0aaa61f02",
+      "3386c88e105330d1ec30041bf2d024dd9472476ba01b49af91d2c7280d089ba3",
+      "d026a6334bdae7b7eef6e680bd02fee584c05f7a9b3b1d25f77f7f1d1870db46"
+    ],
+    "feature_hashes": [
+      "db2c3d36191aa652fc65b62d802a2bb3b04ea310e99c653d24dfc2490d965bbf",
+      "efdab01db8ab60df6d5a93dc32dd78042a0376798cd27e792cd39a790a638e5b",
+      "13512a78dddac78371ab785b853b4ad4c665905c2ea6ff0ed4ea7f7bf1c04103",
+      "3c2110643a2482841d820e342ddcc1f6cbed158ae50905e2837509930e01c6e3",
+      "8722e7326da3e295c9d50cc3c54fb2d7da63c3a18a2ddf9fed81e9a3b4809a8f",
+      "9fd2779c3894c8f3f504e9dc39e5b8391589f8c273f197e1bc4faf544e8b203a",
+      "83e9afe6f4648d4852ce89ae7d5422d6aa27ac227e3fddb7897a2d0786a10360",
+      "6dcd7f46dde058010cdab55a6e03e45946bb59797e5a086e7ac1b2eda36eefbe"
+    ],
+    "module_grads": {},
+    "fm": 0.3236731959041208,
+    "state": 0.0,
+    "grad_norm": 2.530726909637451,
+    "state_counts": {
+      "door_open": [
+        0,
+        0,
+        0
+      ],
+      "door_ever_opened": [
+        0,
+        0,
+        0
+      ],
+      "bag_grasped": [
+        0,
+        0,
+        0
+      ],
+      "bag_inside": [
+        0,
+        0,
+        0
+      ],
+      "bag_ever_grasped": [
+        0,
+        0,
+        0
+      ],
+      "bag_ever_inside": [
+        0,
+        0,
+        0
+      ],
+      "started": [
+        0,
+        0,
+        0
+      ],
+      "cooked_popcorn_exists": [
+        0,
+        0,
+        0
+      ]
+    },
+    "fm_shared_grad": null,
+    "state_shared_grad": null,
+    "action_elements": 47104.0,
+    "state_elements": [
+      64,
+      64,
+      64,
+      64,
+      64,
+      64,
+      64,
+      64
+    ]
+  },
+  "initial_equivalence": {
+    "not_applicable": "no residual branch"
+  },
+  "trained_equivalence": {
+    "not_applicable": "no residual branch"
+  },
+  "updated_parameters": {},
+  "missing_gradient": [],
+  "stage": "stage1",
+  "prior": "topology",
+  "rows": [
+    {
+      "input_hashes": [
+        "eab05e60827e1827d566bca3a5a03f927292532df0993d47230addc0caa1e5d8",
+        "d3208785502f1d70c32bc2978ace36a042a2e79c141606213e40434ee97c8da6",
+        "63f6620537425a477fc562242442a7b354142cf7f1c925ee465815080f690f50",
+        "43e14419ceff7a4bdae90d27cc8a912ff3f712c13cb7b3d905e8dafc102c0189",
+        "b48fd0cd00783854d9ad8142279e58326c84fe67a38405621767854e92bc2755",
+        "81f777fd4b8e40db22b059fc96e9663384f56bcc607b27db7c22e48497e7930b",
+        "351918bba52027c4323f00a7e18f4913f3e6da52aaf0ab95b07aeed8d9a79941",
+        "fd1cf2c689d8bca8324c59d994f009d5d9698cbff24c6147d3353d5c800466d0"
+      ],
+      "feature_hashes": [
+        "ffef06771eb48261e1d7516dedbebc56f1c46c474cdf6983f6c4eef82b524863",
+        "0d9867187267bb1c3e5ea88637c8467fe766549324e943240fa5f2bcd73eca42",
+        "2f619abf119baed4a7dca426940445c7044075ab879130e1d1960a898ad40256",
+        "70fad3ab3bbaa797ef020b4acf35a5e5144c7269849f422dcb0f2001074dd6db",
+        "a52b999e35087b077ab9bcdfa2ffcabd48a470bbce2182c29698a2e2bcd9cc3b",
+        "9e6c76e783510a2caed7b1a256ce5b079175b8fafa5f8b138d60860d7f533ecb",
+        "428059704c8fdfadfb39376c87fba813e14ba0eaf414e839e4fc0029be3f16c0",
+        "4aeedb8b49480c63a26f42bcd0381ece9d3ea51bf90ce3f8c7ad4989cdc18ef3"
+      ],
+      "module_grads": {},
+      "fm": 0.27448489237576723,
+      "state": 0.0,
+      "grad_norm": 2.592493772506714,
+      "state_counts": {
+        "door_open": [
+          0,
+          0,
+          0
+        ],
+        "door_ever_opened": [
+          0,
+          0,
+          0
+        ],
+        "bag_grasped": [
+          0,
+          0,
+          0
+        ],
+        "bag_inside": [
+          0,
+          0,
+          0
+        ],
+        "bag_ever_grasped": [
+          0,
+          0,
+          0
+        ],
+        "bag_ever_inside": [
+          0,
+          0,
+          0
+        ],
+        "started": [
+          0,
+          0,
+          0
+        ],
+        "cooked_popcorn_exists": [
+          0,
+          0,
+          0
+        ]
+      },
+      "fm_shared_grad": null,
+      "state_shared_grad": null,
+      "action_elements": 47104.0,
+      "state_elements": [
+        64,
+        64,
+        64,
+        64,
+        64,
+        64,
+        64,
+        64
+      ]
+    },
+    {
+      "input_hashes": [
+        "249900642c01c1bca87a727d7b220e112f412909800c67200cbe97edb01455cd",
+        "7b55489a13f08582529e3734ee7a29faea2fd39f3c23ce7c6e3db20392173cca",
+        "20114eca03f42f1d953b17f76ebe0d39ab047baf019e031681f059ca5e82332c",
+        "bff45ce83c1766015d04eae7ca66acd1920c7696a02da63e94df5916bdcd924d",
+        "c5194b0f0df4f5ae89fd0cc7c537395503ab4840472e892d56687c353c2cdb74",
+        "a906f9e39e470f5e4d597117aa4b93f4716ef608c921b01c2bf18935b1453201",
+        "2666e0a23d948e5f080e209297bc16718acbdbd15789ff098499578431349426",
+        "73aa9b1317ebf0719e927c19c438aca131d47360c94b189de1185f20089ac510"
+      ],
+      "feature_hashes": [
+        "c61ce57ab48478b5d1b8379864e151c92ee01cb04ceae8a043ee64c4234930ff",
+        "0871274cd20754f3a0c6713b07768c3e35f98dc2df4c40025b076b92dc75112f",
+        "a1beaf40baae9cf1ed97764abb32b2c4755bdc9a670b865034eb028092adfb05",
+        "985e48c617b32b84ac2ad136ada2a12840b2994b301db2529c082fecb5096291",
+        "4795a5b2c0bd206b1409c5f4e878c0b262b725554c450a0c8abffd0c655bfce8",
+        "eeb6a52e0d949876291579244894eb56a7225aaeb8d13f121040a3ed582c3ac1",
+        "348a19b9c71f70ffa756f891312230c1ba7d1257af0296dc9d936b0345553a0d",
+        "4b32f50675e372a73aae8b42788366ecb09ae2d9ceb7b3e04e83002c27bdae5b"
+      ],
+      "module_grads": {},
+      "fm": 0.3599738348275423,
+      "state": 0.0,
+      "grad_norm": 3.2791695594787598,
+      "state_counts": {
+        "door_open": [
+          0,
+          0,
+          0
+        ],
+        "door_ever_opened": [
+          0,
+          0,
+          0
+        ],
+        "bag_grasped": [
+          0,
+          0,
+          0
+        ],
+        "bag_inside": [
+          0,
+          0,
+          0
+        ],
+        "bag_ever_grasped": [
+          0,
+          0,
+          0
+        ],
+        "bag_ever_inside": [
+          0,
+          0,
+          0
+        ],
+        "started": [
+          0,
+          0,
+          0
+        ],
+        "cooked_popcorn_exists": [
+          0,
+          0,
+          0
+        ]
+      },
+      "fm_shared_grad": null,
+      "state_shared_grad": null,
+      "action_elements": 47104.0,
+      "state_elements": [
+        64,
+        64,
+        64,
+        64,
+        64,
+        64,
+        64,
+        64
+      ]
+    },
+    {
+      "input_hashes": [
+        "4bce1a1791cbefb2be956db8216bcd7fb1f498b806c1ac968fb82819861705d8",
+        "4765e9919d425f1704a635a54798ee5d817bd230d928a6fce053b4eb28bfe949",
+        "d1b869eb89196c54cfd5489008997e28e01f9a0aa2922ff999bab861eec5acd6",
+        "a1ce226df9f2258078ec1579eb0180cabaf43efbe5de4b2cc8005135871cbf99",
+        "4edd1ab3c29aa3930e35baafcf23ed24750766c6e72c7f3af1b48b8d8c80daf7",
+        "afdf17a865e7140e3f491ad0bb1379882b5a090ddf7671c1a556edc60ca0e8fb",
+        "ac6f6e70f097ecb5d6b78f6afb7ac687261a342ad358dd1f61d11c943c30a96e",
+        "8f836f886a263402949a042dc2196e24a906c246f0213aff6c072133f84a0e7e"
+      ],
+      "feature_hashes": [
+        "2f87a6993e8dcb6ea67cf4aadc898c876e7026d25401975db26cb069475c700a",
+        "1caa6544093fce6fc071c8834c80c17fdd878bdf4c0130b14e2e22b4892b4c54",
+        "8acf2a74c9040be6d2e12c2ef05deacaa28c19b9dc533d732ef0308c4afb297c",
+        "3056a3abad4fafc44c1de18de71600b4dbbad543c2260ea2def9b8b38a3a90e7",
+        "07e477d50a60b8958395c4f16779310421ad85678f005f5d9c14c7d75b640a3b",
+        "6308197781d549337a968f715084e846555c52c61db184d8c2c6bad8f7345835",
+        "fa070b4236037c306f203f5e1f0e48fe04967d1d31f6a1c0f278e4318f966458",
+        "0aa8997df59b08d2d7adc825e11d8a8429fe443cf9c66b86ecd2977a9aafd03f"
+      ],
+      "module_grads": {},
+      "fm": 0.3007486807182431,
+      "state": 0.0,
+      "grad_norm": 2.7418391704559326,
+      "state_counts": {
+        "door_open": [
+          0,
+          0,
+          0
+        ],
+        "door_ever_opened": [
+          0,
+          0,
+          0
+        ],
+        "bag_grasped": [
+          0,
+          0,
+          0
+        ],
+        "bag_inside": [
+          0,
+          0,
+          0
+        ],
+        "bag_ever_grasped": [
+          0,
+          0,
+          0
+        ],
+        "bag_ever_inside": [
+          0,
+          0,
+          0
+        ],
+        "started": [
+          0,
+          0,
+          0
+        ],
+        "cooked_popcorn_exists": [
+          0,
+          0,
+          0
+        ]
+      },
+      "fm_shared_grad": null,
+      "state_shared_grad": null,
+      "action_elements": 47104.0,
+      "state_elements": [
+        64,
+        64,
+        64,
+        64,
+        64,
+        64,
+        64,
+        64
+      ]
+    }
+  ],
+  "base_unchanged": null,
+  "label_sha256": "7c8bf5cb7db9fa2ba49579f4bb0f130dd242ac97548860b458bfeaf00ab10f80",
+  "checkpoint": "/nvme3/huggingface/train_model/GR00T/GR00T-N1.6-3B",
+  "states": [
+    "door_open",
+    "door_ever_opened",
+    "bag_grasped",
+    "bag_inside",
+    "bag_ever_grasped",
+    "bag_ever_inside",
+    "started",
+    "cooked_popcorn_exists"
+  ],
+  "microbatch": 2,
+  "fusion_layers": 0,
+  "source_digest": "c32ae17197824c733288afbc67bea42cfe0de931440a3633f09cb2e06b9868d8",
+  "identity": {
+    "stage": "stage1",
+    "prior": "topology",
+    "fusion_layers": 0,
+    "states": [
+      "door_open",
+      "door_ever_opened",
+      "bag_grasped",
+      "bag_inside",
+      "bag_ever_grasped",
+      "bag_ever_inside",
+      "started",
+      "cooked_popcorn_exists"
+    ],
+    "seed": 42,
+    "microbatch": 2,
+    "lr": 1e-05,
+    "weak_weight": 0.5,
+    "requested_state_weight": 0.01,
+    "world_size": 4,
+    "calibration_reference_sha256": null,
+    "source_digest": "c32ae17197824c733288afbc67bea42cfe0de931440a3633f09cb2e06b9868d8",
+    "label_sha256": "7c8bf5cb7db9fa2ba49579f4bb0f130dd242ac97548860b458bfeaf00ab10f80",
+    "initial_checkpoint": "/nvme3/huggingface/train_model/GR00T/GR00T-N1.6-3B",
+    "dataset": "/nvme3/data_wyh/datasets/b1k2025_groot_task40_v1_200"
+  },
+  "lambda_s": 0.01,
+  "split": {
+    "task": 40,
+    "seed": 42,
+    "train": [
+      400010,
+      400020,
+      400030,
+      400040,
+      400050,
+      400060,
+      400070,
+      400090,
+      400100,
+      400110,
+      400120,
+      400130,
+      400140,
+      400150,
+      400160,
+      400170,
+      400180,
+      400190,
+      400200,
+      400220,
+      400230,
+      400240,
+      400260,
+      400280,
+      400290,
+      400300,
+      400310,
+      400320,
+      400330,
+      400340,
+      400350,
+      400360,
+      400370,
+      400400,
+      400410,
+      400420,
+      400430,
+      400440,
+      400450,
+      400460,
+      400490,
+      400500,
+      400510,
+      400530,
+      400540,
+      400550,
+      400560,
+      400570,
+      400600,
+      400610,
+      400620,
+      400640,
+      400660,
+      400670,
+      400680,
+      400690,
+      400700,
+      400710,
+      400720,
+      400730,
+      400740,
+      400750,
+      400760,
+      400780,
+      400790,
+      400800,
+      400810,
+      400820,
+      400830,
+      400840,
+      400860,
+      400870,
+      400880,
+      400890,
+      400900,
+      400910,
+      400920,
+      400930,
+      400940,
+      400950,
+      400960,
+      400970,
+      400990,
+      401000,
+      401010,
+      401020,
+      401030,
+      401040,
+      401050,
+      401060,
+      401080,
+      401090,
+      401100,
+      401110,
+      401120,
+      401130,
+      401150,
+      401160,
+      401200,
+      401220,
+      401230,
+      401240,
+      401250,
+      401260,
+      401280,
+      401290,
+      401300,
+      401310,
+      401320,
+      401340,
+      401350,
+      401360,
+      401370,
+      401380,
+      401390,
+      401400,
+      401410,
+      401420,
+      401430,
+      401450,
+      401460,
+      401470,
+      401480,
+      401490,
+      401500,
+      401510,
+      401530,
+      401540,
+      401560,
+      401580,
+      401650,
+      401860,
+      401880,
+      401910,
+      402010,
+      402190,
+      402230,
+      402470,
+      402500,
+      402510,
+      402520,
+      402530,
+      402550,
+      402560,
+      402570,
+      402580,
+      402590,
+      402600,
+      402610,
+      402620,
+      402630,
+      402640,
+      402650,
+      402660,
+      402670,
+      402710,
+      402720,
+      402740,
+      402750,
+      402760,
+      402770,
+      402790,
+      402800,
+      402810,
+      402820,
+      402830,
+      402840,
+      402850,
+      402860,
+      402870,
+      402880,
+      402900,
+      402920,
+      402930,
+      402940,
+      402950,
+      402960,
+      402970,
+      402990,
+      403000
+    ],
+    "validation": [
+      400080,
+      400210,
+      400250,
+      400270,
+      400380,
+      400390,
+      400480,
+      400520,
+      400580,
+      400850,
+      401140,
+      401270,
+      401520,
+      401710,
+      401950,
+      402340,
+      402680,
+      402780,
+      402910,
+      402980
+    ],
+    "train_episodes_per_task": 180,
+    "validation_episodes_per_task": 20,
+    "validation_enabled": true
+  },
+  "base_initial_hash": "f88bcb26df0ee008d1e0674c6b43ae3e286ffb91bf9b18f5792d35e78d4abc47"
+}

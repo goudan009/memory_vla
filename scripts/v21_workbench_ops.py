@@ -22,7 +22,12 @@ def main():
     if args.evidence:
         args.evidence.parent.mkdir(parents=True,exist_ok=True)
         args.evidence.write_text(json.dumps(result,indent=2,ensure_ascii=False)+'\n')
-    print(json.dumps(result,ensure_ascii=False))
+    shown=result
+    if args.action=='detail':
+        shown={k:result.get(k) for k in ('run','state','checkpoints','preflight','resume','log_tail')}
+    elif args.action=='snapshot':
+        shown={'jobs':[{k:j.get(k) for k in ('run','status','step','max_steps','gpus')} for j in result.get('jobs',[]) if j.get('version')=='v2.1']}
+    print(json.dumps(shown,ensure_ascii=False))
 
 
 if __name__=='__main__':main()

@@ -130,6 +130,7 @@ def run_update(ds,pair,seed,base,model,labels,pos,args,optimizer=None,calibrate=
     fm_total=0.;state_total=0.
     fgr=sgr=None
     ordinal=0
+    input_hashes=[];feature_hashes=[]
     if calibrate:
         shared=list(model.memory.enhance.parameters())
         fgr=[None]*len(shared);sgr=[None]*len(shared)
@@ -141,9 +142,11 @@ def run_update(ds,pair,seed,base,model,labels,pos,args,optimizer=None,calibrate=
             if model is None and not owned:continue
             inputs=ds.processor.collator(g["steps"][a:b])["inputs"]
             bk,act=base.prepare_input(inputs)
+            if args.preflight_only:input_hashes.append(tensor_tree_hash((bk,act)))
             seeded(seed+g["group_id"]*100+a)
             with torch.no_grad(),torch.autocast("cuda",dtype=torch.bfloat16):
                 feat=base.backbone(bk)
+            if args.preflight_only:feature_hashes.append(tensor_tree_hash(feat))
             with torch.autocast("cuda",dtype=torch.bfloat16):
                 if model is None:
                     output=base.action_head(feat,act)
@@ -200,7 +203,7 @@ def run_update(ds,pair,seed,base,model,labels,pos,args,optimizer=None,calibrate=
             for i,p in enumerate(shared):
                 if grads[i] is None:grads[i]=torch.zeros_like(p,dtype=torch.float32)
                 parallel.sum_tensor(grads[i])
-    return dict(module_grads=module_grads,fm=totals[0],state=totals[1],grad_norm=gn,state_counts=stats,
+    return dict(input_hashes=input_hashes,feature_hashes=feature_hashes,module_grads=module_grads,fm=totals[0],state=totals[1],grad_norm=gn,state_counts=stats,
                 fm_shared_grad=norm(fgr) if calibrate else None,state_shared_grad=norm(sgr) if calibrate else None,
                 action_elements=units,state_elements=counts.cpu().tolist())
 
@@ -390,11 +393,13 @@ def main():
         checkpoint=args.output/'checkpoints'/f'{args.checkpoint_prefix}__step000003'
         reloaded_state=torch.load(checkpoint/'training_state.pt',map_location='cpu',weights_only=False)
         full_hash=base_hash(base)
+        saved_parameter_hashes={n:tensor_tree_hash(p) for n,p in (model or base).state_dict().items()}
         _,next_pair=next(seq)
         expected_row=run_update(tr,next_pair,args.seed+300000,base,model,labels,pos,args,opt)
         expected_weights=tensor_tree_hash((model or base).state_dict())
         expected_optimizer=tensor_tree_hash(opt.state_dict())
         expected_runtime=tensor_tree_hash(export_runtime(model))
+        expected_parameter_hashes={n:tensor_tree_hash(p) for n,p in (model or base).state_dict().items()}
         # Release the first model before rebuilding to keep the diagnostic's
         # peak memory bounded by the normal training footprint.
         del before,opt,model,base
@@ -402,6 +407,7 @@ def main():
         gc.collect();torch.cuda.empty_cache()
         _,proc,tr,val,labels,pos,base,model,lo,hi=initialize(args,checkpoint)
         full_reload=base_hash(base)==full_hash
+        reload_differences=[n for n,p in (model or base).state_dict().items() if tensor_tree_hash(p)!=saved_parameter_hashes[n]]
         opt=optimizer_for(base,model,args);opt.load_state_dict(reloaded_state['optimizer'])
         local=reloaded_state['ranks'][parallel.rank()]
         import_runtime(model,local['runtime']);restore_rng(local['rng'])
@@ -409,7 +415,14 @@ def main():
         resume_equal=(expected_weights==tensor_tree_hash((model or base).state_dict()) and
                       expected_optimizer==tensor_tree_hash(opt.state_dict()) and
                       expected_runtime==tensor_tree_hash(export_runtime(model)))
-        if not full_reload or not resume_equal:raise RuntimeError('full HF reload / next optimizer update mismatch')
+        diagnostics=dict(full_reload=full_reload,resume_equal=resume_equal,reload_differences=reload_differences,
+                         update_differences=[n for n,p in (model or base).state_dict().items() if tensor_tree_hash(p)!=expected_parameter_hashes[n]],
+                         weights_equal=expected_weights==tensor_tree_hash((model or base).state_dict()),
+                         optimizer_equal=expected_optimizer==tensor_tree_hash(opt.state_dict()),
+                         runtime_equal=expected_runtime==tensor_tree_hash(export_runtime(model)),
+                         reference=expected_row,replay=replay_row)
+        jsonwrite(args.output/'resume_diagnostics.json',diagnostics)
+        if not full_reload or not resume_equal:raise RuntimeError('full HF reload / next optimizer update mismatch; see resume_diagnostics.json')
         ranks_match=len(set(parallel.gather(tensor_tree_hash((model or base).state_dict()))))==1
         jsonwrite(args.output/"preflight.json",dict(passed=all(np.isfinite(r["grad_norm"]) and r["grad_norm"]>0 for r in rows) and unchanged is not False and not missing_gradient and trainable_updated and backbone_unchanged and ranks_match and full_reload and resume_equal,
                    full_hf_reload_matches=full_reload,strict_resume_next_update_matches=resume_equal,

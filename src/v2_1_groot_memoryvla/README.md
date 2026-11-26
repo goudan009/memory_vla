@@ -29,25 +29,25 @@ python -m v2_1_groot_memoryvla.train --stage stage1 \
   --dataset "$DATASET" --checkpoint "$BASE" --labels "$LABELS" \
   --output "$OUT/stage1_preflight" --preflight-only
 ```
-上述命令只打印配置。通过工作台授权短测后，再加 --execute；输出目录必须不存在。预检不产出正式权重。核对 preflight.json 的 passed 和身份字段。正式 Stage1 需另行获批，使用同一配置并指定 --accept-preflight，输出独立目录；默认 6000 步。
+上述命令只打印配置。实际运行经工作台四卡 torchrun 并加 --execute；输出目录必须不存在。预检权重只用于工程认证。核对 preflight.json 的 passed 和身份字段，证据独立归档后清理专属权重。用户已确认预检通过后直接正式 Stage1，使用同一配置并指定 --accept-preflight，输出独立目录；默认 6000 步。
 
-Stage1 完成且基线有效后，将 S1 指向其 checkpoints/step-006000（必须有 COMPLETE.json）。同样先 preview，再经批准进行：
+Stage1 完成且基线有效后，将 S1 指向其 checkpoints/v2.1__test01__exp14__run001__step006000（必须有 COMPLETE.json）。同样先 preview，再进行：
 ```bash
 python -m v2_1_groot_memoryvla.train --stage memory --prior topology \
   --dataset "$DATASET" --checkpoint "$S1" --labels "$LABELS" \
   --output "$OUT/A_preflight" --preflight-only
 ```
-真实短测将检查初始零残差、gamma=0/empty 同噪声原模型一致、校准、各模块梯度、冻结参数哈希及训练后 sidecar 重载一致性。先记录证据再决定正式 Stage2。B 使用 --prior fk；C 使用 --prior none；D 另加 --fusion-layers 2。B/C/D 指定 A 的 --calibration-reference。continued 使用 --stage continued，无记忆，同 Stage2 3000 步。
+真实短测将检查初始零残差、gamma=0/empty 同噪声原模型一致、校准、各模块梯度、冻结参数哈希及训练后 sidecar 重载一致性。记录证据且预检通过后按已确认协议进行正式 Stage2。B 使用 --prior fk；C 使用 --prior none；D 另加 --fusion-layers 2。B/C/D 指定 A 的 --calibration-reference。continued 使用 --stage continued，无记忆，同 Stage2 3000 步。
 
 训练采用两个顺序窗口、每窗32决策、stride8、microbatch2，BF16 autocast、FP32 trainable master、AdamW lr1e-5、梯度裁剪1。必要时先以 microbatch1 重做预检。resume 必须是同输出目录、同源码和同配置的已完成 checkpoint；不要把不可信 training_state.pt 载入。中断续训逐步一致性仍需真实 GPU 检验。
 
 ## 放行前必做
 1. 本地复跑 CPU 回归、核对全部 200 条数据和 label episode/帧对齐、训练集统计、真实 processor 维度，执行 Stage1 预检。
-2. Stage1 获批并有效完成后，A/B/C（D 可选）真实短测：零残差/empty/gamma0 一致；冻结权重不变；确认有效标签、梯度、参数变化和峰值显存。
+2. Stage1 有效完成后，A/B/C（D 可选）真实短测：零残差/empty/gamma0 一致；冻结权重不变；确认有效标签、梯度、参数变化和峰值显存。
 3. 真实 checkpoint 保存、完整进程重载、断点重跑对照；多环境 reset 和 episode key 不串库；真实仿真接口单回合 smoke。
 4. 工作台 backend 注册、代码同步与 preview 检查，确保显式选 V2.1 才路由新入口，不破坏 V1；现有 shell 入口支持 --source-version v2.1。
 5. 用户于2026-11-27已确认通用GR00T、180/20和原V2.1配方：A100四卡真实预检通过后直接正式训练，执行记录见 Output/test_01/experiment_14。闭环评估沿用已确认协议与工作台。
 
-离线 diagnose.py 在训练完成后运行，固定验证集 20 条 × 每条 5 个预定锚点；无合格冲突 donor 的点仅记录 normal/empty，不伪造 wrong。状态真值只用于标签监督/离线指标或选 donor，绝不输入推理模型。gamma=0 不计算原始 residual，相关诊断记 null。
+离线 diagnose.py 保留为故障定位工具；本次不新增离线Probe或错历史实验。效果交付使用仿真闭环。状态真值只用于监督和验证，绝不输入推理模型。gamma=0 不计算原始 residual，相关诊断记 null。
 
 详细配置与定义见 docs/v2/2.1-protocol.md 和 configs/task40.json。

@@ -1,0 +1,10 @@
+{
+  "run": "v2.1__test01__exp14__run001__preflight001",
+  "arm": "baseline",
+  "status": "deleted",
+  "output": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v2.1__test01__exp14__run001__preflight001",
+  "deleted_at": "2026-11-27T00:35:36.571619",
+  "evidence_path": "/nvme3/data_wyh/outputs/memory_vla/v2_1/experiment14/evidence/preflight-failed-001.json",
+  "purged": true,
+  "source": "/nvme3/projects/memory_vla/deployments/v2.1__test01__exp14__run001__preflight001"
+}

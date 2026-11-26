@@ -18,6 +18,10 @@ def world_size():
 
 
 def setup():
+    # Required for bitwise replay after rebuilding CUDA modules. CUDA attention
+    # backward may otherwise use atomic reductions even with identical RNG.
+    os.environ.setdefault("CUBLAS_WORKSPACE_CONFIG", ":4096:8")
+    torch.use_deterministic_algorithms(True)
     if int(os.environ.get("WORLD_SIZE", "1")) > 1:
         torch.cuda.set_device(int(os.environ["LOCAL_RANK"]))
         dist.init_process_group("nccl")
