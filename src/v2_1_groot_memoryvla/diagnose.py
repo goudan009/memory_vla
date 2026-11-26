@@ -43,7 +43,7 @@ def metrics(out,act,gain):
         stats=[]
         for u,d in out.get("residual_stats",[]):
             m=mask[:,:,a:b];u0=rms(u[:,:,a:b],m);raw=rms(d[:,:,a:b],m);eff=abs(gain)*raw
-            stats.append({"u0_rms":u0,"raw_residual_rms":raw,"effective_residual_rms":eff,
+            stats.append({"u0_rms":u0,"raw_residual_rms":raw if gain!=0 else None,"effective_residual_rms":eff,
                           "ratio":eff/(u0+1e-8),"near_zero_base":u0<1e-5})
         row["flow_steps"]=stats
         results[group]=row
@@ -54,10 +54,13 @@ def state_summary(scores,y,q):
         s=scores[valid];truth=y[valid]==1
         if not len(s):result[quality]={"count":0};continue
         pred=s>=.5;tp=int((pred&truth).sum());fp=int((pred&~truth).sum());fn=int((~pred&truth).sum())
-        order=np.argsort(-s,kind="stable");t=truth[order];prec=np.cumsum(t)/(np.arange(len(t))+1)
+        order=np.argsort(-s,kind="stable");t=truth[order];sorted_scores=s[order]
+        ends=np.r_[np.flatnonzero(sorted_scores[:-1]!=sorted_scores[1:]),len(s)-1]
+        cum=np.cumsum(t)[ends];prec=cum/(ends+1)
+        ap=float((np.diff(np.r_[0,cum])*prec).sum()/cum[-1]) if cum[-1]>0 else None
         result[quality]={"count":len(s),"positive":int(truth.sum()),"tp":tp,"fp":fp,"fn":fn,
                          "precision":tp/max(tp+fp,1),"recall":tp/max(tp+fn,1),"f1":2*tp/max(2*tp+fp+fn,1),
-                         "average_precision":float(prec[t].mean()) if t.any() else None}
+                         "average_precision":ap}
     return result
 def event_summary(scores,y,q,tolerance=2):
     # Known-to-known transitions can span unknown frames; preserve their intervals.
