@@ -1,14 +1,15 @@
 """Single-GPU chronological training. Explicit --execute plus preflight required.
 
 Stage1 / continued: original action expert only; memory: frozen entire base.
-No automatic launch, no implicit V1 memory fallback. Resume is intentionally not
-advertised until optimizer/runtime restore is verified on the local server.
+No automatic launch, no implicit V1 memory fallback. Resume restores the exact
+optimizer, schedule cursor, RNG and detached runtime; real-server validation is required.
 """
 import argparse,copy,json,hashlib,random
 from pathlib import Path
 import numpy as np
 import torch
 from .config import Config,CORE_STATES
+from .runtime import source_digest,export_runtime,import_runtime,rng_state,restore_rng
 from .data.labels import Labels,state_terms
 from .model.integration import Integrated
 from .data.windows import Windows,make_split,schedule,fit_statistics,TAG
@@ -43,23 +44,27 @@ def load_base(path,stage):
     if stage=="memory":base.requires_grad_(False).eval()
     else:base.action_head.train()
     return base
-def initialize(args):
+def initialize(args,resume=None):
     seeded(args.seed)
-    split=make_split(args.dataset,args.seed) if args.split is None else json.loads(args.split.read_text())
+    split=json.loads((args.output/'data_split.json').read_text()) if resume else (make_split(args.dataset,args.seed) if args.split is None else json.loads(args.split.read_text()))
     if split.get("task")!=40 or len(split["train"])!=180 or len(split["validation"])!=20 or len(set(split["train"]+split["validation"]))!=200:
         raise ValueError("invalid fixed Task40 split")
-    processor=Gr00tN1d6Processor.from_pretrained(args.checkpoint)
+    processor=Gr00tN1d6Processor.from_pretrained(resume or args.checkpoint)
     if not processor.use_relative_action or processor.use_percentiles:raise ValueError("processor convention mismatch")
     mods=processor.modality_configs[TAG]
     if list(mods["action"].delta_indices)!=list(range(32)) or processor.max_action_horizon!=50 or processor.max_action_dim!=128:
         raise ValueError("processor action contract mismatch")
     train=Windows(args.dataset,processor,split["train"],seed=args.seed)
-    if args.stage=="stage1":
+    if args.stage=="stage1" and resume is None:
         stats,lo,hi=fit_statistics(train,processor);processor.set_statistics(stats,override=True)
     else:
-        meta=json.loads((args.checkpoint/"v2_1_stage1.json").read_text())
-        if meta["split"]!=split or meta["step"]!=6000:raise ValueError("expected common Stage1 step6000 with same split")
-        if meta["statistics_sha256"]!=hash_file(args.checkpoint/"statistics.json"):raise ValueError("statistics mismatch")
+        ref=resume if args.stage=="stage1" else args.checkpoint
+        meta=json.loads((ref/"v2_1_stage1.json").read_text())
+        if meta["split"]!=split or (args.stage!="stage1" and meta["step"]!=6000):
+            raise ValueError("expected fixed split and common Stage1 step6000")
+        if meta["statistics_sha256"]!=hash_file(ref/"statistics.json"):raise ValueError("statistics mismatch")
+        if resume is not None and hash_file(resume/"statistics.json")!=meta["statistics_sha256"]:
+            raise ValueError("resumed processor statistics mismatch")
         lo,hi=meta["raw_lo"],meta["raw_hi"]
     processor.train();validation_processor=copy.deepcopy(processor);validation_processor.eval()
     val=Windows(args.dataset,validation_processor,split["validation"],seed=args.seed)
@@ -70,9 +75,15 @@ def initialize(args):
     pos=labels.class_weights(split["train"],weak_weight=args.weak_weight).cuda()
     # This also verifies that the selected fields have both classes in held-out observations.
     labels.class_weights(split["validation"],weak_weight=args.weak_weight)
-    base=load_base(args.checkpoint,args.stage)
-    model=Integrated(base,Config(prior=args.prior,fusion_layers=args.fusion_layers,states=tuple(args.states),weak_weight=args.weak_weight,
-                                 state_weight=args.state_weight),lo,hi).cuda() if args.stage=="memory" else None
+    base=load_base(resume if resume and args.stage!="memory" else args.checkpoint,args.stage)
+    model=None
+    if args.stage=="memory":
+        if resume:
+            model=Integrated.load_sidecar(base,resume,"cuda").train()
+            args.state_weight=model.cfg.state_weight
+        else:
+            model=Integrated(base,Config(prior=args.prior,fusion_layers=args.fusion_layers,states=tuple(args.states),weak_weight=args.weak_weight,
+                                         state_weight=args.state_weight),lo,hi).cuda()
     return split,processor,train,val,labels,pos,base,model,lo,hi
 
 def groups(ds,pair,seed,labels):
@@ -202,8 +213,15 @@ def validate(ds,base,model,labels,pos,args,step):
     finally:
         if model is not None:model.memory._banks=old_banks;model.train()
         else:base.action_head.train(prior)
-def save(args,base,model,processor,split,lo,hi,step,initial_hash):
-    dest=args.output/"checkpoints"/f"step-{step:06d}"
+def identity(args):
+    return {k:getattr(args,k) for k in ("stage","prior","fusion_layers","states","seed","microbatch","lr","weak_weight")} | {
+        "source_digest":source_digest(),"label_sha256":hash_file(args.labels),
+        "initial_checkpoint":str(args.checkpoint.resolve()),"dataset":str(args.dataset.resolve())}
+
+def save(args,base,model,processor,split,lo,hi,step,initial_hash,opt):
+    final=args.output/"checkpoints"/f"step-{step:06d}"
+    dest=final.with_name(final.name+".partial")
+    if final.exists():raise FileExistsError(final)
     dest.mkdir(parents=True,exist_ok=False)
     if model is None:
         base.save_pretrained(dest,max_shard_size="5GB");processor.save_pretrained(dest)
@@ -211,7 +229,7 @@ def save(args,base,model,processor,split,lo,hi,step,initial_hash):
         # Keep the exact immutable Stage1 checkpoint files, no dtype conversion on save.
         import os,shutil
         for p in args.checkpoint.iterdir():
-            if not p.is_file() or p.name in ('v2_1_run.json','v2_1.json','v2_1.pt','training_state.pt'):continue
+            if not p.is_file() or p.name in ('v2_1_run.json','v2_1.json','v2_1.pt','training_state.pt','COMPLETE.json'):continue
             if p.suffix in ('.safetensors','.bin'):
                 try:os.link(p,dest/p.name)
                 except OSError:shutil.copy2(p,dest/p.name)
@@ -225,6 +243,11 @@ def save(args,base,model,processor,split,lo,hi,step,initial_hash):
                                              statistics_sha256=hash_file(dest/"statistics.json")))
     jsonwrite(dest/"v2_1_run.json",dict(stage=args.stage,step=step,base_initial_hash=initial_hash,lambda_s=args.state_weight,
                                        label_sha256=hash_file(args.labels),prior=args.prior,states=args.states,seed=args.seed))
+    torch.save({"identity":identity(args),"step":step,"optimizer":opt.state_dict(),"runtime":export_runtime(model),
+                "rng":rng_state(),"lambda_s":args.state_weight,"base_initial_hash":initial_hash},dest/"training_state.pt")
+    jsonwrite(dest/"COMPLETE.json",{"step":step,"source_digest":source_digest()})
+    dest.rename(final)
+
 def main():
     p=argparse.ArgumentParser(__doc__)
     p.add_argument("--stage",choices=["stage1","memory","continued"],required=True)
@@ -235,6 +258,7 @@ def main():
     p.add_argument("--steps",type=int);p.add_argument("--lr",type=float,default=1e-5)
     p.add_argument("--seed",type=int,default=42);p.add_argument("--microbatch",type=int,choices=[1,2],default=2)
     p.add_argument("--weak-weight",type=float,default=.5);p.add_argument("--state-weight",type=float,default=.01)
+    p.add_argument("--resume",type=Path,help="Completed checkpoint from this same output run (trusted local file)")
     p.add_argument("--execute",action="store_true");p.add_argument("--preflight-only",action="store_true")
     p.add_argument("--accept-preflight",type=Path,help="Required signed-off local preflight evidence for formal run")
     args=p.parse_args()
@@ -245,17 +269,30 @@ def main():
     print(json.dumps(spec,indent=2))
     if not args.execute:return
     if args.stage=="stage1" and (args.checkpoint/"v2_1_stage1.json").exists():raise ValueError("Stage1 must start from generic GR00T, not an existing Stage1 result")
-    if not args.preflight_only:
+    if args.resume and args.preflight_only:raise ValueError('resume is not a disposable preflight')
+    if not args.preflight_only and not args.resume:
         if args.accept_preflight is None or not args.accept_preflight.exists():raise SystemExit("formal run requires local preflight evidence")
         gate=json.loads(args.accept_preflight.read_text())
-        if not gate.get("passed") or gate.get("stage")!=args.stage or gate.get("prior")!=args.prior or gate.get("label_sha256")!=hash_file(args.labels) or gate.get("checkpoint")!=str(args.checkpoint.resolve()) or gate.get("states")!=args.states or gate.get("microbatch")!=args.microbatch or gate.get("fusion_layers")!=args.fusion_layers:
+        if not gate.get("passed") or gate.get("stage")!=args.stage or gate.get("prior")!=args.prior or gate.get("label_sha256")!=hash_file(args.labels) or gate.get("checkpoint")!=str(args.checkpoint.resolve()) or gate.get("states")!=args.states or gate.get("microbatch")!=args.microbatch or gate.get("fusion_layers")!=args.fusion_layers or gate.get('source_digest')!=source_digest():
             raise SystemExit("preflight evidence mismatch")
     if not torch.cuda.is_available() or torch.cuda.device_count()!=1:raise SystemExit("select one GPU explicitly")
-    args.output.mkdir(parents=True,exist_ok=False)
-    split,proc,tr,val,labels,pos,base,model,lo,hi=initialize(args)
-    jsonwrite(args.output/"config.json",spec);jsonwrite(args.output/"data_split.json",split)
+    saved=None
+    if args.resume:
+        if args.resume.resolve().parent!=(args.output/"checkpoints").resolve() or not (args.resume/"COMPLETE.json").is_file():
+            raise ValueError("resume must be a completed checkpoint of this run")
+        # Local, user-owned training state includes Python/NumPy RNG objects.
+        saved=torch.load(args.resume/"training_state.pt",map_location="cpu",weights_only=False)
+        if saved["identity"]!=identity(args) or not 0<=saved["step"]<args.steps:
+            raise ValueError("resume configuration/source or budget mismatch")
+        args.state_weight=float(saved["lambda_s"])
+    else:args.output.mkdir(parents=True,exist_ok=False)
+    split,proc,tr,val,labels,pos,base,model,lo,hi=initialize(args,args.resume)
+    if saved is None:
+        jsonwrite(args.output/"config.json",spec);jsonwrite(args.output/"data_split.json",split)
     initial_hash=base_hash(base) if model is not None else None
-    if model is not None:
+    if saved is not None and model is not None and initial_hash!=saved["base_initial_hash"]:
+        raise ValueError("base checkpoint changed during resume")
+    if model is not None and saved is None:
         if args.prior!='topology':
             if args.calibration_reference is None:raise ValueError('B/C/D require A calibration reference')
             ref=json.loads(args.calibration_reference.read_text())
@@ -285,19 +322,25 @@ def main():
                    initial_equivalence=initial_equiv,trained_equivalence=trained_equiv,updated_parameters=updated,missing_gradient=missing_gradient,
                    stage=args.stage,prior=args.prior,rows=rows,base_unchanged=unchanged,
                    label_sha256=hash_file(args.labels),checkpoint=str(args.checkpoint.resolve()),states=args.states,
-                   microbatch=args.microbatch,fusion_layers=args.fusion_layers))
+                   microbatch=args.microbatch,fusion_layers=args.fusion_layers,source_digest=source_digest()))
         return
     opt=optimizer_for(base,model,args);seq=stream(tr,args.seed)
-    save(args,base,model,proc,split,lo,hi,0,initial_hash)
-    jsonwrite(args.output/"validation-000000.json",validate(val,base,model,labels,pos,args,0))
-    for step in range(1,args.steps+1):
+    if saved is None:
+        start=0
+        save(args,base,model,proc,split,lo,hi,0,initial_hash,opt)
+        jsonwrite(args.output/"validation-000000.json",validate(val,base,model,labels,pos,args,0))
+    else:
+        start=int(saved["step"])
+        opt.load_state_dict(saved["optimizer"]);import_runtime(model,saved["runtime"]);restore_rng(saved["rng"])
+        for _ in range(start):next(seq)
+    for step in range(start+1,args.steps+1):
         epoch,pair=next(seq);r=run_update(tr,pair,args.seed+(step-1)*100000,base,model,labels,pos,args,opt)
         r.update(step=step,epoch=epoch,windows=pair)
         with (args.output/"metrics.jsonl").open("a") as f:f.write(json.dumps(r)+"\n")
         print(json.dumps(r),flush=True)
         if step%1000==0 or step==args.steps:
             if model is not None and base_hash(base)!=initial_hash:raise RuntimeError("frozen base changed")
-            save(args,base,model,proc,split,lo,hi,step,initial_hash)
+            save(args,base,model,proc,split,lo,hi,step,initial_hash,opt)
         if step%(3000 if args.stage=="stage1" else 1000)==0 or step==args.steps:
             jsonwrite(args.output/f"validation-{step:06d}.json",validate(val,base,model,labels,pos,args,step))
 if __name__=="__main__":main()
