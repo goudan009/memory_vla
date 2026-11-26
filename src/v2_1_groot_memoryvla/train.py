@@ -60,6 +60,8 @@ def initialize(args,resume=None):
     else:
         ref=resume if args.stage=="stage1" else args.checkpoint
         meta=json.loads((ref/"v2_1_stage1.json").read_text())
+        complete=json.loads((ref/"COMPLETE.json").read_text())
+        if complete["step"]!=meta["step"]:raise ValueError("incomplete Stage1 checkpoint")
         if meta["split"]!=split or (args.stage!="stage1" and meta["step"]!=6000):
             raise ValueError("expected fixed split and common Stage1 step6000")
         if meta["statistics_sha256"]!=hash_file(ref/"statistics.json"):raise ValueError("statistics mismatch")
@@ -273,7 +275,7 @@ def main():
     if not args.preflight_only and not args.resume:
         if args.accept_preflight is None or not args.accept_preflight.exists():raise SystemExit("formal run requires local preflight evidence")
         gate=json.loads(args.accept_preflight.read_text())
-        if not gate.get("passed") or gate.get("stage")!=args.stage or gate.get("prior")!=args.prior or gate.get("label_sha256")!=hash_file(args.labels) or gate.get("checkpoint")!=str(args.checkpoint.resolve()) or gate.get("states")!=args.states or gate.get("microbatch")!=args.microbatch or gate.get("fusion_layers")!=args.fusion_layers or gate.get('source_digest')!=source_digest():
+        if not gate.get("passed") or gate.get("identity")!=identity(args):
             raise SystemExit("preflight evidence mismatch")
     if not torch.cuda.is_available() or torch.cuda.device_count()!=1:raise SystemExit("select one GPU explicitly")
     saved=None
@@ -289,20 +291,22 @@ def main():
     split,proc,tr,val,labels,pos,base,model,lo,hi=initialize(args,args.resume)
     if saved is None:
         jsonwrite(args.output/"config.json",spec);jsonwrite(args.output/"data_split.json",split)
-    initial_hash=base_hash(base) if model is not None else None
+    initial_hash=saved["base_initial_hash"] if saved is not None and model is None else base_hash(base)
+    if not args.preflight_only and saved is None and (gate["split"]!=split or gate["base_initial_hash"]!=initial_hash):
+        raise ValueError("preflight split or initial weights changed")
     if saved is not None and model is not None and initial_hash!=saved["base_initial_hash"]:
         raise ValueError("base checkpoint changed during resume")
     if model is not None and saved is None:
         if args.prior!='topology':
             if args.calibration_reference is None:raise ValueError('B/C/D require A calibration reference')
             ref=json.loads(args.calibration_reference.read_text())
-            if ref.get('prior')!='topology' or ref.get('label_sha256')!=hash_file(args.labels) or ref.get('states')!=args.states or ref.get('split')!=split:
+            if ref.get('prior')!='topology' or ref.get('label_sha256')!=hash_file(args.labels) or ref.get('states')!=args.states or ref.get('split')!=split or ref.get('base_initial_hash')!=initial_hash or ref.get('weak_weight')!=args.weak_weight:
                 raise ValueError('A calibration reference is incompatible')
             args.state_weight=float(ref['lambda_s'])
             if not .001<=args.state_weight<=.1:raise ValueError('invalid reference lambda_s')
             result=dict(lambda_s=args.state_weight,reference=str(args.calibration_reference),ratio=ref['ratio'])
         else:result=calibration(tr,base,model,labels,pos,args)
-        result.update(prior=args.prior,label_sha256=hash_file(args.labels),states=args.states,split=split)
+        result.update(prior=args.prior,label_sha256=hash_file(args.labels),states=args.states,split=split,base_initial_hash=initial_hash,weak_weight=args.weak_weight)
         jsonwrite(args.output/"calibration.json",result)
     if args.preflight_only:
         from .preflight import equivalence
@@ -322,7 +326,8 @@ def main():
                    initial_equivalence=initial_equiv,trained_equivalence=trained_equiv,updated_parameters=updated,missing_gradient=missing_gradient,
                    stage=args.stage,prior=args.prior,rows=rows,base_unchanged=unchanged,
                    label_sha256=hash_file(args.labels),checkpoint=str(args.checkpoint.resolve()),states=args.states,
-                   microbatch=args.microbatch,fusion_layers=args.fusion_layers,source_digest=source_digest()))
+                   microbatch=args.microbatch,fusion_layers=args.fusion_layers,source_digest=source_digest(),
+                   identity=identity(args),split=split,base_initial_hash=initial_hash))
         return
     opt=optimizer_for(base,model,args);seq=stream(tr,args.seed)
     if saved is None:
