@@ -331,7 +331,7 @@ let s='<defs><marker id="act-tip" markerUnits="userSpaceOnUse" markerWidth="6" m
 function rt(x,y,w,h,f,st='#a7b8c9'){s+='<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="4" fill="'+f+'" stroke="'+st+'"/>'}
 function tx(x,y,t,a='middle',size=15){s+='<text x="'+x+'" y="'+y+'" text-anchor="'+a+'" font-size="'+size+'">'+t+'</text>'}
 function arr(d){s+='<path d="'+d+'" fill="none" stroke="#8192a3" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#act-tip)"/>'}
-for(let k=0;k<2;k++){let xx=20+k*185;tx(xx+76,24,k?'基准 u₀：H×N':'带噪 X：H×N');for(let i=0;i<8;i++)for(let j=0;j<6;j++)rt(xx+j*25,40+i*21,21,17,j===row?'#b6d0ec':'#edf1f5',j===row?'#2863a5':'#cad4df');const x=xx+row*25+10.5, track=213+k*17;arr('M'+x+' 204V'+track+'H'+(385+k*12)+'V'+(250+k*14)+'H415')}
+for(let k=0;k<2;k++){let xx=20+k*185;tx(xx+76,24,k?'基准 u₀：H×N':'带噪 X：H×N');for(let i=0;i<8;i++)for(let j=0;j<6;j++)rt(xx+j*25,40+i*21,21,17,j===row?'#b6d0ec':'#edf1f5',j===row?'#2863a5':'#cad4df');}const x0=20+row*25+10.5,x1=205+row*25+10.5;s+='<path d="M'+x0+' 204V216H397M'+x1+' 204V216" fill="none" stroke="#8192a3" stroke-width="1.5" stroke-linejoin="round"/>';s+='<circle cx="'+x1+'" cy="216" r="2.4" fill="#8192a3"/>';arr('M397 216V263H415');
 rt(415,232,160,62,'#eaf2fc');tx(495,255,'Jʲ：256维');tx(495,277,names[row],'middle',13);
 rt(415,36,160,54,'#fff4e1');tx(495,57,'mʲ：256维');tx(495,76,'同编号历史','middle',13);
 rt(415,115,160,54,'#eaf2fc');tx(495,137,'Bʲ / τ');tx(495,156,'本体与生成时间','middle',13);arr('M495 169V232');
