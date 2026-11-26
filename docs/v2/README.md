@@ -16,7 +16,7 @@
 | [统一符号](notation.md) | 数学符号、张量与时间索引约定 |
 | [历史归档](archive/README.md) | 历史架构、早期构建稿、旧网页及旧 SVG |
 
-当前 A（局部拓扑 + 全局）优先、B（FK + 全局）备选、C（单层全局）对照；尚未实现或正式训练。拟新增 src/v2_1_groot_memoryvla/，保留原实验和 checkpoint 身份。V2.0及早期稿全文保留在 archive，不覆盖现有结果。
+当前 A（局部拓扑 + 全局）优先、B（FK + 全局）备选、C（单层全局）对照；增加非学习型推理残差强度 `residual_scale`（γ，默认1.0），仍为 V2.1。已放行源码开发，尚未实现或正式训练。拟新增 src/v2_1_groot_memoryvla/，保留原实验和 checkpoint 身份。V2.0及早期稿全文保留在 archive，不覆盖现有结果。
 
 ## 后续维护约定
 
