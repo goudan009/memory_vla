@@ -109,3 +109,24 @@ def test_causal_memory_gradient_and_empty():
         assert torch.equal(out,u) and torch.count_nonzero(d)==0
     model.reset();assert not model.banks.last
     del model,head,opt;gc.collect()
+
+
+def test_runtime_roundtrip():
+    from types import SimpleNamespace
+    from v2_1_groot_memoryvla.runtime import export_runtime,import_runtime
+    lo,hi=bounds()
+    b=Banks(2,.2,lo,hi)
+    q=torch.zeros(82);q[3:6]=1.;q[10]=1.
+    for t in range(5):
+        b.write('a',t,torch.ones(3,4)*t,q,torch.ones(6)*t,torch.ones(2)*t)
+    model=SimpleNamespace(memory=SimpleNamespace(banks=b,robot=SimpleNamespace(lo=lo)),reset=b.reset)
+    state=export_runtime(model)
+    b.reset()
+    import_runtime(model,state)
+    assert b.last['a']==4 and sum(s.count for s in b.p['a'])==5
+    p,c,prev=b.read('a',5)
+    assert all(s.end<5 for s in p+c)
+    assert torch.equal(prev,torch.full((2,),4.))
+    assert torch.equal(p[0].value,state['p']['a'][0][3])
+    assert not p[0].value.requires_grad
+    assert b.read('other',0)==([],[],None)
