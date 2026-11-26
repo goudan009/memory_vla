@@ -1,0 +1,18 @@
+{
+  "goal": "恢复原始物体资产并扩展Task40可认证/弱标签、历史事件及跨任务提取接口；不训练、不修改模型、不影响现有实验",
+  "created_at": "2026-11-26",
+  "author": "Codex /root",
+  "reason": "用户新增明确授权：尝试恢复原始资产认证Inside；允许清楚标识的抓取弱标签；统一可靠状态和历史事件。保留v001与已发布交付。",
+  "category": "label_data_extension",
+  "code_commit": "0c83d38b8e8b3bbc7ef8028d0440f63409c64141",
+  "output": "v2_1_preflight/label_extension/",
+  "mainline": ["asset_recovery", "geometry", "unified_labels", "audit", "delivery"],
+  "nodes": [
+    {"id":"asset_recovery","title":"原始资产恢复与身份核验","after":[],"parallel_with":[],"acceptance":"记录本地/历史/官方来源及hash；不替换共享资产；找到匹配原始资产或明确检索缺口"},
+    {"id":"geometry","title":"Inside几何与原始记录认证","after":["asset_recovery"],"parallel_with":["grasp"],"acceptance":"按实际Inside源码、记录位姿及真实资产计算；验证恢复与原图/接口一致；证据不足不得标认证"},
+    {"id":"grasp","title":"多视角与运动一致性抓取补充","after":["asset_recovery"],"parallel_with":["geometry"],"acceptance":"融合物体/末端轨迹及原始多视角抽查；认证与弱标签分离；阈值与边界未知可追溯"},
+    {"id":"unified_labels","title":"统一当前状态、历史事件与跨任务接口","after":["geometry","grasp"],"parallel_with":[],"acceptance":"200条所有观测帧一致索引；逐状态值/质量/有效性掩码/来源；历史事件遵循未知传播；配置化对象角色和谓词"},
+    {"id":"audit","title":"状态统计与关键切换验收","after":["unified_labels"],"parallel_with":[],"acceptance":"正负未知和认证/弱标签统计、事件因果性、切换图像、数值一致性和脚本检查通过"},
+    {"id":"delivery","title":"记录、打包与GitHub更新","after":["audit"],"parallel_with":[],"acceptance":"报告、机器可读schema、逐帧标签、统计、样例与复现入口齐全；保留旧版发布与明确认证边界"}
+  ]
+}
