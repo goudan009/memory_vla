@@ -144,7 +144,16 @@ def run_update(ds,pair,seed,base,model,labels,pos,args,optimizer=None,calibrate=
         gn=float(torch.nn.utils.clip_grad_norm_(params,1.,error_if_nonfinite=True))
         optimizer.step()
     else:gn=0.
-    return dict(fm=fm_total,state=state_total,grad_norm=gn,state_counts=stats,
+    module_grads={}
+    if optimizer is not None and args.preflight_only and model is not None:
+        for name,module in dict(visual=model.memory.visual,enhance=model.memory.enhance,state_head=model.memory.state_head,
+             body=model.memory.robot.body,whole=model.memory.robot.whole,identity=model.memory.robot.id_embed,
+             cognition=model.memory.cog_read,cognitive_gate=model.memory.cog_gate,cognitive_time=model.memory.cog_time,
+             task_c=model.memory.task_c,task_v=model.memory.task_v,query=model.memory.query,key=model.memory.key,value=model.memory.value,
+             action=model.refinement.action,fusion=model.refinement.fusion,global_blocks=model.refinement.global_blocks,output=model.refinement.output,
+             **({"local":model.refinement.local} if model.refinement.local is not None else {})).items():
+            module_grads[name]=norm([p.grad for p in module.parameters()])
+    return dict(module_grads=module_grads,fm=fm_total,state=state_total,grad_norm=gn,state_counts=stats,
                 fm_shared_grad=norm(fgr) if calibrate else None,state_shared_grad=norm(sgr) if calibrate else None,
                 action_elements=units,state_elements=counts.cpu().tolist())
 
@@ -259,13 +268,21 @@ def main():
         result.update(prior=args.prior,label_sha256=hash_file(args.labels),states=args.states,split=split)
         jsonwrite(args.output/"calibration.json",result)
     if args.preflight_only:
+        from .preflight import equivalence
+        initial_equiv=equivalence(base,model,tr,args.output/'initial',args.seed)
         # Disposable actual optimization; separate run, never promoted to checkpoint.
+        before={k:p.detach().cpu().clone() for k,p in model.named_parameters() if p.requires_grad} if model is not None else {}
         opt=optimizer_for(base,model,args)
         seq=stream(tr,args.seed);rows=[]
         for i in range(3):
             _,pair=next(seq);rows.append(run_update(tr,pair,args.seed+i*100000,base,model,labels,pos,args,opt))
         unchanged=(base_hash(base)==initial_hash) if model is not None else None
-        jsonwrite(args.output/"preflight.json",dict(passed=all(np.isfinite(r["grad_norm"]) and r["grad_norm"]>0 for r in rows) and unchanged is not False,
+        updated={k:bool(not torch.equal(before[k],p.detach().cpu())) for k,p in model.named_parameters() if k in before} if model is not None else {}
+        module_names=set().union(*(r['module_grads'] for r in rows))
+        missing_gradient=[n for n in sorted(module_names) if not any(np.isfinite(r['module_grads'].get(n,0.)) and r['module_grads'].get(n,0.)>0 for r in rows[1:])]
+        trained_equiv=equivalence(base,model,tr,args.output/'trained',args.seed)
+        jsonwrite(args.output/"preflight.json",dict(passed=all(np.isfinite(r["grad_norm"]) and r["grad_norm"]>0 for r in rows) and unchanged is not False and not missing_gradient and (bool(any(updated.values())) if model is not None else True),
+                   initial_equivalence=initial_equiv,trained_equivalence=trained_equiv,updated_parameters=updated,missing_gradient=missing_gradient,
                    stage=args.stage,prior=args.prior,rows=rows,base_unchanged=unchanged,
                    label_sha256=hash_file(args.labels),checkpoint=str(args.checkpoint.resolve()),states=args.states,
                    microbatch=args.microbatch,fusion_layers=args.fusion_layers))
