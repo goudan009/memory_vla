@@ -12,7 +12,7 @@ from .data.labels import Labels
 from .model.integration import Integrated
 from .model.memory import Slot
 from .model.velocity import inference_velocity
-from .train import load_base
+from .loading import load_base
 from v1_groot_memoryvla.experiment.first_training import seeded
 from v1_groot_memoryvla.model.gr00t_n1d6.processing_gr00t_n1d6 import Gr00tN1d6Processor
 

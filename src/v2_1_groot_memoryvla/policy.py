@@ -4,9 +4,12 @@ from typing import Any
 import numpy as np
 import torch
 from v1_groot_memoryvla.policy.gr00t_policy import Gr00tPolicy,_rec_to_dtype
+from v1_groot_memoryvla.policy.policy import BasePolicy
 from v1_groot_memoryvla.policy.memory_state import MemoryState
 from v1_groot_memoryvla.data.types import MessageType
+from v1_groot_memoryvla.model.gr00t_n1d6.processing_gr00t_n1d6 import Gr00tN1d6Processor
 from .model.integration import Integrated
+from .loading import load_base
 from .config import check_scale
 from .data.windows import raw_from_states
 
@@ -16,8 +19,18 @@ class Policy(Gr00tPolicy):
             raise ValueError('Expected V2.1 sidecar; refusing a baseline fallback')
         if embodiment_tag.value!='behavior_r1_pro':
             raise ValueError('V2.1 currently supports the audited R1Pro mapping')
-        super().__init__(embodiment_tag,model_path,device=device,strict=strict,history_mode='normal')
-        self.model=Integrated.load_sidecar(self.model,model_path,device)
+        BasePolicy.__init__(self,strict=strict)
+        base=load_base(model_path,"memory",device=device)
+        self.model=Integrated.load_sidecar(base,model_path,device)
+        self.processor=Gr00tN1d6Processor.from_pretrained(model_path)
+        self.processor.eval()
+        self.embodiment_tag=embodiment_tag
+        self.modality_configs=self.processor.get_modality_configs()[embodiment_tag.value]
+        self.collate_fn=self.processor.collator
+        language=self.modality_configs["language"]
+        if len(language.modality_keys)!=1 or len(language.delta_indices)!=1:
+            raise ValueError("Only one language key and delta index are supported")
+        self.language_key=language.modality_keys[0]
         self.device_type=next(self.model.base.parameters()).device.type
         self.model.residual_scale=check_scale(residual_scale)
         self.memory_state=MemoryState(self.model.memory)

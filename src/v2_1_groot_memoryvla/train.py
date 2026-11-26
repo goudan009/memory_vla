@@ -14,7 +14,7 @@ from .data.labels import Labels,state_terms
 from .model.integration import Integrated
 from .data.windows import Windows,make_split,schedule,fit_statistics,TAG
 from v1_groot_memoryvla.experiment.first_training import seeded
-from v1_groot_memoryvla.model.gr00t_n1d6.gr00t_n1d6 import Gr00tN1d6
+from .loading import load_base
 from v1_groot_memoryvla.model.gr00t_n1d6.processing_gr00t_n1d6 import Gr00tN1d6Processor
 
 def jsonwrite(p,x):
@@ -30,20 +30,6 @@ def base_hash(base):
     for name,p in base.named_parameters():
         h.update(name.encode());h.update(p.detach().cpu().contiguous().reshape(-1).view(torch.uint8).numpy().tobytes())
     return h.hexdigest()
-def load_base(path,stage):
-    saved=json.loads((Path(path)/"config.json").read_text())
-    if saved.get("memory_enabled") or saved.get("finetuning_lora"):raise ValueError("expected original no-memory full checkpoint")
-    base,info=Gr00tN1d6.from_pretrained(path,memory_enabled=False,tune_llm=False,tune_visual=False,
-        tune_top_llm_layers=0,backbone_trainable_params_fp32=False,torch_dtype=torch.float32,output_loading_info=True)
-    if any(info.get(k) for k in ("missing_keys","unexpected_keys","mismatched_keys","error_msgs")):
-        raise ValueError("base checkpoint load mismatch: "+str(info))
-    base.backbone.requires_grad_(False).bfloat16().eval()
-    tune=stage!="memory"
-    base.action_head.set_trainable_parameters(tune,tune,tune)
-    base.action_head.float();base.to("cuda")
-    if stage=="memory":base.requires_grad_(False).eval()
-    else:base.action_head.train()
-    return base
 def initialize(args,resume=None):
     seeded(args.seed)
     split=json.loads((args.output/'data_split.json').read_text()) if resume else (make_split(args.dataset,args.seed) if args.split is None else json.loads(args.split.read_text()))
@@ -217,8 +203,14 @@ def validate(ds,base,model,labels,pos,args,step):
         else:base.action_head.train(prior)
 def identity(args):
     return {k:getattr(args,k) for k in ("stage","prior","fusion_layers","states","seed","microbatch","lr","weak_weight")} | {
+        "requested_state_weight":getattr(args,"requested_state_weight",args.state_weight),
+        "calibration_reference_sha256":hash_file(args.calibration_reference) if args.calibration_reference is not None else None,
         "source_digest":source_digest(),"label_sha256":hash_file(args.labels),
         "initial_checkpoint":str(args.checkpoint.resolve()),"dataset":str(args.dataset.resolve())}
+
+def verify_calibrated_weight(gate,args):
+    if gate.get("lambda_s")!=args.state_weight:
+        raise ValueError("preflight calibrated state weight mismatch")
 
 def save(args,base,model,processor,split,lo,hi,step,initial_hash,opt):
     final=args.output/"checkpoints"/f"step-{step:06d}"
@@ -264,6 +256,8 @@ def main():
     p.add_argument("--execute",action="store_true");p.add_argument("--preflight-only",action="store_true")
     p.add_argument("--accept-preflight",type=Path,help="Required signed-off local preflight evidence for formal run")
     args=p.parse_args()
+    # Preserve the requested configuration while calibration/resume changes the effective loss.
+    args.requested_state_weight=args.state_weight
     args.steps=(6000 if args.stage=="stage1" else 3000) if args.steps is None else args.steps
     if args.steps<1 or not np.isfinite(args.lr) or args.lr<=0:raise ValueError('invalid training budget')
     Config(prior=args.prior,fusion_layers=args.fusion_layers,states=tuple(args.states),weak_weight=args.weak_weight,state_weight=args.state_weight)
@@ -289,6 +283,8 @@ def main():
         args.state_weight=float(saved["lambda_s"])
     else:args.output.mkdir(parents=True,exist_ok=False)
     split,proc,tr,val,labels,pos,base,model,lo,hi=initialize(args,args.resume)
+    if saved is not None:
+        verify_calibrated_weight(saved,args)
     if saved is None:
         jsonwrite(args.output/"config.json",spec);jsonwrite(args.output/"data_split.json",split)
     initial_hash=saved["base_initial_hash"] if saved is not None and model is None else base_hash(base)
@@ -308,6 +304,8 @@ def main():
         else:result=calibration(tr,base,model,labels,pos,args)
         result.update(prior=args.prior,label_sha256=hash_file(args.labels),states=args.states,split=split,base_initial_hash=initial_hash,weak_weight=args.weak_weight)
         jsonwrite(args.output/"calibration.json",result)
+    if saved is None and not args.preflight_only:
+        verify_calibrated_weight(gate,args)
     if args.preflight_only:
         from .preflight import equivalence
         initial_equiv=equivalence(base,model,tr,args.output/'initial',args.seed)
@@ -327,7 +325,7 @@ def main():
                    stage=args.stage,prior=args.prior,rows=rows,base_unchanged=unchanged,
                    label_sha256=hash_file(args.labels),checkpoint=str(args.checkpoint.resolve()),states=args.states,
                    microbatch=args.microbatch,fusion_layers=args.fusion_layers,source_digest=source_digest(),
-                   identity=identity(args),split=split,base_initial_hash=initial_hash))
+                   identity=identity(args),lambda_s=args.state_weight,split=split,base_initial_hash=initial_hash))
         return
     opt=optimizer_for(base,model,args);seq=stream(tr,args.seed)
     if saved is None:

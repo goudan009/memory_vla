@@ -47,9 +47,12 @@ class Banks:
         delta[3]=torch.atan2(delta[3].sin(),delta[3].cos()).abs()
         angular=torch.atan2(a.q[6:8],a.q[3:5])-torch.atan2(b.q[6:8],b.q[3:5])
         angular=torch.atan2(angular.sin(),angular.cos()).abs()/math.pi
-        span=(self.hi[ids]-self.lo[ids]).float();span[3]=math.pi
+        span=(self.hi[ids]-self.lo[ids]).float()
         valid=span>1e-6
-        physical=torch.cat(((delta[valid]/span[valid]).clamp(0,1),angular)).mean()
+        span[3]=math.pi
+        angular_valid=((self.hi[3:5]-self.lo[3:5])>1e-6)|((self.hi[6:8]-self.lo[6:8])>1e-6)
+        components=torch.cat(((delta[valid]/span[valid]).clamp(0,1),angular[angular_valid]))
+        physical=components.mean() if components.numel() else delta.new_zeros(())
         return (1-self.alpha)*cosine_distance(a.value,b.value)+self.alpha*physical
     def merge_q(self,a,b,w):
         q=a.float()*w+b.float()*(1-w)
