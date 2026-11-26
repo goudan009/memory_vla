@@ -1,0 +1,268 @@
+"""Single-GPU chronological training. Explicit --execute plus preflight required.
+
+Stage1 / continued: original action expert only; memory: frozen entire base.
+No automatic launch, no implicit V1 memory fallback. Resume is intentionally not
+advertised until optimizer/runtime restore is verified on the local server.
+"""
+import argparse,copy,json,hashlib,random
+from pathlib import Path
+import numpy as np
+import torch
+from .config import Config,CORE_STATES
+from .data.labels import Labels,state_terms
+from .model.integration import Integrated
+from .data.windows import Windows,make_split,schedule,fit_statistics,TAG
+from v1_groot_memoryvla.experiment.first_training import seeded
+from v1_groot_memoryvla.model.gr00t_n1d6.gr00t_n1d6 import Gr00tN1d6
+from v1_groot_memoryvla.model.gr00t_n1d6.processing_gr00t_n1d6 import Gr00tN1d6Processor
+
+def jsonwrite(p,x):
+    p.parent.mkdir(parents=True,exist_ok=True)
+    p.write_text(json.dumps(x,indent=2,ensure_ascii=False)+"\n")
+def hash_file(p):
+    h=hashlib.sha256()
+    with open(p,"rb") as f:
+        for x in iter(lambda:f.read(1024*1024),b""):h.update(x)
+    return h.hexdigest()
+def base_hash(base):
+    h=hashlib.sha256()
+    for name,p in base.named_parameters():
+        h.update(name.encode());h.update(p.detach().cpu().contiguous().view(torch.uint8).numpy().tobytes())
+    return h.hexdigest()
+def load_base(path,stage):
+    saved=json.loads((Path(path)/"config.json").read_text())
+    if saved.get("memory_enabled") or saved.get("finetuning_lora"):raise ValueError("expected original no-memory full checkpoint")
+    base,info=Gr00tN1d6.from_pretrained(path,memory_enabled=False,tune_llm=False,tune_visual=False,
+        tune_top_llm_layers=0,backbone_trainable_params_fp32=False,torch_dtype=torch.float32,output_loading_info=True)
+    if any(info.get(k) for k in ("missing_keys","unexpected_keys","mismatched_keys","error_msgs")):
+        raise ValueError("base checkpoint load mismatch: "+str(info))
+    base.backbone.requires_grad_(False).bfloat16().eval()
+    tune=stage!="memory"
+    base.action_head.set_trainable_parameters(tune,tune,tune)
+    base.action_head.float();base.to("cuda")
+    if stage=="memory":base.requires_grad_(False).eval()
+    else:base.action_head.train()
+    return base
+def initialize(args):
+    seeded(args.seed)
+    split=make_split(args.dataset,args.seed) if args.split is None else json.loads(args.split.read_text())
+    if split.get("task")!=40 or len(split["train"])!=180 or len(split["validation"])!=20 or len(set(split["train"]+split["validation"]))!=200:
+        raise ValueError("invalid fixed Task40 split")
+    processor=Gr00tN1d6Processor.from_pretrained(args.checkpoint)
+    if not processor.use_relative_action or processor.use_percentiles:raise ValueError("processor convention mismatch")
+    mods=processor.modality_configs[TAG]
+    if list(mods["action"].delta_indices)!=list(range(32)) or processor.max_action_horizon!=50 or processor.max_action_dim!=128:
+        raise ValueError("processor action contract mismatch")
+    train=Windows(args.dataset,processor,split["train"],seed=args.seed)
+    if args.stage=="stage1":
+        stats,lo,hi=fit_statistics(train,processor);processor.set_statistics(stats,override=True)
+    else:
+        meta=json.loads((args.checkpoint/"v2_1_stage1.json").read_text())
+        if meta["split"]!=split or meta["step"]!=6000:raise ValueError("expected common Stage1 step6000 with same split")
+        if meta["statistics_sha256"]!=hash_file(args.checkpoint/"statistics.json"):raise ValueError("statistics mismatch")
+        lo,hi=meta["raw_lo"],meta["raw_hi"]
+    processor.train();validation_processor=copy.deepcopy(processor);validation_processor.eval()
+    val=Windows(args.dataset,validation_processor,split["validation"],seed=args.seed)
+    labels=Labels(args.labels,args.states)
+    lengths={e:n for (_,e),n in train.episode_lengths.items()}
+    if set(labels.data)!=set(split["train"]+split["validation"]) or any(len(labels.data[e][0])!=lengths[e] for e in labels.data):
+        raise ValueError("label/episode length mismatch")
+    pos=labels.class_weights(split["train"],weak_weight=args.weak_weight).cuda()
+    # This also verifies that the selected fields have both classes in held-out observations.
+    labels.class_weights(split["validation"],weak_weight=args.weak_weight)
+    base=load_base(args.checkpoint,args.stage)
+    model=Integrated(base,Config(prior=args.prior,fusion_layers=args.fusion_layers,states=tuple(args.states),weak_weight=args.weak_weight,
+                                 state_weight=args.state_weight),lo,hi).cuda() if args.stage=="memory" else None
+    return split,processor,train,val,labels,pos,base,model,lo,hi
+
+def groups(ds,pair,seed,labels):
+    out=[]
+    for k in pair:
+        seeded(seed+k);g=ds.get_group(k,sampling_seed=seed+k)
+        g["target"],g["quality"]=labels.get(g["episode"],g["frame_indices"])
+        out.append(g)
+    return out
+
+def grad_add(total,grads):
+    for i,g in enumerate(grads):
+        if g is not None:total[i]=g.detach().float() if total[i] is None else total[i]+g.detach().float()
+def norm(grads):
+    return float(torch.stack([g.square().sum() for g in grads if g is not None]).sum().sqrt()) if any(g is not None for g in grads) else 0.
+
+def run_update(ds,pair,seed,base,model,labels,pos,args,optimizer=None,calibrate=False):
+    gs=groups(ds,pair,seed,labels)
+    units=sum(float(np.asarray(s["action_mask"]).sum()) for g in gs for s in g["steps"])
+    counts=sum((g["quality"]>0).sum(0) for g in gs).cuda()
+    if units<=0:raise ValueError("no supervised actions")
+    if optimizer is not None:optimizer.zero_grad(set_to_none=True)
+    fm_total=0.;state_total=0.
+    fgr=sgr=None
+    if calibrate:
+        shared=list(model.memory.enhance.parameters())
+        fgr=[None]*len(shared);sgr=[None]*len(shared)
+    stats={n:[0,0,0] for n in args.states} # TP, FP, FN
+    for g in gs:
+        for a in range(0,len(g["steps"]),args.microbatch):
+            b=min(a+args.microbatch,len(g["steps"]))
+            inputs=ds.processor.collator(g["steps"][a:b])["inputs"]
+            bk,act=base.prepare_input(inputs)
+            seeded(seed+g["group_id"]*100+a)
+            with torch.no_grad(),torch.autocast("cuda",dtype=torch.bfloat16):
+                feat=base.backbone(bk)
+            with torch.autocast("cuda",dtype=torch.bfloat16):
+                if model is None:
+                    output=base.action_head(feat,act)
+                    fm=output["action_loss"].float().sum()/units
+                    state=fm.new_zeros(())
+                else:
+                    context=dict(mode="train_sequence",episode_keys=[g["episode_key"]]*(b-a),
+                        timesteps=g["timesteps"][a:b],sequence_start=g["episode_start"] and a==0,
+                        sequence_end=g["episode_end"] and b==len(g["steps"]))
+                    cache=model.prepare_cache(feat,bk["input_ids"],torch.from_numpy(g["raw_q"][a:b]).cuda(),context)
+                    # Reset action RNG after all memory computation.
+                    seeded(seed+g["group_id"]*100+a)
+                    output=model.loss_from_features(feat,act,cache)
+                    fm=output["fm_numerator"]/units
+                    target=g["target"][a:b].cuda();quality=g["quality"][a:b].cuda()
+                    numerator,_=state_terms(cache.logits,target,quality,pos,args.weak_weight)
+                    state=(numerator/counts.clamp_min(1)).sum()/(counts>0).sum().clamp_min(1)
+                    with torch.no_grad():
+                        pred=cache.logits>=0;known=quality>0;truth=target==1
+                        for i,n in enumerate(args.states):
+                            stats[n][0]+=int((pred[:,i]&truth[:,i]&known[:,i]).sum())
+                            stats[n][1]+=int((pred[:,i]&~truth[:,i]&known[:,i]).sum())
+                            stats[n][2]+=int((~pred[:,i]&truth[:,i]&known[:,i]).sum())
+            loss=fm+args.state_weight*state
+            if not torch.isfinite(loss):raise FloatingPointError("nonfinite training loss")
+            if calibrate:
+                if fm.requires_grad:grad_add(fgr,torch.autograd.grad(fm,shared,retain_graph=True,allow_unused=True))
+                if state.requires_grad:grad_add(sgr,torch.autograd.grad(state,shared,retain_graph=True,allow_unused=True))
+            if optimizer is not None and loss.requires_grad:loss.backward()
+            fm_total+=float(fm.detach());state_total+=float(state.detach())
+    if optimizer is not None:
+        params=[p for g in optimizer.param_groups for p in g["params"]]
+        gn=float(torch.nn.utils.clip_grad_norm_(params,1.,error_if_nonfinite=True))
+        optimizer.step()
+    else:gn=0.
+    return dict(fm=fm_total,state=state_total,grad_norm=gn,state_counts=stats,
+                fm_shared_grad=norm(fgr) if calibrate else None,state_shared_grad=norm(sgr) if calibrate else None,
+                action_elements=units,state_elements=counts.cpu().tolist())
+
+def optimizer_for(base,model,args):
+    params=[p for p in (model or base).parameters() if p.requires_grad]
+    if not params or any(p.dtype!=torch.float32 for p in params):raise ValueError("trainable FP32 parameters required")
+    return torch.optim.AdamW(params,lr=args.lr,betas=(.9,.999),eps=1e-8,weight_decay=.01)
+def stream(ds,seed):
+    epoch=0
+    while True:
+        for pair in schedule(ds,seed,epoch):yield epoch,pair
+        epoch+=1
+def calibration(ds,base,model,labels,pos,args):
+    # Save CPU master weights, isolate preflight from formal training entirely.
+    initial={k:v.detach().cpu().clone() for k,v in model.state_dict().items() if not k.startswith("base.")}
+    def once():
+        model.reset();opt=optimizer_for(base,model,args);seq=stream(ds,args.seed);rows=[]
+        for step in range(20):
+            _,pair=next(seq);rows.append(run_update(ds,pair,args.seed+step*100000,base,model,labels,pos,args,opt,True))
+        model.load_state_dict(initial,strict=False);model.reset();del opt;seeded(args.seed)
+        f=float(np.median([x["fm_shared_grad"] for x in rows]));s=float(np.median([x["state_shared_grad"] for x in rows]))
+        return f,s,rows
+    f,s,rows=once()
+    if min(f,s)<=0 or not np.isfinite([f,s]).all():raise RuntimeError("shared gradients not established")
+    ratio=args.state_weight*s/f
+    if not .1<=ratio<=10:
+        args.state_weight=float(np.clip(.5*f/s,.001,.1))
+        f,s,rows2=once()
+        ratio=args.state_weight*s/f
+        if not .1<=ratio<=10:raise RuntimeError("state/FM calibration failed")
+    else:rows2=None
+    return dict(fm=f,state=s,ratio=ratio,lambda_s=args.state_weight,initial=rows,recheck=rows2)
+
+def validate(ds,base,model,labels,pos,args,step):
+    prior=base.action_head.training;old_banks=model.memory._banks if model is not None else None
+    if model is not None:model.memory._banks=None;model.eval()
+    base.eval()
+    try:
+        total=0.;units=0.;stats={n:[0,0,0] for n in args.states}
+        with torch.no_grad():
+            for i,pair in enumerate(schedule(ds,args.seed,0)):
+                r=run_update(ds,pair,100000000+100000*i,base,model,labels,pos,args)
+                total+=r["fm"]*r["action_elements"];units+=r["action_elements"]
+                for n in stats:stats[n]=[x+y for x,y in zip(stats[n],r["state_counts"][n])]
+        return {"step":step,"fm":total/units,"states":{n:dict(tp=t[0],fp=t[1],fn=t[2],f1=2*t[0]/max(2*t[0]+t[1]+t[2],1)) for n,t in stats.items()}}
+    finally:
+        if model is not None:model.memory._banks=old_banks;model.train()
+        else:base.action_head.train(prior)
+def save(args,base,model,processor,split,lo,hi,step,initial_hash):
+    dest=args.output/"checkpoints"/f"step-{step:06d}"
+    dest.mkdir(parents=True,exist_ok=False)
+    if model is None:
+        base.save_pretrained(dest,max_shard_size="5GB");processor.save_pretrained(dest)
+    else:
+        # Keep the exact immutable Stage1 checkpoint files, no dtype conversion on save.
+        import os,shutil
+        for p in args.checkpoint.iterdir():
+            if not p.is_file():continue
+            try:os.link(p,dest/p.name)
+            except OSError:shutil.copy2(p,dest/p.name)
+        # Avoid overwriting linked files; Stage2 processor is identical to Stage1.
+        model.save_sidecar(dest)
+    if args.stage=="stage1":
+        jsonwrite(dest/"v2_1_stage1.json",dict(step=step,split=split,raw_lo=np.asarray(lo).tolist(),raw_hi=np.asarray(hi).tolist(),
+                                             statistics_sha256=hash_file(dest/"statistics.json")))
+    jsonwrite(dest/"v2_1_run.json",dict(stage=args.stage,step=step,base_initial_hash=initial_hash,lambda_s=args.state_weight,
+                                       label_sha256=hash_file(args.labels),prior=args.prior,states=args.states,seed=args.seed))
+def main():
+    p=argparse.ArgumentParser(__doc__)
+    p.add_argument("--stage",choices=["stage1","memory","continued"],required=True)
+    p.add_argument("--dataset",type=Path,required=True);p.add_argument("--checkpoint",type=Path,required=True)
+    p.add_argument("--labels",type=Path,required=True);p.add_argument("--output",type=Path,required=True)
+    p.add_argument("--split",type=Path);p.add_argument("--prior",choices=["topology","fk","none"],default="topology")
+    p.add_argument("--fusion-layers",type=int,default=0);p.add_argument("--states",nargs="+",default=list(CORE_STATES))
+    p.add_argument("--steps",type=int);p.add_argument("--lr",type=float,default=1e-5)
+    p.add_argument("--seed",type=int,default=42);p.add_argument("--microbatch",type=int,choices=[1,2],default=2)
+    p.add_argument("--weak-weight",type=float,default=.5);p.add_argument("--state-weight",type=float,default=.01)
+    p.add_argument("--execute",action="store_true");p.add_argument("--preflight-only",action="store_true")
+    p.add_argument("--accept-preflight",type=Path,help="Required signed-off local preflight evidence for formal run")
+    args=p.parse_args()
+    args.steps=args.steps or (6000 if args.stage=="stage1" else 3000)
+    spec={k:str(v) if isinstance(v,Path) else v for k,v in vars(args).items()}
+    print(json.dumps(spec,indent=2))
+    if not args.execute:return
+    if not args.preflight_only:
+        if args.accept_preflight is None or not args.accept_preflight.exists():raise SystemExit("formal run requires local preflight evidence")
+        gate=json.loads(args.accept_preflight.read_text())
+        if not gate.get("passed") or gate.get("stage")!=args.stage or gate.get("prior")!=args.prior:
+            raise SystemExit("preflight evidence mismatch")
+    if not torch.cuda.is_available() or torch.cuda.device_count()!=1:raise SystemExit("select one GPU explicitly")
+    args.output.mkdir(parents=True,exist_ok=False)
+    split,proc,tr,val,labels,pos,base,model,lo,hi=initialize(args)
+    jsonwrite(args.output/"config.json",spec);jsonwrite(args.output/"data_split.json",split)
+    initial_hash=base_hash(base) if model is not None else None
+    if model is not None:
+        result=calibration(tr,base,model,labels,pos,args)
+        jsonwrite(args.output/"calibration.json",result)
+    if args.preflight_only:
+        # Disposable actual optimization; separate run, never promoted to checkpoint.
+        opt=optimizer_for(base,model,args)
+        seq=stream(tr,args.seed);rows=[]
+        for i in range(3):
+            _,pair=next(seq);rows.append(run_update(tr,pair,args.seed+i*100000,base,model,labels,pos,args,opt))
+        unchanged=(base_hash(base)==initial_hash) if model is not None else None
+        jsonwrite(args.output/"preflight.json",dict(passed=all(np.isfinite(r["grad_norm"]) and r["grad_norm"]>0 for r in rows) and unchanged is not False,
+                   stage=args.stage,prior=args.prior,rows=rows,base_unchanged=unchanged))
+        return
+    opt=optimizer_for(base,model,args);seq=stream(tr,args.seed)
+    save(args,base,model,proc,split,lo,hi,0,initial_hash)
+    jsonwrite(args.output/"validation-000000.json",validate(val,base,model,labels,pos,args,0))
+    for step in range(1,args.steps+1):
+        epoch,pair=next(seq);r=run_update(tr,pair,args.seed+(step-1)*100000,base,model,labels,pos,args,opt)
+        r.update(step=step,epoch=epoch,windows=pair)
+        with (args.output/"metrics.jsonl").open("a") as f:f.write(json.dumps(r)+"\n")
+        print(json.dumps(r),flush=True)
+        if step%1000==0 or step==args.steps:
+            if model is not None and base_hash(base)!=initial_hash:raise RuntimeError("frozen base changed")
+            save(args,base,model,proc,split,lo,hi,step,initial_hash)
+        if step%(3000 if args.stage=="stage1" else 1000)==0 or step==args.steps:
+            jsonwrite(args.output/f"validation-{step:06d}.json",validate(val,base,model,labels,pos,args,step))
+if __name__=="__main__":main()
