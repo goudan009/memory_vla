@@ -1,0 +1,27 @@
+{
+  "step": 2,
+  "world_size": 4,
+  "run_id": "v2_1__test02__exp01__run003__preflight001",
+  "recipe": "native_random_v2",
+  "source_digest": "53a2c0ab6c747c0264988ca0b6c53e12c433cbc7354d6c542bfb95158d818615",
+  "per_rank_sample_cursor": 32,
+  "files": {
+    "optimizer.pt": "1848ac6163ef88adb9edb0ef2f93f0035f1d15851599197211185a2bd45126d3",
+    "scheduler.pt": "0a1b55ef8ff698384c9bef68da817e6c264fbc4276da08974a67873fa578074b",
+    "trainer_state.json": "14ae8d1132b6e151fb2538984b4a36cb28272b80ca73179f5bc7d5635076b67e",
+    "config.json": "b057fac6d59138f715539bb16a5e1c3d0c908fbcfd49f0d9c5d18c33d61043fa",
+    "processor_config.json": "d89876e7c6e730287bca4975566bdda31e0fb86db6b519bee7adc600e7c7623a",
+    "statistics.json": "911f1db2728ddd0b6ab840a48e353b9fbc1f0854a68826e1b76ae8c6793a9833",
+    "embodiment_id.json": "be6f2e2539fe4ec97b03d0f838afeeac74de7d074a4a01fe4bd4607fce36981e",
+    "rng_state_0.pth": "62d93eaa5af22af75192466c85ae87fd2942a684b6d2fd4c54ed23751d35716c",
+    "rng_state_1.pth": "67043702f7167e230650dfd7cd5faa4a8ef3534478701f338c846c3fd326d380",
+    "rng_state_2.pth": "154362e460d15377767538899e57c86dafe09330044d15ceda34ab98f70ddbfd",
+    "rng_state_3.pth": "b32189ffa7d0b095dc21583672199613a676d450be098e09550f09aa88214c6f",
+    "model.safetensors.index.json": "963940a09dc144b846e2fc90ed6902f081e8bbf00c20f91d561f7e8d18467149",
+    "model-00001-of-00002.safetensors": "7d09883ff96c04808b8646e5c6e1ee323b3438ca57981e7449cb58a8f36569a2",
+    "model-00002-of-00002.safetensors": "77d62e515ed7ccf51f4318f3731546b34d2d285fcbecafff8285ea379f003a5c",
+    "training_state.pt": "0071939ef7d63e8656aeab7ca87313ab577239bcd644083783a89dcf13c21efe",
+    "v2_1_stage1.json": "7e09bc606715ab1efdfe8c39205e7d64753c93056e444a738e46039d6e7b9d18",
+    "v2_1_run.json": "a7f47a28ad787c04e25a5f35690c016ebc636042d331b3cc8c78570ec6815756"
+  }
+}

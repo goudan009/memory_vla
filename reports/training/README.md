@@ -11,6 +11,7 @@ Loss 为训练记录中的 loss；V2.1 为 fm + 配方 state_weight × state。�
 | --- | --- | --- | --- | --- | --- |
 | [a100/v1__test01__exp13__run001/memory_v1](runs/a100/v1__test01__exp13__run001/memory_v1/events/204b3706c90523df31cb-958f37778991/workbench.json) | completed | 16000 / 16000 | 0.018298337 | 0.010263368 | 16000 |
 | [a100/v2_1__test02__exp01__run001/baseline](runs/a100/v2_1__test02__exp01__run001/baseline/events/51d79243d755c7c37fb3-e2583a8073bf/workbench.json) | completed | 3000 / 3000 | 0.014303987 | 0.011696154 | 3000 |
+| [a100/v2_1__test02__exp01__run003__preflight001/baseline](runs/a100/v2_1__test02__exp01__run003__preflight001/baseline/events/31e20d304097534b9bfb-79677fd3d4d3/workbench.json) | completed | 4 / 4 | 未记录 | 未记录 | 4 |
 
 ## 闭环评估总表
 
@@ -382,6 +383,104 @@ Loss 为训练记录中的 loss；V2.1 为 fm + 配方 state_weight × state。�
 | 1000 | /nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v2_1__test02__exp01__run001/run/checkpoints/v2_1__test02__exp01__run001__step001000 |
 | 10 | /nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v2_1__test02__exp01__run001/run/checkpoints/v2_1__test02__exp01__run001__step000010 |
 | 0 | /nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v2_1__test02__exp01__run001/run/checkpoints/v2_1__test02__exp01__run001__step000000 |
+
+### 闭环评估
+
+尚未归档已结束且明确绑定本 run / checkpoint 的评估。
+
+## v2_1__test02__exp01__run003__preflight001 / baseline / a100
+
+证据：[清单](runs/a100/v2_1__test02__exp01__run003__preflight001/baseline/events/31e20d304097534b9bfb-79677fd3d4d3/MANIFEST.json)、[实际配方与统计](runs/a100/v2_1__test02__exp01__run003__preflight001/baseline/events/31e20d304097534b9bfb-79677fd3d4d3/workbench.json)、[最近终态](runs/a100/v2_1__test02__exp01__run003__preflight001/baseline/latest.json)。
+
+原始输出：`/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v2_1__test02__exp01__run003__preflight001`；源码：`/nvme3/projects/memory_vla/deployments/v2_1__test02__exp01__run003__preflight001`；源码 digest：`53a2c0ab6c747c0264988ca0b6c53e12c433cbc7354d6c542bfb95158d818615`。
+
+身份字段（直接沿用工作台，不补猜历史编号）：{"model_version": "V_2_1", "test_id": null, "experiment_id": null, "training_id": "v2_1__test02__exp01__run003__preflight001", "run": "v2_1__test02__exp01__run003__preflight001"}
+
+初始权重 / 恢复：{"checkpoint": "/nvme3/huggingface/train_model/GR00T/GR00T-N1.6-3B", "label": "V2_1 原始起点", "mode": "fresh"}
+
+原始指标：已归档；step 范围 1–4；重复 step 0；非递增转换 0；范围内缺步 0；不完整尾行 0。
+
+预算记录：当前停止目标 4；原始配置 steps 6000。终态 completed 只描述本次工作台目标。
+
+### 实际记录配方
+
+字段来源：["/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v2_1__test02__exp01__run003__preflight001/config/web_launch.json"]
+
+| 参数 | 值 |
+| --- | --- |
+| accumulation | 8 |
+| arm | baseline |
+| asynchronous_validation | False |
+| category | engineering_preflight |
+| checkpoint | /nvme3/huggingface/train_model/GR00T/GR00T-N1.6-3B |
+| checkpoint_interval | 1000 |
+| checkpoint_root | /nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v2_1__test02__exp01__run003__preflight001/run/checkpoints |
+| created_at | 2026-11-27T19:26:37.323272 |
+| dataset | /nvme3/data_wyh/datasets/b1k2025_groot_task40_v1_200 |
+| enqueue | True |
+| existing_pids | [3857420, 4127800] |
+| experiment_id | exp01 |
+| global_decisions | 64 |
+| gpus | [0, 1, 2, 3] |
+| learning_rate | 0.0001 |
+| method | baseline |
+| microbatch | 2 |
+| model_version | V_2_1 |
+| naming_schema | groot-runs-v3 |
+| normalization | guarded |
+| notes | User-authorized plan-v005 native_random_v2 Stage1 gate: 6000-step scheduler, pause at2 and strict same-run resume to4; no Stage2 |
+| official_root | /nvme3/projects/GR00T/Isaac-GR00T-n1d6-9b37aa1 |
+| output | /nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v2_1__test02__exp01__run003__preflight001 |
+| preflight_only | True |
+| preflight_steps | 4 |
+| recipe | native_random_v2 |
+| run_id | v2_1__test02__exp01__run003__preflight001 |
+| run_name | v2_1__test02__exp01__run003__preflight001 |
+| scheduler | cosine |
+| seed | 42 |
+| share_existing | True |
+| source | /nvme3/projects/memory_vla/deployments/v2_1__test02__exp01__run003__preflight001 |
+| split | /nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v2.1__test01__exp14__run001/run/data_split.json |
+| stage | stage1 |
+| steps | 6000 |
+| task | 40 |
+| test_id | test02 |
+| train_episodes | 180 |
+| train_number | 3 |
+| training_id | v2_1__test02__exp01__run003__preflight001 |
+| training_run | run003 |
+| validation_enabled | True |
+| validation_episodes | 20 |
+| validation_gpu | 未记录 |
+| version | V_2_1 |
+| video_backend | torchcodec |
+| warmup_ratio | 0.05 |
+| weight_decay | 1e-05 |
+| workers | 2 |
+
+### 指标覆盖
+
+| 字段 | 有限记录 | 零值记录 | 缺失或非有限 | 均值 | 最小 / 最大 |
+| --- | --- | --- | --- | --- | --- |
+| fm | 4 | 0 | 0 | 0.296125 | 0.2101 / 0.3683 |
+| grad_norm | 4 | 0 | 0 | 2.3503545 | 1.8907443 / 2.7595453 |
+| lr | 4 | 1 | 0 | 5e-07 | 0 / 1e-06 |
+| state | 4 | 4 | 0 | 0 | 0 / 0 |
+
+### 按原始 epoch 字段汇总
+
+| epoch 原值 | 记录数 | 有限 Loss 均值 |
+| --- | --- | --- |
+| unrecorded | 4 | 未记录 |
+
+### 工作台列出的 checkpoint
+
+仅列元数据；权重与 optimizer tensor 留在训练设备。完整性标记见事件清单中的原始文件。
+
+| optimizer step | 原始路径 |
+| --- | --- |
+| 4 | /nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v2_1__test02__exp01__run003__preflight001/run/checkpoints/v2_1__test02__exp01__run003__preflight001__step000004 |
+| 2 | /nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v2_1__test02__exp01__run003__preflight001/run/checkpoints/v2_1__test02__exp01__run003__preflight001__step000002 |
 
 ### 闭环评估
 

@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  "created_at": "2026-11-26",
+  "reason": "User requested multi-agent code review and conditional merge; three reproducible defects and unresolved protocol choices found.",
+  "goal": "Review V2.1 against its design and GR00T contracts, fix confirmed engineering defects without training or changing research choices",
+  "mainline": ["review", "fix", "verify", "handoff"],
+  "nodes": [
+    {"id": "review", "title": "并行代码审查", "after": [], "acceptance": "Design, data and GR00T interface findings have source evidence"},
+    {"id": "fix", "title": "复现与最小修复", "after": ["review"], "acceptance": "Regression coverage for loader precision, compression validity and loss identity"},
+    {"id": "verify", "title": "工程验证", "after": ["fix"], "acceptance": "CPU suite and complete-environment CLI checks; explicitly identify unexecuted real-model gates"},
+    {"id": "handoff", "title": "合并条件核对", "after": ["verify"], "acceptance": "Publish fixes and review evidence; merge only if remaining concrete blockers are resolved"}
+  ]
+}

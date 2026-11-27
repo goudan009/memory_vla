@@ -1,0 +1,29 @@
+{
+  "status": "completed",
+  "step": 4,
+  "total_steps": 4,
+  "started_at": "2026-11-27T19:35:08.192073",
+  "last": {
+    "step": 4,
+    "fm": 0.3565,
+    "state": 0.0,
+    "grad_norm": 2.7338390350341797,
+    "lr": 1.0000000000000002e-06,
+    "seen_samples": 256,
+    "elapsed_seconds": 46.95851374603808,
+    "gpu_peak_allocated": 35030728704,
+    "part_loss": {
+      "base": 0.16171634717223546,
+      "torso": 0.6070029810070992,
+      "left_arm": 0.2390299942344427,
+      "left_gripper": 2.2300142608582973,
+      "right_arm": 0.1915880244757448,
+      "right_gripper": 0.04165154131169402
+    }
+  },
+  "world_size": 4,
+  "seen_samples": 256,
+  "training_complete": true,
+  "preflight_passed": true,
+  "finished_at": "2026-11-27T19:37:44.516506"
+}
