@@ -1,0 +1,94 @@
+{
+  "created_at": "2026-11-27",
+  "author": "ChatGPT 仓库协作会话",
+  "goal": "重新训练V2_1 Stage1无记忆基线，修复此前独立CLI违反工作台身份和输出约定的问题",
+  "reason": "用户已确认重训配方并明确要求遵守仓库 Agent Skill；724d3c0新增原生训练候选未接工作台及严格续训，禁止直接执行。",
+  "identity": {
+    "model_version": "V_2_1",
+    "test_id": "test02",
+    "experiment_id": "exp01",
+    "run_id": null,
+    "run_assignment": "本地工作台查询已有作业、目录、部署和回收站，锁定唯一新run；远端会话不猜编号",
+    "historical_reference": "v2.1__test01__exp14__run001__step006000",
+    "category": "formal_training"
+  },
+  "research_contract": {
+    "stage": "stage1",
+    "recipe": "native_random_v2",
+    "base": "generic GR00T-N1.6-3B",
+    "split": "historical Stage1 exact 180/20",
+    "seed": 42,
+    "steps": 6000,
+    "world_size": 4,
+    "microbatch": 2,
+    "accumulation": 8,
+    "effective_batch": 64,
+    "lr": 0.0001,
+    "scheduler": "cosine",
+    "warmup_ratio": 0.05,
+    "weight_decay": 0.00001,
+    "normalization": "guarded relative-action bounds per training-only audit; otherwise minmax",
+    "freeze": "all Eagle; train original action head/projector/VLLN",
+    "horizon": 50,
+    "action_labels": 32,
+    "inference_steps": 4,
+    "execute_steps": 8,
+    "save_interval": 1000
+  },
+  "mainline": [
+    "identity",
+    "integration",
+    "preflight",
+    "train",
+    "evaluate",
+    "archive"
+  ],
+  "nodes": [
+    {
+      "id": "identity",
+      "title": "锁定实验身份与资源",
+      "after": [],
+      "acceptance": "读取Skill、实际services/options/jobs；在test02/exp01核对已用run及归档，显式新run ID、目标设备和输出由工作台核验；不猜路径或编号"
+    },
+    {
+      "id": "integration",
+      "title": "原生训练器工作台接入",
+      "after": [
+        "identity"
+      ],
+      "acceptance": "原生随机分片训练接入现有V2_1 Backend preview/start/queue/stop/resume；规范checkpoint ID、日志、指标和源快照；解决原生resume重置种子及采样游标问题；不得退回旧顺序配方或独立CLI"
+    },
+    {
+      "id": "preflight",
+      "title": "四卡真实预检与暂停恢复",
+      "after": [
+        "integration"
+      ],
+      "acceptance": "不超过100 optimizer steps；完整保存与重载、各rank RNG/采样位置、optimizer/scheduler、参数更新，真实工作台暂停释放并同run恢复；证据归档后清理专属临时产物"
+    },
+    {
+      "id": "train",
+      "title": "Stage1正式6000步训练",
+      "after": [
+        "preflight"
+      ],
+      "acceptance": "同一preview/start请求、独立新run、明确通用初始权重、4 A100 ranks与有效batch64；1000步保存，完成6000；按工作台真实监控，保留旧作业"
+    },
+    {
+      "id": "evaluate",
+      "title": "Stage1统一闭环评估",
+      "after": [
+        "train"
+      ],
+      "acceptance": "按已确认协议与旧Stage1和官方B1K性能参考比较；Task40实例0–9共10个有效回合、seed0 sequence、积分4、执行8；真实视频/阶段与成功计数，不以离线MAE代替"
+    },
+    {
+      "id": "archive",
+      "title": "归档与基线验收",
+      "after": [
+        "evaluate"
+      ],
+      "acceptance": "关联真实工作台job、run/checkpoint、路径、hash、配置、视频和证据；未获闭环结果不称基线已改善；不自动重启旧Stage2或修改记忆架构"
+    }
+  ]
+}
