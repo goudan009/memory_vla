@@ -32,8 +32,17 @@ def checkpoint(root,model="Gr00tN1d7"):
     modes={k:dict(modality_keys=v,delta_indices=list(range(16)) if k=="action" else [0])
            for k,v in dict(state=list(c.STATE_GROUPS_2026),action=list(c.ACTION_GROUPS),
                 video=["head","left_wrist","right_wrist"],language=["annotation.human.task_description"]).items()}
-    write(root/"processor_config.json",{"processor_kwargs":{"modality_configs":{"new_embodiment":modes}}})
-    write(root/"statistics.json",{"new_embodiment":{}})
+    modes["action"]["action_configs"]=[dict(rep="RELATIVE" if k in ("torso","left_arm","right_arm") else "ABSOLUTE",
+        type="NON_EEF",format="DEFAULT",state_key=k if k in ("torso","left_arm","right_arm") else None,
+        is_gripper="gripper" in k) for k in c.ACTION_GROUPS]
+    write(root/"processor_config.json",{"processor_class":"Gr00tN1d7Processor","processor_kwargs":{
+        "modality_configs":{"new_embodiment":modes},"max_action_horizon":40,
+        "max_action_dim":132,"max_state_dim":132,"use_relative_action":True}})
+    stats={}
+    for kind,layout in (("state",c.STATE_GROUPS_2026),("action",c.ACTION_GROUPS),
+                         ("relative_action",{k:c.ACTION_GROUPS[k] for k in ("torso","left_arm","right_arm")})):
+        stats[kind]={k:dict(min=[-1]*(b-a),max=[1]*(b-a)) for k,(a,b) in layout.items()}
+    write(root/"statistics.json",{"new_embodiment":stats})
     (root/"model.safetensors").write_bytes(b"fixture")
 
 
@@ -44,11 +53,11 @@ def test_model_and_protocol_gate(tmp_path,monkeypatch):
     assert info["valid_action_steps"]==16 and info["physical_action_dim"]==23
     python=tmp_path/"python";python.touch()
     monkeypatch.setattr(c,"inspect_upstream",lambda p:{"root":str(p),"revision":c.FORK_REVISION})
-    spec=c.official_serve_spec(python=python,upstream=tmp_path,checkpoint=ck,host="127.0.0.1",port=8000,gpu_index=0)
+    spec=c.official_serve_spec(python=python,upstream=tmp_path,checkpoint=ck,host="127.0.0.1",port=8000,gpu_index=0,verified_radio_sha256=c.checkpoint_digest(ck))
     assert spec["protocol"]==c.B1K2026 and spec["max_envs_per_service"]==1 and spec["rtc"] is False
     assert "temporal_ensemble" in spec["argv"]
     output=tmp_path/"eval";output.mkdir()
-    endpoint=dict(spec,state="ready",checkpoint_sha256="fixture")
+    endpoint=dict(spec,state="ready")
     plan=c.official_eval_spec(python=python,behavior_root=tmp_path,output=output,endpoint=endpoint,instance=0,rollouts=1)
     assert plan["num_envs"]==1 and "omnigibson.eval.eval" in plan["argv"]
     with pytest.raises(ValueError):
@@ -81,3 +90,25 @@ def test_2025_modality_keeps_original_joint_groups(tmp_path):
 def test_native_batch_is_pre_accumulation():
     assert batch_accounting(4,2,8)=={"global_batch_size":8,"effective_batch":64}
     with pytest.raises(ValueError):batch_accounting(4,2,0)
+
+
+def test_reject_wrong_processor_and_checkpoint_identity(tmp_path,monkeypatch):
+    ck=tmp_path/"ckpt";checkpoint(ck)
+    python=tmp_path/"python";python.touch()
+    monkeypatch.setattr(c,"inspect_upstream",lambda p:{"root":str(p),"revision":c.FORK_REVISION})
+    digest=c.checkpoint_digest(ck)
+    (ck/"model.safetensors").write_bytes(b"changed")
+    assert digest!=c.checkpoint_digest(ck)
+    with pytest.raises(ValueError,match="identity mismatch"):
+        c.official_serve_spec(python=python,upstream=tmp_path,checkpoint=ck,host="localhost",port=8000,gpu_index=0,verified_radio_sha256=digest)
+    pc=c.read(ck/"processor_config.json")
+    pc["processor_kwargs"]["max_action_dim"]=128
+    write(ck/"processor_config.json",pc)
+    with pytest.raises(ValueError,match="dimension mismatch"):
+        c.inspect_checkpoint(ck,role="official_2026_radio")
+    checkpoint(ck)
+    stats=c.read(ck/"statistics.json")
+    stats["new_embodiment"]["relative_action"]["left_arm"]["min"]=[]
+    write(ck/"statistics.json",stats)
+    with pytest.raises(ValueError,match="normalization range"):
+        c.inspect_checkpoint(ck,role="official_2026_radio")
