@@ -3,12 +3,12 @@ import json
 import os
 from pathlib import Path
 import argparse
+import copy
 import math
 import time
 import bisect
 import hashlib
 import random
-import shutil
 import sys
 
 from stage1_native_prepare import read, write, sha, verify_prepared, TAG, RELATIVE
@@ -294,6 +294,7 @@ def worker(args):
         atomic(output/"data_split.json",contract["split"])
     dist.barrier()
     manifest=verify_prepared(prepared);contract=read(output/"native_contract.json")
+    if source_identity(root)!=contract['upstream']:raise ValueError('upstream source changed')
     resume=args.resume.resolve() if args.resume else None
     resumed_step=0
     if resume:
@@ -401,11 +402,40 @@ def worker(args):
                 self.cached_occurrence=occurrence
             return self.cache[offset]
 
+    def same_tree(a,b):
+        if torch.is_tensor(a) and torch.is_tensor(b):
+            return a.dtype==b.dtype and a.shape==b.shape and torch.equal(a.detach().cpu(),b.detach().cpu())
+        if isinstance(a,np.ndarray) and isinstance(b,np.ndarray):return np.array_equal(a,b)
+        if isinstance(a,dict) and isinstance(b,dict):
+            return a.keys()==b.keys() and all(same_tree(a[k],b[k]) for k in a)
+        if isinstance(a,(list,tuple)) and isinstance(b,(list,tuple)):
+            return len(a)==len(b) and all(same_tree(x,y) for x,y in zip(a,b))
+        return a==b
+
+    def sample_hash(model,trainable):
+        h=hashlib.sha256()
+        for name,p in model.named_parameters():
+            if p.requires_grad==trainable:
+                h.update(name.encode())
+                h.update(p.detach().reshape(-1)[:64].cpu().contiguous().view(torch.uint8).numpy().tobytes())
+        return h.hexdigest()
+
     class WorkbenchCallback(TrainerCallback):
         def __init__(self,trainer):
-            self.trainer=trainer;self.start=time.monotonic()
+            self.trainer=trainer;self.start=time.monotonic();self.initial_trainable=None;self.initial_frozen=None
+        def on_train_begin(self,a,s,c,model=None,**kw):
+            if preflight:
+                self.initial_trainable=sample_hash(model,True);self.initial_frozen=sample_hash(model,False)
+            if rank==0:
+                atomic(output/'status.json',dict(status='training',step=resumed_step,total_steps=STEPS,world_size=GPU))
         def on_step_end(self,a,s,c,**kw):
             step=s.global_step
+            if step%a.logging_steps==0 or step>=cap:
+                totals=torch.cat((self.trainer.part_sum,self.trainer.part_count))
+                dist.all_reduce(totals)
+                self.trainer.part_latest=dict(zip(('base','torso','left_arm','left_gripper','right_arm','right_gripper'),
+                    (totals[:6]/totals[6:].clamp_min(1)).tolist()))
+                self.trainer.part_sum.zero_();self.trainer.part_count.zero_()
             control=read(output/"stop.json") if (output/"stop.json").exists() else {}
             stop=step>=int(control.get("stop_after_step",STEPS))
             # Read only rank0 control, broadcast decision, all ranks save.
@@ -424,10 +454,16 @@ def worker(args):
             row=dict(step=s.global_step,fm=logs["loss"],state=0.,grad_norm=logs["grad_norm"],
                      lr=logs.get("learning_rate"),seen_samples=s.global_step*64,
                      elapsed_seconds=time.monotonic()-self.start,
-                     gpu_peak_allocated=torch.cuda.max_memory_allocated(local))
+                     gpu_peak_allocated=torch.cuda.max_memory_allocated(local),part_loss=self.trainer.part_latest)
             with (output/"metrics.jsonl").open("a") as f:f.write(json.dumps(row)+"\n")
         def on_save(self,a,s,c,**kw):
             dist.barrier() # official callback has copied processor files; RNG all ranks saved
+            if preflight:
+                model=kw['model']
+                if sample_hash(model,True)==self.initial_trainable or sample_hash(model,False)!=self.initial_frozen:
+                    raise RuntimeError('preflight parameter update/freeze check failed')
+                if resume and not all(self.trainer.restore_checks.values()):
+                    raise RuntimeError('strict resume checks incomplete')
             if rank==0:publish(job_root,native,s.global_step,contract,manifest)
             dist.barrier()
             return c
@@ -448,6 +484,10 @@ def worker(args):
             # Preserve upstream native train/compute_loss/optimizer/scheduler.
             # Only the dataloader's restart semantics and workbench hooks differ.
             self.indexed=IndexedShards(self.train_dataset)
+            self.restore_checks=dict(model=False,optimizer=False,scheduler=False,rng=False) if resume and preflight else {}
+            self.part_sum=torch.zeros(6,device=torch.device('cuda',local),dtype=torch.float64)
+            self.part_count=torch.zeros_like(self.part_sum)
+            self.part_latest={}
             dist.barrier()
             assert_processor(native/"processor",prepared)
             if rank==0:
@@ -462,6 +502,57 @@ def worker(args):
                 collate_fn=self.data_collator,num_workers=args.workers,
                 persistent_workers=True,pin_memory=True,generator=gen,
                 multiprocessing_context=self.multiprocessing_context,drop_last=True)
+        def _load_from_checkpoint(self,resume_from_checkpoint,model=None):
+            result=super()._load_from_checkpoint(resume_from_checkpoint,model)
+            if preflight and resume:
+                # Check every serialized tensor on rank0, not just a reload success message.
+                if rank==0:
+                    from safetensors import safe_open
+                    actual=(model or self.model).state_dict()
+                    for p in sorted(resume.glob("*.safetensors")):
+                        with safe_open(str(p),framework="pt",device="cpu") as f:
+                            for name in f.keys():
+                                if name not in actual or not torch.equal(actual[name].detach().cpu(),f.get_tensor(name)):
+                                    raise RuntimeError("resumed model tensor mismatch: "+name)
+                dist.barrier()
+                self.restore_checks["model"]=True
+            return result
+        def _load_optimizer_and_scheduler(self,checkpoint):
+            result=super()._load_optimizer_and_scheduler(checkpoint)
+            if preflight and resume:
+                if rank==0:
+                    saved=torch.load(resume/"optimizer.pt",map_location="cpu",weights_only=False,mmap=True)
+                    if not same_tree(self.optimizer.state_dict(),saved):
+                        raise RuntimeError("resumed optimizer mismatch")
+                    del saved
+                if not same_tree(self.lr_scheduler.state_dict(),torch.load(resume/"scheduler.pt",map_location="cpu",weights_only=False)):
+                    raise RuntimeError("resumed scheduler mismatch")
+                dist.barrier()
+                self.restore_checks["optimizer"]=True;self.restore_checks["scheduler"]=True
+            return result
+        def _load_rng_state(self,checkpoint):
+            result=super()._load_rng_state(checkpoint)
+            if preflight and resume:
+                saved=torch.load(resume/f"rng_state_{rank}.pth",map_location="cpu",weights_only=False)
+                cuda=saved.get("cuda")
+                actual_cuda=torch.cuda.get_rng_state_all() if isinstance(cuda,list) else torch.cuda.get_rng_state(local)
+                if not all((same_tree(saved["cpu"],torch.get_rng_state()),
+                            same_tree(saved["python"],random.getstate()),
+                            same_tree(saved["numpy"],np.random.get_state()),
+                            same_tree(cuda,actual_cuda))):
+                    raise RuntimeError("resumed per-rank RNG mismatch")
+                self.restore_checks["rng"]=True
+            return result
+        def compute_loss(self,model,inputs,return_outputs=False,**kw):
+            loss,result=super().compute_loss(model,inputs,return_outputs=True,**kw)
+            if not torch.isfinite(loss):raise FloatingPointError("nonfinite native FM loss")
+            if model.training:
+                action=result["action_loss"].detach().float()
+                mask=result["action_mask"].detach().float()
+                for i,(lo,hi) in enumerate(((0,3),(3,7),(7,14),(14,15),(15,22),(22,23))):
+                    self.part_sum[i]+=action[...,lo:hi].sum()
+                    self.part_count[i]+=mask[...,lo:hi].sum()
+            return (loss,result) if return_outputs else loss
         def training_step(self,model,inputs,*a,**kw):
             mask=inputs["inputs"]["action_mask"]
             if tuple(mask.shape)!=(MICROBATCH,50,128) or mask.sum().item()!=MICROBATCH*32*23:
@@ -495,7 +586,7 @@ def worker(args):
                 raise ValueError("preflight did not establish finite nonzero gradients")
             atomic(output/"preflight.json",dict(passed=True,strict_resume=True,contract=contract,
                 run_id=run,resumed_from=resumed_step,step=step,checkpoint=final.name,
-                cursor=cursor(step),rows=rows))
+                cursor=cursor(step),restore_checks={"model":True,"optimizer":True,"scheduler":True,"rng":True},rows=rows))
         terminal="completed" if (step>=4 if preflight else step>=STEPS) else "paused"
         atomic(output/"status.json",dict(status=terminal,step=step,total_steps=STEPS,
                     world_size=GPU,training_complete=terminal=="completed"))
