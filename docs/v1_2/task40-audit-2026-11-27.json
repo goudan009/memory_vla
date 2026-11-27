@@ -1,0 +1,45 @@
+{
+  "record_type": "summary_of_read_only_audit_stdout",
+  "observed_date": "2026-11-27",
+  "host_timezone": "UTC+08:00",
+  "code_base": "fab19b604609728bd95ba5076f678c0d61416c92",
+  "audit_script": "scripts/audit_v12_task40.py (added in the same change as this record)",
+  "status": "PASS",
+  "scope": "existing files only; native N1.7 runtime not exercised",
+  "dataset": "/nvme3/projects/memory_vla/assets/datasets/b1k2025_groot_task40_v1_200",
+  "episodes": 200,
+  "rows": 647555,
+  "state_dim": 82,
+  "action_dim": 23,
+  "fps": 30,
+  "original_split": {
+    "train": 180,
+    "validation": 20,
+    "overlap": 0,
+    "remote_original_train_array_identical": true,
+    "remote_original_validation_array_identical": true,
+    "remote_original_path": "/nvme3/data_wyh/datasets/b1k2025_groot_task40_v1_200/preparation/data_split.json",
+    "remote_original_sha256": "6e6d5bb26085210e187b8617f27f90be8779f08145289840bafb013ab25d8fb7"
+  },
+  "parquet_files": 200,
+  "video_headers": 600,
+  "decoded_frames": 27,
+  "decoded_cameras": ["head", "left_wrist", "right_wrist"],
+  "decoded_episode_frame_indices": {
+    "400010": [0, 1939, 3878],
+    "401060": [0, 1346, 2691],
+    "403000": [0, 1586, 3172]
+  },
+  "metadata_sha256": {
+    "info.json": "96994583b74ef06a0ecb0d47142513f443267890c5028e1cb281cb4cae04d867",
+    "modality.json": "af3a354159496192103bcec4d7cd0dd5cfeeba3445af82b5a09c9cbfe37bff19",
+    "episodes.jsonl": "da631d4b3c8961c65e7bedf9cdf54f097008ebfc2aec82fc1c5e19596b2c8ba2",
+    "tasks.jsonl": "fb6717bbb4fa503ac5d2bbf220d13727e29d6d320e5cd0d4a4e9b2200483943b"
+  },
+  "native_train_ready": false,
+  "remaining": [
+    "separate physical train-only view and newly computed statistics",
+    "N1.7 loader/processor/model and transport runtime checks",
+    "approved experiment identity and scientific training configuration"
+  ]
+}
