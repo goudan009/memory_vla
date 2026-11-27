@@ -1,0 +1,15 @@
+{
+  "created_at":"2026-11-27",
+  "author":"Codex /root",
+  "goal":"Diagnose abnormal actions of the existing Stage1 step6000 checkpoint without architecture changes or formal retraining",
+  "reason":"User explicitly requests official-versus-Stage1 training audit, normalization and relative-action checks, inference4/8/16 and execution8/16 diagnostic comparisons, and prediction-versus-controller attribution. This diagnostic supersedes further training work for this turn; existing jobs are preserved.",
+  "identity":{"model_version":"V_2_1","test_id":"test02","experiment_id":"exp01","checkpoint_id":"v2.1__test01__exp14__run001__step006000","parent_run_id":"v2.1__test01__exp14__run001","category":"existing_checkpoint_diagnostic","new_optimizer_steps":0},
+  "mainline":["audit","numeric","inference","attribution","report"],
+  "nodes":[
+    {"id":"audit","title":"基线训练与官方实现核对","after":[],"parallel_branches":["numeric"],"acceptance":"Freeze exact6000 checkpoint/source identity; compare actual sampling, LR, batch, freeze, loss and accumulation with pinned official source"},
+    {"id":"numeric","title":"动作归一化与相对转换核验","after":["audit"],"acceptance":"Real physical actions roundtrip through checkpoint processor; inspect min/max ranges, masks, relative anchors and simulator control mapping"},
+    {"id":"inference","title":"积分与执行窗口对照","after":["numeric"],"acceptance":"Test integration4/8/16 and execution8/16 on same inputs/noise with existing6000 checkpoint; use workbench for GPU work, preserve configuration and actual outputs; bounded fault diagnostics do not count as success-rate evaluation"},
+    {"id":"attribution","title":"动作切块与控制执行归因","after":["inference"],"acceptance":"Align predicted targets, execution actions, observed joints and chunk boundaries in existing/diagnostic traces; distinguish proven causes from unresolved controller effects"},
+    {"id":"report","title":"异常原因与重训判断","after":["attribution"],"acceptance":"Evidence-backed conclusions, code/parameter changes needed and whether retraining is required; disclose any unperformed numeric or simulator comparisons; no architecture modification or formal retraining"}
+  ]
+}
