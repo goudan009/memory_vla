@@ -1,0 +1,14 @@
+{
+  "goal": "把Exp13累计16000步的训练、配方、实际源码和闭环结果整理成Git可跟踪的文本诊断资料，供在线AI核查。",
+  "created_at": "2026-11-27",
+  "parent_plan": "plan-v008.json",
+  "reason": "用户指出GitHub缺少16000步原始loss曲线、梯度、评估和完整训练配方；当前实验仅任务书与计划被跟踪。",
+  "invariants": ["仅只读采集原训练和评估，不启动/暂停/续跑任何作业", "同一v1__test01__exp13__run001谱系", "保留原始指标并记录来源与SHA256", "运行中评估标为时点快照", "不上传权重、数据集、凭据或无关未提交改动", "在main提交，不新建分支"],
+  "mainline": ["inventory", "export", "verify", "publish"],
+  "nodes": [
+    {"id": "inventory", "after": [], "parallel_with": [], "acceptance": "核实GitHub main、gitignore、16000步真实作业、指标位置和checkpoint匹配的评估。"},
+    {"id": "export", "after": ["inventory"], "parallel_with": [], "acceptance": "诊断目录包含分片原始指标、便于阅读的CSV、完整实际配方/恢复记录、对应源码和原始闭环结果，附来源清单及阅读入口；最小放行忽略规则。"},
+    {"id": "verify", "after": ["export"], "parallel_with": [], "acceptance": "核对1–16000步覆盖、无重复/缺失、分片拼接哈希、配置与评估checkpoint身份、文件大小及无凭据/权重；保持其他工作区改动。"},
+    {"id": "publish", "after": ["verify"], "parallel_with": [], "acceptance": "只提交本次资料和规则，在GitHub核对提交与阅读入口；明确资料覆盖及运行中/未记录的限制。"}
+  ]
+}
