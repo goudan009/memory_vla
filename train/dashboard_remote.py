@@ -181,7 +181,8 @@ def catalog():
             training_profile=checkpoint_training_profile(file.parent)))
     for source in datasets.values():
         source['training_profile'] = dataset_training_profile(source)
-    return dict(model_versions=MODEL_VERSIONS, naming_schema=NAMING_SCHEMA,
+    return dict(model_versions={k:v for k,v in MODEL_VERSIONS.items() if v.get('launch_ready',True)},
+                registered_model_versions=MODEL_VERSIONS, naming_schema=NAMING_SCHEMA,
                 datasets=[datasets[key] for key in sorted(datasets)], checkpoints=checkpoints, gpus=gpu_info(),
                 python_path=str(PYTHON), live_source=str(LIVE))
 
@@ -215,6 +216,8 @@ def prepare(request):
     if 'version' not in request:
         raise ValueError('模型版本必须显式提供；不得使用默认版本')
     version = registered_version(request['version'])
+    if not MODEL_VERSIONS[version].get('launch_ready',True):
+        raise ValueError('V_1_2 N1.7已登记但专用工作台尚未验收；禁止回退N1.6入口')
     if is_v2_1_version(request.get('version')):
         return v21_backend().prepare(request)
     registered_version(version, backend='v1')
