@@ -1,0 +1,14 @@
+{
+  "scope": "V1.2 GR00T N1.7 + B1K2026 resource downloads only",
+  "authorization": "2026-11-27 user: update GitHub main; use /nvme3; download official resources; preserve V2.1; no formal training",
+  "mainline": ["inventory", "pinned_downloads", "integrity_and_data_contract", "github_handoff"],
+  "nodes": [
+    {"id": "inventory", "depends_on": [], "parallel": [], "acceptance": "Read latest Skill/plan; query workbench read-only; verify storage and source revisions"},
+    {"id": "pinned_downloads", "depends_on": ["inventory"], "parallel": ["official_sources", "n17_weights", "radio_weights", "simulation_archives", "task0_40_rgb_and_annotations", "cosmos_access_check"], "acceptance": "Exact file manifest, immutable upstream revisions, resumable downloads and durable progress; access failures recorded independently"},
+    {"id": "integrity_and_data_contract", "depends_on": ["pinned_downloads"], "parallel": [], "acceptance": "Verify downloaded hashes and task/episode/video/annotation mapping; distinguish blocked resources; never edit upstream metadata or existing V2.1 assets"},
+    {"id": "github_handoff", "depends_on": ["integrity_and_data_contract"], "parallel": [], "acceptance": "Commit only this task's scripts, manifest and progress to main and push; report actual completion and blockers"}
+  ],
+  "budget": {"gpu_jobs": 0, "training_steps": 0, "dataset_tasks": [0, 40], "depth_video": false, "storage_root": "/nvme3"},
+  "identity": "Infrastructure preparation; no experiment/run ID assigned",
+  "notes": "Cosmos gated access may block that resource without blocking independent downloads. Official baseline closed-loop acceptance remains pending future workbench identity and preview."
+}
