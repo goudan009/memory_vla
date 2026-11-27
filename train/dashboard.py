@@ -15,7 +15,7 @@ from run_identity import identity_bundle
 PROJECT = '/nvme3/projects/memory_vla'
 LIVE = PROJECT + '/deployments/web_live'
 SKIP = {'.venv', '__pycache__', '.pytest_cache', '.git', '.ruff_cache'}
-SYNC_TREES = ['src/v1_groot_memoryvla', 'src/v2_groot_memoryvla', 'src/v2_1_groot_memoryvla', 'src/v3_bodymemory',
+SYNC_TREES = ['src/v1_groot_memoryvla', 'src/v2_groot_memoryvla', 'src/v2_1_groot_memoryvla', 'src/v1_2_groot_baseline', 'src/v3_bodymemory',
               'baselines/groot_n1d6', 'train', 'scripts', 'configs', 'evaluation/scripts', 'evaluation/sim', 'evaluation/configs']
 
 
