@@ -1,0 +1,8 @@
+[Unit]
+Description=V2_1 Test02 Exp01 plan-v005 native Stage1 train and closed-loop workbench supervision
+
+[Service]
+Type=oneshot
+WorkingDirectory=/nvme3/projects/memory_vla
+ExecStart=/usr/bin/python3 /nvme3/projects/memory_vla/Output/test_02/experiment_01/workflow/native_supervisor.py
+TimeoutStartSec=600

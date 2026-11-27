@@ -1,0 +1,30 @@
+{
+  "device": "a100",
+  "version": "V_2_1",
+  "recipe": "native_random_v2",
+  "task": 40,
+  "stage": "stage1",
+  "run_id": "v2_1__test02__exp01__run003",
+  "dataset": "/nvme3/data_wyh/datasets/b1k2025_groot_task40_v1_200",
+  "checkpoint": "/nvme3/huggingface/train_model/GR00T/GR00T-N1.6-3B",
+  "split": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v2.1__test01__exp14__run001/run/data_split.json",
+  "official_root": "/nvme3/projects/GR00T/Isaac-GR00T-n1d6-9b37aa1",
+  "gpus": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "steps": 6000,
+  "seed": 42,
+  "microbatch": 2,
+  "accumulation": 8,
+  "learning_rate": 0.0001,
+  "preflight_only": false,
+  "enqueue": true,
+  "share_existing": true,
+  "video_backend": "torchcodec",
+  "workers": 2,
+  "accept_preflight": "/nvme3/data_wyh/outputs/memory_vla/v2_1/test02/exp01/evidence/v2_1__test02__exp01__run003__preflight001-preflight.json",
+  "notes": "User-authorized plan-v005 native_random_v2 Stage1 formal6000 after real four-A100 strict pause/resume gate; then exact step6000 A100 inference and dual4090 dual2 Task40 10 valid episodes; no Stage2"
+}
