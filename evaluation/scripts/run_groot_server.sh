@@ -42,6 +42,12 @@ checkpoint = args.checkpoint.expanduser().resolve()
 source = args.source_dir.expanduser().resolve()
 requested_source = source
 python = args.python_path.expanduser().absolute()
+# N1.7 uses a different native policy and websocket evaluator. Do not
+# silently feed it into the legacy N1.6 server even when the weights exist.
+if (checkpoint/'config.json').is_file():
+    model_type = str(json.loads((checkpoint/'config.json').read_text()).get('model_type','')).lower()
+    if model_type == 'gr00tn1d7':
+        parser.error('V_1_2 N1.7 requires its own verified native workbench route; N1.6 serving fallback forbidden')
 is_v21 = any((checkpoint/name).is_file() for name in ('v2_1.json','v2_1_stage1.json','v2_1_run.json'))
 module = 'v2_1_groot_memoryvla.serve' if is_v21 else 'v1_groot_memoryvla.serve'
 source_compatibility = None
