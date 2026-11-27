@@ -204,3 +204,16 @@ def test_controller_reports_actual_native_progress_and_failure(tmp_path):
     config['argv']=[sys.executable,'-c','raise SystemExit(7)']
     assert controller(config)==7
     assert read(root/'status.json')['status']=='failed'
+
+
+def test_current_stage1_retrain_cannot_fall_back_to_sequential_recipe(backend):
+    # Synthetic namespace for a test only; never creates an actual run.
+    req=dict(backend.request,run_id='v2_1__test02__exp01__run999__preflight001')
+    with pytest.raises(ValueError,match='禁止回退旧顺序训练配方'):
+        backend.prepare(req)
+    with pytest.raises(ValueError,match='BLOCKED_WORKBENCH_INTEGRATION'):
+        backend.prepare(dict(req,recipe='native_random_v2'))
+    assert not backend.training.exists()
+    # Historical task remains available with its own unchanged recipe.
+    assert backend.prepare(backend.request)['learning_rate']==1e-5
+
