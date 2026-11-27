@@ -274,6 +274,7 @@ def verify_prepared(path):
 
 
 if __name__=="__main__":
+    raise SystemExit("BLOCKED_WORKBENCH_INTEGRATION: dataset preparation belongs to the registered job; do not create a separate output directory.")
     p=argparse.ArgumentParser(__doc__)
     for n in ("dataset","split","base","output"):
         p.add_argument("--"+n,type=Path,required=True)
