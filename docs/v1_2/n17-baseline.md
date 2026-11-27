@@ -19,7 +19,7 @@
 | 官方挑战适配 | [wensi-ai/Isaac-GR00T](https://github.com/wensi-ai/Isaac-GR00T)，代码已核对 commit ace36d935b376fbf25cd56371e23877b95407c40（默认分支快照）；本地核对 Git HEAD 与实际 checkpoint 的匹配 |
 | 官方评估环境 | 手册指定 BEHAVIOR-1K v3.9.3；本地核对 tag、依赖、资产、入口及参数。远程会话未直接取得该 tag 的 evaluator 文件，不以 main 的接口冒充已验收 tag |
 
-独立 N1.7 Python 3.10 环境，官方 fork 使用 uv lock；不要复用或修改 N1.6 Python。2026 仿真环境与现有 B1K2025 分离。先核对是否已有本机可用 checkout、缓存和评估资产，再下载缺失资源；不下载整个 3.27TB 数据集。官方权重下载后记录出处、实体路径、所有权重和 processor 文件 SHA256；不得从目录名推断权重是官方或已微调。
+独立 N1.7 Python 3.10 环境，官方 fork 使用 uv lock；不要复用或修改 N1.6 Python。2026 仿真环境与现有 B1K2025 分离。先核对是否已有本机可用 checkout、缓存和评估资产，再下载缺失资源；不下载整个 3.27TB 数据集。官方权重下载后记录出处、实体路径、所有权重和 processor 文件 SHA256；不得从目录名或模态配置推断权重是官方或某项任务微调。用 contracts.checkpoint_digest 计算实体摘要，official_serve_spec/official_radio_policy 必须传来自已核实下载记录的 verified_radio_sha256，禁止以任意当前目录的摘要冒充来源。摘要只验证文件一致性，不是官方发布的签名。
 
 ## 代码分层
 
@@ -52,7 +52,7 @@
 
 优先复用现有已经转换的 LeRobot v2.1、30Hz、82维状态、23维动作和原180/20划分，N1.7挑战fork支持v2.1/v3.0。无需将82维向量强行转换成2026的61维。按原有命名生成 N1.7 NEW_EMBODIMENT 模态配置，原生 max_state_dim/max_action_dim 与 action_horizon 在通用 checkpoint 中核对。保留底盘速度和夹爪命令，双臂/躯干相对当前状态的动作定义。原始状态中的 robot_lin_vel 不能自动替换2026 robot-local base_qvel。
 
-实际使用前必须核对训练loader读取视频、语言、frame_index及 action qpos，验证真实 observation/action 组顺序、单位、绝对/相对解码和 action_mask，训练时重新计算训练集统计。不复用N1.6归一化，也不修改源数据目录。2025语义任务名称和动作协议沿用原代码，不能通过相同数字 ID 推测2026任务。
+实际使用前必须核对训练loader读取视频、语言、frame_index及 action qpos，验证真实 observation/action 组顺序、单位、绝对/相对解码和 action_mask，训练时重新计算训练集统计。候选训练接口要求独立 train-only 数据视图、原 split、显式 horizon 及已核实通用权重 verified_generic_sha256；同时校验 episodes.jsonl 与实体 parquet 文件集合，拒绝验证集泄漏。不复用N1.6归一化，也不修改源数据目录。2025语义任务名称和动作协议沿用原代码，不能通过相同数字 ID 推测2026任务。
 
 正式训练起点是通用 N1.7-3B；不继承 N1.6 或官方 radio 微调权重。模型结构、loss、optimizer保持官方原生，VLM冻结/原action expert更新为推荐选项。候选有效 horizon 16（官方挑战配方）或32（沿用2025监督窗口）；训练步数、有效batch、horizon、控制步数、归一化与评估回合在正式任务前再确认，不从2026官方8卡×2048、150000步直接照搬。上游 CLI 的 global_batch_size 是梯度累积前的全卡batch；例如4×2×8时应传8而不是64，实际有效64。
 
@@ -64,5 +64,7 @@
 2. 按真实目录和任务记录锁定V_1_2新实验 testNN/expNN（本会话未分配编号），遵循 Output/test_NN/experiment_NN/task.md、progress.md、workflow/plan-vNNN.json；编号及真实run ID由用户/本地工作台核对，不能以V1.2推导编号或另建输出地址。
 3. 拉取并核对固定fork、通用权重、官方 radio 权重、v3.9.3仿真，补齐独立环境和缓存。执行CPU测试 `PYTHONPATH=src:train python -m pytest -q tests/test_v12_baseline_contract.py`。按照上述 A 完成原生推理与评估接入和短闭环，归档真实工作台job、source digest、checkpoint SHA、协议、视频和回合结果。没有成功回合或接口未验证时如实记录，不能称基线已跑通。
 4. 在 A 验收后，按 B 检查2025 data/processor/model和旧runner兼容性，再提交正式训练配置供确认。正式训练后用真实Task40闭环评价基础动作质量、任务阶段和成功率；不直接启动后续V2.2。
+
+2026-11-27复核：加强 processor 类、model/processor padding、相对/绝对动作表示、归一化区间、checkpoint digest、原始摄像头及语言字段、train-only文件集合检查。训练和评估按 Skill 填一句简短备注，训练 notes 示例「V1.2 / N1.7：原生无记忆基线」，2025评估 run_tag 示例 v1_2-n17-baseline-task40。真实权重 schema 和上游接口必须本地实测，出现不匹配应查证，不放宽检查或修改科研配置来掩盖错误。
 
 本次远程没有真实 GPU/文件系统访问，也未取得新增CPU CI运行结果。只交付源码骨架与迁移合同，不将未验证的 workbench route 标为 launch_ready。
