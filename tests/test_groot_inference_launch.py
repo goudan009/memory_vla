@@ -53,6 +53,24 @@ def test_history_controls_are_forwarded_and_validated():
         manager.argv(payload(history_mode='random'))
 
 
+def test_action_fault_parameters_reach_real_launcher(tmp_path):
+    manager = InferenceManager(ROOT)
+    argv = manager.argv(payload(inference_steps=16, action_diagnostics=True))
+    assert argv[argv.index('--inference-steps') + 1] == '16'
+    assert '--action-diagnostics' in argv
+    for invalid in (True, 0, 5, '8'):
+        with pytest.raises(ValueError):
+            manager.argv(payload(inference_steps=invalid))
+    result = subprocess.run(local_args(tmp_path, free_port()) +
+                            ['--check-only', '--inference-steps', '8', '--action-diagnostics'],
+                            text=True, capture_output=True)
+    assert result.returncode == 0, result.stderr
+    job = json.loads(result.stdout)
+    assert job['inference_steps'] == 8
+    assert '--inference-steps 8' in job['command']
+    assert '--action-diagnostics-dir' in job['command']
+
+
 def test_task40_experiment_10_service_archives_outside_exp09():
     manager = InferenceManager(ROOT)
     args = manager.argv(payload(task40_diagnostics=True, experiment='experiment_10'))

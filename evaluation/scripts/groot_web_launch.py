@@ -118,7 +118,7 @@ class LaunchManager:
             return self._task40_forward(request)
         scalars = {"version", "group", "model_name", "mode", "gpu_index", "task", "preset",
                    "seed", "seed_mode", "policy_host", "policy_port", "run_tag",
-                   "episodes_per_gpu", "repetitions", "debug_max_steps", "video_steps_per_render", "policy_checkpoint", "training_id"}
+                   "episodes_per_gpu", "repetitions", "debug_max_steps", "video_steps_per_render", "policy_checkpoint", "training_id", "action_steps"}
         booleans = {"record_video", "wait_for_gpu", "diagnostics"}
         arrays = {"instances_gpu0", "instances_gpu1"}
         unknown = set(request) - scalars - booleans - arrays - {"resume_from"}

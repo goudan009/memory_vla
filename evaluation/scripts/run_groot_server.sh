@@ -25,6 +25,8 @@ parser.add_argument('--python-path', type=Path, default=PROJECT / 'envs/n1d6-p0/
                     help='模型Python环境')
 parser.add_argument('--log-dir', type=Path, help='日志目录，训练checkpoint默认归所属run的logs')
 parser.add_argument('--seed', type=int, default=42, help='动作随机种子，默认42')
+parser.add_argument('--inference-steps', type=int, choices=(4, 8, 16), help='Euler integration steps; omitted uses checkpoint config')
+parser.add_argument('--action-diagnostics', action='store_true', help='Record raw and decoded actions; enable fixed-input fault diagnostic RPC')
 parser.add_argument('--history-mode', choices=('normal','empty','other_episode'), default='normal',
                     help='历史读取对照；other_episode要求至少两个并行环境')
 parser.add_argument('--task40-diagnostics', action='store_true',
@@ -81,6 +83,10 @@ command = [str(python), '-u', '-m', module,
            '--use-sim-policy-wrapper', '--seed', str(args.seed)]
 if is_v21:
     command += ['--residual-scale', '1', '--history-mode', 'normal']
+if args.inference_steps is not None:
+    command += ['--inference-steps', str(args.inference_steps)]
+if args.action_diagnostics:
+    command += ['--action-diagnostics-dir', str(log_dir / f'port{args.port}' / 'action_diagnostics')]
 if args.history_mode != 'normal':
     command += ['--history-mode', args.history_mode]
 if args.task40_diagnostics:
@@ -111,6 +117,7 @@ if args.task40_diagnostics:
                    '--anchor', str(archive_root / anchor_entry),
                    '--host', args.host, '--port', str(args.port), '--remote-policy']
 result = dict(gpu_index=args.gpu_index, host=args.host, port=args.port, checkpoint=str(checkpoint),
+              inference_steps=args.inference_steps, action_diagnostics=args.action_diagnostics,
               serving_module=module,
               requested_source_dir=str(requested_source), source_compatibility=source_compatibility,
               source_dir=str(source), python_path=str(python), seed=args.seed, history_mode=args.history_mode,

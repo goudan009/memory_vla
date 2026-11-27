@@ -12,6 +12,8 @@ def main():
     p.add_argument("--residual-scale",type=float,default=1.)
     p.add_argument("--history-mode",choices=["normal","empty","wrong","other_episode"],default="normal")
     p.add_argument("--seed",type=int,default=42)
+    p.add_argument("--inference-steps",type=int,choices=(4,8,16))
+    p.add_argument("--action-diagnostics-dir",type=Path)
     args=p.parse_args();check_scale(args.residual_scale)
     if (Path(args.model_path)/'v2_1.json').is_file():
         from .policy import Policy
@@ -27,8 +29,15 @@ def main():
     from v1_groot_memoryvla.experiment.first_training import seeded
     policy=Policy(EmbodimentTag("behavior_r1_pro"),args.model_path,device=args.device,
                   history_mode=args.history_mode,residual_scale=args.residual_scale)
+    if args.inference_steps is not None:
+        policy.model.action_head.num_inference_timesteps=args.inference_steps
+    native_policy=policy
     if args.use_sim_policy_wrapper:policy=Gr00tSimPolicyWrapper(policy)
     seeded(args.seed)
     print(vars(args),flush=True)
-    PolicyServer(policy=policy,host=args.host,port=args.port).run()
+    server=PolicyServer(policy=policy,host=args.host,port=args.port)
+    if args.action_diagnostics_dir:
+        from v1_groot_memoryvla.policy.action_diagnostics import install
+        install(server,native_policy,args.action_diagnostics_dir)
+    server.run()
 if __name__=="__main__":main()

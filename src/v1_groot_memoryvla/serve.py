@@ -55,6 +55,8 @@ class ServerConfig:
 
     history_mode: Literal['normal', 'empty', 'other_episode'] = 'normal'
     """Memory read control; other_episode requires at least two concurrent environments."""
+    inference_steps: Literal[4, 8, 16] | None = None
+    action_diagnostics_dir: str | None = None
 
 
 def main(config: ServerConfig):
@@ -95,6 +97,9 @@ def main(config: ServerConfig):
     else:
         raise ValueError("Either model_path or dataset_path must be provided")
 
+    if config.inference_steps is not None:
+        policy.model.action_head.num_inference_timesteps = config.inference_steps
+    native_policy = policy
     # Apply sim policy wrapper if needed
     if config.use_sim_policy_wrapper:
         from v1_groot_memoryvla.policy.gr00t_policy import Gr00tSimPolicyWrapper
@@ -110,6 +115,10 @@ def main(config: ServerConfig):
     if config.seed is not None:
         from v1_groot_memoryvla.experiment.first_training import seeded
         seeded(config.seed)
+
+    if config.action_diagnostics_dir:
+        from v1_groot_memoryvla.policy.action_diagnostics import install
+        install(server, native_policy, config.action_diagnostics_dir)
 
     try:
         server.run()

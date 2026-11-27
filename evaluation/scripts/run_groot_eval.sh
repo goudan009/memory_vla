@@ -37,6 +37,7 @@ parser.add_argument('--instances-gpu1', type=int, nargs='+')
 parser.add_argument('--seed', default='0', help='integer base seed or random (record the resolved seed)')
 parser.add_argument('--seed-mode', choices=['sequence', 'fixed', 'random'], default='sequence', help='sequence: base+env_idx+episode; fixed: same seed; random: reproducible per-episode seeds derived from base')
 parser.add_argument('--debug-max-steps', type=int, help='fast-debug only; default 1200 actions = 150 outer loops')
+parser.add_argument('--action-steps', type=int, choices=(8, 16), help='executed action chunk; default8, resume inherits saved value')
 parser.add_argument('--policy-host', default='172.28.62.17')
 parser.add_argument('--policy-port', type=int, default=5556)
 parser.add_argument('--model-name', choices=['groot', 'grootmeory'], default='groot', help='legacy metadata label; new results use taskNN_evalNN; model is selected by policy endpoint')
@@ -289,6 +290,8 @@ if dual and appdata[0] == appdata[1]:
 args.version = args.version or 'V_1'
 args.group = args.group or 'baseline'
 saved_config = resume.get('configuration', {}) if resume else {}
+if args.action_steps is None:
+    args.action_steps = int(saved_config.get('action_chunk', 8))
 if resume:
     saved_identity=resume.get('policy_identity') or saved_config.get('policy_identity')
     if policy_identity and saved_identity:
@@ -325,7 +328,7 @@ for gpu in gpus:
                '--gpu-index', str(gpu), '--n-envs', str(n_envs),
                '--episodes', str(episodes), '--instance-ids', *map(str, assignments[gpu]),
                '--seed', str(args.seed), '--seed-mode', args.seed_mode,
-               '--limit-env-episodes', '--action-steps', '8',
+               '--limit-env-episodes', '--action-steps', str(args.action_steps),
                '--policy-host', args.policy_host, '--policy-port', str(args.policy_port),
                '--appdata-path', str(appdata[gpu]), '--run-tag', queue_run_tag,
                '--output-root', str(gpu_output), '--public-output-dir', str(output)]
@@ -356,7 +359,7 @@ plan = {'mode': args.mode, 'preset': args.preset, 'model_name': args.model_name,
         'episodes_per_round': saved_config.get('episodes_per_round', episodes) if resume else episodes_per_round,
         'episode_layout': episode_layout,
         'output': str(output), 'task_outputs': task_outputs, 'synchronized_start': False,
-        'policy_server': f'{args.policy_host}:{args.policy_port}', 'action_chunk': 8,
+        'policy_server': f'{args.policy_host}:{args.policy_port}', 'action_chunk': args.action_steps,
         'record_video': args.record_video, 'video_steps_per_render': args.video_steps_per_render,
         'video_fps': 20, 'video_speedup': args.video_steps_per_render * 20 / 30,
         'viewer_enabled': True,

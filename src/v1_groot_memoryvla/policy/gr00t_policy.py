@@ -371,6 +371,8 @@ class Gr00tPolicy(BasePolicy):
         casted_action = {
             key: value.astype(np.float32) for key, value in unnormalized_action.items()
         }
+        if getattr(self, 'action_diagnostic_hook', None) is not None:
+            self.action_diagnostic_hook(observation, normalized_action, casted_action, options)
         info = {}
         if self.memory_state is not None and context.get('memory_diagnostics'):
             info['memory_diagnostics'] = self.model.memory.last_diagnostics

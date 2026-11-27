@@ -51,12 +51,21 @@ class InferenceManager:
         return dict(result, host=self.bind_host, source_dir=self.default_source, python_path=self.default_python)
 
     def argv(self, request):
-        if not isinstance(request, dict) or set(request) - {"checkpoint", "gpu_index", "port", "seed", "source_dir", "python_path", "history_mode", "task40_diagnostics", "experiment"}:
+        if not isinstance(request, dict) or set(request) - {"checkpoint", "gpu_index", "port", "seed", "source_dir", "python_path", "history_mode", "task40_diagnostics", "experiment", "inference_steps", "action_diagnostics"}:
             raise ValueError("不支持的推理启动参数")
         history_mode=request.get('history_mode', 'normal')
         if history_mode not in ('normal', 'empty', 'other_episode'):
             raise ValueError('历史对照须为normal、empty或other_episode')
         argv = []
+        if 'inference_steps' in request:
+            if type(request['inference_steps']) is not int or request['inference_steps'] not in (4, 8, 16):
+                raise ValueError('inference_steps 必须是4、8或16')
+            argv += ['--inference-steps', str(request['inference_steps'])]
+        if 'action_diagnostics' in request:
+            if type(request['action_diagnostics']) is not bool:
+                raise ValueError('action_diagnostics 必须是开关')
+            if request['action_diagnostics']:
+                argv += ['--action-diagnostics']
         for key, default in (("checkpoint", None), ("gpu_index", None), ("port", None),
                              ("seed", 42), ("source_dir", self.default_source), ("python_path", self.default_python)):
             value = request.get(key, default)

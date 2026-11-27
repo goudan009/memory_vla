@@ -460,6 +460,11 @@ def record_episode_env(factory, outdir, env_idx):
                     "task_progress": [self.idle_progress], "rewards": [],
                 }
             step_started = time.perf_counter()
+            fault_trace = os.environ.get('GROOT_ACTION_FAULT_TRACE') == '1' and self.native_env is not None
+            if fault_trace:
+                import omnigibson.object_states as fault_states
+                from groot_task40_trace import read_state
+                fault_before = read_state(self.native_env, {n: getattr(fault_states, n) for n in ('Open', 'ToggledOn', 'Inside', 'Cooked')})
             observation, reward, terminated, truncated, info = self.env.step(action)
             chunk_s = time.perf_counter() - step_started
             writer.step_times.append(chunk_s)
@@ -484,6 +489,12 @@ def record_episode_env(factory, outdir, env_idx):
                 action_root.mkdir(parents=True, exist_ok=True)
                 append_action(action_root / f"actions_task40_gpu{writer.metadata.get('gpu_index',0)}_env{env_idx}.jsonl",
                               self.runtime_identity, self.sim_steps-len(info.get('rewards',[reward])),self.sim_steps,action)
+                if fault_trace:
+                    after = read_state(self.native_env, {n: getattr(fault_states, n) for n in ('Open', 'ToggledOn', 'Inside', 'Cooked')})
+                    record = dict(self.runtime_identity, action_start=self.sim_steps-len(info.get('rewards',[reward])),
+                                  action_end=self.sim_steps, before=fault_before, after=after)
+                    with (action_root / f"feedback_gpu{writer.metadata.get('gpu_index',0)}_env{env_idx}.jsonl").open('a') as stream:
+                        stream.write(json.dumps(record)+'\n')
             self.preview.publish(observation, action_steps=self.sim_steps, outer_steps=self.outer_steps,
                                  terminal=bool(terminated or truncated))
             if (os.environ.get("GROOT_TASK40_TRACE") == "1" and self.native_env is not None

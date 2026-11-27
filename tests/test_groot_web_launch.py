@@ -97,6 +97,16 @@ def test_standard_evaluation_accepts_five_rounds_in_one_result_bundle():
     assert not Path(plan['output']).exists()
 
 
+def test_fault_diagnostic_execution_window_reaches_both_gpu_commands():
+    plan=launcher().prepare(dict(version='V_2_1',group='ablation_action_fault',mode='dual2',
+        task=40,preset='fast-debug',debug_max_steps=256,action_steps=16))['plan']
+    assert plan['action_chunk']==16
+    assert len(plan['commands'])==2
+    assert all(command[command.index('--action-steps')+1]=='16' for command in plan['commands'])
+    with pytest.raises(ValueError):
+        launcher().prepare(dict(task=40,action_steps=12))
+
+
 @pytest.mark.parametrize("payload", [
     {"version": "../../bad"}, {"group": "baseline; touch bad"},
     {"task": 50}, {"policy_port": 0}, {"preset": "official-eval", "debug_max_steps": 256},
