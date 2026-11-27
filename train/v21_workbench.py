@@ -414,8 +414,8 @@ class Backend:
                 except ValueError:continue
         return dict(run=root.name,arm=launch['arm'],config=launch,state=read(root/launch['arm']/'status.json',{}),
              checkpoints=self.checkpoints(root),checkpoint=str(root/'run/checkpoints'),
-             curve=[[r['step'],r.get('fm',0)+launch['state_weight']*r.get('state',0),1] for r in metrics if 'step' in r],
-             loss_series=[[r['step'],r.get('fm',0)+launch['state_weight']*r.get('state',0),1] for r in metrics if 'step' in r],
+             curve=[[r['step'],r.get('fm',0)+launch.get('state_weight',0)*r.get('state',0),1] for r in metrics if 'step' in r],
+             loss_series=[[r['step'],r.get('fm',0)+launch.get('state_weight',0)*r.get('state',0),1] for r in metrics if 'step' in r],
              metrics=metrics[-100:],preflight=read(root/'run/preflight.json'),
              log_tail=self.r['tail'](root/'logs/controller.log'),epochs=[],validation=[read(p,{}) for p in sorted((root/'run').glob('validation-*.json'))],
              initial_weights=dict(checkpoint=launch['checkpoint'],label='V2_1 原始起点',mode='fresh'),

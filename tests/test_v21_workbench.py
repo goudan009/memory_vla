@@ -273,3 +273,16 @@ def test_native_pause_resume_preserves_identity(backend):
     wrong=checkpoint.with_name('checkpoint-2')
     checkpoint.rename(wrong)
     assert not b.checkpoints(root)
+
+
+def test_native_detail_reports_action_loss_without_state_weight(backend):
+    b=backend;plan=b.prepare(native_request(b))
+    root=b.training/plan['run_id']
+    plan.update(source=str(b.live),source_manifest={'digest':'source'})
+    write(root/'config/web_launch.json',plan)
+    write(root/'baseline/status.json',dict(status='training',step=1))
+    (root/'run').mkdir()
+    (root/'run/metrics.jsonl').write_text(json.dumps(dict(step=1,fm=.25,state=0.))+'\n')
+    detail=b.detail(dict(run=root.name))
+    assert detail['curve']==[[1,.25,1]]
+    assert detail['loss_series']==detail['curve']
