@@ -389,11 +389,8 @@ class Backend:
                 shutil.rmtree(root)
                 if source.is_dir():shutil.rmtree(source)
                 return control
-            trash=self.training/'.trash';trash.mkdir(exist_ok=True)
-            target=trash/root.name
-            if trash.is_symlink() or target.exists():raise ValueError('回收目录已存在或不安全')
-            root.rename(target)
-            return dict(control,trash_path=str(target),files_preserved=True)
+            shutil.rmtree(root)
+            return dict(control,files_preserved=False)
 
 
 def controller(config):

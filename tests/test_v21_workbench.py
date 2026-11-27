@@ -124,6 +124,17 @@ def test_formal_output_cannot_use_preflight_purge(backend):
     assert root.exists()
 
 
+def test_delete_formal_training_output_permanently_preserves_source(backend):
+    b=backend; root,launch=fixture_job(b)
+    source=Path(launch['source']);write(source/'keep.json',{'scientific_source':True})
+    sibling=b.training/'other_run';write(sibling/'keep.json',{'other':True})
+    result=b.delete(dict(run=root.name,delete_files=True,expected_output=str(root)))
+    assert result['status']=='deleted' and not result['files_preserved']
+    assert not root.exists() and not (b.training/'.trash').exists()
+    assert 'trash_path' not in result
+    assert (source/'keep.json').is_file() and (sibling/'keep.json').is_file()
+
+
 def test_rpc_dispatch_coexists_with_legacy_dashboard(backend,monkeypatch):
     spec=importlib.util.spec_from_file_location('v21_remote_test',ROOT/'train/dashboard_remote.py')
     remote=importlib.util.module_from_spec(spec);spec.loader.exec_module(remote)
