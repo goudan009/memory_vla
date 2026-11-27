@@ -98,6 +98,11 @@ class Backend:
         if not isinstance(run,str) or not RUN.fullmatch(run) or ('__preflight' in run) != preflight:
             raise ValueError('新训练标识须为v2_1__testNN__expNN__runNNN，预检追加__preflightNNN')
         identity = validate_run_identity(run, request['version'], preflight=preflight)
+        # The current Test02/Exp01 task authorizes native_random_v2 Stage1 only.
+        # Missing recipe must not silently launch the historical sequential recipe.
+        # Existing runs resume through resume(), not prepare().
+        if stage == 'stage1' and (identity['test_id'], identity['experiment_id']) == ('test02', 'exp01'):
+            raise ValueError('当前Test02/Exp01 Stage1重训必须显式使用native_random_v2；禁止回退旧顺序训练配方')
         if any(p.exists() for p in (self.training/run,self.training/'.trash'/run,self.project/'deployments'/run)):
             raise ValueError('该训练标识已存在，请从原作业续跑')
         fixed = {'seed':42,'microbatch':2,'learning_rate':1e-5,'global_windows_per_step':2,
