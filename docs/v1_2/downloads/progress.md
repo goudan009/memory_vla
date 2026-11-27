@@ -10,7 +10,7 @@
 
 ## pinned_downloads
 
-部分完成（2026-11-27 22:08）。主资源状态文件 `/nvme3/outputs/memory_vla/v12-downloads/progress.json`：466 项中 461 项已逐项校验，`verified_bytes=5,282,703,865`；5 项因 Hugging Face 连接超时失败，`.part` 保留并可继续断点（N1.7 两个 safetensors、资产 31GB 归档、两段 RGB 视频）。资源单文件重试上限已提高到 10 次，当前轮次已结束；重试前不能把主权重或资产包称为完整。官方 radio 状态 `radio-progress.json` 已为 `verified_archive`：6,917,651,266 bytes，SHA256 `74eab585f4cf0f92326c9d4d74732343f6d789b05e945d3e71afe46bac69cb46`，13 个 ZIP 成员，`zipfile.testzip()` 通过。
+部分完成（2026-11-27 22:08；22:49 续传复核）。主资源状态文件 `/nvme3/outputs/memory_vla/v12-downloads/progress.json`：466 项中 461 项已逐项校验，`verified_bytes=5,282,703,865`；5 项因 Hugging Face 连接超时失败，`.part` 保留并可继续断点（N1.7 两个 safetensors、资产 31GB 归档、两段 RGB 视频）。22:49 续传轮次按每文件 10 次重试后仍为 `partial_failure`，错误均为 `curl exit 28`；没有把未完成主权重或资产包标记为完整。官方 radio 状态 `radio-progress.json` 已为 `verified_archive`：6,917,651,266 bytes，SHA256 `74eab585f4cf0f92326c9d4d74732343f6d789b05e945d3e71afe46bac69cb46`，13 个 ZIP 成员，`zipfile.testzip()` 通过。
 
 Cosmos-Reason2-2B 固定 9ce19a195e423419c349abfc86fd07178b230561；实际配置文件请求返回 GatedRepoError / HTTP401。本机未发现已登录 token，需要具有该模型访问权的 Hugging Face 账号；其他下载继续。
 
