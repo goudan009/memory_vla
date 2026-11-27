@@ -1,7 +1,12 @@
 name: Stage1 native preparation CPU checks
 on:
   push:
-    branches: [dev/stage1-native-retrain]
+    branches: [main]
+    paths:
+      - 'scripts/stage1_native*.py'
+      - 'tests/test_stage1_native.py'
+      - 'train/run_identity.py'
+      - '.github/workflows/stage1-native-cpu.yml'
   pull_request:
     paths:
       - 'scripts/stage1_native*.py'
@@ -20,6 +25,7 @@ jobs:
             scripts/stage1_native_prepare.py
             scripts/stage1_native_train.py
             tests/test_stage1_native.py
+            train/run_identity.py
           sparse-checkout-cone-mode: false
       - uses: actions/setup-python@v5
         with:
