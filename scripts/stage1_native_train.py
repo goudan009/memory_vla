@@ -456,7 +456,7 @@ def worker(args):
                         features=processor([{"type":MessageType.EPISODE_STEP.value,"content":sample}])
                         inp=processor.collator([features])["inputs"]
                         if inp["action_mask"].sum().item()!=32*23:raise ValueError("held-out mask mismatch")
-                        torch.manual_seed(42+ordinal*5+j)
+                        torch.random.default_generator.manual_seed(42+ordinal*5+j)
                         torch.cuda.manual_seed(42+ordinal*5+j)
                         with torch.autocast("cuda",dtype=torch.bfloat16):
                             pred=model(inp)
@@ -525,6 +525,9 @@ def worker(args):
 
     class CheckedTrainer(NativeTrainer):
         def __init__(self,*a,**kw):
+            model=kw['model']
+            if any(p.requires_grad for p in model.backbone.parameters()):raise RuntimeError('unexpected trainable Eagle')
+            model.backbone.bfloat16();model.action_head.float()
             super().__init__(*a,**kw)
             model=self.model
             if any(p.requires_grad for p in model.backbone.parameters()):
