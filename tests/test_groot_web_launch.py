@@ -482,6 +482,21 @@ def test_resume_rejects_paths_outside_evaluation_and_passes_only_explicit_overri
     assert "--seed" not in argv and "--version" not in argv
 
 
+def test_resume_forwards_exact_additional_budget_and_rejects_active_run(monkeypatch):
+    manager = launcher()
+    argv = manager.argv({'resume_from': 'V_1/baseline/test', 'additional_episodes': 7})
+    assert argv[argv.index('--additional-episodes')+1] == '7'
+    monkeypatch.setattr(manager.control, 'processes', lambda path: ({}, [object()]))
+    with pytest.raises(ValueError, match='仍在运行'):
+        manager.argv({'resume_from': 'V_1/baseline/test', 'additional_episodes': 7})
+
+
+@pytest.mark.parametrize('amount', [0, -1, True, 1.5, '7'])
+def test_resume_budget_must_be_a_positive_integer(amount):
+    with pytest.raises(ValueError, match='正整数'):
+        launcher().argv({'resume_from': 'V_1/baseline/test', 'additional_episodes': amount})
+
+
 def test_http_pause_delete_use_scoped_manager_without_launching(tmp_path):
     from types import SimpleNamespace
     viewer=load('eval_controls_http',ROOT/'evaluation/scripts/view_results.py')
@@ -564,7 +579,7 @@ def test_registry_resource_removal_and_restore(tmp_path, monkeypatch):
     resource.write_text("fixture")
     annotations = tmp_path / "annotations.json"
     monkeypatch.setattr(viewer, "REGISTRY_ANNOTATIONS", annotations)
-    monkeypatch.setattr(viewer.experiment_registry, "cached", lambda: {"items": [
+    monkeypatch.setattr(viewer.experiment_registry, "cached", lambda **kwargs: {"items": [
         {"id": "weights:test", "kind": "weights", "path": str(resource)},
         {"id": "dataset:test", "kind": "dataset"},
     ]})

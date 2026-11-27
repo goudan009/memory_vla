@@ -107,7 +107,26 @@
 #page-training .train-record-filters{display:grid;grid-template-columns:minmax(0,1fr) 88px;gap:6px;padding:0 12px 12px}
 #page-training .train-record-filters input,#page-training .train-record-filters select{padding:7px 8px;font-size:11px}
 #page-training .train-form-heading{display:flex;align-items:center;gap:8px;margin:0;padding:14px 20px 0;font-size:14px}
-#page-training .train-identity{grid-template-columns:minmax(110px,.6fr) minmax(0,1fr) minmax(0,1.35fr)}
+#page-training .train-identity{grid-template-columns:repeat(2,minmax(0,1fr))}
+#page-training .train-run-identity{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+#page-training .train-steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;padding:16px;border-bottom:1px solid var(--line)}
+#page-training .train-steps button{display:flex;gap:9px;align-items:flex-start;text-align:left;min-width:0;padding:12px 10px;background:#fafcfb;white-space:normal}
+#page-training .train-steps button[aria-current="step"]{background:var(--soft);border-color:var(--green);color:var(--green)}
+#page-training .train-step-number{display:grid;place-items:center;flex-shrink:0;width:24px;height:24px;border-radius:50%;background:#e9efec;font-size:12px}
+#page-training [aria-current="step"] .train-step-number{background:var(--green);color:white}
+#page-training .train-steps button>span:last-child{min-width:0;overflow-wrap:anywhere}
+#page-training .train-steps strong{display:block;font-size:12px}
+#page-training .train-steps small{display:block;font-size:10px;color:var(--muted);margin-top:4px;line-height:1.5}
+#page-training .train-setup-panel{display:grid;gap:12px;min-width:0}
+#page-training .train-step-intro{margin:0;padding:0 4px;font-size:12px;color:var(--muted);line-height:1.7}
+#page-training .train-review{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:0;padding:14px 20px}
+#page-training .train-review>div{min-width:0;padding:10px 12px;background:#f5f8f6;border-radius:8px}
+#page-training .train-review dt{color:var(--muted);font-size:11px;margin-bottom:5px}
+#page-training .train-review dd{margin:0;font-size:12px;line-height:1.7;overflow-wrap:anywhere}
+#page-training .train-preview-result{padding:14px 20px;border:1px solid #bfded0;border-radius:10px;background:var(--soft);font-size:12px;line-height:1.8;overflow-wrap:anywhere}
+#page-training #train-form > .launch-actions{position:static;flex-wrap:wrap;box-shadow:none}
+#page-training .train-step-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:flex-end}
+#page-training #train-config [hidden]{display:none!important}
 #page-training .train-setup-grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:12px}
 #page-training .train-form-extras > details:first-child{border-top:0}
 #page-training .train-form-extras > details > summary{font-size:12px}
@@ -159,6 +178,10 @@
 #page-training #train-delete-error:empty{display:none}
 #page-training .train-delete-actions{display:flex;justify-content:flex-end;gap:8px;padding:12px 20px;border-top:1px solid var(--line)}
 #page-training #train-delete-confirm{background:#9a392c;color:#fff;border-color:#9a392c}
+#page-training #train-checkpoint-delete{color:var(--red)}
+#page-training #train-checkpoint-delete-error{color:var(--red)}
+#page-training #train-checkpoint-delete-error:empty{display:none}
+#page-training #train-checkpoint-delete-confirm{background:#9a392c;color:#fff;border-color:#9a392c}
 #page-training .train-checkpoint-note{padding:0 20px 12px}
 #page-training .train-timing{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;padding:12px 20px;border-bottom:1px solid var(--line);background:#fafcfb}
 #page-training .train-timing label{display:block;color:var(--muted);font-size:11px}
@@ -196,10 +219,13 @@
  #page-training .train-identity .train-initial-weights{grid-column:1/-1}
 }
 @container(max-width:560px){
+ #page-training .train-steps{grid-template-columns:repeat(2,minmax(0,1fr));padding:12px}
+ #page-training .train-review{grid-template-columns:minmax(0,1fr);padding:12px}
  #page-training .train-param-groups{grid-template-columns:1fr}
  #page-training .train-inspect{padding:12px}
 }
 @container(max-width:380px){
+ #page-training .train-run-identity{grid-template-columns:minmax(0,1fr)}
  #page-training .train-identity,#page-training .train-hyperparameters,#page-training .train-config-fields{grid-template-columns:minmax(0,1fr)}
  #page-training .train-timing{grid-template-columns:minmax(0,1fr)}
 }
@@ -236,23 +262,35 @@
  </section>
  <div class="train-content">
   <section id="train-config" aria-label="训练配置">
-   <div class="detail-heading"><div><h2>新建训练</h2><div class="subtle">选择任务与资源，提交后自动固定源码快照</div></div><span id="train-device-label" class="chip gpu">A100</span></div>
-   <form id="train-form">
+   <div class="detail-heading"><div><h2>新建训练</h2><div class="subtle">按四步配置，确认后启动；切换步骤会保留已填内容</div></div><span id="train-device-label" class="chip gpu">A100</span></div>
+   <form id="train-form" novalidate>
+    <nav class="train-steps" aria-label="新建训练步骤">
+     <button type="button" data-train-setup-step="0" aria-current="step" aria-controls="train-setup-0"><span class="train-step-number">1</span><span><strong>实验与模型</strong><small id="train-step-summary-0">设置实验身份与初始权重</small></span></button>
+     <button type="button" data-train-setup-step="1" aria-controls="train-setup-1"><span class="train-step-number">2</span><span><strong>数据任务</strong><small id="train-step-summary-1">选择训练任务</small></span></button>
+     <button type="button" data-train-setup-step="2" aria-controls="train-setup-2"><span class="train-step-number">3</span><span><strong>GPU 与验证</strong><small id="train-step-summary-2">分配训练和验证资源</small></span></button>
+     <button type="button" data-train-setup-step="3" aria-controls="train-setup-3"><span class="train-step-number">4</span><span><strong>参数与启动</strong><small id="train-step-summary-3">确认预算并检查配置</small></span></button>
+    </nav>
     <div class="train-form-body">
+    <div id="train-setup-0" class="train-setup-panel" data-train-setup-panel="0">
+    <p class="train-step-intro" tabindex="-1">第 1 / 4 步 · 确认方法版本、起始权重和本次实验身份。已有作业续训请在训练记录中操作。</p>
     <div class="train-form-section">
     <h3 class="train-form-heading">实验与模型</h3>
     <div class="train-config-fields train-identity">
      <label>模型方法版本<select id="train-version" required><option value="V_1">V_1</option><option value="V_2">V_2（历史方法）</option></select></label>
-     <label>测试编号<input id="train-test-id" type="number" min="1" max="99" required placeholder="如 2"></label>
-     <label>实验编号<input id="train-experiment-id" type="number" min="1" max="99" required placeholder="如 1"></label>
-     <label>独立训练次数<input id="train-run-number" type="number" min="1" value="1" required></label>
      <label>方法<select id="train-arm"><option value="baseline">Baseline · 无记忆微调</option><option value="memory_v1">Memory · 完整记忆</option></select></label>
-     <label class="train-initial-weights">初始权重<select id="train-checkpoint-choice" required><option value="" disabled selected>正在读取设备权重列表…</option></select><span id="train-checkpoint-note"></span></label>
+     <label class="train-initial-weights train-wide">初始权重<select id="train-checkpoint-choice" required><option value="" disabled selected>正在读取设备权重列表…</option></select><span id="train-checkpoint-note"></span></label>
      <label id="train-checkpoint-custom" class="train-wide" hidden>自定义设备权重路径<input id="train-checkpoint" list="train-checkpoints" required><datalist id="train-checkpoints"></datalist></label>
      <label class="train-wide">微调方式<select id="train-fine-tuning"><option value="action_full">动作头 / 记忆全参数微调（冻结 Eagle）</option><option value="full">整个模型全参数微调（包含 Eagle）</option><option value="lora">LoRA 微调</option><option value="custom">自定义组件冻结</option></select></label>
+     <div class="train-wide train-run-identity">
+      <label>测试编号<input id="train-test-id" type="number" min="1" max="99" required placeholder="如 2"></label>
+      <label>实验编号<input id="train-experiment-id" type="number" min="1" max="99" required placeholder="如 1"></label>
+      <label>独立训练次数<input id="train-run-number" type="number" min="1" value="1" required></label>
+     </div>
     </div>
     </div>
-    <div class="train-setup-grid">
+    </div>
+    <div id="train-setup-1" class="train-setup-panel" data-train-setup-panel="1" hidden>
+    <p class="train-step-intro" tabindex="-1">第 2 / 4 步 · 支持多任务联合训练。已选任务可展开管理；缺失数据先准备完成。</p>
     <div class="train-form-section">
      <h3 class="train-form-heading">训练数据 <small id="train-task-count" class="train-hint"></small></h3>
      <div class="train-task-picker">
@@ -266,6 +304,9 @@
       <span id="train-data-status" class="train-hint"></span>
      </div>
     </div>
+    </div>
+    <div id="train-setup-2" class="train-setup-panel" data-train-setup-panel="2" hidden>
+    <p class="train-step-intro" tabindex="-1">第 3 / 4 步 · 分别选择训练卡和验证卡，再决定立即启动或等待 GPU 空闲。</p>
     <div class="train-form-section">
     <h3 class="train-form-heading">GPU 与验证</h3>
     <div class="train-config-fields">
@@ -275,9 +316,13 @@
      <label id="train-validation-gpu-field">验证 GPU<select id="train-validation-gpu"></select><span class="train-hint">优先选独立空闲卡；验证卡不计入训练卡数。</span></label>
      <label id="train-validation-percent-field">验证集比例（%）<input id="train-validation-percent" type="number" min="1" max="50" step="1" value="10"></label>
      <div id="train-batch" class="train-hint train-wide"></div>
+     <label class="train-wide train-check"><input id="train-share" type="checkbox">允许与现有进程共卡</label>
     </div>
     </div>
     </div>
+    <div id="train-setup-3" class="train-setup-panel" data-train-setup-panel="3" hidden>
+    <p class="train-step-intro" tabindex="-1">第 4 / 4 步 · 核对本次配置，调整训练预算，然后检查配置或启动训练。</p>
+    <div class="train-form-section"><h3 class="train-form-heading">本次训练</h3><dl id="train-review" class="train-review"></dl></div>
     <div class="train-form-section">
     <h3 class="train-form-heading">训练参数</h3>
     <div class="train-recommendation" aria-label="训练参数推荐">
@@ -295,7 +340,7 @@
     <div class="train-notes"><label>训练备注（可选）<textarea id="train-notes" rows="2" maxlength="2000" placeholder="记录训练目的或本次调整"></textarea></label></div>
     </div>
     <div class="train-form-extras">
-     <details class="compact-fold"><summary>组件冻结与 LoRA 参数</summary><div class="train-config-fields">
+     <details id="train-tuning-details" class="compact-fold"><summary>组件冻结与 LoRA 参数</summary><div class="train-config-fields">
       <label>LLM<select id="train-freeze-llm"><option value="auto">跟随模式</option><option value="true">冻结</option><option value="false">训练</option></select></label>
       <label>视觉编码器<select id="train-freeze-vision"><option value="auto">跟随模式</option><option value="true">冻结</option><option value="false">训练</option></select></label>
       <label>视觉投影 mlp1<select id="train-freeze-vision-projector"><option value="auto">跟随模式</option><option value="true">冻结</option><option value="false">训练</option></select></label>
@@ -313,37 +358,48 @@
       </div>
       <div class="train-hint train-wide">全模型训练会重算 Eagle 并反传，显存需求高于冻结骨干。LoRA 默认适配 LLM 与动作 DiT，动作投影、LayerNorm、记忆全参数训练；可分别冻结。</div>
      </div></details>
-    <details id="train-advanced" class="compact-fold"><summary>高级参数 · 记忆、验证、随机种子与消融</summary>
+    <details id="train-advanced" class="compact-fold"><summary>优化器、随机种子与图像增强</summary>
      <div class="train-config-fields">
-      <label>消融方法名（可选）<input id="train-method" placeholder="ablation_no_perception" pattern="ablation_[a-z0-9_]+"></label>
-      <label>消融改动说明<input id="train-method-description" placeholder="对应源码或配置的实际改动"></label>
-      <div class="train-hint train-wide">消融名称用于追踪，不会自动关闭模块；使用 Memory 类型及对应的代码或配置。</div>
       <label>随机种子<input id="train-seed" type="number" min="0" step="1" value="42" required></label>
       <label>Weight decay<input id="train-weight-decay" type="number" min="0" step="any" value="0.01"></label>
       <label>AdamW epsilon<input id="train-optimizer-eps" type="number" min="1e-16" step="any" value="1e-8"><span class="train-hint">优化器分母稳定项；过大可能抑制微弱梯度的更新。</span></label>
       <label>梯度裁剪阈值<input id="train-max-grad-norm" type="number" min="0.000001" step="any" value="1"></label>
+      <label class="train-wide train-check"><input id="train-image-augmentation" type="checkbox" checked>启用训练图像增强</label>
+     </div>
+    </details>
+    <details id="train-memory-details" class="compact-fold" hidden><summary>记忆模块参数</summary>
+     <div class="train-config-fields">
       <label>记忆容量<select id="train-memory-length"><option value="16">16</option><option value="64" selected>64</option><option value="256">256</option></select></label>
       <label>记忆接入方式<select id="train-memory-conditioning"><option value="residual">Residual Memory · 保留 GR00T 特征（默认）</option><option value="direct">Direct · 替换原条件特征</option></select></label>
       <label>Residual readout<select id="train-memory-residual-readout"><option value="delta">Delta · 当前融合特征差值</option><option value="value">Value-only · 仅历史注意力 Value</option></select><span class="train-hint">Value-only 仅用于 Residual Memory；Direct 模式固定为 Delta。</span></label>
       <label class="train-check"><input id="train-memory-cognitive-projection" type="checkbox">认知残差使用矩阵投影</label>
       <label>认知残差作用范围<select id="train-memory-cognitive-scope"><option value="eos">EOS · 最后文本位置</option><option value="text">Text · 全部有效文本位置</option></select></label>
-      <label class="train-wide train-check"><input id="train-image-augmentation" type="checkbox" checked>启用训练图像增强</label>
+      <div class="train-hint train-wide">每窗口最多 32 决策，记忆跨窗口延续并截断历史梯度。全局窗口数须能被训练卡数整除。</div>
+     </div>
+    </details>
+    <details id="train-validation-details" class="compact-fold"><summary>验证频率与早停</summary>
+     <div class="train-config-fields">
       <label>完整验证间隔（步）<input id="train-validation-interval" type="number" min="1000" step="1000" value="1000" required><span class="train-hint">关闭验证时忽略；权重仍每 1000 步保存。</span></label>
       <label class="train-check"><input id="train-early-stopping" type="checkbox">验证停滞时自动早停</label>
       <div class="train-hint train-wide">推荐关闭自动早停，先完成所设训练预算，再比较验证指标和任务成功率。手动启用后可能提前结束。</div>
-      <label class="train-wide train-check"><input id="train-share" type="checkbox">允许与现有进程共卡</label>
-      <div class="train-hint train-wide">每窗口最多 32 决策，记忆跨窗口延续并截断历史梯度。全局窗口数须能被训练卡数整除。记忆设置仅用于 Memory 类型。</div>
      </div>
     </details>
-    <details id="train-plan-details" class="compact-fold" hidden><summary>检查结果与启动参数</summary><pre id="train-plan" class="log" hidden></pre></details>
+    <details class="compact-fold"><summary>消融实验标识</summary><div class="train-config-fields">
+      <label>消融方法名（可选）<input id="train-method" placeholder="ablation_no_perception" pattern="ablation_[a-z0-9_]+"></label>
+      <label>消融改动说明<input id="train-method-description" placeholder="对应源码或配置的实际改动"></label>
+      <div class="train-hint train-wide">消融名称用于追踪，不会自动关闭模块；使用 Memory 类型及对应的代码或配置。</div>
+    </div></details>
    <details class="compact-fold"><summary>代码同步 · 4090 → 当前训练设备</summary>
     <div class="train-actions train-sync-actions"><label class="train-check"><input type="checkbox" id="train-autosync">自动同步改动</label><button id="train-sync-once" type="button">立即同步</button></div>
     <p id="train-sync-state" class="train-info train-sync-state"></p>
     <div class="train-sync-state train-hint">启动训练时会自动同步并固定源码快照。自动同步每 4 秒检查，仅传代码与依赖配置，关闭浏览器后继续运行。</div>
    </details>
     </div>
+    <div id="train-preview-result" class="train-preview-result" role="status" hidden></div>
+    <details id="train-plan-details" class="train-form-extras compact-fold" hidden><summary>查看完整检查结果与启动参数</summary><pre id="train-plan" class="log" hidden></pre></details>
     </div>
-    <div class="launch-actions"><div id="train-submit-summary" class="train-submit-summary" aria-live="polite"></div><button id="train-check" type="button">检查配置</button><button id="train-submit" class="primary-button" type="submit">启动训练</button></div>
+    </div>
+    <div class="launch-actions"><div id="train-submit-summary" class="train-submit-summary" aria-live="polite"></div><div class="train-step-actions"><button id="train-previous" type="button" hidden>上一步</button><button id="train-next" class="primary-button" type="button">下一步：数据任务</button><button id="train-check" type="button" hidden>检查配置</button><button id="train-submit" class="primary-button" type="submit" hidden>启动训练</button></div></div>
    </form>
   </section>
   <section id="train-monitor" aria-label="训练详情" hidden>
@@ -371,7 +427,7 @@
    </div>
    <nav id="train-detail-tabs" class="detail-tabs" role="tablist" aria-label="训练详情视图">
     <button id="train-tab-curve" type="button" role="tab" aria-controls="train-pane-curve" aria-selected="true" data-train-tab="curve">训练曲线</button>
-    <button id="train-tab-controls" type="button" role="tab" aria-controls="train-pane-controls" aria-selected="false" data-train-tab="controls" tabindex="-1">权重与控制</button>
+    <button id="train-tab-controls" type="button" role="tab" aria-controls="train-pane-controls" aria-selected="false" data-train-tab="controls" tabindex="-1">权重、备注与控制</button>
     <button id="train-tab-info" type="button" role="tab" aria-controls="train-pane-info" aria-selected="false" data-train-tab="info" tabindex="-1">训练参数</button>
     <button id="train-tab-logs" type="button" role="tab" aria-controls="train-pane-logs" aria-selected="false" data-train-tab="logs" tabindex="-1">运行日志</button>
    </nav>
@@ -386,7 +442,7 @@
    <div id="train-pane-controls" role="tabpanel" aria-labelledby="train-tab-controls" hidden>
     <div id="train-cancel-panel" class="details" hidden><h3 id="train-cancel-title">取消本组排队</h3><p id="train-cancel-scope" class="train-info"></p><p class="train-hint">撤销后不会自动启动。保留配置和日志；需要训练时重新提交。此操作取消等待，不会强制抢占 GPU。</p><button id="train-cancel" type="button">取消本组排队</button></div>
     <p id="train-cancel-message" class="train-info train-control-note" role="status"></p>
-    <div class="train-config-fields"><label class="train-wide">已保存权重<select id="train-saved-checkpoint"></select></label><div id="train-checkpoint-path" class="train-path train-wide"></div><div class="train-wide"><button id="train-use-checkpoint" type="button">用于推理评估 →</button></div></div>
+    <div class="train-config-fields"><label class="train-wide">已保存权重<select id="train-saved-checkpoint"></select></label><div id="train-checkpoint-path" class="train-path train-wide"></div><div id="train-saved-checkpoint-note" class="train-wide"></div><div class="train-wide train-actions"><button id="train-use-checkpoint" type="button">用于推理评估 →</button><button id="train-checkpoint-delete" type="button" disabled>删除此 checkpoint</button></div><div class="train-wide"><p id="train-checkpoint-delete-message" class="train-info" role="status"></p><button id="train-checkpoint-undo" type="button" hidden>撤销刚才的回收</button></div></div>
     <details id="train-stop-panel" class="compact-fold"><summary>指定保存后停止步数</summary><div class="train-config-fields train-command-fields"><label>停止步数<input id="train-stop-step" type="number" min="1" step="1" value="3000"></label><div class="train-actions"><button id="train-stop" type="button">设置停止点</button></div></div><p class="train-hint train-control-note">关闭验证或使用独立异步验证时，可指定未来任意整数步保存后停止，适合短训检查。旧同步验证模式仍需1000的整数倍。已排队验证继续完成。</p><p id="train-stop-message" class="train-info train-control-note" role="status"></p></details>
    </div>
    <div id="train-pane-info" class="train-inspect" role="tabpanel" aria-labelledby="train-tab-info" hidden>
@@ -434,10 +490,24 @@
   <div class="section-head"><h2 id="train-delete-title">删除训练记录</h2></div>
   <div class="train-delete-body">
    <div class="train-delete-target"><strong id="train-delete-name"></strong><p id="train-delete-device" class="subtle"></p><p id="train-delete-path" class="train-path"></p></div>
-   <label class="train-check"><input id="train-delete-files" type="checkbox">同时移除输出目录</label>
+   <label class="train-check"><input id="train-delete-files" type="checkbox">同时永久删除输出目录（权重和日志）</label>
    <p id="train-delete-description" class="train-hint"></p>
    <p id="train-delete-error" class="train-info" role="alert"></p>
   </div>
   <div class="train-delete-actions"><button id="train-delete-close" type="button" autofocus>取消</button><button id="train-delete-confirm" type="submit">删除记录</button></div>
+ </form>
+</dialog>
+<dialog id="train-checkpoint-delete-dialog" class="train-delete-dialog" aria-labelledby="train-checkpoint-delete-title" aria-describedby="train-checkpoint-delete-description">
+ <form id="train-checkpoint-delete-form">
+  <div class="section-head"><h2 id="train-checkpoint-delete-title">删除单个 checkpoint</h2></div>
+  <div class="train-delete-body">
+   <div class="train-delete-target"><strong id="train-checkpoint-delete-name"></strong><p id="train-checkpoint-delete-device" class="subtle"></p><p id="train-checkpoint-delete-path" class="train-path"></p><p id="train-checkpoint-delete-note" class="train-hint"></p></div>
+   <p id="train-checkpoint-delete-description" class="train-hint">仅删除所选权重文件夹；保留本次训练记录、其他 checkpoint、备注和历史评估结果。</p>
+   <label class="train-check"><input id="train-checkpoint-delete-permanent" type="checkbox">永久删除，释放磁盘空间（无法恢复）</label>
+   <p id="train-checkpoint-delete-mode" class="train-hint">默认移入回收目录，可以撤销；回收目录仍占用磁盘空间。</p>
+   <p id="train-checkpoint-delete-warning" class="train-info"></p>
+   <p id="train-checkpoint-delete-error" class="train-info" role="alert"></p>
+  </div>
+  <div class="train-delete-actions"><button id="train-checkpoint-delete-close" type="button" autofocus>取消</button><button id="train-checkpoint-delete-confirm" type="submit" disabled>移入回收目录</button></div>
  </form>
 </dialog>

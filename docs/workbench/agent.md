@@ -27,7 +27,15 @@ Task 40 的采集和检查点恢复还需要实验存储中的仿真检查点、
 
 自动配对队列和独立分支续训同样必须携带 `test_id` / `experiment_id`；旧记录缺失这两个字段时不得推测并创建新 run。所有入口均以 `train/run_identity.py` 校验身份。
 
-普通闭环评估支持 `repetitions`（正整数，默认1）和 `episodes_per_gpu`（每轮每卡回合数，默认单卡10、双卡各5），CLI 对应 `--repetitions`、`--episodes-per-gpu`。默认设置下5轮共50回合，仍归入一个评估目录。实例ID仍为0–9；多回合按环境的原生实例分区循环，保存每槽配额、偏移和逐回合seed。sequence/random模式为同一实例后续回合产生新seed，fixed模式的重复不能作为独立随机样本。单卡中断续跑保留原实例池与各槽偏移；旧版单轮续跑规则保持兼容。双卡续跑及剩余回合少于原环境数的续跑暂不支持。
+普通闭环评估支持 `repetitions`（正整数，默认1）和 `episodes_per_gpu`（每轮每卡回合数，默认单卡10、双卡各5），CLI 对应 `--repetitions`、`--episodes-per-gpu`。默认设置下5轮共50回合，仍归入一个评估目录。实例ID仍为0–9；多回合按环境的原生实例分区循环，保存每槽配额、偏移和逐回合seed。sequence/random模式为同一实例后续回合产生新seed，fixed模式的重复不能作为独立随机样本。单卡、双卡继续评估保留原实例池、环境身份与各槽偏移；剩余或追加回合数小于原环境数时只启用有配额的环境，支持仅再跑1个回合。旧版单轮续跑规则保持兼容。
+
+评估暂停后保留已有成绩、日志、录像和备注，不会自动续跑。点击「继续评估…」可选择补完原计划，或填写本次再跑的回合数；完成的记录可点击「追加回合」。继续评估先调用 `POST /api/launch/preview`，确认后调用 `/api/launch/start`，请求为 `{"resume_from":"评估相对目录"}`，追加指定数量时增加 `additional_episodes`（正整数，CLI 为 `--additional-episodes`）。例如已有12个回合、本次再跑5个，累计目标变为17个；预算调整记入 `configuration.resume_history`。沿用确切checkpoint、协议和seed顺序，继续写入原评估目录。历史 `cancelled` / `resume_allowed:false` 记录仍可主动继续。旧 `/api/launch/finish` 兼容入口仅将无活跃进程的中断记录留在 `paused` 状态，不再永久禁止续跑。本地和远端设备均适用。
+
+评估结果的回合表及录像详情均可编辑独立「回合备注」，无需先选择失败分类。同一回合的备注在两个入口同步，切换回合和页面自动刷新保留未保存草稿；保存后刷新页面仍可读取。接口为 `GET /api/episode-notes?run=评估相对目录&episode_index=回合编号` 和同路径 POST（`run`、`episode_index`、`notes`，最多2000字符，空文本清除备注）。备注保存在原评估目录的 `episode_notes/`，不修改成绩、回合日志或人工失败分类。
+
+「新建训练」按实验与模型、数据任务、GPU 与验证、参数与启动四步填写，步骤之间保留输入。最终页汇总实验身份、起始权重、任务数量、资源和预算；高级参数按优化器、记忆、验证和消融分组折叠。检查配置只做预检，启动或排队仍需点击对应按钮；修改配置会清除过期检查结果。训练记录中的断点续训入口保持独立。
+
+删除训练记录时，可选择是否同时永久删除输出目录。未勾选时保留权重和日志；勾选后直接删除该次训练的输出目录，不移入 `.trash`，无法恢复。删除评估直接永久删除该次评估目录（结果、录像和回合备注），本机和远端及其本地缓存采用相同规则。仍在运行、清理或验证中的任务须先停止，训练共享输出目录仍只允许删除记录。此规则不改变单独删除 checkpoint 或台账文件的回收选项。
 
 早期 V_2_1 Stage1/baseline 的训练源码快照只包含记忆模型推理入口。对这类 checkpoint，工作台优先推荐已同步的兼容推理源码；启动器也检查该兼容性，必要时使用 `deployments/web_live` 并冻结为独立推理快照，实际路径和哈希保存在服务记录中。原训练源码和 checkpoint 保留；缺少兼容源码时，预检明确提示先同步源码。
 
@@ -36,6 +44,10 @@ Task 40 的采集和检查点恢复还需要实验存储中的仿真检查点、
 「添加已有目录」登记本机或已配置远端上已有的数据 / 权重文件夹，不执行上传或复制；登记保存在 `outputs/registry_resources.json`，重新扫描后仍保留。在目录内可新建文件夹，删除文件或文件夹时移入同级 `.workbench-trash`，页面提供恢复刚删除项目的入口。回收站仍占用磁盘，存储根目录不能删除，恢复时不覆盖已有同名数据。
 
 资源接口为 `GET /api/registry/storage`（`action=hosts|disks|browse|size`，`host=4090|A100|A6000`，浏览时传绝对 `path`，可附 `query`、`offset`、`limit`），以及同路径的 POST（`action=register|mkdir|trash|restore`）。远端使用既有 `configs/workbench_devices.json` 的 SSH 配置，浏览和预览限制在已登记资源与数据存储目录中。
+
+单个 checkpoint 可在训练详情「权重、备注与控制」、推理权重选择、评估模型服务和评估结果「Checkpoint 备注」中编辑备注。同一设备、同一绝对路径共用一份备注，训练运行备注仍独立保留。填写后点击「保存备注」，清空再保存可删除；未保存的输入在本次页面自动刷新、切换权重时保留。备注存储于工作台 `outputs/checkpoint_notes.json`，不修改远端权重、训练配置或评估成绩。接口为 `GET /api/checkpoint-notes`（备注和设备映射）、同路径 POST（`device`、`checkpoint`、`notes`，最多2000字符）。旧结果缺少 checkpoint 或设备来源时不能编辑，需先核对身份。
+
+训练详情「权重、备注与控制」选中已保存权重后，可点击「删除此 checkpoint」，仅移除所选权重文件夹，保留训练记录、其他权重、备注及历史评估。默认移入同级 `.workbench-trash`（仍占磁盘），可在页面撤销刚才的回收；勾选「永久删除」会实际释放空间且无法恢复。正在被训练、排队、验证、推理或评估使用的权重不能删除；训练活跃时保留最新恢复断点。删除终态训练的最新断点会影响该步续跑，不将旧模型与最新优化器状态重新配对。接口为 `POST /api/training/checkpoint-delete`：先传 `device/run/arm/checkpoint/preview:true`，确认后用返回的 `expected_checkpoint`、`confirm:true` 及可选 `permanent:true` 提交，提交时重新核对占用。回收撤销沿用 `/api/registry/storage` 的 `restore`。
 
 已安装 `memory-workbench` 时，可直接使用 `status`、`train|infer|eval options/jobs` 和 `train|infer|eval preview/start -f <配置.json>`。CLI 的 `start` 会先预检，再通过同一工作台 API 提交。安装和用法见 [工作台 CLI](../../workbench-cli/README.md)。
 
@@ -66,6 +78,6 @@ Exp13训练支持工程选项 `fsdp_accumulation=retain`：以更多显存保留
 
 Exp13关闭验证的训练可在「续跑训练」中编辑「检查点保存间隔（步）」，默认1000步，支持1000的正整数倍；实际总步数仍遵循原续跑预算限制。对应`/api/training/resume`字段为`checkpoint_interval`，页面先发`preview:true`再提交。间隔从该次续跑起生效，按累计optimizer步数保存，后续续跑保留最近选值；历史断点和原配置记录保留。保存内容仍包含完整模型、优化器与各rank训练状态；更频繁保存会增加磁盘容量需求和保存耗时。
 
-临时训练自检结束并记录验证证据后，在训练页选中对应终态作业，使用现有「删除」操作清理记录。确认作业的输出目录专用于该次自检且没有依赖后，勾选回收输出目录。删除后复查训练列表。
+临时训练自检结束并记录验证证据后，在训练页选中对应终态作业，使用现有「删除」操作清理记录。确认作业的输出目录专用于该次自检且没有依赖后，勾选永久删除输出目录。删除后复查训练列表。
 
 V2 本机短测接在现有 BenchmarkManager：`kind=v2_training_smoke`，`gpu` 为本机编号，`steps` 为 1–100（默认3）。它使用已同步的 Exp11 V1 6000步权重、两条官方示教各三帧经当前主干新编码的特征/动作和明确标注的人工状态测试值，只验收训练链路。HTTP 沿用 `/api/benchmarks/preview`、`start`、`jobs`、`detail`、`stop`。终态详情归档为当前实验的 `evidence/4090-<job_id>.json` 后，通过 `/api/benchmarks/delete` 删除专属临时记录和产物。已有工作台进程尚未载入新入口时，可直接调用同一 `BenchmarkManager.prepare/start/detail/delete`；作业仍使用相同 worker、GPU 检查、记录目录和 HTTP 查询，不需重启服务或另建调度器。

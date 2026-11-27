@@ -124,6 +124,12 @@ class DeviceEvaluationManager:
                      task40_baseline_storage=evaluation.get('task40_baseline_storage'))
         module=(self.root/'evaluation/scripts/groot_device_eval_remote.py').read_text()
         code='import sys\nsys.path.insert(0,'+repr(self.project+'/deployments/web_live/evaluation/scripts')+')\n'
+        if action in ('finish', 'delete'):
+            # Existing runs use frozen source snapshots with older control behavior.
+            # Ship only the current result-control code; leave experiment code intact.
+            control=(self.root/'evaluation/scripts/groot_eval_control.py').read_text()
+            code+='import types\ncontrol=types.ModuleType("groot_eval_control")\n'
+            code+='exec('+repr(control)+',control.__dict__)\nsys.modules["groot_eval_control"]=control\n'
         code+=module+'\nprint(json.dumps(dispatch('+repr(request)+'),ensure_ascii=False))\n'
         result=subprocess.run(['ssh','-o','BatchMode=yes','-o','ConnectTimeout=5',self.host,'python3 -'],
             input=code,capture_output=True,text=True,timeout=60)
@@ -243,8 +249,13 @@ class DeviceEvaluationManager:
         result=self._remote(action,dict(run=marker['remote_run']))
         if action=='delete':
             result=EvaluationControl(self.root).delete(request)
+        elif action=='finish':
+            # The remote action has confirmed its controller is stopped. Reflect
+            # the paused state immediately, including for sealed cache entries.
+            EvaluationControl(self.root).finish(request)
         return result
 
     def pause(self, request): return self._action('pause',request)
+    def finish(self, request): return self._action('finish',request)
     def delete(self, request): return self._action('delete',request)
     def stop_restore(self, request): return self._remote('stop_restore',request)

@@ -1364,6 +1364,116 @@ def training_parameters(root, arm, config):
     return dict(values=values,sources=list(dict.fromkeys(sources)))
 
 
+def saved_checkpoints(root, arm):
+    """Only expose weights whose save has been published by the worker."""
+    checkpoints = []
+    for entry in sorted((root/arm/'validation_queue').glob('step-*.json'), reverse=True):
+        published = read_json(entry)
+        if published['step'] and (Path(published['checkpoint'])/'config.json').is_file():
+            checkpoints.append(dict(step=published['step'], path=str(Path(published['checkpoint']).resolve())))
+    latest = read_json(root/arm/'checkpoints/latest.json', {}).get('step', 0)
+    published_steps = {p['step'] for p in checkpoints}
+    for file in (root/arm/'checkpoints').glob('*/config.json'):
+        step = checkpoint_step(file.parent.name, root.name)
+        if step is not None and step <= latest and step not in published_steps:
+            checkpoints.append(dict(step=step, path=str(file.parent.resolve())))
+    return sorted(checkpoints, key=lambda p: p['step'], reverse=True)
+
+
+def delete_checkpoint(request):
+    """Remove one published checkpoint, never its run or shared optimizer state."""
+    import uuid
+
+    v21 = v21_backend()
+    if v21.owns(request):
+        root, launch = v21.root(request)
+        arm = launch['arm']
+        checkpoint_root = root/'run/checkpoints'
+    else:
+        root, arm = job_root(request)
+        checkpoint_root = root/arm/'checkpoints'
+    raw = request.get('checkpoint', '')
+    if not isinstance(raw, str) or not raw.startswith('/') or '\x00' in raw:
+        raise ValueError('请选择完整的 checkpoint 路径')
+    path = Path(raw)
+    # Reject aliases, symlinked ancestors and any parent/run deletion.
+    if (str(path) != raw or '..' in path.parts or path.parent != checkpoint_root
+            or root.resolve().parent != TRAINING.resolve()
+            or any(p.is_symlink() for p in [path, *path.parents])):
+        raise ValueError('只能删除当前训练目录内的单个 checkpoint，不能使用软链接或上级路径')
+    permanent = request.get('permanent', False)
+    preview = request.get('preview', False)
+    if type(permanent) is not bool or type(preview) is not bool:
+        raise ValueError('删除选项必须是开关')
+    with (TRAINING/'.gpu_queue.lock').open('a') as lock:
+        fcntl.flock(lock, fcntl.LOCK_EX)
+        checkpoints = v21.checkpoints(root) if v21.owns(request) else saved_checkpoints(root, arm)
+        selected = next((p for p in checkpoints if p['path'] == raw), None)
+        if not selected or not path.is_dir():
+            raise ValueError('checkpoint 不存在或尚未完成保存，请刷新列表')
+        state = read_json(root/arm/'status.json', {})
+        live = v21.live_processes(root) if v21.owns(request) else live_run_processes(root)
+        active = state.get('status') not in TERMINAL_TRAINING_STATES | {'paused'} or bool(live)
+        latest = read_json(checkpoint_root/'latest.json', {})
+        is_latest = (raw == latest.get('path') if latest else selected == checkpoints[0])
+        if is_latest and active:
+            raise ValueError('这是当前训练的最新恢复断点，请等待停止或新的 checkpoint 保存后再删除')
+        validation = read_json(root/arm/'validation_status.json', {})
+        queued = any(read_json(p, {}).get('checkpoint') == raw
+                     for p in (root/arm/'validation_queue').glob('step-*.json'))
+        validated = (root/arm/f'metrics/round-{selected["step"]:06d}.json').is_file()
+        if (validation.get('status') not in TERMINAL_TRAINING_STATES | {None, 'disabled'}
+                and (validation.get('checkpoint_step') == selected['step'] or queued and not validated)):
+            raise ValueError('该 checkpoint 正在验证或等待验证，请等待验证结束')
+        if queued and not validated and active and not validation:
+            raise ValueError('该 checkpoint 尚在验证队列，请等待验证结束')
+        # Queued training can depend on these weights before a process exists.
+        for config in TRAINING.glob('*/config/web_launch.json'):
+            consumer = read_json(config, {})
+            consumer_state = read_json(config.parents[1]/consumer.get('arm', 'baseline')/'status.json', {})
+            if consumer_state.get('status') in TERMINAL_TRAINING_STATES | {'paused'}:
+                continue
+            if any(isinstance(consumer.get(key), str) and
+                   (consumer[key] == raw or consumer[key].startswith(raw+'/'))
+                   for key in ('checkpoint', 'labels', 'calibration_reference', 'preflight')):
+                raise ValueError('该 checkpoint 被训练任务 '+config.parents[1].name+' 使用或排队引用')
+        # Include inference launched outside the current dashboard session.
+        for cmdline in Path('/proc').glob('[0-9]*/cmdline'):
+            try:
+                args = cmdline.read_bytes().decode().split('\x00')
+            except (OSError, UnicodeError):
+                continue
+            if any(arg == raw or arg.startswith(raw+'/') for arg in args):
+                raise ValueError('该 checkpoint 仍被活跃进程 '+cmdline.parent.name+' 使用，请先停止对应服务')
+        stat = path.stat()
+        identity = f'{stat.st_dev}:{stat.st_ino}:{stat.st_ctime_ns}'
+        result = dict(run=root.name, arm=arm, checkpoint=raw, step=selected['step'],
+                      permanent=permanent, expected_checkpoint=identity,
+                      warning='删除最新断点后，此训练可能无法从该步续跑；不会把旧模型与最新优化器混用。' if is_latest else '')
+        if preview:
+            return dict(result, status='preview')
+        if request.get('confirm') is not True or request.get('expected_checkpoint') != identity:
+            raise ValueError('请重新预览并确认要删除的 checkpoint')
+        if permanent:
+            shutil.rmtree(path)
+            return dict(result, status='deleted')
+        trash = checkpoint_root/'.workbench-trash'
+        if trash.is_symlink():
+            raise ValueError('回收目录不能是软链接')
+        trash.mkdir(exist_ok=True)
+        token = uuid.uuid4().hex
+        metadata = trash/(token+'.json')
+        atomic_json(metadata, dict(path=raw, deleted_at=time.time()))
+        try:
+            path.rename(trash/token)
+        except OSError:
+            metadata.unlink()
+            raise
+        # Keep latest.json as historical identity. A missing model makes strict
+        # resume unavailable; restoring it restores resume without mixing states.
+        return dict(result, status='trashed', trash_path=str(trash/token), token=token)
+
+
 def detail(request):
     if v21_backend().owns(request):
         return v21_backend().detail(request)
@@ -1407,18 +1517,7 @@ def detail(request):
     config=read_json(root/arm/'config/ddp.json',{})
     means=[dict(epoch=e['epoch'],first=e['first'],last=e['last'],steps=e['steps'],loss=e['total']/e['count'],
                 complete=e['steps']==config.get('steps_per_epoch')) for e in epochs.values()]
-    checkpoints=[]
-    for entry in sorted((root/arm/'validation_queue').glob('step-*.json'), reverse=True):
-        published=read_json(entry)
-        if published['step'] and (Path(published['checkpoint'])/'config.json').is_file():
-            checkpoints.append(dict(step=published['step'],path=str(Path(published['checkpoint']).resolve())))
-    latest=read_json(root/arm/'checkpoints/latest.json',{}).get('step',0)
-    published_steps={p['step'] for p in checkpoints}
-    for file in (root/arm/'checkpoints').glob('*/config.json'):
-        step=checkpoint_step(file.parent.name, root.name)
-        if step is not None and step<=latest and step not in published_steps:
-            checkpoints.append(dict(step=step,path=str(file.parent.resolve())))
-    checkpoints.sort(key=lambda p:p['step'],reverse=True)
+    checkpoints = saved_checkpoints(root, arm)
     state = read_json(root/arm/'status.json', {})
     plan = recorded_plan(root)
     stop = read_json(root/'metrics/stop_training.json', {})
@@ -1501,13 +1600,8 @@ def delete(request):
             raise ValueError('该输出目录包含其他训练组，只能删除记录')
         if (job['queue'] or {}).get('status') in WAITING_QUEUE_STATES or live_run_processes(root):
             raise ValueError('训练目录仍有排队任务或活跃进程，请等待结束')
-        trash = training_root/'.trash'
-        trash.mkdir(exist_ok=True)
-        target = trash/root.name
-        if trash.is_symlink() or os.path.lexists(target):
-            raise ValueError('回收目录异常或已存在同名记录，未移动训练目录')
-        root.rename(target)
-        return dict(control, output=job['output'], trash_path=str(target))
+        shutil.rmtree(root)
+        return dict(control, output=job['output'])
 
 
 def v21_backend():
@@ -1527,6 +1621,7 @@ if __name__=='__main__':
         elif action=='stop': result=stop(REQUEST['payload'])
         elif action=='cancel': result=cancel(REQUEST['payload'])
         elif action=='delete': result=delete(REQUEST['payload'])
+        elif action=='checkpoint-delete': result=delete_checkpoint(REQUEST['payload'])
         elif action=='resume': result=resume(REQUEST['payload'],REQUEST.get('resume_controller'))
         else: raise ValueError('不支持的训练操作')
         print(json.dumps(result,ensure_ascii=False))

@@ -948,7 +948,7 @@ def test_delete_training_record_preserves_checkpoints_and_other_runs(remote):
     assert remote.detail(dict(run=root.name,arm='baseline'))['checkpoints'][0]['step']==1000
 
 
-def test_delete_moves_output_to_trash_and_preserves_run_number(remote, monkeypatch):
+def test_delete_removes_output_permanently_and_preserves_source_and_other_runs(remote, monkeypatch):
     root = make_job(remote)
     root = root.rename(root.with_name('v1__test01__exp01__run004'))
     remote.atomic_json(root/'baseline/status.json', dict(status='completed'))
@@ -957,13 +957,15 @@ def test_delete_moves_output_to_trash_and_preserves_run_number(remote, monkeypat
     monkeypatch.setattr(remote, 'live_run_processes', lambda root: [])
     job = remote.jobs()['jobs'][0]
     assert job['can_delete_files']
+    sibling = remote.TRAINING/'other_run'
+    sibling.mkdir(); (sibling/'keep.txt').write_text('other training')
 
     result = remote.delete(dict(run=root.name, arm='baseline', delete_files=True, expected_output=job['output']))
 
-    trash = remote.TRAINING/'.trash'/root.name
-    assert not result['files_preserved'] and result['trash_path'] == str(trash)
+    assert not result['files_preserved'] and 'trash_path' not in result
     assert not root.exists()
-    assert (trash/'baseline/checkpoints/step-001000/config.json').is_file()
+    assert not (remote.TRAINING/'.trash').exists()
+    assert (sibling/'keep.txt').read_text() == 'other training'
     assert (source/'manifest.json').is_file()
     assert remote.jobs()['jobs'] == []
     _, number = remote.reserve_training(remote.TRAINING, remote.PROJECT/'deployments', 'V_1',
@@ -1003,6 +1005,171 @@ def test_delete_refuses_active_training_or_validation(remote,status,validation):
     with pytest.raises(ValueError,match='停止|结束'):
         remote.delete(dict(run=root.name,arm='baseline'))
     assert len(remote.jobs()['jobs'])==1
+
+
+def checkpoint_delete_request(remote, root, step=1000, **options):
+    return dict(run=root.name, arm='baseline',
+                checkpoint=str(root/f'baseline/checkpoints/step-{step:06d}'), **options)
+
+
+def publish_checkpoint_delete_fixture(remote, root):
+    remote.atomic_json(root/'baseline/status.json', dict(status='completed', step=2000))
+    remote.atomic_json(root/'baseline/checkpoints/latest.json',
+                       dict(step=2000, path=str(root/'baseline/checkpoints/step-002000')))
+
+
+def test_checkpoint_delete_preview_recycle_restore_preserves_run(remote, monkeypatch):
+    root = make_job(remote)
+    publish_checkpoint_delete_fixture(remote, root)
+    monkeypatch.setattr(remote, 'live_run_processes', lambda root: [])
+    payload = checkpoint_delete_request(remote, root)
+    original = {p: p.read_bytes() for p in root.rglob('*') if p.is_file()}
+    preview = remote.delete_checkpoint(dict(payload, preview=True))
+    assert preview['status'] == 'preview'
+    assert all(p.read_bytes() == value for p, value in original.items())
+    with pytest.raises(ValueError, match='预览并确认'):
+        remote.delete_checkpoint(payload)
+    result = remote.delete_checkpoint(dict(payload, confirm=True, expected_checkpoint=preview['expected_checkpoint']))
+    assert result['status'] == 'trashed' and not Path(payload['checkpoint']).exists()
+    assert (Path(result['trash_path'])/'config.json').is_file()
+    assert [p['step'] for p in remote.detail(payload)['checkpoints']] == [2000]
+    assert len(remote.jobs()['jobs']) == 1
+    assert all(p.read_bytes() == value for p, value in original.items()
+               if not p.is_relative_to(Path(payload['checkpoint'])))
+    # The shared resource restore API can undo this exact checkpoint move.
+    sys.path.insert(0, str(ROOT/'evaluation/scripts'))
+    from registry_storage import operate
+    operate(dict(action='restore', roots=[str(remote.TRAINING)], path=payload['checkpoint'], token=result['token']))
+    assert all(p.read_bytes() == value for p, value in original.items())
+    assert [p['step'] for p in remote.detail(payload)['checkpoints']] == [2000, 1000]
+
+
+def test_checkpoint_permanent_delete_latest_disables_strict_resume_without_repointing(remote, monkeypatch):
+    root = resumable_job(remote, monkeypatch)
+    latest = remote.read_json(root/'baseline/checkpoints/latest.json')
+    checkpoint = root/f'baseline/checkpoints/{root.name}__step002000'
+    Path(latest['path']).rename(checkpoint)
+    latest['path'] = str(checkpoint)
+    remote.atomic_json(root/'baseline/checkpoints/latest.json', latest)
+    old = root/f'baseline/checkpoints/{root.name}__step001000'
+    remote.atomic_json(old/'config.json', {})
+    assert remote.resume_info(root, 'baseline')['available']
+    payload = dict(run=root.name, arm='baseline', checkpoint=str(checkpoint), permanent=True)
+    preview = remote.delete_checkpoint(dict(payload, preview=True))
+    assert preview['warning']
+    remote.delete_checkpoint(dict(payload, confirm=True, expected_checkpoint=preview['expected_checkpoint']))
+    assert not Path(payload['checkpoint']).exists()
+    assert (old/'config.json').is_file()
+    assert remote.read_json(root/'baseline/checkpoints/latest.json') == latest
+    assert not remote.resume_info(root, 'baseline')['available']
+    assert (root/'baseline/checkpoints/latest_optimizer.pt').is_file()
+    assert not (root/'baseline/checkpoints/.workbench-trash').exists()
+
+
+@pytest.mark.parametrize('case', ['parent', 'other_run', 'unpublished', 'traversal', 'symlink', 'ancestor_symlink'])
+def test_checkpoint_delete_rejects_wrong_or_incomplete_target(remote, monkeypatch, case):
+    root = make_job(remote)
+    monkeypatch.setattr(remote, 'live_run_processes', lambda root: [])
+    payload = checkpoint_delete_request(remote, root)
+    path = Path(payload['checkpoint'])
+    if case == 'parent': payload['checkpoint'] = str(path.parent)
+    if case == 'other_run': payload['checkpoint'] = str(remote.TRAINING/'other/baseline/checkpoints/step-001000')
+    if case == 'unpublished': payload['checkpoint'] = str(path.with_name('step-002000'))
+    if case == 'traversal': payload['checkpoint'] = str(path.parent)+'/../checkpoints/'+path.name
+    if case == 'symlink':
+        other = path.rename(path.with_name('actual'))
+        path.symlink_to(other, target_is_directory=True)
+    if case == 'ancestor_symlink':
+        other = path.parent.rename(path.parent.with_name('actual-checkpoints'))
+        path.parent.symlink_to(other, target_is_directory=True)
+    with pytest.raises(ValueError): remote.delete_checkpoint(dict(payload, preview=True))
+    assert path.is_dir()
+
+
+def test_checkpoint_delete_rechecks_preview_and_live_dependencies(remote, monkeypatch):
+    root = make_job(remote)
+    publish_checkpoint_delete_fixture(remote, root)
+    monkeypatch.setattr(remote, 'live_run_processes', lambda root: [])
+    payload = checkpoint_delete_request(remote, root, 2000)
+    preview = remote.delete_checkpoint(dict(payload, preview=True))
+    confirmed = dict(payload, confirm=True, expected_checkpoint=preview['expected_checkpoint'])
+    remote.atomic_json(root/'baseline/status.json', dict(status='training', step=2100))
+    with pytest.raises(ValueError, match='最新恢复断点'): remote.delete_checkpoint(confirmed)
+    # An old, fully validated checkpoint is removable while the same run trains.
+    remote.atomic_json(root/'baseline/metrics/round-001000.json', dict(step=1000))
+    remote.atomic_json(root/'baseline/validation_status.json', dict(status='validating', checkpoint_step=2000))
+    old = checkpoint_delete_request(remote, root)
+    assert remote.delete_checkpoint(dict(old, preview=True))['status'] == 'preview'
+    remote.atomic_json(root/'baseline/validation_status.json', dict(status='validating', checkpoint_step=1000))
+    with pytest.raises(ValueError, match='验证'): remote.delete_checkpoint(dict(old, preview=True))
+    remote.atomic_json(root/'baseline/validation_status.json', dict(status='completed'))
+    remote.atomic_json(remote.TRAINING/'consumer/config/web_launch.json', dict(arm='baseline',checkpoint=old['checkpoint']))
+    remote.atomic_json(remote.TRAINING/'consumer/baseline/status.json', dict(status='queued'))
+    with pytest.raises(ValueError, match='排队引用'): remote.delete_checkpoint(dict(old, preview=True))
+    remote.atomic_json(remote.TRAINING/'consumer/baseline/status.json', dict(status='completed'))
+    assert remote.delete_checkpoint(dict(old, preview=True))['status'] == 'preview'
+    with pytest.raises(ValueError, match='预览并确认'):
+        remote.delete_checkpoint(dict(old, confirm=True, expected_checkpoint='stale'))
+    assert Path(old['checkpoint']).exists()
+
+
+def test_checkpoint_delete_v21_nested_checkpoints_keep_run_and_training_state(remote, monkeypatch):
+    root = remote.TRAINING/'v2_1__test02__exp01__run001'
+    remote.atomic_json(root/'config/web_launch.json', dict(version='V_2_1', arm='memory_v1'))
+    remote.atomic_json(root/'memory_v1/status.json', dict(status='completed'))
+    for step in [1000, 2000]:
+        checkpoint = root/f'run/checkpoints/{root.name}__step{step:06d}'
+        remote.atomic_json(checkpoint/'COMPLETE.json', dict(step=step))
+        (checkpoint/'training_state.pt').touch()
+    path = root/f'run/checkpoints/{root.name}__step001000'
+    payload = dict(run=root.name, arm='memory_v1', checkpoint=str(path), permanent=True)
+    monkeypatch.setattr(remote, 'live_run_processes', lambda root: [])
+    preview = remote.delete_checkpoint(dict(payload, preview=True))
+    remote.delete_checkpoint(dict(payload, confirm=True, expected_checkpoint=preview['expected_checkpoint']))
+    assert not path.exists()
+    assert (root/'config/web_launch.json').is_file()
+    assert [c['step'] for c in remote.v21_backend().checkpoints(root)] == [2000]
+
+
+def test_checkpoint_delete_http_checks_inference_evaluation_and_device():
+    from urllib.error import HTTPError
+    sys.path.insert(0, str(ROOT/'evaluation/scripts'))
+    viewer = load('checkpoint_delete_viewer', ROOT/'evaluation/scripts/view_results.py')
+    inference = SimpleNamespace(bind_host='server', jobs=[], lock=threading.Lock(), snapshot=lambda: {})
+    evaluations = []
+    received = []
+    manager = SimpleNamespace(host='user@server', delete_checkpoint=lambda value: received.append(value) or dict(status='preview'))
+    class Handler(viewer.Handler):
+        training_manager = manager
+        training_devices = dict(a100=manager)
+        inference_devices = dict(a100=inference)
+        launch_manager = SimpleNamespace(snapshot=lambda: evaluations)
+    server = viewer.ThreadingHTTPServer(('127.0.0.1', 0), Handler)
+    thread = threading.Thread(target=server.serve_forever, daemon=True); thread.start()
+    base = f'http://127.0.0.1:{server.server_address[1]}'
+    payload = dict(device='a100',run='run',arm='baseline',checkpoint='/weights/one',preview=True)
+    def post(value=payload):
+        return json.load(urlopen(Request(base+'/api/training/checkpoint-delete',data=json.dumps(value).encode(),
+                                        headers={'Content-Type':'application/json'})))
+    try:
+        assert post()['status'] == 'preview'
+        assert received[-1]['checkpoint'] == '/weights/one' and 'device' not in received[-1]
+        for state in ['ready', 'loading', 'starting', 'stopping']:
+            inference.jobs = [dict(state=state,checkpoint='/weights/one',port=5555)]
+            with pytest.raises(HTTPError) as exc: post()
+            assert '推理服务' in json.load(exc.value)['error']
+        inference.jobs = [dict(state='stopped',checkpoint='/weights/one')]
+        evaluations[:] = [dict(id='eval',state='running',policy_identity=dict(host='server',checkpoint='/weights/one'))]
+        with pytest.raises(HTTPError) as exc: post()
+        assert '评估任务' in json.load(exc.value)['error']
+        # The same path on a different host, or historical evaluation, is unrelated.
+        evaluations[0]['policy_identity']['host'] = 'another'
+        assert post()['status'] == 'preview'
+        evaluations[0]['state'] = 'complete'; evaluations[0]['policy_identity']['host'] = 'server'
+        assert post()['status'] == 'preview'
+        with pytest.raises(HTTPError): post(dict(payload,device='unknown'))
+    finally:
+        server.shutdown(); server.server_close(); thread.join()
 
 
 def make_waiting_queue(remote):
@@ -1256,7 +1423,7 @@ def test_training_page_hides_cancelled_jobs_and_leaves_cancelled_detail():
     harness='''
 const assert=require('node:assert/strict');
 const elements={};
-global.window={}; global.setInterval=()=>{};
+global.window={addEventListener:()=>{}}; global.setInterval=()=>{};
 global.document={getElementById(id) { return elements[id] ||= {
     textContent:'',innerHTML:'',hidden:false,scrollTop:0,
     querySelectorAll:()=>[],setAttribute:()=>{}
@@ -1295,7 +1462,7 @@ def test_training_form_submits_joint_tasks_queue_and_optional_validation():
     window.trainingDashboard =''')
     harness='''
 const assert=require('node:assert/strict'), elements={};
-global.window={};global.setInterval=()=>{};
+global.window={addEventListener:()=>{}};global.setInterval=()=>{};
 global.document={getElementById(id) {return elements[id] ||= {
   value:'',checked:false,selectedOptions:[],textContent:'',hidden:false,
   querySelectorAll:selector=>selector==='input:checked'?[{value:'0'},{value:'1'}]:[]

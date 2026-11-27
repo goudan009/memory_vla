@@ -75,6 +75,10 @@ class LaunchManager:
         with self.lock:
             return self.control.pause(request)
 
+    def finish(self, request):
+        with self.lock:
+            return self.control.finish(request)
+
     def task40_root(self, group=TASK40_DEFAULT_EXPERIMENT):
         if group == TASK40_DEFAULT_EXPERIMENT:
             return self.task40_experiment
@@ -118,7 +122,7 @@ class LaunchManager:
             return self._task40_forward(request)
         scalars = {"version", "group", "model_name", "mode", "gpu_index", "task", "preset",
                    "seed", "seed_mode", "policy_host", "policy_port", "run_tag",
-                   "episodes_per_gpu", "repetitions", "debug_max_steps", "video_steps_per_render", "policy_checkpoint", "training_id", "action_steps"}
+                   "episodes_per_gpu", "repetitions", "additional_episodes", "debug_max_steps", "video_steps_per_render", "policy_checkpoint", "training_id", "action_steps"}
         booleans = {"record_video", "wait_for_gpu", "diagnostics"}
         arrays = {"instances_gpu0", "instances_gpu1"}
         unknown = set(request) - scalars - booleans - arrays - {"resume_from"}
@@ -137,8 +141,13 @@ class LaunchManager:
             argv += ["--resume-from", str(path)]
             # Preserve the saved protocol, GPU assignment, model endpoint and
             # video settings. The resume form sends no default overrides.
-            if any(key not in {"resume_from", "policy_host", "policy_port"} for key in request):
-                raise ValueError("续跑沿用原配置，只允许显式覆盖推理地址和端口")
+            if any(key not in {"resume_from", "policy_host", "policy_port", "additional_episodes"} for key in request):
+                raise ValueError("继续评估沿用原配置，可指定本次回合数及推理地址和端口")
+            if 'additional_episodes' in request and (type(request['additional_episodes']) is not int or request['additional_episodes'] < 1):
+                raise ValueError('本次回合数必须为正整数')
+            _, active = self.control.processes(path)
+            if active:
+                raise ValueError('评估仍在运行，请先暂停并等待停止后继续')
         for key in sorted(scalars):
             value = request.get(key)
             if key == 'version':
@@ -688,6 +697,13 @@ class LaunchManager:
             status.update(result_ready=(output / 'results.json').is_file(), artifacts=task40_artifacts(output),
                           progress=progress)
             status['forward_log_tail' if plan['kind'] == 'task40_forward' else 'sim_log_tail'] = sim_tail
+        if code is not None and status['result_ready']:
+            try:
+                result = json.loads((output/'results.json').read_text())
+                if result.get('status') in ('cancelled', 'paused', 'interrupted'):
+                    status['state'] = result['status']
+            except (OSError, ValueError):
+                pass
         return status
 
     def snapshot(self, *, running_only=False):

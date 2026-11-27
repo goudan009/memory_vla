@@ -83,7 +83,10 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
     ['complete','completed','cancelled','stopped'].includes(state) ? 'complete' : 'running') + '">' + esc(stateName(state)) + '</span>';
   let mounted = false, options = null, jobs = [], chosen = null, detail = null, busy = false, refreshing = false, view = 'new', lastOptionsAt = 0, recommendation = null, jobActionBusy = false;
   let trainingDevice = 'a100';
+  let setupStep = 0;
+  const setupLabels = ['实验与模型','数据任务','GPU 与验证','参数与启动'];
   let deleteTarget = null;
+  let checkpointDeleteTarget = null, checkpointUndo = null;
   let logSource = 'training';
   const detailTabs = ['curve','controls','info','logs'];
   const deviceLabel = () => trainingDevice === 'a100' ? 'A100' : 'RTX 6000 Ada';
@@ -186,6 +189,70 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
       esc(data.length ? data.length + ' 个任务 · ' + data.slice(0,3).map(d => 'Task' + d.task).join(' / ') + (data.length>3?' 等':'') : '未选任务') + ' · ' +
       esc(gpus.length ? 'GPU ' + gpus.join(', ') : '未选训练 GPU');
     el('train-submit').textContent = el('train-enqueue').checked ? '加入训练队列' : '启动训练';
+    const identity = ['test-id','experiment-id','run-number'].map(id => el('train-'+id).value);
+    el('train-step-summary-0').textContent = identity.every(Boolean) ?
+      el('train-version').value + ' · test' + identity[0] + ' / exp' + identity[1] + ' / run' + identity[2] : '待填写实验身份';
+    el('train-step-summary-1').textContent = data.length ? '已选 ' + data.length + ' 个 · ' + data.filter(d=>d.ready).length + ' 个就绪' : '待选择任务';
+    el('train-step-summary-2').textContent = gpus.length ? '训练 GPU ' + gpus.join('、') + (el('train-validation-enabled').checked ? ' · 启用验证' : ' · 关闭验证') : '待选择训练 GPU';
+    el('train-step-summary-3').textContent = el('train-steps').value ? el('train-steps').value + ' 步 · ' + (el('train-enqueue').checked ? '排队启动' : '立即启动') : '待设置训练预算';
+    const rows = [
+      ['实验身份',el('train-step-summary-0').textContent],
+      ['方法与微调',method + ' · ' + (el('train-fine-tuning').selectedOptions?.[0]?.textContent || el('train-fine-tuning').value)],
+      ['初始权重',el('train-checkpoint').value || '尚未选择'],
+      ['训练数据',el('train-step-summary-1').textContent],
+      ['运行资源',deviceLabel() + ' · ' + (gpus.length ? '训练 GPU '+gpus.join('、') : '未选训练 GPU') +
+        (el('train-validation-enabled').checked ? ' · 验证 GPU '+el('train-validation-gpu').value+' / '+el('train-validation-percent').value+'%' : ' · 不启用验证')],
+      ['预算与启动',el('train-step-summary-3').textContent]
+    ];
+    el('train-review').innerHTML = rows.map(([label,value])=>'<div><dt>'+esc(label)+'</dt><dd>'+esc(value)+'</dd></div>').join('');
+    el('train-memory-details').hidden = el('train-arm').value !== 'memory_v1';
+    el('train-validation-details').hidden = !el('train-validation-enabled').checked;
+    el('train-validation-interval').disabled = !el('train-validation-enabled').checked;
+    el('train-lora-fields').querySelectorAll('input').forEach(input => {
+      input.disabled = el('train-fine-tuning').value !== 'lora';
+    });
+  }
+  function showSetupStep(step, focus = false) {
+    setupStep = Math.max(0, Math.min(3, step));
+    el('train-form').querySelectorAll('[data-train-setup-panel]').forEach(panel => {
+      panel.hidden = Number(panel.dataset.trainSetupPanel) !== setupStep;
+    });
+    el('train-form').querySelectorAll('[data-train-setup-step]').forEach(button => {
+      if (Number(button.dataset.trainSetupStep) === setupStep) button.setAttribute('aria-current','step');
+      else button.removeAttribute('aria-current');
+    });
+    el('train-previous').hidden = setupStep === 0;
+    el('train-next').hidden = setupStep === 3;
+    el('train-next').textContent = '下一步：' + (setupLabels[setupStep+1] || '');
+    el('train-check').hidden = el('train-submit').hidden = setupStep !== 3;
+    if (focus) el('train-setup-'+setupStep).querySelector('.train-step-intro').focus();
+  }
+  function validateSetup(step = null) {
+    const panels = [...el('train-form').querySelectorAll('[data-train-setup-panel]')];
+    for (const panel of panels) {
+      const index = Number(panel.dataset.trainSetupPanel);
+      if (step != null && index !== step) continue;
+      for (const input of panel.querySelectorAll('input,select,textarea')) {
+        if (!input.willValidate || input.validity.valid) continue;
+        showSetupStep(index);
+        for (let parent = input.parentElement; parent && parent !== panel; parent = parent.parentElement)
+          if (parent.tagName === 'DETAILS') parent.open = true;
+        input.reportValidity();
+        return false;
+      }
+      if (index === 1 && (!selectedDatasets().length || selectedDatasets().some(d=>!d.ready))) {
+        showSetupStep(1);
+        message(selectedDatasets().length ? '所选任务还有缺失数据，请先准备完成。' : '请至少选择一个训练任务。', true);
+        el(selectedDatasets().length ? 'train-prepare-data' : 'train-task-search').focus();
+        return false;
+      }
+      if (index === 2 && !selectedGPUs().length) {
+        showSetupStep(2); message('请至少选择一张训练 GPU。', true);
+        el('train-gpus').querySelector('input')?.focus();
+        return false;
+      }
+    }
+    return true;
   }
   function renderTaskChoices() {
     const list = el('train-task-list'), scroll = list.scrollTop;
@@ -211,6 +278,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
   function invalidatePlan() {
     el('train-plan').hidden = true;
     el('train-plan-details').hidden = true;
+    el('train-preview-result').hidden = true;
     if (!busy) message('');
   }
   function showDetailLoading() {
@@ -359,6 +427,11 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
   }
   async function submit(start) {
     if (busy) return;
+    if (setupStep !== 3) {
+      if (validateSetup(setupStep)) showSetupStep(setupStep+1, true);
+      return;
+    }
+    if (!validateSetup()) return;
     busy = true; el('train-submit').disabled = el('train-check').disabled = true;
     try {
       const params = parameters();
@@ -372,7 +445,13 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
         showDetailLoading();
         selectView('detail');
         await refresh();
-      } else message('检查通过。尚未启动训练。名称：' + result.run_name + '。全局最多 ' + result.global_decisions + ' 决策 / 优化步。');
+      } else {
+        el('train-preview-result').hidden = false;
+        el('train-preview-result').innerHTML = '<strong>配置检查通过 · 尚未启动</strong><br>运行名称：' + esc(result.run_name) +
+          '<br>全局最多 ' + esc(result.global_decisions) + ' 决策 / 优化步。启动后固定源码快照；完整参数可在下方展开查看。';
+        el('train-preview-result').scrollIntoView({block:'nearest',behavior:'smooth'});
+        message('配置检查通过，可确认下方结果后启动。');
+      }
     } catch (error) { reportError(error); }
     finally { busy = false; el('train-submit').disabled = el('train-check').disabled = false; }
   }
@@ -472,6 +551,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
     el('train-cancel-top').hidden = !job?.can_cancel;
     el('train-cancel-top').disabled = jobActionBusy;
     el('train-delete').disabled = jobActionBusy || !job?.can_delete;
+    el('train-checkpoint-delete').disabled = jobActionBusy || !el('train-saved-checkpoint').value;
     el('train-delete').title = job?.can_delete ? '删除训练记录，可选择是否保留输出目录' : job?.delete_block_reason || '请先结束训练和验证';
     el('train-action-hint').textContent = job?.can_stop ?
       (job.stop_after_step ? '已设定第 ' + job.stop_after_step + ' 步保存后停止。' : '在下一个计划保存点停止，权重与日志保留。') :
@@ -528,9 +608,9 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
   }
   function updateDeleteDescription() {
     const files = el('train-delete-files');
-    el('train-delete-confirm').textContent = files.checked ? '删除记录并回收目录' : '删除记录';
+    el('train-delete-confirm').textContent = files.checked ? '永久删除记录和目录' : '删除记录';
     el('train-delete-description').textContent = files.checked ?
-      '权重和日志随目录移入设备的 .trash，原路径将失效。' :
+      '永久删除该训练的输出目录，包括权重和日志，无法恢复。' :
       files.disabled ? '此记录只能从列表移除，输出目录会保留。' : '仅从列表移除记录，保留权重和日志。';
   }
   function openDeleteDialog() {
@@ -567,7 +647,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
       selectView('new');
       el('train-new').focus();
       message(result.files_preserved ? '已删除训练记录，输出目录保留。' :
-        '已删除训练记录。输出目录已移至 ' + result.trash_path);
+        '已永久删除训练记录及输出目录，包括权重和日志。');
       if (!result.files_preserved) {
         if (el('train-checkpoint').value.startsWith(output + '/')) el('train-checkpoint').value = '';
         lastOptionsAt = 0;
@@ -580,6 +660,90 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
       el('train-delete-confirm').disabled = el('train-delete-close').disabled = false;
       jobActionBusy = false;
       updateJobActions();
+    }
+  }
+  function checkpointDeleteMode() {
+    const permanent = el('train-checkpoint-delete-permanent').checked;
+    el('train-checkpoint-delete-confirm').textContent = permanent ? '永久删除此 checkpoint' : '移入回收目录';
+    el('train-checkpoint-delete-mode').textContent = permanent ?
+      '仅永久删除上方所选的权重文件夹，无法撤销。' : '默认移入回收目录，可以撤销；回收目录仍占用磁盘空间。';
+  }
+  async function openCheckpointDelete() {
+    const job = currentJob(), path = el('train-saved-checkpoint').value;
+    const checkpoint = detail?.checkpoints?.find(p => p.path === path);
+    if (!job || !checkpoint || jobActionBusy) return;
+    const target = {run:job.run, arm:job.arm, checkpoint:path, device:trainingDevice};
+    checkpointDeleteTarget = target;
+    el('train-checkpoint-delete-name').textContent = job.run + ' · step ' + checkpoint.step;
+    el('train-checkpoint-delete-device').textContent = deviceLabel();
+    el('train-checkpoint-delete-path').textContent = path;
+    el('train-checkpoint-delete-note').textContent = checkpointNotes.note(trainingDevice,path) || '暂无备注';
+    el('train-checkpoint-delete-permanent').checked = false;
+    el('train-checkpoint-delete-permanent').disabled = false;
+    el('train-checkpoint-delete-confirm').disabled = true;
+    el('train-checkpoint-delete-close').disabled = false;
+    el('train-checkpoint-delete-warning').textContent = '正在核对 checkpoint 和占用情况…';
+    el('train-checkpoint-delete-error').textContent = '';
+    checkpointDeleteMode();
+    el('train-checkpoint-delete-dialog').showModal();
+    try {
+      const preview = await api('checkpoint-delete',{...target,preview:true});
+      if (checkpointDeleteTarget !== target || !el('train-checkpoint-delete-dialog').open) return;
+      target.expected_checkpoint = preview.expected_checkpoint;
+      el('train-checkpoint-delete-warning').textContent = preview.warning || '';
+      el('train-checkpoint-delete-confirm').disabled = false;
+    } catch (error) {
+      if (checkpointDeleteTarget !== target) return;
+      el('train-checkpoint-delete-warning').textContent = '';
+      el('train-checkpoint-delete-error').textContent = error.message;
+    }
+  }
+  async function deleteSelectedCheckpoint(event) {
+    event.preventDefault();
+    const target = checkpointDeleteTarget;
+    if (!target?.expected_checkpoint || target.device !== trainingDevice || jobActionBusy) return;
+    const permanent = el('train-checkpoint-delete-permanent').checked;
+    jobActionBusy = true; updateJobActions();
+    for (const name of ['confirm','close','permanent']) el('train-checkpoint-delete-'+name).disabled = true;
+    el('train-checkpoint-delete-error').textContent = '';
+    try {
+      const result = await api('checkpoint-delete',{...target,permanent,confirm:true});
+      el('train-checkpoint-delete-dialog').close();
+      checkpointUndo = result.status === 'trashed' ? {...result,device:target.device} : null;
+      el('train-checkpoint-undo').hidden = !checkpointUndo;
+      el('train-checkpoint-delete-message').textContent = (permanent ? '已永久删除：' : '已移入回收目录（仍占磁盘）：') +
+        target.checkpoint + '。训练记录、其他权重、备注和历史结果保留。';
+      if (el('train-checkpoint').value === target.checkpoint) el('train-checkpoint').value = '';
+      lastOptionsAt = 0;
+      window.dispatchEvent(new CustomEvent('checkpoint-deleted',{detail:target}));
+      await refresh();
+    } catch (error) {
+      el('train-checkpoint-delete-error').textContent = error.message;
+    } finally {
+      jobActionBusy = false; updateJobActions();
+      for (const name of ['confirm','close','permanent']) el('train-checkpoint-delete-'+name).disabled = false;
+    }
+  }
+  async function undoCheckpointDelete() {
+    const target = checkpointUndo;
+    if (!target || jobActionBusy) return;
+    jobActionBusy = true; updateJobActions();
+    el('train-checkpoint-undo').disabled = true;
+    try {
+      const response = await fetch('/api/registry/storage',{method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({action:'restore',host:target.device === 'a100' ? 'A100' : 'A6000',path:target.checkpoint,token:target.token})});
+      const result = await response.json();
+      if (!response.ok) throw Error(result.error || '恢复失败');
+      checkpointUndo = null;
+      el('train-checkpoint-undo').hidden = true;
+      el('train-checkpoint-delete-message').textContent = '已恢复 checkpoint：' + target.checkpoint;
+      lastOptionsAt = 0;
+      window.dispatchEvent(new CustomEvent('checkpoint-restored',{detail:target}));
+      await refresh();
+    } catch (error) { el('train-checkpoint-delete-message').textContent = error.message; }
+    finally {
+      jobActionBusy = false; updateJobActions();
+      el('train-checkpoint-undo').disabled = false;
     }
   }
   function drawCurve() {
@@ -788,7 +952,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
       '</tbody></table><table><thead><tr><th>验证 checkpoint</th><th>验证 Loss</th><th>动作 MAE</th></tr></thead><tbody>' +
       detail.validation.map(v => '<tr><td>' + v.step + '</td><td>' + fmt(v.validation_loss) + '</td><td>' + fmt(v.action_mae?.normal ?? v.action_mae) + '</td></tr>').join('') + '</tbody></table>';
     const previous = el('train-saved-checkpoint').value;
-    el('train-saved-checkpoint').innerHTML = (detail.checkpoints || []).map(p => '<option value="' + esc(p.path) + '">step ' + p.step + '</option>').join('') || '<option value="">暂无已保存权重</option>';
+    el('train-saved-checkpoint').innerHTML = (detail.checkpoints || []).map(p => '<option value="' + esc(p.path) + '">step ' + p.step + esc(checkpointNotes.brief(trainingDevice,p.path)) + '</option>').join('') || '<option value="">暂无已保存权重</option>';
     if ([...el('train-saved-checkpoint').options].some(o => o.value === previous)) el('train-saved-checkpoint').value = previous;
     updateCheckpointPath();
     el('train-use-checkpoint').disabled = !(detail.checkpoints?.length);
@@ -807,7 +971,18 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
     el('train-monitor-body').hidden = false;
     if (!el('train-pane-logs').hidden) renderRunLog();
   }
-  function updateCheckpointPath() { el('train-checkpoint-path').textContent = el('train-saved-checkpoint').value; }
+  function updateCheckpointPath() {
+    el('train-checkpoint-path').textContent = el('train-saved-checkpoint').value;
+    checkpointNotes.bind('train-saved-checkpoint-note',trainingDevice,el('train-saved-checkpoint').value);
+    el('train-checkpoint-delete').disabled = jobActionBusy || !el('train-saved-checkpoint').value;
+  }
+  window.addEventListener('checkpoint-notes-updated',()=>{
+    if (!mounted) return;
+    for(const option of el('train-saved-checkpoint').options){
+      option.dataset.baseLabel ||= option.textContent.split(' · 备注：')[0];
+      option.textContent=option.dataset.baseLabel+checkpointNotes.brief(trainingDevice,option.value);
+    }
+  });
   async function refresh() {
     if (refreshing) return;
     refreshing = true;
@@ -831,6 +1006,12 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
     finally { el('train-sync-once').disabled = el('train-autosync').disabled = false; }
   }
   function bind() {
+    el('train-form').querySelectorAll('[data-train-setup-step]').forEach(button => {
+      button.onclick = () => showSetupStep(Number(button.dataset.trainSetupStep), true);
+    });
+    el('train-previous').onclick = () => showSetupStep(setupStep-1, true);
+    el('train-next').onclick = () => { if (validateSetup(setupStep)) { message(''); showSetupStep(setupStep+1, true); } };
+    showSetupStep(0);
     el('train-device').onchange = async () => {
       if(busy || jobActionBusy){el('train-device').value=trainingDevice;return;}
       trainingDevice=el('train-device').value;
@@ -873,6 +1054,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
     };
     for (const id of ['train-arm','train-fine-tuning','train-checkpoint']) el(id).onchange = () => {
       if (el('train-lora-fields')) el('train-lora-fields').hidden = el('train-fine-tuning').value !== 'lora';
+      if (id === 'train-fine-tuning') el('train-tuning-details').open = ['lora','custom'].includes(el(id).value);
       updateRecommendation();
     };
     el('train-select-ready').onclick = () => selectTasks(data=>data.ready);
@@ -947,6 +1129,13 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
     el('train-delete-form').onsubmit = event => void deleteTrainingRecord(event);
     el('train-delete-close').onclick = () => el('train-delete-dialog').close();
     el('train-delete-dialog').oncancel = event => { if (jobActionBusy) event.preventDefault(); };
+    el('train-checkpoint-delete').onclick = () => void openCheckpointDelete();
+    el('train-checkpoint-delete-permanent').onchange = checkpointDeleteMode;
+    el('train-checkpoint-delete-form').onsubmit = event => void deleteSelectedCheckpoint(event);
+    el('train-checkpoint-delete-close').onclick = () => el('train-checkpoint-delete-dialog').close();
+    el('train-checkpoint-delete-dialog').onclose = () => { checkpointDeleteTarget = null; };
+    el('train-checkpoint-delete-dialog').oncancel = event => { if (jobActionBusy) event.preventDefault(); };
+    el('train-checkpoint-undo').onclick = () => void undoCheckpointDelete();
     el('train-cancel-top').onclick = () => {
       if (window.confirm('取消本组排队？\n' + (currentJob()?.queue?.affected_runs || []).join('\n')))
         el('train-cancel').click();

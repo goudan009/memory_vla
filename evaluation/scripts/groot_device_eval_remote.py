@@ -6,6 +6,7 @@ import os
 from pathlib import Path
 import shutil
 import subprocess
+import tempfile
 
 
 class ObservedProcess:
@@ -53,6 +54,27 @@ def set_task40_dependencies(project, dependencies):
 
 def task40_status(status):
     return dict(status, output_exists=Path(status['output']).is_dir())
+
+
+def resume_source(project, original, live):
+    """Overlay continuation bookkeeping on a copy of the original experiment."""
+    names = ['run_groot_eval.sh', 'groot_eval_resume.py', 'groot_eval_results.py']
+    files = {name: hashlib.sha256((live/'evaluation/scripts'/name).read_bytes()).hexdigest() for name in names}
+    digest = hashlib.sha256(json.dumps(dict(original=str(original), files=files), sort_keys=True).encode()).hexdigest()
+    source = project/'deployments'/('eval_resume_'+digest)
+    if not source.exists():
+        staging = Path(tempfile.mkdtemp(prefix='.eval-resume-', dir=source.parent))
+        shutil.copytree(original, staging, symlinks=True, dirs_exist_ok=True,
+                        ignore=lambda path, entries: {'Output'} if Path(path) == original else set())
+        for name in names:
+            target = staging/'evaluation/scripts'/name
+            if target.is_symlink(): target.unlink()
+            shutil.copy2(live/'evaluation/scripts'/name, target)
+        manifest = json.loads((original/'web_source_manifest.json').read_text())
+        manifest.update(digest=digest, continuation_engineering=dict(original_source=str(original),files=files))
+        (staging/'web_source_manifest.json').write_text(json.dumps(manifest))
+        staging.rename(source)
+    return source
 
 
 def dispatch(request):
@@ -112,7 +134,7 @@ def dispatch(request):
             if payload.get('resume_from'):
                 original=next((row for row in reversed(rows) if row['output']==payload['resume_from']),None)
                 if original is None: raise ValueError('找不到续跑评估的原始源码记录')
-                source=Path(original['source'])
+                source=resume_source(project, Path(original['source']), live)
                 manifest=json.loads((source/'web_source_manifest.json').read_text())
             else:
                 source=project/'deployments'/('eval_'+manifest['digest'])
@@ -140,6 +162,10 @@ def dispatch(request):
             for row in reversed(rows):
                 manager=LaunchManager(row['source'])
                 status=manager._status(observed_job(row))
+                if status.get('state') in ('failed', 'complete', 'stopped', 'cancelled') and (Path(row['output'])/'results.json').is_file():
+                    saved_status = json.loads((Path(row['output'])/'results.json').read_text()).get('status')
+                    if saved_status in ('cancelled', 'paused', 'interrupted'):
+                        status['state'] = saved_status
                 status=dict(status,source=row['source'],source_digest=row.get('source_digest'))
                 if row.get('kind') == 'task40_collect':
                     status=task40_status(dict(status,plan=row['plan'],
@@ -153,11 +179,15 @@ def dispatch(request):
             manager=LaunchManager(row['source'])
             manager.jobs.append(observed_job(row))
             return manager.stop_restore(payload)
-        if action in ('pause','delete'):
+        if action in ('pause','delete','finish'):
             row=next((r for r in reversed(rows) if r['folder']==payload['run']),None)
             if row is None: raise ValueError('未找到该设备上的评估记录')
-            manager=LaunchManager(row['source'])
-            result=getattr(manager,action)(payload)
+            if action in ('finish', 'delete'):
+                from groot_eval_control import EvaluationControl
+                result = getattr(EvaluationControl(row['source'], os.environ['GROOT_EVAL_ROOT']), action)(payload)
+            else:
+                manager=LaunchManager(row['source'])
+                result=getattr(manager,action)(payload)
             if action=='delete':
                 rows=[r for r in rows if r['folder']!=payload['run']]
                 record.write_text(json.dumps(rows))

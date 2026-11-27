@@ -60,6 +60,8 @@ class EpisodeWriter:
         self.outdir = Path(outdir)
         self.metadata = json.loads((self.outdir / "run_meta.json").read_text())
         self.env_idx = env_idx
+        layout = self.metadata.get('episode_layout')
+        self.record_env_idx = layout[env_idx].get('env_index', env_idx) if layout else env_idx
         self.started_at = time.perf_counter()
         self.records = self.load_records()
         self.reset_times = []
@@ -104,7 +106,7 @@ class EpisodeWriter:
         record = {
             "evaluation_mode": self.metadata.get("preset", "official-eval"),
             "task": self.metadata["task_name"],
-            "env_idx": self.env_idx,
+            "env_idx": self.record_env_idx,
             "instance_id": instance_id,
             "seed": int(self.metadata.get("seed", 0)) if seed is None else seed,
             "terminated": terminated,
@@ -133,7 +135,7 @@ class EpisodeWriter:
             layout = self.metadata.get('episode_layout')
             if layout:
                 slot = layout[self.env_idx]
-                number = slot['offset'] + sum(row['env_idx'] == self.env_idx for row in self.records)
+                number = slot['offset'] + sum(row['env_idx'] == self.record_env_idx for row in self.records)
                 record['episode_in_slot'] = number + 1
                 record['instance_cycle'] = number // len(slot['instances']) + 1
             record["episode_index"] = len(self.records) + 1
@@ -302,7 +304,7 @@ def record_episode_env(factory, outdir, env_idx):
 
     writer = EpisodeWriter(outdir, env_idx=env_idx, initialize_files=False)
     fixed_seed = writer.metadata.get("seed_mode", "sequence") == "fixed"
-    base_seed = int(writer.metadata.get("seed", 0)) + (0 if fixed_seed else env_idx)
+    base_seed = int(writer.metadata.get("seed", 0)) + (0 if fixed_seed else writer.record_env_idx)
     layout = writer.metadata.get('episode_layout')
     slot = layout[env_idx] if layout else None
     episode_offset = slot['offset'] if slot else 0
@@ -311,7 +313,7 @@ def record_episode_env(factory, outdir, env_idx):
         number += episode_offset
         if writer.metadata.get("seed_mode") == "random":
             return int(np.random.SeedSequence([
-                int(writer.metadata.get("seed", 0)), env_idx, number,
+                int(writer.metadata.get("seed", 0)), writer.record_env_idx, number,
             ]).generate_state(1)[0])
         return base_seed + (0 if fixed_seed else number)
 
@@ -425,7 +427,7 @@ def record_episode_env(factory, outdir, env_idx):
                     break
                 current = state.get("env")
             self.runtime_identity = {
-                "instance_id": self.instance_id, "env_idx": env_idx,
+                "instance_id": self.instance_id, "env_idx": writer.record_env_idx,
                 "seed": self.episode_seed, "episode_number": self.episode_count,
                 "native_termination_config": (
                     self.native_env.task._termination_config if self.native_env is not None else None

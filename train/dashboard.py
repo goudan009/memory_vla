@@ -290,6 +290,10 @@ class TrainingManager:
         with self.lock:
             return self._remote('delete',request)
 
+    def delete_checkpoint(self, request):
+        with self.lock:
+            return self._remote('checkpoint-delete', request)
+
     def resume(self, request):
         with self.lock:
             return self._remote('resume',request,

@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+from contextlib import ExitStack
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import json
 import os
@@ -27,12 +28,15 @@ import b1k_metrics
 import task_stage_diagnostics
 import vlm_stage_diagnosis
 import human_review
+import episode_notes
 from agent_experiments import experiment_catalog, experiment_record
+from checkpoint_notes import CheckpointNotes
 
 
 EVALUATION_ROOT = Path(__file__).resolve().parents[1]
 REGISTRY_ANNOTATIONS = EVALUATION_ROOT.parent / "outputs" / "registry_annotations.json"
 REGISTRY_ANNOTATIONS_LOCK = threading.Lock()
+CHECKPOINT_NOTES = CheckpointNotes(EVALUATION_ROOT.parent / 'outputs' / 'checkpoint_notes.json')
 TASK40_VIDEOS = Path("/nvme3/projects/memory_vla/outputs/overnight_memory_task40_20261114/verification/task40_vlm_blind_review/full_episodes")
 TASK40_ANNOTATIONS_FILE = EVALUATION_ROOT.parent / "outputs" / "task40_annotations.json"
 TASK40_ANNOTATIONS_LOCK = threading.Lock()
@@ -148,6 +152,8 @@ def load_runs(root: Path) -> list[dict]:
         except (ValueError, TypeError):
             review_stages = []
         for episode in result['_episodes']:
+            note = episode_notes.read(result_path.parent, episode.get('episode_index'))
+            episode['notes'] = note.get('notes', '') if note else ''
             review_record = review_records.get(f"episode:{episode.get('episode_index')}", {})
             annotated = human_review.is_annotated(review_record)
             episode['human_review_needs_update'] = (
@@ -286,6 +292,15 @@ class Handler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(body)
 
+    def _checkpoint_note_devices(self):
+        devices = {'a100': {'label': 'A100', 'host': '172.28.62.17'},
+                   'local': {'label': '4090', 'host': '127.0.0.1'}}
+        devices.update(load_workbench_devices(EVALUATION_ROOT.parent))
+        for key, manager in (self.inference_devices or {}).items():
+            devices[key] = dict(devices.get(key, {}), host=manager.bind_host)
+        return {key: {'label': value.get('label', key),
+                      'host': value.get('host', '').split('@')[-1]} for key, value in devices.items()}
+
     def _agent_live_jobs(self, directory):
         jobs = []
         unavailable = self.launch_manager is None
@@ -410,7 +425,8 @@ class Handler(BaseHTTPRequestHandler):
                     manager=self.inference_devices[device]
             action = route.rsplit('/', 1)[-1]
             operation = {'preview': 'prepare', 'start': 'start', 'sync': 'sync', 'stop': 'stop', 'dataset': 'prepare_dataset',
-                         'pause':'pause','delete':'delete','restore-stop':'stop_restore','cancel':'cancel','resume':'resume'}[action]
+                         'pause':'pause','delete':'delete','finish':'finish','restore-stop':'stop_restore','cancel':'cancel','resume':'resume',
+                         'checkpoint-delete':'delete_checkpoint'}[action]
             if route == '/api/launch/start' and (request.get('task40_collect') is True
                                                  or request.get('task40_forward') is True):
                 with self.task40_launch_lock:
@@ -428,12 +444,39 @@ class Handler(BaseHTTPRequestHandler):
                         pending = self.evaluation_record.with_suffix('.pending')
                         pending.write_text(json.dumps(records, ensure_ascii=False))
                         pending.replace(self.evaluation_record)
+            elif route == '/api/training/checkpoint-delete':
+                value = self._delete_training_checkpoint(manager, request)
             else:
                 value = getattr(manager, operation)(request)
         except (ValueError, OSError, subprocess.SubprocessError) as error:
             self._json({"error": str(error)}, 400)
             return
         self._json(value, 200 if route.endswith("/preview") else 202)
+
+    def _delete_training_checkpoint(self, manager, request):
+        """Pin service starts while checking dependencies and removing weights."""
+        host = manager.host.split('@')[-1]
+        inference = list((self.inference_devices or {}).values()) or [self.inference_manager]
+        matching = [m for m in inference if m is not None and m.bind_host == host]
+        checkpoint = request.get('checkpoint', '')
+        with ExitStack() as stack:
+            for service in matching:
+                service.snapshot()
+                stack.enter_context(service.lock)
+                for job in service.jobs:
+                    if (job.get('state') not in {'stopped', 'failed', 'exited', 'complete', 'completed'}
+                            and checkpoint in (job.get('checkpoint'), job.get('checkpoint_resolved'))):
+                        raise ValueError('该 checkpoint 正被推理服务使用，请先停止对应服务（端口 '+str(job.get('port'))+'）')
+            evaluations = [self.launch_manager, *(self.evaluation_devices or {}).values()]
+            for evaluation in evaluations:
+                if evaluation is None:
+                    continue
+                for job in evaluation.snapshot():
+                    identity = job.get('policy_identity') or {}
+                    if (job.get('state') not in {'stopped', 'failed', 'exited', 'complete', 'completed', 'cancelled', 'paused', 'interrupted'}
+                            and identity.get('host') == host and identity.get('checkpoint') == checkpoint):
+                        raise ValueError('该 checkpoint 正被评估任务 '+str(job.get('id'))+' 使用，请等待结束')
+            return manager.delete_checkpoint(request)
 
     def _preview_run(self, name):
         root = self.root.resolve()
@@ -595,6 +638,36 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_POST(self):
         route = urlparse(self.path).path
+        if route == '/api/episode-notes':
+            try:
+                origin = self.headers.get('Origin')
+                if origin and urlparse(origin).netloc != self.headers.get('Host'):
+                    raise ValueError('请从本工作台保存备注')
+                length = int(self.headers.get('Content-Length', '0'))
+                if not 0 < length <= 32768:
+                    raise ValueError('回合备注请求长度不正确')
+                request = json.loads(self.rfile.read(length))
+                if not isinstance(request, dict) or set(request) != {'run','episode_index','notes'}:
+                    raise ValueError('请提供评估目录、回合编号和备注')
+                run = self._preview_run(request['run'])
+                if run is None: raise ValueError('找不到评估目录')
+                self._json(episode_notes.save(run, request['episode_index'], request['notes']))
+            except (ValueError, OSError, TypeError) as error:
+                self._json({'error':str(error)}, 400)
+            return
+        if route == '/api/checkpoint-notes':
+            try:
+                origin = self.headers.get('Origin')
+                if origin and urlparse(origin).netloc != self.headers.get('Host'):
+                    raise ValueError('请从本工作台保存备注')
+                length = int(self.headers.get('Content-Length', '0'))
+                if not 0 < length <= 32768:
+                    raise ValueError('checkpoint 备注请求长度不正确')
+                request = json.loads(self.rfile.read(length))
+                self._json(CHECKPOINT_NOTES.save(request, self._checkpoint_note_devices()))
+            except (ValueError, OSError, TypeError) as error:
+                self._json({'error': str(error)}, 400)
+            return
         if route == '/api/human-review/options':
             try:
                 length = int(self.headers.get('Content-Length', '0'))
@@ -674,8 +747,8 @@ class Handler(BaseHTTPRequestHandler):
         if route in ('/api/benchmarks/preview', '/api/benchmarks/start', '/api/benchmarks/stop', '/api/benchmarks/delete'):
             self._launch_post(route)
             return
-        if route in ("/api/launch/preview", "/api/launch/start", "/api/launch/pause", "/api/launch/delete", "/api/launch/restore-stop", "/api/inference/preview", "/api/inference/start", "/api/inference/stop",
-                     "/api/training/preview", "/api/training/start", "/api/training/sync", "/api/training/stop", "/api/training/cancel", "/api/training/delete", "/api/training/resume", "/api/training/dataset"):
+        if route in ("/api/launch/preview", "/api/launch/start", "/api/launch/pause", "/api/launch/delete", "/api/launch/finish", "/api/launch/restore-stop", "/api/inference/preview", "/api/inference/start", "/api/inference/stop",
+                     "/api/training/preview", "/api/training/start", "/api/training/sync", "/api/training/stop", "/api/training/cancel", "/api/training/delete", "/api/training/checkpoint-delete", "/api/training/resume", "/api/training/dataset"):
             self._launch_post(route)
             return
         if route != "/api/preview":
@@ -764,7 +837,33 @@ class Handler(BaseHTTPRequestHandler):
                 remaining -= len(chunk)
 
     def do_GET(self):
+        if urlparse(self.path).path == '/api/episode-notes':
+            try:
+                query = parse_qs(urlparse(self.path).query)
+                run = self._preview_run(query.get('run',[''])[0])
+                if run is None: raise ValueError('找不到评估目录')
+                index = int(query.get('episode_index',[''])[0])
+                human_review.target(run, episode_index=index)
+                self._json(episode_notes.read(run,index) or dict(episode_index=index,notes=''))
+            except (ValueError, OSError, TypeError) as error:
+                self._json({'error':str(error)},400)
+            return
         route = urlparse(self.path).path
+        if route == '/api/checkpoint-notes':
+            try:
+                self._json({'notes': CHECKPOINT_NOTES.read(), 'devices': self._checkpoint_note_devices()})
+            except (ValueError, OSError) as error:
+                self._json({'error': str(error)}, 500)
+            return
+        if route == '/checkpoint_notes.js':
+            body = Path(__file__).with_name('checkpoint_notes.js').read_bytes()
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/javascript; charset=utf-8')
+            self.send_header('Content-Length', str(len(body)))
+            self.send_header('Cache-Control', 'no-store')
+            self.end_headers()
+            self.wfile.write(body)
+            return
         if route == '/api/agent-experiments':
             query = parse_qs(urlparse(self.path).query)
             selected = query.get('experiment', [None])[0]

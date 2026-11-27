@@ -1,10 +1,10 @@
-"""Pause one evaluation through its controller; move stopped results to trash."""
+"""Pause one evaluation through its controller; delete stopped results."""
 import json
 import os
 from pathlib import Path
 import signal
+import shutil
 import time
-import uuid
 
 
 def process_info(pid):
@@ -100,9 +100,35 @@ class EvaluationControl:
         _, active = self.processes(run)
         if active:
             raise ValueError('评估仍在运行或清理，请先暂停，停止后再删除')
-        trash = self.evaluation/'.trash'
-        trash.mkdir(exist_ok=True)
-        destination = trash/(time.strftime('%Y%m%d_%H%M%S')+'_'+run.name+'_'+uuid.uuid4().hex[:8])
-        run.rename(destination)
-        return dict(state='deleted',run=request['run'],trash=str(destination),
-                    message='已移入 evaluation/.trash，可恢复')
+        shutil.rmtree(run)
+        return dict(state='deleted',run=request['run'],
+                    message='已永久删除此评估及其结果、录像和备注，无法恢复')
+
+    def finish(self, request):
+        """Leave an evaluation paused without scheduling its next attempt."""
+        run = self.run(request)
+        _, active = self.processes(run)
+        if active:
+            raise ValueError('评估仍在运行或清理，请先暂停并等待停止后再结束')
+        result = json.loads((run/'results.json').read_text())
+        if result.get('status') == 'paused' and result.get('resume_allowed') is not False:
+            return dict(state='paused', run=request['run'], message='评估已暂停，不会自动续跑；可随时选择继续及本次回合数')
+        if result.get('status') not in ('interrupted', 'failed', 'stopped', 'paused', 'cancelled'):
+            raise ValueError('只能结束已暂停、中断或失败的评估；已完成的评估无需操作')
+        # Use the writer's lock so status cannot overwrite an episode journal.
+        # Keep requested/completed counts and scores exactly as recorded.
+        import fcntl
+        runtime = run/'.runtime'
+        runtime.mkdir(exist_ok=True)
+        with (runtime/'results.lock').open('a') as lock:
+            fcntl.flock(lock, fcntl.LOCK_EX)
+            result = json.loads((run/'results.json').read_text())
+            if result.get('status') not in ('interrupted', 'failed', 'stopped', 'paused', 'cancelled'):
+                raise ValueError('评估状态已变化，请刷新后重试')
+            result.update(status='paused', resume_allowed=True,
+                          ended_by_user=False, paused_at=time.strftime('%Y-%m-%dT%H:%M:%S%z'))
+            temporary = run/'results.json.tmp'
+            temporary.write_text(json.dumps(result, indent=2, ensure_ascii=False)+'\n')
+            temporary.replace(run/'results.json')
+        return dict(state='paused', run=request['run'],
+                    message='保持暂停，不会自动续跑。结果和录像保留；之后可选择继续并设置本次回合数。')

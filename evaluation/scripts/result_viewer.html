@@ -96,7 +96,7 @@
     .episode-button { padding:2px 8px; color:var(--green); border-color:#c6ded4; font-size:12px }
     .status,.chip { display:inline-flex; align-items:center; gap:5px; padding:3px 8px; font-size:11px; font-weight:550; border-radius:6px; white-space:nowrap; background:#f0f3f1; color:#6b7a72 }
     .status::before { content:""; width:5px; height:5px; border-radius:50%; background:currentColor }
-    .status.complete { color:var(--green); background:#eaf6f0 }.status.failed { color:var(--red); background:#fcf0ed }.status.interrupted { color:#85735d; background:#f5f1eb }.status.running { color:#087f68; background:#e9f6f0 }
+    .status.complete { color:var(--green); background:#eaf6f0 }.status.failed { color:var(--red); background:#fcf0ed }.status.paused,.status.interrupted,.status.cancelled { color:#85735d; background:#f5f1eb }.status.running { color:#087f68; background:#e9f6f0 }
     .chip { background:#f1f5f3; color:#5f7569 }.chip.gpu { color:var(--green); background:#edf7f2; flex-shrink:0 }.chip.port { font-family:ui-monospace,monospace }
     .details { padding:14px 20px }
     .facts { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:9px 18px }
@@ -415,6 +415,14 @@
       .workflow-graph { padding-inline:10px }
     }
     @media(prefers-reduced-motion:reduce) { * { transition:none !important } }
+    .checkpoint-note { display:grid; gap:7px; min-width:0; margin:12px 0; padding:12px; border:1px solid var(--line); border-radius:10px; background:#fafcfb }
+    .checkpoint-note > label { font-size:13px; font-weight:600; color:var(--ink) }
+    .checkpoint-note small { overflow-wrap:anywhere; color:#5e7268; line-height:1.5 }
+    .checkpoint-note textarea { box-sizing:border-box; width:100%; min-width:0; max-width:100%; resize:vertical; padding:9px 10px; border:1px solid var(--line); border-radius:7px; font:inherit; font-size:13px; line-height:1.6; background:white }
+    .checkpoint-note-actions { display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap }
+    #result-note-panel { margin:0 20px 14px; overflow-wrap:anywhere }
+    #result-note-panel > summary { cursor:pointer; font-size:13px; line-height:1.6 }
+    #result-note-preview { color:#5e7268; white-space:pre-wrap }
   </style>
 </head>
 <body>
@@ -472,6 +480,7 @@
                   <label class="wide">模型版本<select id="inference-version"><option value="">全部版本</option></select></label>
                   <label class="wide">模型权重<select id="inference-weight"><option value="">手动填写权重路径</option></select><small id="inference-catalog-hint">展开后读取可用权重。</small></label>
                   <details id="inference-weight-path" class="compact-fold wide"><summary>权重完整路径 / 手动填写</summary><label>权重目录<input id="inference-checkpoint" list="inference-checkpoints" required placeholder="A100 checkpoint 绝对路径"><datalist id="inference-checkpoints"></datalist></label></details>
+                  <div id="inference-checkpoint-note" class="wide"></div>
                   <label>推理 GPU<select id="inference-gpu" required><option value="">选择GPU，查看显存占用</option></select></label>
                   <label>新服务端口<input id="inference-port" type="number" min="1" max="65535" value="5557" required></label>
                 </div>
@@ -495,6 +504,7 @@
               <div id="launch-device-field" class="launch-fields"><label class="wide">评估设备<select id="launch-device"><option value="local">4090 · 本机双卡</option><option value="a6000">RTX 6000 Ada · 单卡 48GB</option><option value="a100" disabled>A100 · 训练 / 推理设备</option></select><small id="launch-device-hint">先选设备，再选 GPU。</small></label></div>
               <fieldset id="launch-new">
                 <div class="launch-fields"><label class="wide">模型服务<select id="launch-service"><option value="">手动填写地址和端口</option></select><small id="launch-policy-summary">正在检查已有服务…</small></label></div>
+                <div id="launch-checkpoint-note"></div>
                 <details id="launch-endpoint" class="compact-fold"><summary>权重路径与连接设置</summary><div class="policy-path" id="launch-policy-details"></div><div class="launch-fields"><label>Policy 主机<input id="launch-host" value="172.28.62.17" required></label><label>Policy 端口<input id="launch-port" type="number" min="1" max="65535" value="5556" required></label></div></details>
                 <div class="form-block">
                 <div class="launch-fields task-fields">
@@ -527,7 +537,10 @@
                 </div></details>
               </fieldset>
               <fieldset id="launch-resume" class="launch-fields" hidden disabled>
-                <label class="wide">续跑目录<select id="launch-resume-run"><option value="">选择中断或失败的正式评估</option></select><small>沿用原任务、实例、种子与录像配置。</small></label>
+                <label class="wide">评估记录<select id="launch-resume-run"><option value="">选择已暂停或已完成的正式评估</option></select><small>继续使用原 checkpoint、实例池、种子序列和录像配置；保留已有回合。</small></label>
+                <label>本次运行量<select id="launch-resume-budget"><option value="remaining">补完原计划剩余回合</option><option value="additional">本次再跑指定回合数</option></select></label>
+                <label id="launch-resume-count-field" hidden>本次再跑多少回合<input id="launch-resume-count" type="number" min="1" step="1" value="10" disabled></label>
+                <p id="launch-resume-summary" class="wide subtle" role="status"></p>
                 <label>覆盖推理主机（可选）<input id="launch-resume-host" placeholder="留空沿用原配置"></label>
                 <label>覆盖推理端口（可选）<input id="launch-resume-port" type="number" min="1" max="65535" placeholder="留空沿用原配置"></label>
               </fieldset>
@@ -566,10 +579,11 @@
         </div>
     </div>
     <div class="layout" id="page-results" role="tabpanel" aria-labelledby="page-tab-results">
-      <section class="run-browser" aria-label="选择评估记录"><div class="section-head"><h2>全部运行</h2><span id="run-count" class="subtle">0 条</span></div><div class="filters"><input id="run-search" type="search" placeholder="搜索版本、任务或运行名" aria-label="搜索评估记录"><select id="status-filter" aria-label="按运行状态筛选"><option value="">全部状态</option><option value="running">运行中</option><option value="complete">已完成</option><option value="failed">异常退出</option><option value="interrupted">已中止</option></select></div><div class="run-list" id="runs"></div><div id="empty" class="empty" hidden>还没有评估结果。</div></section>
+      <section class="run-browser" aria-label="选择评估记录"><div class="section-head"><h2>全部运行</h2><span id="run-count" class="subtle">0 条</span></div><div class="filters"><input id="run-search" type="search" placeholder="搜索版本、任务或运行名" aria-label="搜索评估记录"><select id="status-filter" aria-label="按运行状态筛选"><option value="">全部状态</option><option value="running">运行中</option><option value="complete">已完成</option><option value="failed">异常退出</option><option value="interrupted">已暂停 / 中断</option><option value="paused">已暂停</option><option value="cancelled">已暂停（历史停止）</option></select></div><div class="run-list" id="runs"></div><div id="empty" class="empty" hidden>还没有评估结果。</div></section>
       <section aria-label="选中运行详情">
         <div class="detail-heading"><div><div id="detail-path" class="eyebrow">选择一次评估</div><h2 id="detail-title">运行详情</h2><div id="detail-subtitle" class="subtle">任务、进度与成绩集中显示在这里</div></div><div class="heading-status"><span id="detail-status"></span><span id="detail-mode" class="subtle"></span></div></div>
         <div class="evaluation-actions"><div id="evaluation-actions"></div><span id="evaluation-action-message" class="evaluation-action-message" role="status"></span></div>
+        <details id="result-note-panel"><summary>Checkpoint 备注 <small id="result-note-preview"></small></summary><div id="result-checkpoint-note"></div></details>
         <div class="summary" id="summary"></div>
         <nav class="detail-tabs" role="tablist" aria-label="运行详情视图"><button type="button" id="tab-episodes" role="tab" aria-controls="pane-episodes" onclick="selectDetailTab('episodes')">回合成绩</button><button type="button" id="tab-media" role="tab" aria-controls="pane-media" onclick="selectDetailTab('media')">录像与相机</button><button type="button" id="tab-info" role="tab" aria-controls="pane-info" onclick="selectDetailTab('info')">日志与配置</button></nav>
         <div id="pane-episodes" role="tabpanel" aria-labelledby="tab-episodes"><div class="details" id="details"></div></div>
@@ -579,6 +593,12 @@
         <div class="media-grid">
         <div class="video-panel"><h2>回合录像</h2><div id="video-empty" class="subtle">选择运行后检查录像文件</div><select id="video-select" aria-label="选择回合录像" hidden></select><video id="video-player" controls preload="metadata" playsinline hidden></video><div id="video-location" class="subtle video-location"></div></div>
         <div class="video-panel" id="preview-panel"><div class="preview-head"><h2 id="preview-title">实时相机预览</h2><label class="preview-switch"><input id="preview-toggle" type="checkbox" role="switch"><span id="preview-toggle-label">开启预览</span></label></div><div id="preview-status" class="subtle" role="status">默认关闭；打开后约每秒更新三路策略相机画面。</div><div id="preview-environments" hidden></div></div>
+        </div>
+        <div class="review-box" id="episode-note-panel">
+          <div class="review-head"><h2>回合备注</h2><span id="episode-note-identity" class="review-identity"></span></div>
+          <label for="episode-note-text" class="subtle">记录本回合的观察、问题或比较结论，可单独保存。</label>
+          <textarea id="episode-note-text" rows="3" maxlength="2000" placeholder="例如：第 3 次抓取后滑落；与上一权重相比转向更稳定" style="box-sizing:border-box;width:100%;min-width:0;resize:vertical;margin-top:8px"></textarea>
+          <div class="review-actions"><button id="episode-note-save" type="button">保存回合备注</button><button id="episode-note-clear" type="button">清空备注</button><span id="episode-note-message" class="subtle" role="status"></span></div>
         </div>
         <div class="review-box" id="review-box">
           <div class="review-head"><h2>失败原因标注</h2><div class="review-head-meta"><span class="review-identity" id="review-identity">选择已结束回合</span><span class="review-status pending" id="review-status">待标注</span></div></div>
@@ -600,6 +620,7 @@
     <section id="page-registry" role="tabpanel" aria-labelledby="page-tab-registry" hidden></section>
     <div class="page-foot">GR00T N1.6 · B1K-2025 · 调试记录与正式评估分别标记</div>
   </main>
+<script src="/checkpoint_notes.js"></script>
 <script>
   let runs = [], selected = null, refreshInFlight = false;
   let activePage='results', launchOptions=null, launchBusy=false, launchServices=[];
@@ -632,7 +653,7 @@
   const safe = v => String(v ?? "-");
   const taskNames = {21:"收集儿童玩具",22:"将鞋放上鞋架",26:"组装礼品篮"};
   const taskLabel = r => {const name=taskNames[r.task_id]||r.task_name?.replace(/_/g," ");return `Task${r.task_id??"-"}${name?` · ${name}`:""}`;};
-  const statusLabels = {running:"运行中",complete:"已完成",failed:"异常退出",interrupted:"已中止",loading:"模型加载中",ready:"端口已就绪",stopping:"关闭中",stopped:"已停止"};
+  const statusLabels = {running:"运行中",complete:"已完成",failed:"异常退出",interrupted:"已暂停 / 中断",paused:"已暂停",cancelled:"已暂停（历史停止）",loading:"模型加载中",ready:"端口已就绪",stopping:"关闭中",stopped:"已停止"};
   const statusBadge = status => `<span class="status ${esc(status||"unknown")}">${esc(statusLabels[status]||status||"未知")}</span>`;
   const completion = r => Math.max(0,Math.min(100,100*(r.completed_episodes??r.recorded_episodes??0)/(r.requested_episodes||1)));
   const duration = r => { if (r.elapsed_wall_s == null) return "运行中"; let s=Math.floor(r.elapsed_wall_s),h=Math.floor(s/3600),m=Math.floor((s%3600)/60); return h?`${h}h ${String(m).padStart(2,"0")}m`:`${m}m ${String(s%60).padStart(2,"0")}s`; };
@@ -727,7 +748,7 @@
     }
     $('inference-weight').innerHTML='<option value="">手动填写权重路径</option>'+[...groups].map(([arm,entries])=>
       '<optgroup label="'+esc(policyArmLabel(arm))+'">'+entries.map(c=>
-        '<option value="'+esc(c.path)+'">'+esc(c.label)+'</option>').join('')+'</optgroup>').join('');
+        '<option value="'+esc(c.path)+'">'+esc(c.label+checkpointNotes.brief($('inference-device').value,c.path))+'</option>').join('')+'</optgroup>').join('');
     if(selectFirst && !choices.some(c=>c.path===$('inference-checkpoint').value) && choices.length){
       $('inference-checkpoint').value=choices[0].path;
       applyInferenceCheckpoint();
@@ -735,6 +756,7 @@
     $('inference-weight').value=choices.some(c=>c.path===$('inference-checkpoint').value)?$('inference-checkpoint').value:'';
   }
   function applyInferenceCheckpoint() {
+    checkpointNotes.bind('inference-checkpoint-note',$('inference-device').value,$('inference-checkpoint').value);
     const known=inferenceOptions?.checkpoints.find(c=>c.path===$('inference-checkpoint').value);
     if(known && 'source_dir' in known) $('inference-source').value=known.inference_source_dir||known.source_dir||inferenceOptions.source_dir;
     $('inference-source-hint').textContent=known?.source_compatibility||'与训练该权重使用的代码版本对应。';
@@ -766,7 +788,7 @@
     $('launch-submit').disabled=launchBusy||Boolean(blocked)||unavailable||(usesDevice&&(launchDeviceLoading||!launchDeviceReady));
     $('launch-check').disabled=launchBusy||unavailable||(collect&&(launchDeviceLoading||!launchDeviceReady));
     $('launch-submit').textContent=blocked?(pendingInference.state==='failed' || pendingInference.state==='stopped'?'推理未就绪':'等待推理就绪'):
-      kind==='restore'?'启动检查点恢复':collect?'启动轨迹采集':forward?'启动冻结前向':'启动评估';
+      kind==='restore'?'启动检查点恢复':collect?'启动轨迹采集':forward?'启动冻结前向':kind==='resume'?'开始本次评估':'启动评估';
   }
   async function inferenceAPI(path,payload,device=$('inference-device').value||'a100') {
     const response=await fetch('/api/inference/'+path+'?device='+device,payload===undefined?{cache:'no-store'}:
@@ -1000,10 +1022,27 @@
     const templates=$('launch-template'), template=templates.value, resume=$('launch-resume-run'), old=resume.value;
     templates.innerHTML='<option value="">手动设置</option>'+runs.map(r=>`<option value="${esc(r._folder)}">${esc(r._folder)} · ${esc(r.configuration?.policy_server||'')}</option>`).join('');
     templates.value=template;
-    resume.innerHTML='<option value="">选择中断或失败的正式评估</option>'+runs.filter(r=>
-      ['failed','interrupted'].includes(r.status) && r.evaluation_mode==='official-eval').map(r=>
+    resume.innerHTML='<option value="">选择已暂停或已完成的正式评估</option>'+runs.filter(r=>
+      ['failed','interrupted','paused','stopped','cancelled','complete'].includes(r.status) && r.evaluation_mode==='official-eval').map(r=>
       `<option value="${esc(r._folder)}">${esc(r._folder)} · ${r.completed_episodes??0}/${r.requested_episodes??'?'} 集</option>`).join('');
     resume.value=old;
+    updateResumeBudget();
+  }
+  function updateResumeBudget() {
+    const run=runs.find(r=>r._folder===$('launch-resume-run').value);
+    const done=run?.recorded_episodes??run?.completed_episodes??0;
+    const remaining=Math.max(0,(run?.requested_episodes??0)-done);
+    const remainingOption=$('launch-resume-budget').querySelector('[value="remaining"]');
+    remainingOption.disabled=!!run&&!remaining;
+    if(run&&!remaining) $('launch-resume-budget').value='additional';
+    const custom=$('launch-resume-budget').value==='additional';
+    $('launch-resume-count-field').hidden=!custom;
+    $('launch-resume-count').disabled=!custom;
+    const amount=custom?Number($('launch-resume-count').value):remaining;
+    $('launch-resume-summary').textContent=run?
+      '已有 '+done+' 个回合 · 原计划 '+run.requested_episodes+' 个 · 本次再跑 '+(Number.isSafeInteger(amount)&&amount>0?amount:'待填写')+
+      ' 个 · 本次完成后累计 '+(Number.isSafeInteger(amount)&&amount>0?done+amount:'—')+' 个。暂停后不会自动续跑，已完成回合不会重跑。':
+      '先选择评估记录，再决定本次运行量。';
   }
   function readyTask40Policies() {
     const kind=$('launch-kind').value;
@@ -1073,6 +1112,7 @@
       '';
   }
   function updateLaunchForm() {
+    updateResumeBudget();
     const singleDevice=$('launch-device').value==='a6000';
     for(const option of $('launch-mode').options) option.disabled=singleDevice&&option.value.startsWith('dual');
     if(singleDevice&&$('launch-mode').value.startsWith('dual')) $('launch-mode').value='single1';
@@ -1155,6 +1195,11 @@
     if($('launch-kind').value==='resume'){
       if(!$('launch-resume-run').value) throw Error('请选择要续跑的评估目录');
       const request={resume_from:$('launch-resume-run').value};
+      if($('launch-resume-budget').value==='additional') {
+        const amount=Number($('launch-resume-count').value);
+        if(!Number.isSafeInteger(amount)||amount<1) throw Error('本次回合数必须为正整数');
+        request.additional_episodes=amount;
+      }
       if($('launch-resume-host').value.trim()) request.policy_host=$('launch-resume-host').value.trim();
       if($('launch-resume-port').value) request.policy_port=Number($('launch-resume-port').value);
       return request;
@@ -1266,6 +1311,14 @@
       'GPU '+(p.gpu??'-')+' · '+host+':'+port+(p.listening_ports?.includes(Number(port))?' · 就绪':' · 尚未就绪'):
       '手动连接 '+host+':'+port;
     $('launch-policy-details').textContent=p?.model||'模型由此地址所连接的服务决定。';
+    checkpointNotes.bind('launch-checkpoint-note',host,p?.model||'');
+    for(const option of $('launch-service').options){
+      const service=launchServices.find(p=>p.host+':'+p.configured_port===option.value);
+      if(service){
+        option.dataset.baseLabel ||= option.textContent;
+        option.textContent=option.dataset.baseLabel+checkpointNotes.brief(service.host,service.model);
+      }
+    }
     if(!$('launch-service').value) $('launch-endpoint').open=true;
   }
   async function submitLaunch(start) {
@@ -1290,6 +1343,7 @@
         plan&&request.restore_checkpoint?`仿真 GPU ${esc(request.sim_gpu)} · 恢复 ${esc(request.restore_checkpoint)} · 重复 ${esc(request.restore_repeats)} 次 · 每次最多 ${esc(request.cycles)} 次决策<br>${endpoint}`:
         plan&&collect?`${request.controlled_reclosure?'受控重关 · ':''}仿真 GPU ${esc(request.sim_gpu)} · 实例 ${esc(request.instances.join(', '))} · 每实例 ${esc(request.repetitions||1)} 次 · 基础种子 ${esc(request.seed)} · 每条最多 ${esc(request.cycles)} 次决策<br>${endpoint}`:
         plan?.kind==='task40_restore'?'GPU 仿真/策略：'+esc(JSON.stringify(plan.instances))+' · 决策 '+esc(plan.cycles)+' · '+esc(plan.memory_mode):
+        plan&&request.resume_from?`已有 ${esc(plan.recorded_episodes)} 个 · 本次再跑 ${esc(plan.additional_episodes)} 个 · 完成后累计 ${esc(plan.requested_episodes)} 个回合`:
         plan?`${esc(plan.repetitions||1)} 轮 · 总计 ${Number(plan.episodes_per_gpu)*Object.keys(plan.instances||{}).length} 回合 · 实例分配：${esc(JSON.stringify(plan.instances))} · 种子 ${esc(plan.base_seed)} · ${esc(plan.preset)}`:'';
       $('launch-plan').hidden=false;
       $('launch-plan').innerHTML=`<details><summary>查看实际启动命令</summary><pre>${esc(result.command)}</pre></details>`+(plan?
@@ -1375,8 +1429,9 @@
     if(!r) return '';
     const running=r.status==='running', stopping=evaluationStopping.has(r._folder);
     const button=(action,label,disabled=false)=>`<button type="button" data-evaluation-action="${action}" data-evaluation-run="${esc(r._folder)}"${disabled||evaluationActionBusy?' disabled':''}>${label}</button>`;
+    const resumable=['failed','interrupted','paused','stopped','cancelled','complete'].includes(r.status)&&r.evaluation_mode==='official-eval';
     return (running?button('pause',stopping?'暂停中…':'暂停评估',stopping):
-      ['failed','interrupted'].includes(r.status)&&r.evaluation_mode==='official-eval'?button('resume','续跑评估'):'')+
+      (resumable?button('resume',r.status==='complete'?'追加回合':'继续评估…'):''))+
       button('delete','删除评估',running||stopping);
   }
   function bindEvaluationButtons(node) {
@@ -1394,11 +1449,12 @@
     if(evaluationActionBusy) return;
     if(action==='resume'){
       selectPage('launch');renderLaunchTemplates();$('launch-kind').value='resume';
-      $('launch-resume-run').value=folder;updateLaunchForm();
-      $('launch-message').textContent='已选择续跑目录；保留已完成回合，未完成回合重新开始。';return;
+      $('launch-resume-run').value=folder;$('launch-resume-budget').value='additional';updateLaunchForm();
+      $('launch-message').textContent='请选择本次再跑多少回合，或补完原计划。已有结果和备注保留，尚未启动。';return;
     }
-    const prompt=action==='pause'?'暂停此评估？已完成回合和录像保留；当前未完成回合续跑时会重新开始。':
-      '删除此评估？整个运行目录将移入 evaluation/.trash，可恢复。';
+    const prompt=action==='pause'?'暂停此评估？已完成回合、备注和录像保留，不会自动续跑。之后可选择继续，并设置本次回合数。':
+      action==='finish'?'保持暂停？之后仍可继续并设置本次回合数。':
+      '永久删除此评估？将直接删除该次评估的结果、录像和备注，无法恢复。';
     if(!window.confirm(prompt+'\n'+folder)) return;
     evaluationActionBusy=true;renderEvaluationActions();
     try{
@@ -1483,6 +1539,62 @@
   function chooseEpisode(index) {
     mediaChoice=`episode:${index}`;detailRun=selected?._folder??null;detailTab='media';render();
   }
+  function chooseEpisodeNote(index) {
+    chooseEpisode(index);
+    $('episode-note-panel').scrollIntoView({block:'center',behavior:'smooth'});
+    $('episode-note-text').focus({preventScroll:true});
+  }
+  const episodeNoteDrafts=new Map(), episodeNoteMessages=new Map(), episodeNoteSaving=new Set();
+  let episodeNoteTarget=null;
+  function renderEpisodeNote(r,choice) {
+    const episode=choice?.episode;
+    const target=episode?{run:r._folder,episode_index:episode.episode_index}:null;
+    const key=target?JSON.stringify([target.run,target.episode_index]):'';
+    const changed=episodeNoteTarget?.key!==key;
+    episodeNoteTarget=target?{...target,key}:null;
+    $('episode-note-panel').hidden=!target;
+    if(!target) return;
+    $('episode-note-identity').textContent='第 '+episode.episode_index+' 集 · 实例 '+safe(episode.instance_id)+' · seed '+safe(episode.seed);
+    if(changed) $('episode-note-text').value=episodeNoteDrafts.get(key)??episode.notes??'';
+    $('episode-note-save').disabled=$('episode-note-clear').disabled=episodeNoteSaving.has(key);
+    $('episode-note-message').textContent=episodeNoteMessages.get(key)||'';
+  }
+  $('episode-note-text').oninput=()=>{
+    if(!episodeNoteTarget) return;
+    episodeNoteDrafts.set(episodeNoteTarget.key,$('episode-note-text').value);
+    episodeNoteMessages.set(episodeNoteTarget.key,'未保存');
+    $('episode-note-message').textContent='未保存';
+  };
+  async function saveEpisodeNote(clear=false) {
+    const target=episodeNoteTarget;
+    if(!target||episodeNoteSaving.has(target.key)) return;
+    const notes=clear?'':$('episode-note-text').value;
+    episodeNoteDrafts.set(target.key,notes);
+    if(clear) $('episode-note-text').value='';
+    episodeNoteSaving.add(target.key);
+    episodeNoteMessages.set(target.key,'正在保存…');
+    renderEpisodeNote(selected,syncMedia(selected));
+    try {
+      const response=await fetch('/api/episode-notes',{method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({run:target.run,episode_index:target.episode_index,notes})});
+      const data=await response.json();
+      if(!response.ok||data.error) throw Error(data.error||'保存失败');
+      const run=runs.find(r=>r._folder===target.run);
+      for(const episode of run?._episodes||[]) if(episode.episode_index===target.episode_index) episode.notes=data.notes;
+      for(const episode of Object.values(run?._video_episodes||{})) if(episode.episode_index===target.episode_index) episode.notes=data.notes;
+      const unchanged=episodeNoteDrafts.get(target.key)===notes;
+      if(unchanged) episodeNoteDrafts.delete(target.key);
+      episodeNoteMessages.set(target.key,unchanged?(clear?'已清空备注':'备注已保存'):'已保存上一版，当前修改未保存');
+      if(episodeNoteTarget?.key===target.key&&unchanged) $('episode-note-text').value=data.notes;
+      if(selected?._folder===target.run) renderDetails(selected);
+    } catch(error) {episodeNoteMessages.set(target.key,'保存失败：'+error.message);}
+    finally {
+      episodeNoteSaving.delete(target.key);
+      renderEpisodeNote(selected,syncMedia(selected));
+    }
+  }
+  $('episode-note-save').onclick=()=>void saveEpisodeNote();
+  $('episode-note-clear').onclick=()=>void saveEpisodeNote(true);
   function renderDetailTabs() {
     const run=selected?._folder??null;
     if(detailRun!==run){detailRun=run;detailTab='episodes';}
@@ -1564,10 +1676,14 @@
   }
   function renderSummary(r) {
     const done=r?.completed_episodes??r?.recorded_episodes??0, asked=r?.requested_episodes??0;
-    const vals=[["有效回合",r?`${done} / ${asked}`:"—",r?`${r.invalid_episodes??0} 个无效回合`:"尚未选择评估"],["平均 Q",qmean(r),r?.evaluation_mode==="fast-debug"?"调试 · 不计正式成绩":`0–1 · ${r?.q_score_episodes??0}/${done} 回合已记录`],["任务成功率",pct(r?.success_rate),r?`${r.successful_episodes??0} 个完整成功回合`:"完整任务成功比例"],["平均任务进度",r?.mean_task_progress==null?"—":`${num(r.mean_task_progress)}%`,"与 Q 分数分别统计"]];
+    const vals=[["有效回合",r?`${done} / ${asked}`:"—",['cancelled','paused','interrupted'].includes(r?.status)?`暂停中 · ${Math.max(0,asked-(r.recorded_episodes??done+(r.invalid_episodes??0)))} 回合尚未执行`:r?`${r.invalid_episodes??0} 个无效回合`:"尚未选择评估"],["平均 Q",qmean(r),r?.evaluation_mode==="fast-debug"?"调试 · 不计正式成绩":`0–1 · ${r?.q_score_episodes??0}/${done} 回合已记录`],["任务成功率",pct(r?.success_rate),r?`${r.successful_episodes??0} 个完整成功回合`:"完整任务成功比例"],["平均任务进度",r?.mean_task_progress==null?"—":`${num(r.mean_task_progress)}%`,"与 Q 分数分别统计"]];
     $("summary").innerHTML=vals.map(([l,v,h],i)=>`<div class="metric ${i===1?"primary":""}"><label>${l}</label><strong>${esc(v)}</strong><small>${esc(h)}</small></div>`).join("");
   }
   function renderDetails(r) {
+    const checkpointIdentity=r?.policy_identity||r?.configuration?.policy_identity||{};
+    checkpointNotes.bind('result-checkpoint-note',checkpointIdentity.host,checkpointIdentity.checkpoint||'');
+    $('result-note-panel').hidden=!checkpointIdentity.checkpoint;
+    $('result-note-preview').textContent=checkpointNotes.brief(checkpointIdentity.host,checkpointIdentity.checkpoint).replace(' · 备注：','')||'暂无备注 · 点击添加';
     if(!r){$("details").innerHTML="<div class='empty'>从左侧选择一次运行，查看进度、成绩与录像</div>";$("log").textContent="";$("configuration-details").innerHTML="";$("detail-title").textContent="运行详情";$("detail-mode").textContent="";$("detail-path").textContent="选择一次评估";$("detail-subtitle").textContent="";$("detail-status").innerHTML="";return;}
     const c=r.configuration||{}, debug=r.evaluation_mode==="fast-debug";
     $("detail-title").textContent=(r._folder||"").split("/").pop();
@@ -1589,14 +1705,14 @@
     for(const [gpu,data] of Object.entries(r.per_gpu||{})) for(const [env,state] of Object.entries(data.environments||{})) current.push({gpu,env,...state});
     const currentRows=current.map(e=>`<tr title="seed ${esc(safe(e.seed))}"><td><span class="chip gpu">GPU ${esc(e.gpu)}</span> ${esc(e.env.replace("runtime_env","env"))}</td><td>${esc(safe(e.instance_id))}</td><td>${Number(e.action_steps||0).toLocaleString()}</td><td>${e.task_progress==null?"—":`${num(e.task_progress)}%`}</td><td>${e.elapsed_s==null?"—":duration({elapsed_wall_s:e.elapsed_s})}</td></tr>`).join("");
     const eps=mediaEpisodes(r);
-    const rows=eps.map(e=>`<tr class="${mediaChoice===`episode:${e.episode_index}`?'episode-selected':''}" title="GPU ${esc(safe(e.gpu_index))} / env ${esc(safe(e.env_idx))} · seed ${esc(safe(e.seed))}"><td data-label="回合 / 实例"><button type="button" class="episode-button" onclick="chooseEpisode(${Number(e.episode_index)})">第 ${esc(safe(e.episode_index))} 集</button><div class="subtle">实例 ${esc(safe(e.instance_id))}</div></td><td data-label="结果">${e.valid===false?"无效":debug?"调试":e.success===true?"成功":e.success===false?"失败":"未判定"}</td><td data-label="Q">${qnum(e.q_score)}</td><td data-label="任务进度">${e.task_progress==null?"-":`${num(e.task_progress)}%`}</td><td data-label="动作步">${Number(e.sim_steps||e.episode_length||0).toLocaleString()}</td><td data-label="耗时">${e.duration_s==null?"-":duration({elapsed_wall_s:e.duration_s})}</td><td data-label="人工标注"><span class="status ${e.human_review_needs_update?'interrupted':e.human_reviewed?'complete':'interrupted'}">${e.human_review_needs_update?'需更新':e.human_reviewed?'已标注':'待标注'}</span></td></tr>`).join("");
+    const rows=eps.map(e=>`<tr class="${mediaChoice===`episode:${e.episode_index}`?'episode-selected':''}" title="GPU ${esc(safe(e.gpu_index))} / env ${esc(safe(e.env_idx))} · seed ${esc(safe(e.seed))}"><td data-label="回合 / 实例"><button type="button" class="episode-button" onclick="chooseEpisode(${Number(e.episode_index)})">第 ${esc(safe(e.episode_index))} 集</button><div class="subtle">实例 ${esc(safe(e.instance_id))}</div></td><td data-label="结果">${e.valid===false?"无效":debug?"调试":e.success===true?"成功":e.success===false?"失败":"未判定"}</td><td data-label="Q">${qnum(e.q_score)}</td><td data-label="任务进度">${e.task_progress==null?"-":`${num(e.task_progress)}%`}</td><td data-label="动作步">${Number(e.sim_steps||e.episode_length||0).toLocaleString()}</td><td data-label="耗时">${e.duration_s==null?"-":duration({elapsed_wall_s:e.duration_s})}</td><td data-label="人工标注"><span class="status ${e.human_review_needs_update?'interrupted':e.human_reviewed?'complete':'interrupted'}">${e.human_review_needs_update?'需更新':e.human_reviewed?'已标注':'待标注'}</span></td><td data-label="回合备注" style="max-width:220px;overflow-wrap:anywhere;white-space:normal"><button type="button" class="episode-button" onclick="chooseEpisodeNote(${Number(e.episode_index)})">${e.notes?esc(e.notes.slice(0,100))+(e.notes.length>100?'…':''):'添加备注'}</button></td></tr>`).join("");
     const live=r.status==="running"?`<div class="live-block"><h2 class="block-title">当前环境 <small>实时动作与任务进度</small></h2><div class="table-wrap"><table class="table-small"><thead><tr><th>GPU / 环境</th><th>实例</th><th>动作步</th><th>任务进度</th><th>已运行</th></tr></thead><tbody>${currentRows||"<tr><td colspan='5'>等待环境初始化或回合重置…</td></tr>"}</tbody></table></div></div>`:"";
     const notice=debug?"调试回合不计入正式成功率和平均 Q。":r.missing_q_score_episodes>0?`有 ${r.missing_q_score_episodes} 个有效回合未记录 Q，当前平均 Q 不代表完整成绩。`:"";
     const failure=r.failure_reason, failureNotice=failure?`<p class="notice error">评估异常：${esc(failure.message)} GPU ${esc(safe(failure.gpu_index))} / env ${esc(safe(failure.env_idx))} · 实例 ${esc(safe(failure.instance_id))} · seed ${esc(safe(failure.seed))}</p>`:"";
     const scroll=episodeScrollRun===r._folder?($('episode-table')?.scrollTop||0):0;
     episodeScrollRun=r._folder;
     const reviewed=eps.filter(e=>e.human_reviewed).length,needsUpdate=eps.filter(e=>e.human_review_needs_update).length;
-    $("details").innerHTML=`<div class="run-meta"><span>${esc(c.mode??"-")} · ${esc(c.n_envs_per_gpu??"-")} 环境/卡</span><span>总耗时 ${esc(duration(r))}</span><span>推理 ${esc(c.policy_server??"-")}</span></div>${failureNotice}${live}<h2 class="block-title">回合记录 <small>全部 ${eps.length} 集 · 已标注 ${reviewed}/${eps.length}${needsUpdate?` · 需更新 ${needsUpdate}`:''} · 点击编号查看录像与相机</small></h2><div class="table-wrap episode-table" id="episode-table"><table class="table-small"><thead><tr><th>回合 / 实例</th><th>结果</th><th>Q</th><th>任务进度</th><th>动作步</th><th>耗时</th><th>人工标注</th></tr></thead><tbody>${rows||"<tr><td colspan='7' class='empty'>首个回合结束后显示成绩</td></tr>"}</tbody></table></div>${notice?`<p class="notice">${esc(notice)}</p>`:""}`;
+    $("details").innerHTML=`<div class="run-meta"><span>${esc(c.mode??"-")} · ${esc(c.n_envs_per_gpu??"-")} 环境/卡</span><span>总耗时 ${esc(duration(r))}</span><span>推理 ${esc(c.policy_server??"-")}</span></div>${failureNotice}${live}<h2 class="block-title">回合记录 <small>全部 ${eps.length} 集 · 已标注 ${reviewed}/${eps.length}${needsUpdate?` · 需更新 ${needsUpdate}`:''} · 点击编号查看录像与相机</small></h2><div class="table-wrap episode-table" id="episode-table"><table class="table-small"><thead><tr><th>回合 / 实例</th><th>结果</th><th>Q</th><th>任务进度</th><th>动作步</th><th>耗时</th><th>人工标注</th><th>回合备注</th></tr></thead><tbody>${rows||"<tr><td colspan='8' class='empty'>首个回合结束后显示成绩</td></tr>"}</tbody></table></div>${notice?`<p class="notice">${esc(notice)}</p>`:""}`;
     $('episode-table').scrollTop=scroll;
     $("configuration-details").innerHTML=`<div class="facts">${facts.map(([l,v])=>`<div class="fact"><label>${esc(l)}</label><strong>${esc(safe(v))}</strong></div>`).join("")}</div><p class="subtle">Q 为回合结束时的评分（0–1），与累计任务进度不同。平均 Q 仅统计有记录的有效正式回合。悬停回合行可查看 GPU、env 和 seed。</p>`;
     const logs=r._logs||{}; $("log").textContent=Object.entries(logs).map(([name,text])=>`===== ${name} =====\n${text}`).join("\n")||"还没有生成 GPU 日志"; $("log").scrollTop=$("log").scrollHeight;
@@ -1916,6 +2032,7 @@
     }catch(error){$('review-message').textContent='选项更新失败：'+error.message;}
   }
   function renderHumanReview(r,choice){
+    renderEpisodeNote(r,choice);
     const episode=choice?.episode, key=episode?`${r?._folder}:${episode.episode_index}`:'';
     const fields=['review-stage','review-stage-position','review-stage-new','review-stage-add','review-stage-edit','review-stage-delete','review-cause','review-cause-new','review-cause-add','review-cause-edit','review-cause-delete','review-specific','review-specific-new','review-specific-add','review-specific-edit','review-specific-delete','review-secondary-specific','review-secondary-new','review-secondary-add','review-secondary-edit','review-secondary-delete','review-save','review-clear'];
     const enabled=!!episode;for(const id of fields)$(id).disabled=!enabled;
@@ -2033,6 +2150,9 @@
       if(kind==='collect'&&!launchOptions&&!launchDeviceLoading) void loadLaunchOptions();
     }
   };
+  $('launch-resume-run').onchange=()=>{updateResumeBudget();$('launch-plan').hidden=true;};
+  $('launch-resume-budget').onchange=()=>{updateResumeBudget();$('launch-plan').hidden=true;};
+  $('launch-resume-count').oninput=()=>{updateResumeBudget();$('launch-plan').hidden=true;};
   for(const id of ['launch-mode','launch-preset','launch-video']) $(id).onchange=updateLaunchForm;
   $('launch-device').onchange=()=>{
     if(launchBusy) return;
@@ -2043,6 +2163,7 @@
     $('inference-device').value=device;
     inferenceOptions=null;inferenceJobs=[];
     for(const id of ['inference-checkpoint','inference-source','inference-python']) $(id).value='';
+    checkpointNotes.bind('inference-checkpoint-note',device,'');
     $('inference-gpu').innerHTML='';$('inference-plan').hidden=true;
     updateInferenceDiagnostics();
     await loadInferenceOptions(true);void refreshInferenceJobs();
@@ -2075,6 +2196,7 @@
   };
   $('inference-checkpoint').oninput=()=>{
     $('inference-version').value='';renderInferenceWeights();
+    checkpointNotes.bind('inference-checkpoint-note',$('inference-device').value,$('inference-checkpoint').value);
     if(!$('inference-weight').value) $('inference-weight-path').open=true;
   };
   $('inference-task40').onchange=()=>{
@@ -2097,6 +2219,23 @@
     $('page-tab-ai').setAttribute('aria-current','page');
     $('page-tab-results').setAttribute('aria-selected','false');
   }
+  window.addEventListener('checkpoint-notes-updated',()=>{
+    renderInferenceWeights();
+    updatePolicySummary();
+    const identity=selected?.policy_identity||selected?.configuration?.policy_identity||{};
+    $('result-note-preview').textContent=checkpointNotes.brief(identity.host,identity.checkpoint).replace(' · 备注：','')||'暂无备注 · 点击添加';
+  });
+  window.addEventListener('checkpoint-deleted',event=>{
+    if($('inference-device').value!==event.detail.device) return;
+    if($('inference-checkpoint').value===event.detail.checkpoint){
+      $('inference-checkpoint').value='';
+      checkpointNotes.bind('inference-checkpoint-note',event.detail.device,'');
+    }
+    void loadInferenceOptions(true);
+  });
+  window.addEventListener('checkpoint-restored',event=>{
+    if($('inference-device').value===event.detail.device) void loadInferenceOptions(true);
+  });
   $("refresh").onclick=refresh; refresh(); setInterval(refresh,5000);
 </script>
 <script src="/benchmarks.js"></script>
