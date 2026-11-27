@@ -428,14 +428,59 @@ def worker(args):
                 h.update(p.detach().reshape(-1)[:64].cpu().contiguous().view(torch.uint8).numpy().tobytes())
         return h.hexdigest()
 
+    def heldout_loss(model,processor,step):
+        """Internal validation loss only, no standalone MAE or rollout task."""
+        from gr00t.data.dataset.lerobot_episode_loader import LeRobotEpisodeLoader
+        from gr00t.data.dataset.sharded_single_step_dataset import extract_step_data
+        from gr00t.data.embodiment_tags import EmbodimentTag
+        from gr00t.data.types import MessageType
+        mods=processor.modality_configs[TAG]
+        loader=LeRobotEpisodeLoader(prepared/"validation",mods,video_backend=args.video_backend)
+        tag=EmbodimentTag(TAG)
+        previous_training=model.training
+        py_state=random.getstate();np_state=np.random.get_state()
+        totals=torch.zeros(2,device=torch.device("cuda",local),dtype=torch.float64)
+        try:
+            model.eval();processor.eval()
+            with torch.random.fork_rng(devices=[local]),torch.inference_mode():
+                for ordinal,e in enumerate(loader.episodes_metadata):
+                    if ordinal%GPU!=rank:continue
+                    eid=int(e["episode_index"])
+                    df=loader._load_parquet_data(eid)
+                    anchors=np.unique(np.linspace(0,len(df)-32,5,dtype=int))
+                    rgb=loader._load_video_data(eid,anchors)
+                    for j,frame in enumerate(anchors):
+                        chunk=df.iloc[frame:frame+32].copy().reset_index(drop=True)
+                        for k,frames in rgb.items():chunk["video."+k]=[frames[j]]*32
+                        sample=extract_step_data(chunk,0,mods,tag,False)
+                        features=processor([{"type":MessageType.EPISODE_STEP.value,"content":sample}])
+                        inp=processor.collator([features])["inputs"]
+                        if inp["action_mask"].sum().item()!=32*23:raise ValueError("held-out mask mismatch")
+                        torch.manual_seed(42+ordinal*5+j)
+                        torch.cuda.manual_seed(42+ordinal*5+j)
+                        with torch.autocast("cuda",dtype=torch.bfloat16):
+                            pred=model(inp)
+                        totals[0]+=pred["action_loss"].detach().float().sum()
+                        totals[1]+=pred["action_mask"].detach().float().sum()
+            dist.all_reduce(totals)
+            if not torch.isfinite(totals).all() or totals[1]<=0:raise ValueError("nonfinite held-out FM loss")
+            if rank==0:
+                atomic(output/f"validation-{step:06d}.json",dict(step=step,
+                    fm=float(totals[0]/totals[1]),samples=int(totals[1].item()/(32*23)),states={}))
+        finally:
+            random.setstate(py_state);np.random.set_state(np_state)
+            model.train(previous_training);processor.train()
+
     class WorkbenchCallback(TrainerCallback):
         def __init__(self,trainer):
             self.trainer=trainer;self.start=time.monotonic();self.initial_trainable=None;self.initial_frozen=None
         def on_train_begin(self,a,s,c,model=None,**kw):
+            if not preflight and not resume:
+                heldout_loss(self.trainer.model,self.trainer.indexed.mixture.datasets[0].processor,0)
             if preflight:
                 self.initial_trainable=sample_hash(model,True);self.initial_frozen=sample_hash(model,False)
             if rank==0:
-                atomic(output/'status.json',dict(status='training',step=resumed_step,total_steps=STEPS,world_size=GPU))
+                atomic(output/'status.json',dict(status='training',step=resumed_step,total_steps=4 if preflight else STEPS,world_size=GPU))
         def on_step_end(self,a,s,c,**kw):
             step=s.global_step
             if step%a.logging_steps==0 or step>=cap:
@@ -452,7 +497,7 @@ def worker(args):
             if flag.item():
                 c.should_save=True;c.should_training_stop=True;c.should_log=True
             if rank==0:
-                atomic(output/"status.json",dict(status="training",step=step,total_steps=STEPS,
+                atomic(output/"status.json",dict(status="training",step=step,total_steps=4 if preflight else STEPS,
                     world_size=GPU,seen_samples=step*GPU*MICROBATCH*ACCUM))
             return c
         def on_log(self,a,s,c,logs=None,**kw):
@@ -472,6 +517,8 @@ def worker(args):
                     raise RuntimeError('preflight parameter update/freeze check failed')
                 if resume and not all(self.trainer.restore_checks.values()):
                     raise RuntimeError('strict resume checks incomplete')
+            if (not preflight and s.global_step%1000==0):
+                heldout_loss(self.trainer.model,self.trainer.indexed.mixture.datasets[0].processor,s.global_step)
             if rank==0:publish(job_root,native,s.global_step,contract,manifest)
             dist.barrier()
             return c
@@ -596,7 +643,7 @@ def worker(args):
                 run_id=run,resumed_from=resumed_step,step=step,checkpoint=final.name,
                 cursor=cursor(step),restore_checks={"model":True,"optimizer":True,"scheduler":True,"rng":True},rows=rows))
         terminal="completed" if (step>=4 if preflight else step>=STEPS) else "paused"
-        atomic(output/"status.json",dict(status=terminal,step=step,total_steps=STEPS,
+        atomic(output/"status.json",dict(status=terminal,step=step,total_steps=4 if preflight else STEPS,
                     world_size=GPU,training_complete=terminal=="completed"))
     dist.barrier()
     dist.destroy_process_group()
