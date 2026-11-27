@@ -70,6 +70,16 @@ class Backend:
         return root, launch
 
     def prepare(self, request):
+        if request.get('recipe') == 'native_random_v2':
+            # Explicitly refuse rather than silently falling back to the old
+            # fixed sequential recipe, which has a different LR and sampler.
+            if canonical_version(request.get('version')) != VERSION:
+                raise ValueError('native_random_v2须使用已登记的V_2_1')
+            fields=validate_run_identity(request.get('run_id'), request['version'],
+                                         preflight=request.get('preflight_only',False))
+            if (fields['test_id'],fields['experiment_id'])!=('test02','exp01'):
+                raise ValueError('当前重训任务属于test02/exp01；不得猜测或迁移身份')
+            raise ValueError('BLOCKED_WORKBENCH_INTEGRATION: native_random_v2尚未通过原生训练器严格暂停恢复及规范checkpoint发布验收；禁止旧配方回退或CLI绕行')
         allowed = {'version','task','stage','run_id','dataset','checkpoint','labels','gpus','steps','seed',
                    'microbatch','learning_rate','global_windows_per_step','prior','fusion_layers',
                    'weak_weight','state_weight','states','split','calibration_reference','preflight_only',
