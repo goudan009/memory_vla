@@ -118,9 +118,9 @@ assets/
 
 仿真默认读取本项目的 `assets/simulation/`。评测启动器仅通过显式设置 `BEHAVIOR_DATA` 覆盖资产根目录，忽略其他项目遗留的 `OMNIGIBSON_DATA_PATH`；单独调用 `scripts/b1k_python.sh` 时仍可通过 `OMNIGIBSON_DATA_PATH` 指定资源。资源根目录应直接包含上述三个资产目录及密钥。下载时可放在项目外的大容量目录，完成后将对应入口链接到实际解压目录。
 
-## V1.2 / GR00T N1.7 无记忆基线
+## V1.2 / GR00T N1.7 + B1K-2026 无记忆基线
 
-独立迁移架构与本地验收见 [N1.7 Baseline](docs/v1_2/n17-baseline.md)。当前仅建立源码骨架，尚未开放正式训练入口；不影响 V2.1 的原有运行。
+迁移及下载清单见 [N1.7 + B1K-2026 Baseline](docs/v1_2/n17-baseline.md)。V1.2/未来V2.2统一采用2026官方原生链路，不再适配2025；V2.1保持原环境。当前尚未开放V1.2正式训练入口。
 
 ## 安装与训练入口
 
