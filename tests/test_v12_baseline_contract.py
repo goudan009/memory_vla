@@ -10,7 +10,7 @@ sys.path.insert(0,str(ROOT/"train"))
 from run_identity import MODEL_VERSIONS, validate_run_identity
 from v1_2_groot_baseline import contracts as c
 from v1_2_groot_baseline.data_contract import STATE_WIDTHS,CAMERAS,audit_2025,modality_source
-from v1_2_groot_baseline.training_contract import batch_accounting
+from v1_2_groot_baseline.training_contract import batch_accounting, native_train_candidate
 
 
 def write(path,value):
@@ -112,3 +112,32 @@ def test_reject_wrong_processor_and_checkpoint_identity(tmp_path,monkeypatch):
     write(ck/"statistics.json",stats)
     with pytest.raises(ValueError,match="normalization range"):
         c.inspect_checkpoint(ck,role="official_2026_radio")
+
+
+def test_native_training_rejects_validation_file_leak(tmp_path,monkeypatch):
+    from v1_2_groot_baseline import training_contract as t
+    ck=tmp_path/"base";checkpoint(ck)
+    dataset=tmp_path/"train";offset=0;state={}
+    for k,w in STATE_WIDTHS.items():
+        state[k]={"start":offset,"end":offset+w};offset+=w
+    write(dataset/"meta/info.json",{"fps":30,"features":{"observation.state":{"shape":[82]},"action":{"shape":[23]}}})
+    write(dataset/"meta/modality.json",dict(state=state,action={k:{"start":a,"end":b} for k,(a,b) in c.ACTION_GROUPS.items()},
+         video={k:{"original_key":k} for k in CAMERAS},annotation={"human.coarse_action":{"original_key":"annotation.human.coarse_action"}}))
+    (dataset/"meta/episodes.jsonl").write_text('{"episode_index":1}\n')
+    data=dataset/"data/task-0000";data.mkdir(parents=True)
+    (data/"episode_00000001.parquet").touch()
+    split=tmp_path/"split.json";write(split,{"train":[1],"validation":[2]})
+    python=tmp_path/"python";python.touch()
+    run="v1_2__test99__exp99__run999"
+    job=tmp_path/run;job.mkdir()
+    modality=job/"modality.py";modality.write_text(modality_source(dataset,horizon=16))
+    monkeypatch.setattr(t,"inspect_upstream",lambda p:{"root":str(p),"revision":c.FORK_REVISION})
+    kw=dict(python=python,upstream=tmp_path,base=ck,dataset=dataset,modality=modality,
+            job_root=job,run_id=run,gpus=[0],microbatch=2,accumulation=8,steps=4,
+            save_steps=2,lr=1e-4,wd=1e-5,warmup_ratio=.05,horizon=16,split_file=split,
+            verified_generic_sha256=c.checkpoint_digest(ck))
+    plan=native_train_candidate(**kw)
+    assert plan["effective_batch"]==16 and plan["launch_ready"] is False
+    (data/"episode_00000002.parquet").touch()
+    with pytest.raises(ValueError,match="held-out"):
+        native_train_candidate(**kw)
