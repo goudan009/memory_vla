@@ -1,7 +1,7 @@
-"""V2.1 Stage1 rerun: actual upstream GR00T pipeline, dataset and Gr00tTrainer.
+"""V2_1 native Stage1 candidate implementation, not a public launch entry.
 
-Preview by default; 3-update disposable native smoke test and then formal run.
-No change to the existing V2.1 training loop, weights or Stage2.
+The existing workbench must integrate the candidate and validate exact resume
+before any real training. See Output/test_02/experiment_01/workflow/plan-v004.json.
 """
 import argparse
 import json
@@ -17,6 +17,51 @@ STEPS = 6000
 GPU = 4
 MICROBATCH = 2
 ACCUM = 8
+
+
+def workbench_layout(job_root):
+    """Derive the only allowed published checkpoint namespace from a real job.
+
+    Never reserve a run here; the workbench owns reservation and source snapshots.
+    Native checkpoint-N folders are internal staging, not public identities.
+    """
+    repo = Path(__file__).resolve().parents[1]
+    sys.path.insert(0, str(repo/"train"))
+    from run_identity import validate_run_identity
+    root = Path(job_root)
+    if root.is_symlink():
+        raise ValueError("workbench job root cannot be a symlink")
+    config = read(root/"config/web_launch.json")
+    run = config.get("run_id")
+    if not isinstance(run, str) or run != root.name or config.get("run_name") != run:
+        raise ValueError("workbench run identity mismatch")
+    if config.get("version") != "V_2_1" or config.get("stage") != "stage1":
+        raise ValueError("expected V_2_1 Stage1 workbench job")
+    if config.get("recipe") != "native_random_v2":
+        raise ValueError("explicit native_random_v2 recipe required")
+    preflight = config.get("preflight_only")
+    if type(preflight) is not bool:
+        raise ValueError("workbench preflight identity required")
+    fields = validate_run_identity(run, config["version"], preflight=preflight)
+    if fields["test_id"] != "test02" or fields["experiment_id"] != "exp01":
+        raise ValueError("recipe belongs to current Test02/Exp01 task; do not infer IDs")
+    return root/"run", run
+
+
+def canonical_checkpoint(job_root, step):
+    output, run = workbench_layout(job_root)
+    if type(step) is not int or step < 0:
+        raise ValueError("step must be cumulative optimizer step")
+    return output/"checkpoints"/f"{run}__step{step:06d}"
+
+
+def require_workbench_integration():
+    raise RuntimeError(
+        "BLOCKED_WORKBENCH_INTEGRATION: native_random_v2 is a code candidate, "
+        "not an approved launch route. Use the existing V_2_1 workbench only "
+        "after canonical checkpoint publication and strict pause/resume pass. "
+        "Do not switch to the old Stage1 recipe or run this script directly."
+    )
 
 
 def plan(args, steps):
@@ -85,6 +130,7 @@ def assert_processor(checkpoint, prepared):
 
 
 def worker(args):
+    require_workbench_integration()
     import copy
     import numpy as np
     import torch
@@ -249,6 +295,8 @@ def validate(checkpoint, prepared, backend, episodes=None):
 
 
 def export_final(args, manifest):
+    # Do not publish a misleading COMPLETE marker before strict resume support.
+    require_workbench_integration()
     checkpoint=args.output/"native"/f"checkpoint-{STEPS}"
     state=read(checkpoint/"trainer_state.json")
     if state["global_step"]!=STEPS:
@@ -271,6 +319,8 @@ def export_final(args, manifest):
 
 
 def launch(args):
+    if args.execute or args.finalize_only:
+        require_workbench_integration()
     manifest=verify_prepared(args.prepared)
     ident=identity(args)
     steps=3 if args.preflight else STEPS
@@ -354,6 +404,7 @@ def main():
     os.environ["HF_HUB_OFFLINE"]="1"
     os.environ["TRANSFORMERS_OFFLINE"]="1"
     if a.worker:
+        require_workbench_integration()
         worker(a)
     else:
         launch(a)
