@@ -4,7 +4,7 @@ The workbench must own the process, allocated GPU, source snapshot and
 checkpoint binding. Call these functions only inside that process.
 """
 from pathlib import Path
-from .contracts import inspect_upstream, inspect_checkpoint, B1K2026, B1K2025
+from .contracts import inspect_upstream, inspect_checkpoint, checkpoint_digest, B1K2025
 from .data_contract import STATE_WIDTHS, CAMERAS, LANGUAGE, ACTION_GROUPS
 
 
@@ -20,10 +20,12 @@ def _native_import(upstream):
     return root
 
 
-def official_radio_policy(upstream,checkpoint,device):
+def official_radio_policy(upstream,checkpoint,device,*,verified_radio_sha256):
     """Unmodified official 2026 wrapper; temporal ensembling is not RTC."""
     root=_native_import(upstream)
     inspect_checkpoint(checkpoint,role="official_2026_radio")
+    if checkpoint_digest(checkpoint)!=verified_radio_sha256:
+        raise ValueError("official radio download identity mismatch")
     from gr00t.eval.eval_b1k_wrapper import B1KPolicyWrapper,load_modality_config
     from gr00t.data.embodiment_tags import EmbodimentTag
     from gr00t.policy.gr00t_policy import Gr00tPolicy
@@ -50,7 +52,7 @@ def b1k2025_policy(upstream,checkpoint,device,*,horizon):
     if (lineage.get("protocol")!=B1K2025 or lineage.get("version")!="V_1_2"
         or lineage.get("horizon")!=horizon):
         raise ValueError("not a compatible V1.2 B1K2025 checkpoint")
-    inspect_checkpoint(checkpoint,role="generic")  # model-family + required artifacts only
+    inspect_checkpoint(checkpoint,role="family_only")  # model-family + required artifacts only
     from gr00t.policy.gr00t_policy import Gr00tPolicy,Gr00tSimPolicyWrapper
     from gr00t.data.embodiment_tags import EmbodimentTag
     policy=Gr00tPolicy(embodiment_tag=EmbodimentTag.NEW_EMBODIMENT,
