@@ -24,14 +24,21 @@ def main():
         atomic_json(ROOT / 'radio-progress.json', state)
     try:
         if not archive.exists():
-            p = subprocess.Popen(['curl', '--fail', '--location', '--retry', '3', '--connect-timeout', '30',
-                                  '--speed-time', '120', '--speed-limit', '1024', '--continue-at', '-',
-                                  '--output', str(partial), URL])
-            while p.poll() is None:
+            for attempt in range(1, 11):
+                state['attempt'] = attempt
+                p = subprocess.Popen(['curl', '--fail', '--location', '--silent', '--show-error', '--connect-timeout', '30',
+                                      '--max-time', '900', '--speed-time', '60', '--speed-limit', '1024', '--continue-at', '-',
+                                      '--output', str(partial), URL])
+                while p.poll() is None:
+                    save()
+                    time.sleep(10)
+                if p.returncode == 0:
+                    break
+                state['last_error'] = 'curl exit ' + str(p.returncode) + '; partial preserved'
                 save()
-                time.sleep(10)
+                time.sleep(5)
             if p.returncode:
-                raise RuntimeError('curl exit ' + str(p.returncode))
+                raise RuntimeError(state['last_error'])
             assert partial.stat().st_size == SIZE
             partial.replace(archive)
         assert archive.stat().st_size == SIZE

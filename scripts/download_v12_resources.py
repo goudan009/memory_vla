@@ -6,8 +6,10 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import subprocess
 import threading
 import time
+from urllib.parse import quote
 
 ROOT = Path('/nvme3/outputs/memory_vla/v12-downloads')
 MANIFEST = Path(__file__).resolve().parents[1] / 'docs/v1_2/downloads/manifest.json'
@@ -81,6 +83,26 @@ def verify(path, entry):
     return sha256.hexdigest()
 
 
+def resume_large_file(resource, entry, path):
+    """Use one stable partial; hub 2.4.0 intentionally discards process-unique partials."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    partial = path.with_suffix(path.suffix + '.part')
+    if not partial.exists() and entry['sha256']:
+        candidates = list((Path(resource['target']) / '.cache/huggingface/download').rglob('*.' + entry['sha256'] + '.*.incomplete'))
+        if candidates:
+            max(candidates, key=lambda p: p.stat().st_size).replace(partial)
+    prefix = 'datasets/' if resource['repo_type'] == 'dataset' else ''
+    url = 'https://huggingface.co/' + prefix + resource['repo'] + '/resolve/' + resource['revision'] + '/' + quote(entry['path'])
+    result = subprocess.run(['curl', '--fail', '--location', '--silent', '--show-error', '--connect-timeout', '30',
+                             '--max-time', '900', '--speed-time', '60', '--speed-limit', '1024',
+                             '--continue-at', '-', '--output', str(partial), url])
+    if result.returncode:
+        raise RuntimeError('curl exit ' + str(result.returncode) + '; partial preserved: ' + str(partial))
+    verify(partial, entry)
+    partial.replace(path)
+    return path
+
+
 def download():
     from huggingface_hub import hf_hub_download
     ROOT.mkdir(parents=True, exist_ok=True)
@@ -94,7 +116,7 @@ def download():
         with mutex:
             state['updated_at'] = time.time()
             state['verified_bytes'] = sum(x.get('bytes', 0) for x in state['files'].values() if x['status'] == 'verified')
-            state['partial_bytes'] = sum(p.stat().st_size for r in manifest['resources'] for p in Path(r['target']).glob('.cache/huggingface/download/**/*.incomplete') if p.is_file())
+            state['partial_bytes'] = sum(p.stat().st_size for r in manifest['resources'] for p in Path(r['target']).rglob('*.part') if p.is_file())
             atomic_json(ROOT / 'progress.json', state)
     def heartbeat():
         while not done.wait(30):
@@ -115,8 +137,11 @@ def download():
                     except (ValueError, AssertionError):
                         pass
                 if not reused:
-                    path = hf_hub_download(resource['repo'], entry['path'], repo_type=resource['repo_type'],
-                                           revision=resource['revision'], local_dir=resource['target'])
+                    if entry['bytes'] >= 10 * 1024 * 1024:
+                        path = resume_large_file(resource, entry, path)
+                    else:
+                        path = hf_hub_download(resource['repo'], entry['path'], repo_type=resource['repo_type'],
+                                               revision=resource['revision'], local_dir=resource['target'])
                 digest = verify(Path(path), entry)
                 with mutex:
                     state['files'][key] = {'status': 'verified', 'bytes': entry['bytes'], 'sha256': digest, 'path': str(path), 'reused': reused}
@@ -132,10 +157,13 @@ def download():
                 if attempt < 3:
                     time.sleep(5 * attempt)
     save()
-    with ThreadPoolExecutor(max_workers=3) as pool:
-        futures = [pool.submit(fetch, r, f) for r in manifest['resources'] for f in r['files']]
-        for future in as_completed(futures):
-            future.result()
+    def fetch_resource(resource):
+        with ThreadPoolExecutor(max_workers=2) as pool:
+            futures = [pool.submit(fetch, resource, entry) for entry in resource['files']]
+            for future in as_completed(futures):
+                future.result()
+    with ThreadPoolExecutor(max_workers=len(manifest['resources'])) as pool:
+        list(pool.map(fetch_resource, manifest['resources']))
     done.set()
     state['status'] = 'complete' if all(f['status'] == 'verified' for f in state['files'].values()) else 'partial_failure'
     save()
