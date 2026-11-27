@@ -1,0 +1,17 @@
+{
+  "created_at": "2026-11-27",
+  "author": "Codex /root",
+  "goal": "Run the fixed V2_1 training recipe and obtain measured memory-calibration diagnostics",
+  "reason": "Continued preflight has passed full reload and exact next-update checks. Queue the memory preflight before the long continued run so the known calibration failure is measured promptly; do not wait for 3000 continued updates to collect its diagnostics. Research contract is unchanged from plan-v001.",
+  "research_contract_from": "plan-v001.json",
+  "mainline": ["audit", "continued_preflight", "memory_preflight", "continued_train", "archive"],
+  "nodes": [
+    {"id":"audit","title":"核对现有权重与资源","after":[],"acceptance":"Completed Stage1 step6000, exact lineage, four A100 UUIDs and no duplicate training verified"},
+    {"id":"continued_preflight","title":"无记忆对照真实预检","after":["audit"],"acceptance":"Four-rank actual updates, full reload, exact next-update equality; archive and purge dedicated temporary artifacts"},
+    {"id":"memory_preflight","title":"拓扑记忆真实预检","after":["continued_preflight"],"parallel_branches":["memory_debug"],"acceptance":"Queue unchanged topology recipe with existing per-pass diagnostic instrumentation. Preserve original gate; record measured pass or failure before continued training receives the GPUs"},
+    {"id":"memory_debug","title":"记忆校准故障定位","after":["memory_preflight"],"acceptance":"Read actual per-pass gradients and ratios; no architecture/hyperparameter changes or gate bypass"},
+    {"id":"continued_train","title":"无记忆对照正式训练","after":["memory_preflight"],"acceptance":"Start certified3000-step continued run via workbench, strict pause/release/resume proof and next optimizer update; training-only durable timer"},
+    {"id":"memory_train","title":"拓扑记忆正式训练","after":["memory_preflight","memory_debug"],"acceptance":"Only after original memory gate passes, run fixed3000 updates from common Stage1; otherwise retain precise blocker"},
+    {"id":"archive","title":"训练记录与清理","after":["continued_train"],"acceptance":"Record actual jobs, identities, diagnostics, supervision; purge dedicated temporary weights after evidence. No evaluation dispatch"}
+  ]
+}
