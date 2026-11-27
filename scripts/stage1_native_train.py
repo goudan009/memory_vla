@@ -3,7 +3,6 @@
 The existing workbench must integrate the candidate and validate exact resume
 before any real training. See Output/test_02/experiment_01/workflow/plan-v004.json.
 """
-import argparse
 import json
 import os
 from pathlib import Path
@@ -319,8 +318,7 @@ def export_final(args, manifest):
 
 
 def launch(args):
-    if args.execute or args.finalize_only:
-        require_workbench_integration()
+    require_workbench_integration()
     manifest=verify_prepared(args.prepared)
     ident=identity(args)
     steps=3 if args.preflight else STEPS
@@ -384,30 +382,7 @@ def finalize(args,manifest):
 
 
 def main():
-    p=argparse.ArgumentParser(__doc__)
-    for key in ("official-root","prepared","output"):
-        p.add_argument("--"+key,type=Path,required=True)
-    p.add_argument("--video-backend",choices=["torchcodec","decord","ffmpeg"],default="torchcodec")
-    p.add_argument("--workers",type=int,default=2)
-    p.add_argument("--preflight",action="store_true")
-    p.add_argument("--accept-preflight",type=Path)
-    p.add_argument("--execute",action="store_true")
-    p.add_argument("--finalize-only",action="store_true",help="Run held-out validation/export on an already completed formal run; no training")
-    p.add_argument("--worker",action="store_true",help=argparse.SUPPRESS)
-    a=p.parse_args()
-    if a.workers<0:raise ValueError("workers must be nonnegative")
-    a.prepared=a.prepared.resolve();a.output=a.output.resolve();a.official_root=a.official_root.resolve()
-    root=a.official_root.resolve()
-    if not (root/"gr00t/experiment/experiment.py").is_file():raise FileNotFoundError(root)
-    sys.path.insert(0,str(root))
-    os.environ["PYTHONPATH"]=str(root)+os.pathsep+os.environ.get("PYTHONPATH","")
-    os.environ["HF_HUB_OFFLINE"]="1"
-    os.environ["TRANSFORMERS_OFFLINE"]="1"
-    if a.worker:
-        require_workbench_integration()
-        worker(a)
-    else:
-        launch(a)
+    require_workbench_integration()
 
 
 if __name__=="__main__":
