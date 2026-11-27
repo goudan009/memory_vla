@@ -71,15 +71,7 @@ class Backend:
 
     def prepare(self, request):
         if request.get('recipe') == 'native_random_v2':
-            # Explicitly refuse rather than silently falling back to the old
-            # fixed sequential recipe, which has a different LR and sampler.
-            if canonical_version(request.get('version')) != VERSION:
-                raise ValueError('native_random_v2须使用已登记的V_2_1')
-            fields=validate_run_identity(request.get('run_id'), request['version'],
-                                         preflight=request.get('preflight_only',False))
-            if (fields['test_id'],fields['experiment_id'])!=('test02','exp01'):
-                raise ValueError('当前重训任务属于test02/exp01；不得猜测或迁移身份')
-            raise ValueError('BLOCKED_WORKBENCH_INTEGRATION: native_random_v2尚未通过原生训练器严格暂停恢复及规范checkpoint发布验收；禁止旧配方回退或CLI绕行')
+            return self.prepare_native(request)
         allowed = {'version','task','stage','run_id','dataset','checkpoint','labels','gpus','steps','seed',
                    'microbatch','learning_rate','global_windows_per_step','prior','fusion_layers',
                    'weak_weight','state_weight','states','split','calibration_reference','preflight_only',
@@ -175,7 +167,109 @@ class Backend:
             raise ValueError('正式训练需要独立归档的preflight.json')
         return plan
 
+    def prepare_native(self, request):
+        """Same identity, resource, queue and output owner as other V2_1 jobs."""
+        allowed={'version','recipe','task','stage','run_id','dataset','checkpoint','split',
+                 'official_root','gpus','steps','seed','microbatch','accumulation',
+                 'learning_rate','preflight_only','accept_preflight','enqueue',
+                 'share_existing','notes','arm','video_backend','workers'}
+        if set(request)-allowed:
+            raise ValueError('不支持的原生Stage1参数: '+','.join(sorted(set(request)-allowed)))
+        if canonical_version(request.get('version'))!=VERSION or request.get('task')!=40 or request.get('stage')!='stage1':
+            raise ValueError('native_random_v2仅支持已登记V_2_1 Stage1 Task40')
+        pre=request.get('preflight_only',False)
+        if type(pre) is not bool:raise ValueError('preflight_only必须为开关')
+        run=request.get('run_id')
+        if not isinstance(run,str) or not RUN.fullmatch(run):
+            raise ValueError('必须显式提供规范run_id')
+        identity=validate_run_identity(run,request['version'],preflight=pre)
+        if (identity['test_id'],identity['experiment_id'])!=('test02','exp01'):
+            raise ValueError('当前重训任务属于test02/exp01；不得猜测或迁移身份')
+        if any(p.exists() or p.is_symlink() for p in
+               (self.training/run,self.training/'.trash'/run,self.training/'.workbench-trash'/run,
+                self.project/'deployments'/run,self.training/'deletions'/(run+'.json'))):
+            raise ValueError('该训练标识已存在或已使用，请勿复用')
+        def path(k):
+            value=request.get(k)
+            if not isinstance(value,str) or not value.startswith('/') or any(x in value for x in ('\x00','\n','\r')):
+                raise ValueError(k+'必须为工作台已核对的目标设备绝对路径')
+            return Path(value)
+        dataset,base,split,upstream=(path(k) for k in ('dataset','checkpoint','split','official_root'))
+        if base.resolve()!=Path(self.r['BASE_CHECKPOINT']).resolve():
+            raise ValueError('必须使用工作台登记的通用GR00T-N1.6-3B')
+        if not all(p.is_file() for p in (dataset/'meta/episodes.jsonl',dataset/'meta/modality.json',
+                dataset/'meta/info.json',base/'config.json',base/'processor_config.json',
+                split,upstream/'gr00t/experiment/experiment.py',upstream/'gr00t/experiment/trainer.py',self.python)):
+            raise ValueError('数据、原始权重、划分、上游源码或Python未就绪')
+        base_cfg=read(base/'config.json')
+        if base_cfg.get('memory_enabled') or base_cfg.get('finetuning_lora'):
+            raise ValueError('基础权重不是无记忆完整模型')
+        index=read(base/'model.safetensors.index.json',{})
+        if any(not (base/p).is_file() for p in (set(index.get('weight_map',{}).values()) or {'model.safetensors'})):
+            raise ValueError('起始权重不完整')
+        rows=[json.loads(l) for l in (dataset/'meta/episodes.jsonl').read_text().splitlines() if l.strip()]
+        data_ids={x['episode_index'] for x in rows}
+        data_split=read(split);data_split=data_split.get('split',data_split)
+        tr,va=data_split.get('train',[]),data_split.get('validation',[])
+        if (len(rows)!=200 or len(data_ids)!=200 or data_split.get('task')!=40 or
+            data_split.get('seed')!=42 or len(tr)!=180 or len(va)!=20 or
+            set(tr+va)!=data_ids or len(set(tr+va))!=200):
+            raise ValueError('必须沿用原Task40 180/20 seed42划分')
+        fixed=dict(seed=42,microbatch=2,accumulation=8,learning_rate=1e-4,steps=6000,arm='baseline')
+        for k,v in fixed.items():
+            if request.get(k,v)!=v or isinstance(request.get(k),bool):
+                raise ValueError('原生Stage1已锁定参数: '+k)
+        gpus=request.get('gpus')
+        if not isinstance(gpus,list) or len(gpus)!=4 or any(type(g) is not int for g in gpus) or len(set(gpus))!=4:
+            raise ValueError('必须选择四个不同A100 rank')
+        gpu_info={g['index']:g for g in self.r['gpu_info']()}
+        if any(g not in gpu_info or 'A100' not in gpu_info[g].get('name','') for g in gpus):
+            raise ValueError('目标GPU须经实时核对为A100')
+        for k in ('enqueue','share_existing'):
+            if type(request.get(k,False)) is not bool:raise ValueError(k+'必须为开关')
+        occupied=self.r['compute_pids'](gpus)
+        if occupied and not request.get('enqueue',False) and not request.get('share_existing',False):
+            raise ValueError('GPU有现有进程；使用现有队列')
+        video=request.get('video_backend','torchcodec')
+        workers=request.get('workers',2)
+        if video not in ('torchcodec','decord','ffmpeg') or type(workers) is not int or workers!=2:
+            raise ValueError('仅支持已核对的视频后端及固定2 workers')
+        plan=dict(request,**identity,version=VERSION,task=40,stage='stage1',run_name=run,
+                  training_id=run,method='baseline',preflight_only=pre,enqueue=request.get('enqueue',False),
+                  share_existing=request.get('share_existing',False),existing_pids=occupied,
+                  dataset=str(dataset.resolve()),checkpoint=str(base.resolve()),split=str(split.resolve()),
+                  official_root=str(upstream.resolve()),video_backend=video,workers=workers,
+                  global_decisions=64,train_episodes=180,validation_episodes=20,
+                  validation_enabled=False,asynchronous_validation=False,validation_gpu=None,
+                  checkpoint_interval=1000,preflight_steps=4 if pre else None,
+                  scheduler='cosine',warmup_ratio=.05,weight_decay=1e-5,
+                  normalization='guarded',naming_schema=NAMING_SCHEMA,
+                  output=str(self.training/run),checkpoint_root=str(self.training/run/'run/checkpoints'),
+                  category='engineering_preflight' if pre else 'formal_training',**fixed)
+        if not pre:
+            gate=path('accept_preflight')
+            evidence=read(gate,{})
+            if not evidence.get('passed') or not evidence.get('strict_resume') or evidence.get('step')!=4:
+                raise ValueError('正式训练需要真实四卡暂停恢复通过证据')
+            # Evidence must belong to this exact new run lineage, not an unrelated job.
+            if not str(evidence.get('run_id','')).startswith(run+'__preflight'):
+                raise ValueError('预检归属不匹配')
+            gate_contract=evidence.get('contract',{})
+            if (gate_contract.get('recipe')!='native_random_v2' or gate_contract.get('base')!=str(base.resolve())
+                or gate_contract.get('dataset')!=str(dataset.resolve()) or gate_contract.get('split')!=data_split
+                or gate_contract.get('video_backend')!=video or gate_contract.get('workers')!=workers):
+                raise ValueError('预检数据、权重或运行配方不匹配')
+            if gate.resolve().is_relative_to(self.training/(evidence['run_id'])):
+                raise ValueError('先将预检证据独立归档再清理临时产物')
+            plan['accept_preflight']=str(gate.resolve())
+        return plan
+
     def command(self, plan, source, root, resume=None):
+        if plan.get('recipe')=='native_random_v2':
+            argv=[str(self.python),'-m','torch.distributed.run','--standalone','--nproc-per-node=4',
+                  str(source/'scripts/stage1_native_train.py'),'--job-root',str(root)]
+            if resume:argv+=['--resume',str(resume)]
+            return argv
         argv=[str(self.python),'-m','torch.distributed.run','--standalone','--nproc-per-node=4',
               '-m','v2_1_groot_memoryvla.train']
         values={'stage':plan['stage'],'dataset':plan['dataset'],'checkpoint':plan['checkpoint'],
@@ -199,7 +293,7 @@ class Backend:
                  OMP_NUM_THREADS='4',TOKENIZERS_PARALLELISM='false')
         env=dict(os.environ,**overrides)
         write(config,dict(root=str(root),arm=plan['arm'],argv=argv,env=overrides,source=str(source),steps=plan['steps'],
-                          preflight_only=plan['preflight_only']))
+                          preflight_only=plan['preflight_only'],recipe=plan.get('recipe')))
         controller=[str(self.python),'-u',str(source/'train/v21_workbench.py'),'--controller',str(config)]
         if plan['enqueue']:
             queue=self.training/'queues'/root.name
@@ -207,7 +301,8 @@ class Backend:
                     allowed_processes={str(p):self.r['process_start'](p) for p in plan['existing_pids']} if plan['share_existing'] else {}))
             write(queue/'status.json',dict(status='queued',jobs=[dict(run=root.name,arm=plan['arm'])],created_at=now()))
             controller=[str(self.python),'-u',str(source/'train/web_training_queue.py'),'--config',str(queue/'config.json')]
-        write(root/plan['arm']/'status.json',dict(status='queued' if plan['enqueue'] else 'submitted',step=0,total_steps=plan['steps']))
+        old_state=read(root/plan['arm']/'status.json',{}) if resumed else {}
+        write(root/plan['arm']/'status.json',dict(status='queued' if plan['enqueue'] else 'submitted',step=old_state.get('step',0),total_steps=plan['steps']))
         (root/'logs').mkdir(exist_ok=True)
         with (root/'logs/controller.log').open('ab') as log:
             proc=subprocess.Popen(controller,env=env,stdin=subprocess.DEVNULL,stdout=log,stderr=subprocess.STDOUT,start_new_session=True)
@@ -227,6 +322,9 @@ class Backend:
             manifest=read(self.live/'web_source_manifest.json',{})
             if not digest or manifest.get('digest')!=digest:
                 raise ValueError('同步源码版本不匹配')
+            if plan.get('recipe')=='native_random_v2' and not plan['preflight_only']:
+                if read(Path(plan['accept_preflight']))['contract'].get('source_digest')!=digest:
+                    raise ValueError('原生Stage1正式训练必须与预检源码摘要一致')
             source=self.project/'deployments'/plan['run_name']
             root=self.training/plan['run_name']
             root.mkdir()
@@ -251,7 +349,7 @@ class Backend:
         for file in Path('/proc').glob('[0-9]*/cmdline'):
             try:
                 argv=file.read_bytes().decode().strip('\x00').split('\x00')
-                for flag,target in (('--output',str(root/'run')),('--controller',str(root/'config/v21_controller.json'))):
+                for flag,target in (('--output',str(root/'run')),('--job-root',str(root)),('--controller',str(root/'config/v21_controller.json'))):
                     if flag in argv and argv[argv.index(flag)+1]==target:
                         found.add(int(file.parent.name))
             except (OSError,UnicodeError,IndexError):
@@ -261,11 +359,13 @@ class Backend:
     def resume_info(self, root, launch, state):
         checkpoints=self.checkpoints(root)
         latest=checkpoints[0] if checkpoints else None
-        allowed=state.get('status') in TERMINAL and latest is not None and latest['step']<launch['steps'] and not launch['preflight_only']
+        native=launch.get('recipe')=='native_random_v2'
+        cap=4 if native and launch['preflight_only'] else launch['steps']
+        allowed=state.get('status') in TERMINAL and latest is not None and latest['step']<cap and (native or not launch['preflight_only'])
         return dict(available=allowed,reason='' if allowed else '需要已停止的正式作业与完整训练断点',
                     checkpoint=latest['path'] if latest else None,step=latest['step'] if latest else 0,
                     source=launch['source'],gpus=launch['gpus'],default_steps=launch['steps'],min_steps=launch['steps'],
-                    fixed_budget=True,validation_enabled=True,validation_gpu=None,checkpoint_interval=1000,
+                    fixed_budget=True,validation_enabled=launch.get('validation_enabled',True),validation_gpu=None,checkpoint_interval=1000,
                     default_checkpoint_interval=1000,checkpoint_interval_editable=False)
 
     def jobs(self):
@@ -291,7 +391,7 @@ class Backend:
                  can_delete=terminal,can_delete_files=terminal,can_stop=status in ('training','running','validating','submitted'),
                  can_cancel=status in ('queued','waiting_for_gpus'),resume=self.resume_info(root,launch,state),
                  checkpoint_interval=1000,notes=launch.get('notes',''),queue=queue or None,
-                 delete_block_reason='' if terminal else '请等待作业停止',validation_enabled=True,last=state.get('last')))
+                 delete_block_reason='' if terminal else '请等待作业停止',validation_enabled=launch.get('validation_enabled',True),last=state.get('last')))
         return result
 
     def detail(self, request):
@@ -425,9 +525,12 @@ def controller(config):
     if code:
         state.update(status='failed',returncode=code)
     elif config['preflight_only']:
-        state.update(status='completed' if preflight.get('passed') else 'failed',preflight_passed=preflight.get('passed',False))
+        if config.get('recipe')=='native_random_v2' and native.get('status')=='paused':
+            state.update(status='paused',preflight_passed=False)
+        else:
+            state.update(status='completed' if preflight.get('passed') else 'failed',preflight_passed=preflight.get('passed',False))
     else:
-        state.update(status='completed' if state['step']>=config['steps'] else 'stopped')
+        state.update(status='completed' if state['step']>=config['steps'] else ('paused' if config.get('recipe')=='native_random_v2' else 'stopped'))
     state.update(finished_at=now(),training_complete=state['status']=='completed')
     write(root/arm/'status.json',state)
     write(root/'status.json',state)
