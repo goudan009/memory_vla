@@ -1,0 +1,584 @@
+{
+  "path": "/nvme3/projects/memory_vla/evaluation/V_2_1/ablation_action_fault/task40_eval03",
+  "groups": {
+    "base": {
+      "interior": {
+        "n": 2688,
+        "mean": 0.00838132102445516,
+        "p50": 0.0021442619326990098,
+        "p95": 0.04564762935042389,
+        "p99": 0.0837195907533169,
+        "max": 0.14018460363149643
+      },
+      "boundary": {
+        "n": 372,
+        "mean": 0.05789340631195877,
+        "p50": 0.005469196825288236,
+        "p95": 0.2615984752075746,
+        "p99": 0.2846233132196358,
+        "max": 0.3746138960123062
+      },
+      "overlap": {
+        "n": 372,
+        "mean": 0.06271609304490182,
+        "p50": 0.005832148541230708,
+        "p95": 0.26421438045217654,
+        "p99": 0.2871991887089098,
+        "max": 0.4585055857896805
+      },
+      "tracking": null,
+      "limits": 0,
+      "elements": 3072,
+      "physical_max": 0.34999996423721313,
+      "max_boundary_event": {
+        "trace": "actions_task40_gpu0_env0.jsonl",
+        "episode": [
+          0,
+          0,
+          1
+        ],
+        "action_start": 16,
+        "channel": 2,
+        "jump": 0.3746138960123062,
+        "previous": 0.09571407735347748,
+        "target": -0.27889981865882874
+      },
+      "anchor_changes": null,
+      "residual_changes": null,
+      "channels": [
+        {
+          "channel": 0,
+          "joint": [
+            "base_footprint_x_joint"
+          ],
+          "limits": [
+            -1,
+            1
+          ],
+          "min": -0.34216776490211487,
+          "max": 0.273316353559494,
+          "violations": 0,
+          "max_overshoot": 0.0,
+          "first_violation": null
+        },
+        {
+          "channel": 1,
+          "joint": [
+            "base_footprint_y_joint"
+          ],
+          "limits": [
+            -1,
+            1
+          ],
+          "min": -0.01524913776665926,
+          "max": 0.34999996423721313,
+          "violations": 0,
+          "max_overshoot": 0.0,
+          "first_violation": null
+        },
+        {
+          "channel": 2,
+          "joint": [
+            "base_footprint_rz_joint"
+          ],
+          "limits": [
+            -1,
+            1
+          ],
+          "min": -0.2997070252895355,
+          "max": 0.2848793864250183,
+          "violations": 0,
+          "max_overshoot": 0.0,
+          "first_violation": null
+        }
+      ],
+      "boundary_to_interior_mean_ratio": 6.907432150974341,
+      "all_executed_transition_abs_delta_mean": 0.014400437275092853,
+      "boundary_fraction_of_total_variation": 0.48873668273808524
+    },
+    "torso": {
+      "interior": {
+        "n": 3584,
+        "mean": 0.0001374918154449551,
+        "p50": 7.863342761993408e-05,
+        "p95": 0.0004918754100799558,
+        "p99": 0.000782929658889771,
+        "max": 0.0015186071395874023
+      },
+      "boundary": {
+        "n": 496,
+        "mean": 0.0004248943599756855,
+        "p50": 0.00031173229217529297,
+        "p95": 0.000941254198551178,
+        "p99": 0.0012976557016372698,
+        "max": 0.013662457466125488
+      },
+      "overlap": {
+        "n": 496,
+        "mean": 0.000463616360637878,
+        "p50": 0.00038117170333862305,
+        "p95": 0.0011334866285324097,
+        "p99": 0.0014149844646453862,
+        "max": 0.013669371604919434
+      },
+      "tracking": {
+        "n": 512,
+        "mean": 4.933206054258399e-05,
+        "p50": 1.3334887626115233e-05,
+        "p95": 8.698850870132443e-05,
+        "p99": 0.00013877868652343748,
+        "max": 0.01268303394317627
+      },
+      "limits": 0,
+      "elements": 4096,
+      "physical_max": 1.4635297060012817,
+      "max_boundary_event": {
+        "trace": "actions_task40_gpu1_env1.jsonl",
+        "episode": [
+          3,
+          0,
+          1
+        ],
+        "action_start": 184,
+        "channel": 0,
+        "jump": 0.013662457466125488,
+        "previous": 1.0390114784240723,
+        "target": 1.0526739358901978
+      },
+      "anchor_changes": {
+        "n": 496,
+        "mean": 0.000592506329267493,
+        "p50": 0.00044980645179748535,
+        "p95": 0.001292109489440918,
+        "p99": 0.004316326975822469,
+        "max": 0.01292264461517334
+      },
+      "residual_changes": {
+        "n": 496,
+        "mean": 0.00037025892802921407,
+        "p50": 0.00020930842310917797,
+        "p95": 0.0010454952716827393,
+        "p99": 0.0039064928889274665,
+        "max": 0.006929725408554077
+      },
+      "channels": [
+        {
+          "channel": 0,
+          "joint": [
+            "torso_joint1"
+          ],
+          "limits": [
+            -1.1344999664710302,
+            1.8325998424937358
+          ],
+          "min": 1.0256617069244385,
+          "max": 1.0583096742630005,
+          "violations": 0,
+          "max_overshoot": 0.0,
+          "first_violation": null
+        },
+        {
+          "channel": 1,
+          "joint": [
+            "torso_joint2"
+          ],
+          "limits": [
+            -2.7924999052639174,
+            2.530699718516441
+          ],
+          "min": -1.4635297060012817,
+          "max": -1.448728322982788,
+          "violations": 0,
+          "max_overshoot": 0.0,
+          "first_violation": null
+        },
+        {
+          "channel": 2,
+          "joint": [
+            "torso_joint3"
+          ],
+          "limits": [
+            -1.8325998424937358,
+            1.5707999220623683
+          ],
+          "min": -0.5191965699195862,
+          "max": -0.46956101059913635,
+          "violations": 0,
+          "max_overshoot": 0.0,
+          "first_violation": null
+        },
+        {
+          "channel": 3,
+          "joint": [
+            "torso_joint4"
+          ],
+          "limits": [
+            -3.054299825695285,
+            3.054299825695285
+          ],
+          "min": -0.00011724643263733014,
+          "max": 0.000182912583113648,
+          "violations": 0,
+          "max_overshoot": 0.0,
+          "first_violation": null
+        }
+      ],
+      "boundary_to_interior_mean_ratio": 3.0903247484268768,
+      "all_executed_transition_abs_delta_mean": 0.00017243094830947527,
+      "boundary_fraction_of_total_variation": 0.2995623735780871
+    },
+    "left_arm": {
+      "interior": {
+        "n": 6272,
+        "mean": 0.0024057527142227605,
+        "p50": 0.001664662835537456,
+        "p95": 0.0069731810130178925,
+        "p99": 0.011224288344383238,
+        "max": 0.025258727371692657
+      },
+      "boundary": {
+        "n": 868,
+        "mean": 0.002897552582440402,
+        "p50": 0.0021723293466493487,
+        "p95": 0.00775778442621231,
+        "p99": 0.012077603042125715,
+        "max": 0.0162544846534729
+      },
+      "overlap": {
+        "n": 868,
+        "mean": 0.004349103894773796,
+        "p50": 0.003260134137235582,
+        "p95": 0.011725761741399759,
+        "p99": 0.01765355113893753,
+        "max": 0.02431325800716877
+      },
+      "tracking": {
+        "n": 896,
+        "mean": 0.00010156832294023437,
+        "p50": 7.591885514557362e-05,
+        "p95": 0.00027783727273344994,
+        "p99": 0.00039528384804725613,
+        "max": 0.0006715902127325535
+      },
+      "limits": 0,
+      "elements": 7168,
+      "physical_max": 0.24933825433254242,
+      "max_boundary_event": {
+        "trace": "actions_task40_gpu1_env1.jsonl",
+        "episode": [
+          3,
+          0,
+          1
+        ],
+        "action_start": 192,
+        "channel": 5,
+        "jump": 0.0162544846534729,
+        "previous": -0.13135454058647156,
+        "target": -0.14760902523994446
+      },
+      "anchor_changes": {
+        "n": 868,
+        "mean": 0.0038318100884943986,
+        "p50": 0.0027178197633475065,
+        "p95": 0.00920162871479988,
+        "p99": 0.023020924570919345,
+        "max": 0.09034830331802368
+      },
+      "residual_changes": {
+        "n": 868,
+        "mean": 0.0042364182192997975,
+        "p50": 0.0028819087892770767,
+        "p95": 0.011563163064420222,
+        "p99": 0.020864488601218954,
+        "max": 0.08816210925579071
+      },
+      "channels": [
+        {
+          "channel": 0,
+          "joint": [
+            "left_arm_joint1"
+          ],
+          "limits": [
+            -4.450599978913791,
+            1.3090000016310008
+          ],
+          "min": -0.06159644201397896,
+          "max": 0.018691563978791237,
+          "violations": 0,
+          "max_overshoot": 0.0,
+          "first_violation": null
+        },
+        {
+          "channel": 1,
+          "joint": [
+            "left_arm_joint2"
+          ],
+          "limits": [
+            -0.17450000187045686,
+            3.1415998441247366
+          ],
+          "min": -0.03144961595535278,
+          "max": 0.002938975812867284,
+          "violations": 0,
+          "max_overshoot": 0.0,
+          "first_violation": null
+        },
+        {
+          "channel": 2,
+          "joint": [
+            "left_arm_joint3"
+          ],
+          "limits": [
+            -2.3561958217728898,
+            2.3561958217728898
+          ],
+          "min": -0.01651179790496826,
+          "max": 0.1447228640317917,
+          "violations": 0,
+          "max_overshoot": 0.0,
+          "first_violation": null
+        },
+        {
+          "channel": 3,
+          "joint": [
+            "left_arm_joint4"
+          ],
+          "limits": [
+            -2.094399762925103,
+            0.34909997215033256
+          ],
+          "min": -0.04761279746890068,
+          "max": 0.11866310238838196,
+          "violations": 0,
+          "max_overshoot": 0.0,
+          "first_violation": null
+        },
+        {
+          "channel": 4,
+          "joint": [
+            "left_arm_joint5"
+          ],
+          "limits": [
+            -2.3561958217728898,
+            2.3561958217728898
+          ],
+          "min": -0.00545623479411006,
+          "max": 0.1931019276380539,
+          "violations": 0,
+          "max_overshoot": 0.0,
+          "first_violation": null
+        },
+        {
+          "channel": 5,
+          "joint": [
+            "left_arm_joint6"
+          ],
+          "limits": [
+            -1.0471980172497886,
+            1.0471980172497886
+          ],
+          "min": -0.24933825433254242,
+          "max": 0.005818852689117193,
+          "violations": 0,
+          "max_overshoot": 0.0,
+          "first_violation": null
+        },
+        {
+          "channel": 6,
+          "joint": [
+            "left_arm_joint7"
+          ],
+          "limits": [
+            -1.5707999220623683,
+            1.5707999220623683
+          ],
+          "min": -0.05771607160568237,
+          "max": 0.026151353493332863,
+          "violations": 0,
+          "max_overshoot": 0.0,
+          "first_violation": null
+        }
+      ],
+      "boundary_to_interior_mean_ratio": 1.2044266084831292,
+      "all_executed_transition_abs_delta_mean": 0.002465540149182552,
+      "boundary_fraction_of_total_variation": 0.1428699064304883
+    },
+    "right_arm": {
+      "interior": {
+        "n": 6272,
+        "mean": 0.0031480208184108604,
+        "p50": 0.0023431843146681786,
+        "p95": 0.008599366895941783,
+        "p99": 0.012764441929757593,
+        "max": 0.025546777993440628
+      },
+      "boundary": {
+        "n": 868,
+        "mean": 0.005132026747101365,
+        "p50": 0.004052624455653131,
+        "p95": 0.01305105984210968,
+        "p99": 0.016875574067235003,
+        "max": 0.020098252221941948
+      },
+      "overlap": {
+        "n": 868,
+        "mean": 0.006468647625837975,
+        "p50": 0.005219635393586941,
+        "p95": 0.017174969613552093,
+        "p99": 0.02175996914505962,
+        "max": 0.03180757025256753
+      },
+      "tracking": {
+        "n": 896,
+        "mean": 0.0001745883685150115,
+        "p50": 0.00011025788262486458,
+        "p95": 0.0005816332995891571,
+        "p99": 0.0010657668113708495,
+        "max": 0.0016561653465032578
+      },
+      "limits": 0,
+      "elements": 7168,
+      "physical_max": 0.43711239099502563,
+      "max_boundary_event": {
+        "trace": "actions_task40_gpu1_env1.jsonl",
+        "episode": [
+          3,
+          0,
+          1
+        ],
+        "action_start": 32,
+        "channel": 0,
+        "jump": 0.020098252221941948,
+        "previous": -0.013159627094864845,
+        "target": -0.03325787931680679
+      },
+      "anchor_changes": {
+        "n": 868,
+        "mean": 0.005152673706232461,
+        "p50": 0.0037023890763521194,
+        "p95": 0.014022925868630408,
+        "p99": 0.020928109051519664,
+        "max": 0.15180733976876581
+      },
+      "residual_changes": {
+        "n": 868,
+        "mean": 0.005982287536484833,
+        "p50": 0.004486718797124922,
+        "p95": 0.01619285461492836,
+        "p99": 0.02197900965809825,
+        "max": 0.14357975302255
+      },
+      "channels": [
+        {
+          "channel": 0,
+          "joint": [
+            "right_arm_joint1"
+          ],
+          "limits": [
+            -4.450599978913791,
+            1.3090000016310008
+          ],
+          "min": -0.06944454461336136,
+          "max": 0.026370970532298088,
+          "violations": 0,
+          "max_overshoot": 0.0,
+          "first_violation": null
+        },
+        {
+          "channel": 1,
+          "joint": [
+            "right_arm_joint2"
+          ],
+          "limits": [
+            -3.1415998441247366,
+            0.17450000187045686
+          ],
+          "min": -0.14015527069568634,
+          "max": 0.012892729602754116,
+          "violations": 0,
+          "max_overshoot": 0.0,
+          "first_violation": null
+        },
+        {
+          "channel": 2,
+          "joint": [
+            "right_arm_joint3"
+          ],
+          "limits": [
+            -2.3561958217728898,
+            2.3561958217728898
+          ],
+          "min": -0.06205415353178978,
+          "max": 0.07720856368541718,
+          "violations": 0,
+          "max_overshoot": 0.0,
+          "first_violation": null
+        },
+        {
+          "channel": 3,
+          "joint": [
+            "right_arm_joint4"
+          ],
+          "limits": [
+            -2.094399762925103,
+            0.34909997215033256
+          ],
+          "min": -0.0740208700299263,
+          "max": 0.08842924982309341,
+          "violations": 0,
+          "max_overshoot": 0.0,
+          "first_violation": null
+        },
+        {
+          "channel": 4,
+          "joint": [
+            "right_arm_joint5"
+          ],
+          "limits": [
+            -2.3561958217728898,
+            2.3561958217728898
+          ],
+          "min": -0.08999895304441452,
+          "max": 0.07165249437093735,
+          "violations": 0,
+          "max_overshoot": 0.0,
+          "first_violation": null
+        },
+        {
+          "channel": 5,
+          "joint": [
+            "right_arm_joint6"
+          ],
+          "limits": [
+            -1.0471980172497886,
+            1.0471980172497886
+          ],
+          "min": -0.43711239099502563,
+          "max": 0.0018957119900733232,
+          "violations": 0,
+          "max_overshoot": 0.0,
+          "first_violation": null
+        },
+        {
+          "channel": 6,
+          "joint": [
+            "right_arm_joint7"
+          ],
+          "limits": [
+            -1.5707999220623683,
+            1.5707999220623683
+          ],
+          "min": -0.25321677327156067,
+          "max": 0.005963532719761133,
+          "violations": 0,
+          "max_overshoot": 0.0,
+          "first_violation": null
+        }
+      ],
+      "boundary_to_interior_mean_ratio": 1.6302391385365878,
+      "all_executed_transition_abs_delta_mean": 0.0033892136960163724,
+      "boundary_fraction_of_total_variation": 0.1840820625799273
+    }
+  },
+  "chunks": 128
+}

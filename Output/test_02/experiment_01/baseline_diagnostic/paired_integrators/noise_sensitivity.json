@@ -1,0 +1,89 @@
+{
+  "input_file": "request_000000.npz",
+  "inference_steps": 4,
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "pairwise": {
+    "42_vs_43": {
+      "base": {
+        "mean_abs_difference": 0.014438614249229431,
+        "max_abs_difference": 0.16446420550346375
+      },
+      "torso": {
+        "mean_abs_difference": 0.00036989335785619915,
+        "max_abs_difference": 0.0015683174133300781
+      },
+      "left_arm": {
+        "mean_abs_difference": 0.014696968719363213,
+        "max_abs_difference": 0.13603395223617554
+      },
+      "left_gripper": {
+        "mean_abs_difference": 0.0,
+        "max_abs_difference": 0.0
+      },
+      "right_arm": {
+        "mean_abs_difference": 0.008540126495063305,
+        "max_abs_difference": 0.1101931780576706
+      },
+      "right_gripper": {
+        "mean_abs_difference": 0.001084575429558754,
+        "max_abs_difference": 0.019454479217529297
+      }
+    },
+    "42_vs_44": {
+      "base": {
+        "mean_abs_difference": 0.0188301969319582,
+        "max_abs_difference": 0.2573091983795166
+      },
+      "torso": {
+        "mean_abs_difference": 0.00031129212584346533,
+        "max_abs_difference": 0.0026491284370422363
+      },
+      "left_arm": {
+        "mean_abs_difference": 0.012463578023016453,
+        "max_abs_difference": 0.1006757840514183
+      },
+      "left_gripper": {
+        "mean_abs_difference": 0.0,
+        "max_abs_difference": 0.0
+      },
+      "right_arm": {
+        "mean_abs_difference": 0.021277757361531258,
+        "max_abs_difference": 0.26796332001686096
+      },
+      "right_gripper": {
+        "mean_abs_difference": 0.0008545015007257462,
+        "max_abs_difference": 0.006092667579650879
+      }
+    },
+    "43_vs_44": {
+      "base": {
+        "mean_abs_difference": 0.0210570078343153,
+        "max_abs_difference": 0.2656307816505432
+      },
+      "torso": {
+        "mean_abs_difference": 0.0004622569540515542,
+        "max_abs_difference": 0.003153681755065918
+      },
+      "left_arm": {
+        "mean_abs_difference": 0.014405452646315098,
+        "max_abs_difference": 0.12731406092643738
+      },
+      "left_gripper": {
+        "mean_abs_difference": 0.0,
+        "max_abs_difference": 0.0
+      },
+      "right_arm": {
+        "mean_abs_difference": 0.01930115930736065,
+        "max_abs_difference": 0.2291174978017807
+      },
+      "right_gripper": {
+        "mean_abs_difference": 0.0012125968933105469,
+        "max_abs_difference": 0.0173492431640625
+      }
+    }
+  }
+}

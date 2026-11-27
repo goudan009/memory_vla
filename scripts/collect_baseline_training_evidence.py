@@ -14,6 +14,11 @@ run=P('/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v2.1__test
 checkpoint=run/'checkpoints/v2.1__test01__exp14__run001__step006000'
 official=P('/nvme3/projects/GR00T/Isaac-GR00T-n1d6-9b37aa1/gr00t')
 def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
+def stream_sha(p):
+    h=hashlib.sha256()
+    with p.open('rb') as f:
+        for block in iter(lambda:f.read(8*1024*1024),b''):h.update(block)
+    return h.hexdigest()
 model_source=deployment/'src/v2_1_groot_memoryvla'
 h=hashlib.sha256()
 for p in sorted(model_source.rglob('*')):
@@ -26,6 +31,8 @@ def dist(values):
 result=dict(run=str(run),checkpoint=str(checkpoint),training_config=json.loads((run/'config.json').read_text()),
     complete=json.loads((checkpoint/'COMPLETE.json').read_text()),actual_model_source_digest=h.hexdigest(),
     source_hashes={},validation={},inference={},metrics={})
+if HASH_WEIGHTS:
+    result['checkpoint_weight_sha256']={p.name:dict(bytes=p.stat().st_size,sha256=stream_sha(p)) for p in sorted(checkpoint.glob('*.safetensors'))}
 roots=[deployment,root/'deployments/inference_cfeabb58a50b5aaec34679524f8e441dbea508d775b7104b65916cd3aa67a21a',
        root/'deployments/inference_13b51a8721ce3cdca2c4d57c616f0923586baf155e9e4e39cb91cf2b031d1395']
 result['training_serving_source_comparison']={}
@@ -71,8 +78,10 @@ if __name__ == '__main__':
     p = argparse.ArgumentParser(__doc__)
     p.add_argument('--host', default='172.28.62.17')
     p.add_argument('--output', type=Path, required=True)
+    p.add_argument('--hash-weights',action='store_true')
     args = p.parse_args()
-    answer = subprocess.run(['ssh','-o','BatchMode=yes',args.host,'python3','-'],input=REMOTE,
+    source='HASH_WEIGHTS='+repr(args.hash_weights)+'\n'+REMOTE
+    answer = subprocess.run(['ssh','-o','BatchMode=yes',args.host,'python3','-'],input=source,
                             text=True,capture_output=True,check=True)
     result = json.loads(answer.stdout)
     args.output.write_text(json.dumps(result,indent=2,ensure_ascii=False)+'\n')

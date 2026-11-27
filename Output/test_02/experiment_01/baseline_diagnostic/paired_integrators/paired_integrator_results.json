@@ -1,0 +1,425 @@
+[
+  {
+    "input_file": "request_000000.npz",
+    "seed": 42,
+    "variants": {
+      "4": {
+        "groups": {
+          "base": {
+            "interior_abs_delta_mean": 0.005383428651839495,
+            "interior_abs_delta_max": 0.08896549046039581,
+            "min": -0.06493743509054184,
+            "max": 0.27326667308807373
+          },
+          "torso": {
+            "interior_abs_delta_mean": 0.00025070819538086653,
+            "interior_abs_delta_max": 0.0018177032470703125,
+            "min": -1.4517669677734375,
+            "max": 1.0284273624420166
+          },
+          "left_arm": {
+            "interior_abs_delta_mean": 0.003137605031952262,
+            "interior_abs_delta_max": 0.014895850792527199,
+            "min": -0.027910439297556877,
+            "max": 0.020410407334566116
+          },
+          "left_gripper": {
+            "interior_abs_delta_mean": 0.0,
+            "interior_abs_delta_max": 0.0,
+            "min": 1.0,
+            "max": 1.0
+          },
+          "right_arm": {
+            "interior_abs_delta_mean": 0.004289757460355759,
+            "interior_abs_delta_max": 0.022132601588964462,
+            "min": -0.07070093601942062,
+            "max": 0.03339351713657379
+          },
+          "right_gripper": {
+            "interior_abs_delta_mean": 0.0006904274923726916,
+            "interior_abs_delta_max": 0.004536151885986328,
+            "min": 0.9954638481140137,
+            "max": 1.0
+          }
+        },
+        "raw_active_clipped_fraction": 0.034646739130434784
+      },
+      "8": {
+        "groups": {
+          "base": {
+            "interior_abs_delta_mean": 0.0062267715111374855,
+            "interior_abs_delta_max": 0.08090885728597641,
+            "min": -0.07961398363113403,
+            "max": 0.27685546875
+          },
+          "torso": {
+            "interior_abs_delta_mean": 0.0002432857290841639,
+            "interior_abs_delta_max": 0.001317739486694336,
+            "min": -1.451833724975586,
+            "max": 1.0281879901885986
+          },
+          "left_arm": {
+            "interior_abs_delta_mean": 0.0037109663244336843,
+            "interior_abs_delta_max": 0.022170979529619217,
+            "min": -0.025706151500344276,
+            "max": 0.018203116953372955
+          },
+          "left_gripper": {
+            "interior_abs_delta_mean": 0.0,
+            "interior_abs_delta_max": 0.0,
+            "min": 1.0,
+            "max": 1.0
+          },
+          "right_arm": {
+            "interior_abs_delta_mean": 0.0048161642625927925,
+            "interior_abs_delta_max": 0.027120433747768402,
+            "min": -0.05500809848308563,
+            "max": 0.032581109553575516
+          },
+          "right_gripper": {
+            "interior_abs_delta_mean": 0.0004225430893711746,
+            "interior_abs_delta_max": 0.004536151885986328,
+            "min": 0.9954638481140137,
+            "max": 1.0
+          }
+        },
+        "raw_active_clipped_fraction": 0.03872282608695652
+      },
+      "16": {
+        "groups": {
+          "base": {
+            "interior_abs_delta_mean": 0.006202413234859705,
+            "interior_abs_delta_max": 0.0801992118358612,
+            "min": -0.09900563210248947,
+            "max": 0.27846673130989075
+          },
+          "torso": {
+            "interior_abs_delta_mean": 0.00019767667981795967,
+            "interior_abs_delta_max": 0.0014351606369018555,
+            "min": -1.450846552848816,
+            "max": 1.0275472402572632
+          },
+          "left_arm": {
+            "interior_abs_delta_mean": 0.0017904224805533886,
+            "interior_abs_delta_max": 0.009527373127639294,
+            "min": -0.01262897439301014,
+            "max": 0.016978243365883827
+          },
+          "left_gripper": {
+            "interior_abs_delta_mean": 0.0,
+            "interior_abs_delta_max": 0.0,
+            "min": 1.0,
+            "max": 1.0
+          },
+          "right_arm": {
+            "interior_abs_delta_mean": 0.0027570913080126047,
+            "interior_abs_delta_max": 0.011220034211874008,
+            "min": -0.03853999078273773,
+            "max": 0.03258628398180008
+          },
+          "right_gripper": {
+            "interior_abs_delta_mean": 0.000661123194731772,
+            "interior_abs_delta_max": 0.005064487457275391,
+            "min": 0.9949355125427246,
+            "max": 1.0
+          }
+        },
+        "raw_active_clipped_fraction": 0.036684782608695655
+      }
+    },
+    "4_vs_8": {
+      "normalized_mean": 0.004400445614010096,
+      "normalized_max": 0.130126953125
+    },
+    "8_vs_16": {
+      "normalized_mean": 0.004620666615664959,
+      "normalized_max": 0.0909382700920105
+    },
+    "4_vs_16": {
+      "normalized_mean": 0.007109975907951593,
+      "normalized_max": 0.2210652232170105
+    }
+  },
+  {
+    "input_file": "request_000010.npz",
+    "seed": 42,
+    "variants": {
+      "4": {
+        "groups": {
+          "base": {
+            "interior_abs_delta_mean": 0.008427382446825504,
+            "interior_abs_delta_max": 0.07024364173412323,
+            "min": -0.2769545316696167,
+            "max": 0.34999996423721313
+          },
+          "torso": {
+            "interior_abs_delta_mean": 0.0002510060148779303,
+            "interior_abs_delta_max": 0.0014369487762451172,
+            "min": -1.4546067714691162,
+            "max": 1.0321186780929565
+          },
+          "left_arm": {
+            "interior_abs_delta_mean": 0.0030582412146031857,
+            "interior_abs_delta_max": 0.01564374938607216,
+            "min": -0.06569021195173264,
+            "max": 0.04802735149860382
+          },
+          "left_gripper": {
+            "interior_abs_delta_mean": 0.0,
+            "interior_abs_delta_max": 0.0,
+            "min": 1.0,
+            "max": 1.0
+          },
+          "right_arm": {
+            "interior_abs_delta_mean": 0.004210860002785921,
+            "interior_abs_delta_max": 0.019411012530326843,
+            "min": -0.0965026468038559,
+            "max": 0.031163252890110016
+          },
+          "right_gripper": {
+            "interior_abs_delta_mean": 0.0006866916664876044,
+            "interior_abs_delta_max": 0.006216287612915039,
+            "min": 0.993783712387085,
+            "max": 1.0
+          }
+        },
+        "raw_active_clipped_fraction": 0.03872282608695652
+      },
+      "8": {
+        "groups": {
+          "base": {
+            "interior_abs_delta_mean": 0.009246354922652245,
+            "interior_abs_delta_max": 0.08200661838054657,
+            "min": -0.2760300934314728,
+            "max": 0.34999996423721313
+          },
+          "torso": {
+            "interior_abs_delta_mean": 0.000252405006904155,
+            "interior_abs_delta_max": 0.0014061927795410156,
+            "min": -1.454432725906372,
+            "max": 1.0318857431411743
+          },
+          "left_arm": {
+            "interior_abs_delta_mean": 0.003815277013927698,
+            "interior_abs_delta_max": 0.02129659429192543,
+            "min": -0.06518686562776566,
+            "max": 0.04282888025045395
+          },
+          "left_gripper": {
+            "interior_abs_delta_mean": 0.0,
+            "interior_abs_delta_max": 0.0,
+            "min": 1.0,
+            "max": 1.0
+          },
+          "right_arm": {
+            "interior_abs_delta_mean": 0.004964468069374561,
+            "interior_abs_delta_max": 0.024020416662096977,
+            "min": -0.1009475439786911,
+            "max": 0.03357912600040436
+          },
+          "right_gripper": {
+            "interior_abs_delta_mean": 0.00033501654979772866,
+            "interior_abs_delta_max": 0.004536151885986328,
+            "min": 0.9954638481140137,
+            "max": 1.0
+          }
+        },
+        "raw_active_clipped_fraction": 0.041440217391304345
+      },
+      "16": {
+        "groups": {
+          "base": {
+            "interior_abs_delta_mean": 0.009051543660461903,
+            "interior_abs_delta_max": 0.09319913387298584,
+            "min": -0.2750086784362793,
+            "max": 0.34999996423721313
+          },
+          "torso": {
+            "interior_abs_delta_mean": 0.00017630615911912173,
+            "interior_abs_delta_max": 0.0014307498931884766,
+            "min": -1.453286051750183,
+            "max": 1.0319057703018188
+          },
+          "left_arm": {
+            "interior_abs_delta_mean": 0.00173760368488729,
+            "interior_abs_delta_max": 0.008543219417333603,
+            "min": -0.059921301901340485,
+            "max": 0.04209122061729431
+          },
+          "left_gripper": {
+            "interior_abs_delta_mean": 0.0,
+            "interior_abs_delta_max": 0.0,
+            "min": 1.0,
+            "max": 1.0
+          },
+          "right_arm": {
+            "interior_abs_delta_mean": 0.002747916616499424,
+            "interior_abs_delta_max": 0.012540739960968494,
+            "min": -0.0953914225101471,
+            "max": 0.027307899668812752
+          },
+          "right_gripper": {
+            "interior_abs_delta_mean": 0.0003511328832246363,
+            "interior_abs_delta_max": 0.003774881362915039,
+            "min": 0.996225118637085,
+            "max": 1.0
+          }
+        },
+        "raw_active_clipped_fraction": 0.04076086956521739
+      }
+    },
+    "4_vs_8": {
+      "normalized_mean": 0.0052114310674369335,
+      "normalized_max": 0.16778564453125
+    },
+    "8_vs_16": {
+      "normalized_mean": 0.005109009798616171,
+      "normalized_max": 0.10327482223510742
+    },
+    "4_vs_16": {
+      "normalized_mean": 0.008360328152775764,
+      "normalized_max": 0.2249104380607605
+    }
+  },
+  {
+    "input_file": "request_000063.npz",
+    "seed": 42,
+    "variants": {
+      "4": {
+        "groups": {
+          "base": {
+            "interior_abs_delta_mean": 0.005583652760833502,
+            "interior_abs_delta_max": 0.07191205024719238,
+            "min": -0.29129087924957275,
+            "max": 0.3292861580848694
+          },
+          "torso": {
+            "interior_abs_delta_mean": 0.0002650907263159752,
+            "interior_abs_delta_max": 0.0015660524368286133,
+            "min": -1.472267985343933,
+            "max": 1.189588189125061
+          },
+          "left_arm": {
+            "interior_abs_delta_mean": 0.0030058338306844234,
+            "interior_abs_delta_max": 0.01517564058303833,
+            "min": -0.1615142971277237,
+            "max": 0.14514678716659546
+          },
+          "left_gripper": {
+            "interior_abs_delta_mean": 0.0,
+            "interior_abs_delta_max": 0.0,
+            "min": 1.0,
+            "max": 1.0
+          },
+          "right_arm": {
+            "interior_abs_delta_mean": 0.0040033371187746525,
+            "interior_abs_delta_max": 0.018496423959732056,
+            "min": -0.31368017196655273,
+            "max": 0.09083560109138489
+          },
+          "right_gripper": {
+            "interior_abs_delta_mean": 0.0005106541211716831,
+            "interior_abs_delta_max": 0.005692958831787109,
+            "min": 0.9943070411682129,
+            "max": 1.0
+          }
+        },
+        "raw_active_clipped_fraction": 0.03940217391304348
+      },
+      "8": {
+        "groups": {
+          "base": {
+            "interior_abs_delta_mean": 0.005474917124956846,
+            "interior_abs_delta_max": 0.07879678905010223,
+            "min": -0.28953322768211365,
+            "max": 0.3304504156112671
+          },
+          "torso": {
+            "interior_abs_delta_mean": 0.00022774553508497775,
+            "interior_abs_delta_max": 0.0012590885162353516,
+            "min": -1.4723643064498901,
+            "max": 1.1896874904632568
+          },
+          "left_arm": {
+            "interior_abs_delta_mean": 0.0036303510423749685,
+            "interior_abs_delta_max": 0.021989867091178894,
+            "min": -0.16264881193637848,
+            "max": 0.14446868002414703
+          },
+          "left_gripper": {
+            "interior_abs_delta_mean": 0.0,
+            "interior_abs_delta_max": 0.0,
+            "min": 1.0,
+            "max": 1.0
+          },
+          "right_arm": {
+            "interior_abs_delta_mean": 0.004423727281391621,
+            "interior_abs_delta_max": 0.024342872202396393,
+            "min": -0.31717121601104736,
+            "max": 0.09165739268064499
+          },
+          "right_gripper": {
+            "interior_abs_delta_mean": 0.00027080121799372137,
+            "interior_abs_delta_max": 0.004536151885986328,
+            "min": 0.9954638481140137,
+            "max": 1.0
+          }
+        },
+        "raw_active_clipped_fraction": 0.03940217391304348
+      },
+      "16": {
+        "groups": {
+          "base": {
+            "interior_abs_delta_mean": 0.004851857665926218,
+            "interior_abs_delta_max": 0.08368398994207382,
+            "min": -0.28988808393478394,
+            "max": 0.3330085575580597
+          },
+          "torso": {
+            "interior_abs_delta_mean": 0.00018748526053968817,
+            "interior_abs_delta_max": 0.0015236139297485352,
+            "min": -1.4716124534606934,
+            "max": 1.1899330615997314
+          },
+          "left_arm": {
+            "interior_abs_delta_mean": 0.0017950478941202164,
+            "interior_abs_delta_max": 0.008637920022010803,
+            "min": -0.15775133669376373,
+            "max": 0.14266043901443481
+          },
+          "left_gripper": {
+            "interior_abs_delta_mean": 0.0,
+            "interior_abs_delta_max": 0.0,
+            "min": 1.0,
+            "max": 1.0
+          },
+          "right_arm": {
+            "interior_abs_delta_mean": 0.002618256490677595,
+            "interior_abs_delta_max": 0.009779363870620728,
+            "min": -0.30966612696647644,
+            "max": 0.09256239235401154
+          },
+          "right_gripper": {
+            "interior_abs_delta_mean": 0.00020190207578707486,
+            "interior_abs_delta_max": 0.0037398338317871094,
+            "min": 0.9962601661682129,
+            "max": 1.0
+          }
+        },
+        "raw_active_clipped_fraction": 0.04076086956521739
+      }
+    },
+    "4_vs_8": {
+      "normalized_mean": 0.004325673915445805,
+      "normalized_max": 0.091064453125
+    },
+    "8_vs_16": {
+      "normalized_mean": 0.004274789709597826,
+      "normalized_max": 0.037963807582855225
+    },
+    "4_vs_16": {
+      "normalized_mean": 0.0064735631458461285,
+      "normalized_max": 0.12499964237213135
+    }
+  }
+]

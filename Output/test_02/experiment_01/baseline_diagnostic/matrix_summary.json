@@ -1,0 +1,1663 @@
+{
+  "category": "bounded_fault_diagnostic",
+  "paired_noise_stream": false,
+  "task_success_rate_claim": false,
+  "trials": [
+    {
+      "variant": "N4_H8",
+      "inference_steps": 4,
+      "execution_steps": 8,
+      "status": "complete",
+      "job_id": "cd6285f573aa",
+      "output": "/nvme3/projects/memory_vla/evaluation/V_2_1/ablation_action_fault/task40_eval01",
+      "category": "bounded_fault_diagnostic",
+      "completed_episodes": 4,
+      "total_action_steps": 1024,
+      "elapsed_wall_s": 556.727391466964,
+      "configuration": {
+        "mode": "dual2",
+        "preset": "fast-debug",
+        "model_name": "groot",
+        "device": "local",
+        "naming_schema": "groot-runs-v2",
+        "evaluation_id": "task40_eval01",
+        "policy_identity": {
+          "version": "V_2_1",
+          "method": "baseline",
+          "training_id": "v2.1__test01__exp14__run001",
+          "train_number": 1,
+          "checkpoint": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v2.1__test01__exp14__run001/run/checkpoints/v2.1__test01__exp14__run001__step006000",
+          "checkpoint_step": "v2.1__test01__exp14__run001__step006000",
+          "source_dir": "/nvme3/projects/memory_vla/deployments/inference_13b51a8721ce3cdca2c4d57c616f0923586baf155e9e4e39cb91cf2b031d1395",
+          "source_digest": "13b51a8721ce3cdca2c4d57c616f0923586baf155e9e4e39cb91cf2b031d1395",
+          "training_seed": 42,
+          "policy_seed": "42",
+          "history_mode": "normal",
+          "task_id": 40,
+          "pid": 1096191,
+          "start_ticks": 1410684554,
+          "host": "172.28.62.17",
+          "port": 5564,
+          "naming_schema": "v2.1-test-experiment-run-step",
+          "task40_diagnostics": false,
+          "task40_trace": false,
+          "gpu_index": "0",
+          "binding": "observed_process"
+        },
+        "method": "baseline",
+        "version": "V_2_1",
+        "group": "ablation_action_fault",
+        "protocol": {
+          "id": "b1k-groot-v1",
+          "sha256": "620ecd00b89129120d3a8c9ffdaa4c7c44aa560991a9da3190e29b0bee940508"
+        },
+        "run_tag": "test02_exp01_stage1_step6000_N4_H8",
+        "task_id": 40,
+        "n_envs_per_gpu": 2,
+        "instances": {
+          "0": [
+            0,
+            1
+          ],
+          "1": [
+            2,
+            3
+          ]
+        },
+        "base_seed": 0,
+        "seed_source": "0",
+        "seed_mode": "fixed",
+        "episodes_per_gpu": 2,
+        "repetitions": 1,
+        "episodes_per_round": 2,
+        "episode_layout": {},
+        "synchronized_start": false,
+        "policy_server": "172.28.62.17:5564",
+        "action_chunk": 8,
+        "record_video": true,
+        "video_steps_per_render": 2,
+        "video_fps": 20,
+        "video_speedup": 1.3333333333333333,
+        "viewer_enabled": true,
+        "task40_stage_trace": true,
+        "runner_max_episode_steps": 256,
+        "diagnostics": false,
+        "wait_for_gpu": true,
+        "gpu_wait_interval": 30.0,
+        "appdata": {
+          "0": "/nvme3/tmp/memory_vla/groot_runtime_gpu0/appdata",
+          "1": "/nvme3/tmp/memory_vla/groot_runtime_gpu1/appdata"
+        },
+        "invocation": [
+          "evaluation/scripts/run_groot_eval.sh",
+          "--action-steps",
+          "8",
+          "--debug-max-steps",
+          "256",
+          "--group",
+          "ablation_action_fault",
+          "--mode",
+          "dual2",
+          "--policy-host",
+          "172.28.62.17",
+          "--policy-port",
+          "5564",
+          "--preset",
+          "fast-debug",
+          "--run-tag",
+          "test02_exp01_stage1_step6000_N4_H8",
+          "--seed",
+          "0",
+          "--seed-mode",
+          "fixed",
+          "--task",
+          "40",
+          "--version",
+          "V_2_1",
+          "--video-steps-per-render",
+          "2",
+          "--record-video",
+          "--wait-for-gpu",
+          "--policy-identity",
+          "{\"version\": \"V_2_1\", \"method\": \"baseline\", \"training_id\": \"v2.1__test01__exp14__run001\", \"train_number\": 1, \"checkpoint\": \"/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v2.1__test01__exp14__run001/run/checkpoints/v2.1__test01__exp14__run001__step006000\", \"checkpoint_step\": \"v2.1__test01__exp14__run001__step006000\", \"source_dir\": \"/nvme3/projects/memory_vla/deployments/inference_13b51a8721ce3cdca2c4d57c616f0923586baf155e9e4e39cb91cf2b031d1395\", \"source_digest\": \"13b51a8721ce3cdca2c4d57c616f0923586baf155e9e4e39cb91cf2b031d1395\", \"training_seed\": 42, \"policy_seed\": \"42\", \"history_mode\": \"normal\", \"task_id\": 40, \"pid\": 1096191, \"start_ticks\": 1410684554, \"host\": \"172.28.62.17\", \"port\": 5564, \"naming_schema\": \"v2.1-test-experiment-run-step\", \"task40_diagnostics\": false, \"task40_trace\": false, \"gpu_index\": \"0\", \"binding\": \"observed_process\"}"
+        ]
+      },
+      "per_gpu_performance": {
+        "0": {
+          "evaluation_mode": "fast-debug",
+          "environment_initialization": {
+            "count": 1,
+            "mean_s": 471.23233709670603,
+            "p95_s": 471.23233709670603
+          },
+          "reset": {
+            "count": 2,
+            "mean_s": 14.974592091981322,
+            "p95_s": 15.137119475612417
+          },
+          "policy_get_action": {
+            "count": 32,
+            "mean_s": 0.2405344101425726,
+            "p95_s": 0.2809427700005472
+          },
+          "env_step": {
+            "count": 32,
+            "mean_s": 1.4845358507009223,
+            "p95_s": 1.8008010220946742
+          },
+          "environment_step_chunk": {
+            "count": 64,
+            "mean_s": 1.3803907885157969,
+            "p95_s": 1.603936549485661
+          },
+          "video_encoding": {
+            "count": 256,
+            "mean_s": 0.019931704518967308,
+            "p95_s": 0.04454277886543423
+          },
+          "episode_total": {
+            "count": 2,
+            "mean_s": 54.78585729608312,
+            "p95_s": 54.90689739426598
+          },
+          "valid_episodes": 2,
+          "elapsed_s": 544.8335607480258,
+          "valid_episodes_per_hour": null
+        },
+        "1": {
+          "evaluation_mode": "fast-debug",
+          "environment_initialization": {
+            "count": 1,
+            "mean_s": 479.3080730899237,
+            "p95_s": 479.3080730899237
+          },
+          "reset": {
+            "count": 2,
+            "mean_s": 16.002246038988233,
+            "p95_s": 16.094550975691526
+          },
+          "policy_get_action": {
+            "count": 32,
+            "mean_s": 0.2318321715138154,
+            "p95_s": 0.3209376283222809
+          },
+          "env_step": {
+            "count": 32,
+            "mean_s": 1.5030675982998218,
+            "p95_s": 1.9630449641495942
+          },
+          "environment_step_chunk": {
+            "count": 64,
+            "mean_s": 1.4150928601957276,
+            "p95_s": 1.8922749241581183
+          },
+          "video_encoding": {
+            "count": 256,
+            "mean_s": 0.018348757959756767,
+            "p95_s": 0.041895262664183974
+          },
+          "episode_total": {
+            "count": 2,
+            "mean_s": 55.12564503541216,
+            "p95_s": 55.18657744689845
+          },
+          "valid_episodes": 2,
+          "elapsed_s": 553.9970643799752,
+          "valid_episodes_per_hour": null
+        }
+      },
+      "groups": {
+        "base": {
+          "interior_mean": 0.00783505018370011,
+          "boundary_mean": 0.05862213479286932,
+          "boundary_p95": 0.2592307254079059,
+          "boundary_max": 0.3926772326231003,
+          "boundary_ratio": 7.482036926173835,
+          "all_transition_mean": 0.014009166351873622,
+          "boundary_variation_fraction": 0.5087106745693225,
+          "out_of_limit_command_elements": 0,
+          "command_elements": 3072,
+          "tracking": null
+        },
+        "torso": {
+          "interior_mean": 0.0001448184507500632,
+          "boundary_mean": 0.0008433188450138668,
+          "boundary_p95": 0.0010323897004127502,
+          "boundary_max": 0.16431427001953125,
+          "boundary_ratio": 5.823283156573188,
+          "all_transition_mean": 0.00022973418495468248,
+          "boundary_variation_fraction": 0.44625972626627264,
+          "out_of_limit_command_elements": 0,
+          "command_elements": 4096,
+          "tracking": {
+            "n": 512,
+            "mean": 0.00042086860730161657,
+            "p50": 1.6450881958007812e-05,
+            "p95": 9.683817625045772e-05,
+            "p99": 0.00016996383666992174,
+            "max": 0.16431772708892822
+          }
+        },
+        "left_arm": {
+          "interior_mean": 0.002385678631636922,
+          "boundary_mean": 0.00290923419773371,
+          "boundary_p95": 0.008301681652665137,
+          "boundary_max": 0.05281040072441101,
+          "boundary_ratio": 1.2194577086594236,
+          "all_transition_mean": 0.0024493265632016294,
+          "boundary_variation_fraction": 0.1443954488002778,
+          "out_of_limit_command_elements": 0,
+          "command_elements": 7168,
+          "tracking": {
+            "n": 896,
+            "mean": 8.932943525711121e-05,
+            "p50": 6.435485556721687e-05,
+            "p95": 0.00024289678549394011,
+            "p99": 0.00035881004296243134,
+            "max": 0.0007875263690948486
+          }
+        },
+        "right_arm": {
+          "interior_mean": 0.0031220291533474924,
+          "boundary_mean": 0.004451159059069732,
+          "boundary_p95": 0.012021898571401833,
+          "boundary_max": 0.021929776296019554,
+          "boundary_ratio": 1.425726295443822,
+          "all_transition_mean": 0.003283609651690196,
+          "boundary_variation_fraction": 0.16479464820021145,
+          "out_of_limit_command_elements": 0,
+          "command_elements": 7168,
+          "tracking": {
+            "n": 896,
+            "mean": 0.00018190286807241916,
+            "p50": 0.00010889768600463867,
+            "p95": 0.0005664681666530669,
+            "p99": 0.0012005059281364043,
+            "max": 0.0026263948529958725
+          }
+        }
+      },
+      "chunks": 128
+    },
+    {
+      "variant": "N4_H16",
+      "inference_steps": 4,
+      "execution_steps": 16,
+      "status": "complete",
+      "job_id": "bcede46e7bb4",
+      "output": "/nvme3/projects/memory_vla/evaluation/V_2_1/ablation_action_fault/task40_eval02",
+      "category": "bounded_fault_diagnostic",
+      "completed_episodes": 4,
+      "total_action_steps": 1024,
+      "elapsed_wall_s": 551.0856029191054,
+      "configuration": {
+        "mode": "dual2",
+        "preset": "fast-debug",
+        "model_name": "groot",
+        "device": "local",
+        "naming_schema": "groot-runs-v2",
+        "evaluation_id": "task40_eval02",
+        "policy_identity": {
+          "version": "V_2_1",
+          "method": "baseline",
+          "training_id": "v2.1__test01__exp14__run001",
+          "train_number": 1,
+          "checkpoint": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v2.1__test01__exp14__run001/run/checkpoints/v2.1__test01__exp14__run001__step006000",
+          "checkpoint_step": "v2.1__test01__exp14__run001__step006000",
+          "source_dir": "/nvme3/projects/memory_vla/deployments/inference_13b51a8721ce3cdca2c4d57c616f0923586baf155e9e4e39cb91cf2b031d1395",
+          "source_digest": "13b51a8721ce3cdca2c4d57c616f0923586baf155e9e4e39cb91cf2b031d1395",
+          "training_seed": 42,
+          "policy_seed": "42",
+          "history_mode": "normal",
+          "task_id": 40,
+          "pid": 1096191,
+          "start_ticks": 1410684554,
+          "host": "172.28.62.17",
+          "port": 5564,
+          "naming_schema": "v2.1-test-experiment-run-step",
+          "task40_diagnostics": false,
+          "task40_trace": false,
+          "gpu_index": "0",
+          "binding": "observed_process"
+        },
+        "method": "baseline",
+        "version": "V_2_1",
+        "group": "ablation_action_fault",
+        "protocol": {
+          "id": "b1k-groot-v1",
+          "sha256": "620ecd00b89129120d3a8c9ffdaa4c7c44aa560991a9da3190e29b0bee940508"
+        },
+        "run_tag": "test02_exp01_stage1_step6000_N4_H16",
+        "task_id": 40,
+        "n_envs_per_gpu": 2,
+        "instances": {
+          "0": [
+            0,
+            1
+          ],
+          "1": [
+            2,
+            3
+          ]
+        },
+        "base_seed": 0,
+        "seed_source": "0",
+        "seed_mode": "fixed",
+        "episodes_per_gpu": 2,
+        "repetitions": 1,
+        "episodes_per_round": 2,
+        "episode_layout": {},
+        "synchronized_start": false,
+        "policy_server": "172.28.62.17:5564",
+        "action_chunk": 16,
+        "record_video": true,
+        "video_steps_per_render": 2,
+        "video_fps": 20,
+        "video_speedup": 1.3333333333333333,
+        "viewer_enabled": true,
+        "task40_stage_trace": true,
+        "runner_max_episode_steps": 256,
+        "diagnostics": false,
+        "wait_for_gpu": true,
+        "gpu_wait_interval": 30.0,
+        "appdata": {
+          "0": "/nvme3/tmp/memory_vla/groot_runtime_gpu0/appdata",
+          "1": "/nvme3/tmp/memory_vla/groot_runtime_gpu1/appdata"
+        },
+        "invocation": [
+          "evaluation/scripts/run_groot_eval.sh",
+          "--action-steps",
+          "16",
+          "--debug-max-steps",
+          "256",
+          "--group",
+          "ablation_action_fault",
+          "--mode",
+          "dual2",
+          "--policy-host",
+          "172.28.62.17",
+          "--policy-port",
+          "5564",
+          "--preset",
+          "fast-debug",
+          "--run-tag",
+          "test02_exp01_stage1_step6000_N4_H16",
+          "--seed",
+          "0",
+          "--seed-mode",
+          "fixed",
+          "--task",
+          "40",
+          "--version",
+          "V_2_1",
+          "--video-steps-per-render",
+          "2",
+          "--record-video",
+          "--wait-for-gpu",
+          "--policy-identity",
+          "{\"version\": \"V_2_1\", \"method\": \"baseline\", \"training_id\": \"v2.1__test01__exp14__run001\", \"train_number\": 1, \"checkpoint\": \"/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v2.1__test01__exp14__run001/run/checkpoints/v2.1__test01__exp14__run001__step006000\", \"checkpoint_step\": \"v2.1__test01__exp14__run001__step006000\", \"source_dir\": \"/nvme3/projects/memory_vla/deployments/inference_13b51a8721ce3cdca2c4d57c616f0923586baf155e9e4e39cb91cf2b031d1395\", \"source_digest\": \"13b51a8721ce3cdca2c4d57c616f0923586baf155e9e4e39cb91cf2b031d1395\", \"training_seed\": 42, \"policy_seed\": \"42\", \"history_mode\": \"normal\", \"task_id\": 40, \"pid\": 1096191, \"start_ticks\": 1410684554, \"host\": \"172.28.62.17\", \"port\": 5564, \"naming_schema\": \"v2.1-test-experiment-run-step\", \"task40_diagnostics\": false, \"task40_trace\": false, \"gpu_index\": \"0\", \"binding\": \"observed_process\"}"
+        ]
+      },
+      "per_gpu_performance": {
+        "0": {
+          "evaluation_mode": "fast-debug",
+          "environment_initialization": {
+            "count": 1,
+            "mean_s": 476.67856368469074,
+            "p95_s": 476.67856368469074
+          },
+          "reset": {
+            "count": 2,
+            "mean_s": 15.273095170035958,
+            "p95_s": 15.490273615531624
+          },
+          "policy_get_action": {
+            "count": 16,
+            "mean_s": 0.2410933412029408,
+            "p95_s": 0.29245631059166044
+          },
+          "env_step": {
+            "count": 16,
+            "mean_s": 3.095804123528069,
+            "p95_s": 4.4765069127315655
+          },
+          "environment_step_chunk": {
+            "count": 32,
+            "mean_s": 2.919074627745431,
+            "p95_s": 4.297130748722702
+          },
+          "video_encoding": {
+            "count": 256,
+            "mean_s": 0.01884922328281391,
+            "p95_s": 0.03892736730631441
+          },
+          "episode_total": {
+            "count": 2,
+            "mean_s": 52.89863289403729,
+            "p95_s": 52.913999876542945
+          },
+          "valid_episodes": 2,
+          "elapsed_s": 548.568365547806,
+          "valid_episodes_per_hour": null
+        },
+        "1": {
+          "evaluation_mode": "fast-debug",
+          "environment_initialization": {
+            "count": 1,
+            "mean_s": 473.82213166030124,
+            "p95_s": 473.82213166030124
+          },
+          "reset": {
+            "count": 2,
+            "mean_s": 15.57613012753427,
+            "p95_s": 15.603540015826002
+          },
+          "policy_get_action": {
+            "count": 16,
+            "mean_s": 0.2368511250242591,
+            "p95_s": 0.2806408155011013
+          },
+          "env_step": {
+            "count": 16,
+            "mean_s": 2.909378730226308,
+            "p95_s": 3.6706539350561798
+          },
+          "environment_step_chunk": {
+            "count": 32,
+            "mean_s": 2.743443131868844,
+            "p95_s": 3.482720993645489
+          },
+          "video_encoding": {
+            "count": 256,
+            "mean_s": 0.017436945481676958,
+            "p95_s": 0.03857862250879407
+          },
+          "episode_total": {
+            "count": 2,
+            "mean_s": 49.767797076143324,
+            "p95_s": 49.901352618075904
+          },
+          "valid_episodes": 2,
+          "elapsed_s": 543.120885825716,
+          "valid_episodes_per_hour": null
+        }
+      },
+      "groups": {
+        "base": {
+          "interior_mean": 0.0072216336096419,
+          "boundary_mean": 0.09112197402490792,
+          "boundary_p95": 0.2733146626022062,
+          "boundary_max": 0.5303504765033722,
+          "boundary_ratio": 12.617917073949476,
+          "all_transition_mean": 0.012156947751716371,
+          "boundary_variation_fraction": 0.44090969448770273,
+          "out_of_limit_command_elements": 0,
+          "command_elements": 3072,
+          "tracking": null
+        },
+        "torso": {
+          "interior_mean": 0.00017540669918233813,
+          "boundary_mean": 0.00041579238643810375,
+          "boundary_p95": 0.0009042635560035703,
+          "boundary_max": 0.001348733901977539,
+          "boundary_ratio": 2.3704475848204676,
+          "all_transition_mean": 0.00018954703372679494,
+          "boundary_variation_fraction": 0.12903591890592653,
+          "out_of_limit_command_elements": 0,
+          "command_elements": 4096,
+          "tracking": {
+            "n": 256,
+            "mean": 3.761153188897026e-05,
+            "p50": 2.172066342609469e-05,
+            "p95": 0.00012187575885036495,
+            "p99": 0.00015766471624374383,
+            "max": 0.00023052096366882324
+          }
+        },
+        "left_arm": {
+          "interior_mean": 0.0025951634196237213,
+          "boundary_mean": 0.002666160818786184,
+          "boundary_p95": 0.00794124007225035,
+          "boundary_max": 0.013172391802072525,
+          "boundary_ratio": 1.027357583197114,
+          "all_transition_mean": 0.0025993397372215134,
+          "boundary_variation_fraction": 0.060335702599616986,
+          "out_of_limit_command_elements": 0,
+          "command_elements": 7168,
+          "tracking": {
+            "n": 448,
+            "mean": 0.00010174658007144899,
+            "p50": 6.978772580623627e-05,
+            "p95": 0.0002863373607397078,
+            "p99": 0.000477740466594696,
+            "max": 0.0006482936441898346
+          }
+        },
+        "right_arm": {
+          "interior_mean": 0.003578122097816764,
+          "boundary_mean": 0.0038137930178587945,
+          "boundary_p95": 0.009894959069788453,
+          "boundary_max": 0.01665206253528595,
+          "boundary_ratio": 1.0658644153551462,
+          "all_transition_mean": 0.0035919850931133536,
+          "boundary_variation_fraction": 0.06245592894762052,
+          "out_of_limit_command_elements": 0,
+          "command_elements": 7168,
+          "tracking": {
+            "n": 448,
+            "mean": 0.0002284103349796039,
+            "p50": 0.00013156794011592865,
+            "p95": 0.0008149154484271998,
+            "p99": 0.0016019181162118868,
+            "max": 0.0030159130692481995
+          }
+        }
+      },
+      "chunks": 64
+    },
+    {
+      "variant": "N8_H8",
+      "inference_steps": 8,
+      "execution_steps": 8,
+      "status": "complete",
+      "job_id": "cbcb177c8c47",
+      "output": "/nvme3/projects/memory_vla/evaluation/V_2_1/ablation_action_fault/task40_eval03",
+      "category": "bounded_fault_diagnostic",
+      "completed_episodes": 4,
+      "total_action_steps": 1024,
+      "elapsed_wall_s": 559.735858285334,
+      "configuration": {
+        "mode": "dual2",
+        "preset": "fast-debug",
+        "model_name": "groot",
+        "device": "local",
+        "naming_schema": "groot-runs-v2",
+        "evaluation_id": "task40_eval03",
+        "policy_identity": {
+          "version": "V_2_1",
+          "method": "baseline",
+          "training_id": "v2.1__test01__exp14__run001",
+          "train_number": 1,
+          "checkpoint": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v2.1__test01__exp14__run001/run/checkpoints/v2.1__test01__exp14__run001__step006000",
+          "checkpoint_step": "v2.1__test01__exp14__run001__step006000",
+          "source_dir": "/nvme3/projects/memory_vla/deployments/inference_13b51a8721ce3cdca2c4d57c616f0923586baf155e9e4e39cb91cf2b031d1395",
+          "source_digest": "13b51a8721ce3cdca2c4d57c616f0923586baf155e9e4e39cb91cf2b031d1395",
+          "training_seed": 42,
+          "policy_seed": "42",
+          "history_mode": "normal",
+          "task_id": 40,
+          "pid": 1096447,
+          "start_ticks": 1410684628,
+          "host": "172.28.62.17",
+          "port": 5565,
+          "naming_schema": "v2.1-test-experiment-run-step",
+          "task40_diagnostics": false,
+          "task40_trace": false,
+          "gpu_index": "1",
+          "binding": "observed_process"
+        },
+        "method": "baseline",
+        "version": "V_2_1",
+        "group": "ablation_action_fault",
+        "protocol": {
+          "id": "b1k-groot-v1",
+          "sha256": "620ecd00b89129120d3a8c9ffdaa4c7c44aa560991a9da3190e29b0bee940508"
+        },
+        "run_tag": "test02_exp01_stage1_step6000_N8_H8",
+        "task_id": 40,
+        "n_envs_per_gpu": 2,
+        "instances": {
+          "0": [
+            0,
+            1
+          ],
+          "1": [
+            2,
+            3
+          ]
+        },
+        "base_seed": 0,
+        "seed_source": "0",
+        "seed_mode": "fixed",
+        "episodes_per_gpu": 2,
+        "repetitions": 1,
+        "episodes_per_round": 2,
+        "episode_layout": {},
+        "synchronized_start": false,
+        "policy_server": "172.28.62.17:5565",
+        "action_chunk": 8,
+        "record_video": true,
+        "video_steps_per_render": 2,
+        "video_fps": 20,
+        "video_speedup": 1.3333333333333333,
+        "viewer_enabled": true,
+        "task40_stage_trace": true,
+        "runner_max_episode_steps": 256,
+        "diagnostics": false,
+        "wait_for_gpu": true,
+        "gpu_wait_interval": 30.0,
+        "appdata": {
+          "0": "/nvme3/tmp/memory_vla/groot_runtime_gpu0/appdata",
+          "1": "/nvme3/tmp/memory_vla/groot_runtime_gpu1/appdata"
+        },
+        "invocation": [
+          "evaluation/scripts/run_groot_eval.sh",
+          "--action-steps",
+          "8",
+          "--debug-max-steps",
+          "256",
+          "--group",
+          "ablation_action_fault",
+          "--mode",
+          "dual2",
+          "--policy-host",
+          "172.28.62.17",
+          "--policy-port",
+          "5565",
+          "--preset",
+          "fast-debug",
+          "--run-tag",
+          "test02_exp01_stage1_step6000_N8_H8",
+          "--seed",
+          "0",
+          "--seed-mode",
+          "fixed",
+          "--task",
+          "40",
+          "--version",
+          "V_2_1",
+          "--video-steps-per-render",
+          "2",
+          "--record-video",
+          "--wait-for-gpu",
+          "--policy-identity",
+          "{\"version\": \"V_2_1\", \"method\": \"baseline\", \"training_id\": \"v2.1__test01__exp14__run001\", \"train_number\": 1, \"checkpoint\": \"/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v2.1__test01__exp14__run001/run/checkpoints/v2.1__test01__exp14__run001__step006000\", \"checkpoint_step\": \"v2.1__test01__exp14__run001__step006000\", \"source_dir\": \"/nvme3/projects/memory_vla/deployments/inference_13b51a8721ce3cdca2c4d57c616f0923586baf155e9e4e39cb91cf2b031d1395\", \"source_digest\": \"13b51a8721ce3cdca2c4d57c616f0923586baf155e9e4e39cb91cf2b031d1395\", \"training_seed\": 42, \"policy_seed\": \"42\", \"history_mode\": \"normal\", \"task_id\": 40, \"pid\": 1096447, \"start_ticks\": 1410684628, \"host\": \"172.28.62.17\", \"port\": 5565, \"naming_schema\": \"v2.1-test-experiment-run-step\", \"task40_diagnostics\": false, \"task40_trace\": false, \"gpu_index\": \"1\", \"binding\": \"observed_process\"}"
+        ]
+      },
+      "per_gpu_performance": {
+        "0": {
+          "evaluation_mode": "fast-debug",
+          "environment_initialization": {
+            "count": 1,
+            "mean_s": 476.9100527600385,
+            "p95_s": 476.9100527600385
+          },
+          "reset": {
+            "count": 2,
+            "mean_s": 15.074654814787209,
+            "p95_s": 15.203721147263423
+          },
+          "policy_get_action": {
+            "count": 32,
+            "mean_s": 0.3441231469332706,
+            "p95_s": 0.5777700138278306
+          },
+          "env_step": {
+            "count": 32,
+            "mean_s": 1.4253660251270048,
+            "p95_s": 1.8024992740945889
+          },
+          "environment_step_chunk": {
+            "count": 64,
+            "mean_s": 1.326459269184852,
+            "p95_s": 1.642751129460521
+          },
+          "video_encoding": {
+            "count": 256,
+            "mean_s": 0.01862839001296379,
+            "p95_s": 0.04104605072643608
+          },
+          "episode_total": {
+            "count": 2,
+            "mean_s": 56.2027957434766,
+            "p95_s": 56.307166434405374
+          },
+          "valid_episodes": 2,
+          "elapsed_s": 551.9094977849163,
+          "valid_episodes_per_hour": null
+        },
+        "1": {
+          "evaluation_mode": "fast-debug",
+          "environment_initialization": {
+            "count": 1,
+            "mean_s": 481.7819089512341,
+            "p95_s": 481.7819089512341
+          },
+          "reset": {
+            "count": 2,
+            "mean_s": 15.233703888952732,
+            "p95_s": 15.481534826103598
+          },
+          "policy_get_action": {
+            "count": 32,
+            "mean_s": 0.32109824001963716,
+            "p95_s": 0.39224745905958114
+          },
+          "env_step": {
+            "count": 32,
+            "mean_s": 1.4549100527947303,
+            "p95_s": 2.2404859906528145
+          },
+          "environment_step_chunk": {
+            "count": 64,
+            "mean_s": 1.3643410541990306,
+            "p95_s": 1.8597796540474516
+          },
+          "video_encoding": {
+            "count": 256,
+            "mean_s": 0.016613709351076977,
+            "p95_s": 0.0366778428433463
+          },
+          "episode_total": {
+            "count": 2,
+            "mean_s": 56.680093738017604,
+            "p95_s": 56.95508061463479
+          },
+          "valid_episodes": 2,
+          "elapsed_s": 557.1081920922734,
+          "valid_episodes_per_hour": null
+        }
+      },
+      "groups": {
+        "base": {
+          "interior_mean": 0.00838132102445516,
+          "boundary_mean": 0.05789340631195877,
+          "boundary_p95": 0.2615984752075746,
+          "boundary_max": 0.3746138960123062,
+          "boundary_ratio": 6.907432150974341,
+          "all_transition_mean": 0.014400437275092853,
+          "boundary_variation_fraction": 0.48873668273808524,
+          "out_of_limit_command_elements": 0,
+          "command_elements": 3072,
+          "tracking": null
+        },
+        "torso": {
+          "interior_mean": 0.0001374918154449551,
+          "boundary_mean": 0.0004248943599756855,
+          "boundary_p95": 0.000941254198551178,
+          "boundary_max": 0.013662457466125488,
+          "boundary_ratio": 3.0903247484268768,
+          "all_transition_mean": 0.00017243094830947527,
+          "boundary_variation_fraction": 0.2995623735780871,
+          "out_of_limit_command_elements": 0,
+          "command_elements": 4096,
+          "tracking": {
+            "n": 512,
+            "mean": 4.933206054258399e-05,
+            "p50": 1.3334887626115233e-05,
+            "p95": 8.698850870132443e-05,
+            "p99": 0.00013877868652343748,
+            "max": 0.01268303394317627
+          }
+        },
+        "left_arm": {
+          "interior_mean": 0.0024057527142227605,
+          "boundary_mean": 0.002897552582440402,
+          "boundary_p95": 0.00775778442621231,
+          "boundary_max": 0.0162544846534729,
+          "boundary_ratio": 1.2044266084831292,
+          "all_transition_mean": 0.002465540149182552,
+          "boundary_variation_fraction": 0.1428699064304883,
+          "out_of_limit_command_elements": 0,
+          "command_elements": 7168,
+          "tracking": {
+            "n": 896,
+            "mean": 0.00010156832294023437,
+            "p50": 7.591885514557362e-05,
+            "p95": 0.00027783727273344994,
+            "p99": 0.00039528384804725613,
+            "max": 0.0006715902127325535
+          }
+        },
+        "right_arm": {
+          "interior_mean": 0.0031480208184108604,
+          "boundary_mean": 0.005132026747101365,
+          "boundary_p95": 0.01305105984210968,
+          "boundary_max": 0.020098252221941948,
+          "boundary_ratio": 1.6302391385365878,
+          "all_transition_mean": 0.0033892136960163724,
+          "boundary_variation_fraction": 0.1840820625799273,
+          "out_of_limit_command_elements": 0,
+          "command_elements": 7168,
+          "tracking": {
+            "n": 896,
+            "mean": 0.0001745883685150115,
+            "p50": 0.00011025788262486458,
+            "p95": 0.0005816332995891571,
+            "p99": 0.0010657668113708495,
+            "max": 0.0016561653465032578
+          }
+        }
+      },
+      "chunks": 128
+    },
+    {
+      "variant": "N8_H16",
+      "inference_steps": 8,
+      "execution_steps": 16,
+      "status": "complete",
+      "job_id": "508ed90b37fa",
+      "output": "/nvme3/projects/memory_vla/evaluation/V_2_1/ablation_action_fault/task40_eval04",
+      "category": "bounded_fault_diagnostic",
+      "completed_episodes": 4,
+      "total_action_steps": 1024,
+      "elapsed_wall_s": 509.6668504723348,
+      "configuration": {
+        "mode": "dual2",
+        "preset": "fast-debug",
+        "model_name": "groot",
+        "device": "local",
+        "naming_schema": "groot-runs-v2",
+        "evaluation_id": "task40_eval04",
+        "policy_identity": {
+          "version": "V_2_1",
+          "method": "baseline",
+          "training_id": "v2.1__test01__exp14__run001",
+          "train_number": 1,
+          "checkpoint": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v2.1__test01__exp14__run001/run/checkpoints/v2.1__test01__exp14__run001__step006000",
+          "checkpoint_step": "v2.1__test01__exp14__run001__step006000",
+          "source_dir": "/nvme3/projects/memory_vla/deployments/inference_13b51a8721ce3cdca2c4d57c616f0923586baf155e9e4e39cb91cf2b031d1395",
+          "source_digest": "13b51a8721ce3cdca2c4d57c616f0923586baf155e9e4e39cb91cf2b031d1395",
+          "training_seed": 42,
+          "policy_seed": "42",
+          "history_mode": "normal",
+          "task_id": 40,
+          "pid": 1096447,
+          "start_ticks": 1410684628,
+          "host": "172.28.62.17",
+          "port": 5565,
+          "naming_schema": "v2.1-test-experiment-run-step",
+          "task40_diagnostics": false,
+          "task40_trace": false,
+          "gpu_index": "1",
+          "binding": "observed_process"
+        },
+        "method": "baseline",
+        "version": "V_2_1",
+        "group": "ablation_action_fault",
+        "protocol": {
+          "id": "b1k-groot-v1",
+          "sha256": "620ecd00b89129120d3a8c9ffdaa4c7c44aa560991a9da3190e29b0bee940508"
+        },
+        "run_tag": "test02_exp01_stage1_step6000_N8_H16",
+        "task_id": 40,
+        "n_envs_per_gpu": 2,
+        "instances": {
+          "0": [
+            0,
+            1
+          ],
+          "1": [
+            2,
+            3
+          ]
+        },
+        "base_seed": 0,
+        "seed_source": "0",
+        "seed_mode": "fixed",
+        "episodes_per_gpu": 2,
+        "repetitions": 1,
+        "episodes_per_round": 2,
+        "episode_layout": {},
+        "synchronized_start": false,
+        "policy_server": "172.28.62.17:5565",
+        "action_chunk": 16,
+        "record_video": true,
+        "video_steps_per_render": 2,
+        "video_fps": 20,
+        "video_speedup": 1.3333333333333333,
+        "viewer_enabled": true,
+        "task40_stage_trace": true,
+        "runner_max_episode_steps": 256,
+        "diagnostics": false,
+        "wait_for_gpu": true,
+        "gpu_wait_interval": 30.0,
+        "appdata": {
+          "0": "/nvme3/tmp/memory_vla/groot_runtime_gpu0/appdata",
+          "1": "/nvme3/tmp/memory_vla/groot_runtime_gpu1/appdata"
+        },
+        "invocation": [
+          "evaluation/scripts/run_groot_eval.sh",
+          "--action-steps",
+          "16",
+          "--debug-max-steps",
+          "256",
+          "--group",
+          "ablation_action_fault",
+          "--mode",
+          "dual2",
+          "--policy-host",
+          "172.28.62.17",
+          "--policy-port",
+          "5565",
+          "--preset",
+          "fast-debug",
+          "--run-tag",
+          "test02_exp01_stage1_step6000_N8_H16",
+          "--seed",
+          "0",
+          "--seed-mode",
+          "fixed",
+          "--task",
+          "40",
+          "--version",
+          "V_2_1",
+          "--video-steps-per-render",
+          "2",
+          "--record-video",
+          "--wait-for-gpu",
+          "--policy-identity",
+          "{\"version\": \"V_2_1\", \"method\": \"baseline\", \"training_id\": \"v2.1__test01__exp14__run001\", \"train_number\": 1, \"checkpoint\": \"/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v2.1__test01__exp14__run001/run/checkpoints/v2.1__test01__exp14__run001__step006000\", \"checkpoint_step\": \"v2.1__test01__exp14__run001__step006000\", \"source_dir\": \"/nvme3/projects/memory_vla/deployments/inference_13b51a8721ce3cdca2c4d57c616f0923586baf155e9e4e39cb91cf2b031d1395\", \"source_digest\": \"13b51a8721ce3cdca2c4d57c616f0923586baf155e9e4e39cb91cf2b031d1395\", \"training_seed\": 42, \"policy_seed\": \"42\", \"history_mode\": \"normal\", \"task_id\": 40, \"pid\": 1096447, \"start_ticks\": 1410684628, \"host\": \"172.28.62.17\", \"port\": 5565, \"naming_schema\": \"v2.1-test-experiment-run-step\", \"task40_diagnostics\": false, \"task40_trace\": false, \"gpu_index\": \"1\", \"binding\": \"observed_process\"}"
+        ]
+      },
+      "per_gpu_performance": {
+        "0": {
+          "evaluation_mode": "fast-debug",
+          "environment_initialization": {
+            "count": 1,
+            "mean_s": 442.1846236898564,
+            "p95_s": 442.1846236898564
+          },
+          "reset": {
+            "count": 2,
+            "mean_s": 13.601758135482669,
+            "p95_s": 13.764997411333024
+          },
+          "policy_get_action": {
+            "count": 16,
+            "mean_s": 0.3070135698071681,
+            "p95_s": 0.3904366829665378
+          },
+          "env_step": {
+            "count": 16,
+            "mean_s": 2.7310392871440854,
+            "p95_s": 3.680134170805104
+          },
+          "environment_step_chunk": {
+            "count": 32,
+            "mean_s": 2.5742287266039057,
+            "p95_s": 3.8395834844559427
+          },
+          "video_encoding": {
+            "count": 256,
+            "mean_s": 0.018625349266585545,
+            "p95_s": 0.04164844669867307
+          },
+          "episode_total": {
+            "count": 2,
+            "mean_s": 48.17129845218733,
+            "p95_s": 48.2614828906022
+          },
+          "valid_episodes": 2,
+          "elapsed_s": 507.4332573870197,
+          "valid_episodes_per_hour": null
+        },
+        "1": {
+          "evaluation_mode": "fast-debug",
+          "environment_initialization": {
+            "count": 1,
+            "mean_s": 436.5665187397972,
+            "p95_s": 436.5665187397972
+          },
+          "reset": {
+            "count": 2,
+            "mean_s": 13.040740551427007,
+            "p95_s": 13.157637687353418
+          },
+          "policy_get_action": {
+            "count": 16,
+            "mean_s": 0.3182222342584282,
+            "p95_s": 0.39359484205488116
+          },
+          "env_step": {
+            "count": 16,
+            "mean_s": 2.5977919670112897,
+            "p95_s": 3.1154104496818036
+          },
+          "environment_step_chunk": {
+            "count": 32,
+            "mean_s": 2.4294398259662557,
+            "p95_s": 2.9266560432966795
+          },
+          "video_encoding": {
+            "count": 256,
+            "mean_s": 0.017145871326647466,
+            "p95_s": 0.03691613953560591
+          },
+          "episode_total": {
+            "count": 2,
+            "mean_s": 46.14930829661898,
+            "p95_s": 46.19225499189925
+          },
+          "valid_episodes": 2,
+          "elapsed_s": 499.3348144958727,
+          "valid_episodes_per_hour": null
+        }
+      },
+      "groups": {
+        "base": {
+          "interior_mean": 0.00819980257647575,
+          "boundary_mean": 0.0863745330405373,
+          "boundary_p95": 0.27483860510401426,
+          "boundary_max": 0.4358205497264862,
+          "boundary_ratio": 10.533733249668165,
+          "all_transition_mean": 0.012798316133185253,
+          "boundary_variation_fraction": 0.39699401326422473,
+          "out_of_limit_command_elements": 0,
+          "command_elements": 3072,
+          "tracking": null
+        },
+        "torso": {
+          "interior_mean": 0.00018418552347115497,
+          "boundary_mean": 0.00041328880414729003,
+          "boundary_p95": 0.0009835317730903625,
+          "boundary_max": 0.00149574875831604,
+          "boundary_ratio": 2.2438723541267596,
+          "all_transition_mean": 0.0001976621870403394,
+          "boundary_variation_fraction": 0.12299320618844366,
+          "out_of_limit_command_elements": 0,
+          "command_elements": 4096,
+          "tracking": {
+            "n": 256,
+            "mean": 4.11970074818413e-05,
+            "p50": 2.428889274597168e-05,
+            "p95": 0.00012912601232528687,
+            "p99": 0.00019364530853636095,
+            "max": 0.00025027990341186523
+          }
+        },
+        "left_arm": {
+          "interior_mean": 0.003127555474708288,
+          "boundary_mean": 0.0030128943670812685,
+          "boundary_p95": 0.008389603719115256,
+          "boundary_max": 0.04585421085357666,
+          "boundary_ratio": 0.9633384256316943,
+          "all_transition_mean": 0.0031208107036714045,
+          "boundary_variation_fraction": 0.056789436221827944,
+          "out_of_limit_command_elements": 0,
+          "command_elements": 7168,
+          "tracking": {
+            "n": 448,
+            "mean": 0.00013299029865265766,
+            "p50": 9.791739284992218e-05,
+            "p95": 0.00037869359366595726,
+            "p99": 0.0006106458371505132,
+            "max": 0.0006674975156784058
+          }
+        },
+        "right_arm": {
+          "interior_mean": 0.004207055428083181,
+          "boundary_mean": 0.004922732309846435,
+          "boundary_p95": 0.013516569696366774,
+          "boundary_max": 0.020755860954523087,
+          "boundary_ratio": 1.1701134900638404,
+          "all_transition_mean": 0.004249154068186902,
+          "boundary_variation_fraction": 0.06814826767108863,
+          "out_of_limit_command_elements": 0,
+          "command_elements": 7168,
+          "tracking": {
+            "n": 448,
+            "mean": 0.00027234224135749434,
+            "p50": 0.00015850504860281944,
+            "p95": 0.0008967339228547633,
+            "p99": 0.0018577275425195675,
+            "max": 0.0026303790509700775
+          }
+        }
+      },
+      "chunks": 64
+    },
+    {
+      "variant": "N16_H8",
+      "inference_steps": 16,
+      "execution_steps": 8,
+      "status": "complete",
+      "job_id": "572d58f1ae87",
+      "output": "/nvme3/projects/memory_vla/evaluation/V_2_1/ablation_action_fault/task40_eval05",
+      "category": "bounded_fault_diagnostic",
+      "completed_episodes": 4,
+      "total_action_steps": 1024,
+      "elapsed_wall_s": 513.5046513127163,
+      "configuration": {
+        "mode": "dual2",
+        "preset": "fast-debug",
+        "model_name": "groot",
+        "device": "local",
+        "naming_schema": "groot-runs-v2",
+        "evaluation_id": "task40_eval05",
+        "policy_identity": {
+          "version": "V_2_1",
+          "method": "baseline",
+          "training_id": "v2.1__test01__exp14__run001",
+          "train_number": 1,
+          "checkpoint": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v2.1__test01__exp14__run001/run/checkpoints/v2.1__test01__exp14__run001__step006000",
+          "checkpoint_step": "v2.1__test01__exp14__run001__step006000",
+          "source_dir": "/nvme3/projects/memory_vla/deployments/inference_13b51a8721ce3cdca2c4d57c616f0923586baf155e9e4e39cb91cf2b031d1395",
+          "source_digest": "13b51a8721ce3cdca2c4d57c616f0923586baf155e9e4e39cb91cf2b031d1395",
+          "training_seed": 42,
+          "policy_seed": "42",
+          "history_mode": "normal",
+          "task_id": 40,
+          "pid": 1096761,
+          "start_ticks": 1410684709,
+          "host": "172.28.62.17",
+          "port": 5566,
+          "naming_schema": "v2.1-test-experiment-run-step",
+          "task40_diagnostics": false,
+          "task40_trace": false,
+          "gpu_index": "0",
+          "binding": "observed_process"
+        },
+        "method": "baseline",
+        "version": "V_2_1",
+        "group": "ablation_action_fault",
+        "protocol": {
+          "id": "b1k-groot-v1",
+          "sha256": "620ecd00b89129120d3a8c9ffdaa4c7c44aa560991a9da3190e29b0bee940508"
+        },
+        "run_tag": "test02_exp01_stage1_step6000_N16_H8",
+        "task_id": 40,
+        "n_envs_per_gpu": 2,
+        "instances": {
+          "0": [
+            0,
+            1
+          ],
+          "1": [
+            2,
+            3
+          ]
+        },
+        "base_seed": 0,
+        "seed_source": "0",
+        "seed_mode": "fixed",
+        "episodes_per_gpu": 2,
+        "repetitions": 1,
+        "episodes_per_round": 2,
+        "episode_layout": {},
+        "synchronized_start": false,
+        "policy_server": "172.28.62.17:5566",
+        "action_chunk": 8,
+        "record_video": true,
+        "video_steps_per_render": 2,
+        "video_fps": 20,
+        "video_speedup": 1.3333333333333333,
+        "viewer_enabled": true,
+        "task40_stage_trace": true,
+        "runner_max_episode_steps": 256,
+        "diagnostics": false,
+        "wait_for_gpu": true,
+        "gpu_wait_interval": 30.0,
+        "appdata": {
+          "0": "/nvme3/tmp/memory_vla/groot_runtime_gpu0/appdata",
+          "1": "/nvme3/tmp/memory_vla/groot_runtime_gpu1/appdata"
+        },
+        "invocation": [
+          "evaluation/scripts/run_groot_eval.sh",
+          "--action-steps",
+          "8",
+          "--debug-max-steps",
+          "256",
+          "--group",
+          "ablation_action_fault",
+          "--mode",
+          "dual2",
+          "--policy-host",
+          "172.28.62.17",
+          "--policy-port",
+          "5566",
+          "--preset",
+          "fast-debug",
+          "--run-tag",
+          "test02_exp01_stage1_step6000_N16_H8",
+          "--seed",
+          "0",
+          "--seed-mode",
+          "fixed",
+          "--task",
+          "40",
+          "--version",
+          "V_2_1",
+          "--video-steps-per-render",
+          "2",
+          "--record-video",
+          "--wait-for-gpu",
+          "--policy-identity",
+          "{\"version\": \"V_2_1\", \"method\": \"baseline\", \"training_id\": \"v2.1__test01__exp14__run001\", \"train_number\": 1, \"checkpoint\": \"/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v2.1__test01__exp14__run001/run/checkpoints/v2.1__test01__exp14__run001__step006000\", \"checkpoint_step\": \"v2.1__test01__exp14__run001__step006000\", \"source_dir\": \"/nvme3/projects/memory_vla/deployments/inference_13b51a8721ce3cdca2c4d57c616f0923586baf155e9e4e39cb91cf2b031d1395\", \"source_digest\": \"13b51a8721ce3cdca2c4d57c616f0923586baf155e9e4e39cb91cf2b031d1395\", \"training_seed\": 42, \"policy_seed\": \"42\", \"history_mode\": \"normal\", \"task_id\": 40, \"pid\": 1096761, \"start_ticks\": 1410684709, \"host\": \"172.28.62.17\", \"port\": 5566, \"naming_schema\": \"v2.1-test-experiment-run-step\", \"task40_diagnostics\": false, \"task40_trace\": false, \"gpu_index\": \"0\", \"binding\": \"observed_process\"}"
+        ]
+      },
+      "per_gpu_performance": {
+        "0": {
+          "evaluation_mode": "fast-debug",
+          "environment_initialization": {
+            "count": 1,
+            "mean_s": 431.75162713369355,
+            "p95_s": 431.75162713369355
+          },
+          "reset": {
+            "count": 2,
+            "mean_s": 13.59539661090821,
+            "p95_s": 13.700796593679115
+          },
+          "policy_get_action": {
+            "count": 32,
+            "mean_s": 0.5133208951447159,
+            "p95_s": 0.907007361901924
+          },
+          "env_step": {
+            "count": 32,
+            "mean_s": 1.2835309599759057,
+            "p95_s": 1.650523765059188
+          },
+          "environment_step_chunk": {
+            "count": 64,
+            "mean_s": 1.1993706475695944,
+            "p95_s": 1.554501685779541
+          },
+          "video_encoding": {
+            "count": 256,
+            "mean_s": 0.01758706389227882,
+            "p95_s": 0.039611855521798134
+          },
+          "episode_total": {
+            "count": 2,
+            "mean_s": 57.01821251329966,
+            "p95_s": 57.08926350779366
+          },
+          "valid_episodes": 2,
+          "elapsed_s": 506.0965936938301,
+          "valid_episodes_per_hour": null
+        },
+        "1": {
+          "evaluation_mode": "fast-debug",
+          "environment_initialization": {
+            "count": 1,
+            "mean_s": 438.12168570421636,
+            "p95_s": 438.12168570421636
+          },
+          "reset": {
+            "count": 2,
+            "mean_s": 13.571285911137238,
+            "p95_s": 13.589602379756979
+          },
+          "policy_get_action": {
+            "count": 32,
+            "mean_s": 0.44857979218068067,
+            "p95_s": 0.567289330624044
+          },
+          "env_step": {
+            "count": 32,
+            "mean_s": 1.3211504720384255,
+            "p95_s": 2.0560050765052433
+          },
+          "environment_step_chunk": {
+            "count": 64,
+            "mean_s": 1.2404624875052832,
+            "p95_s": 1.783127768943086
+          },
+          "video_encoding": {
+            "count": 256,
+            "mean_s": 0.01601028797813342,
+            "p95_s": 0.033363184542395175
+          },
+          "episode_total": {
+            "count": 2,
+            "mean_s": 56.208598067518324,
+            "p95_s": 56.28041456341744
+          },
+          "valid_episodes": 2,
+          "elapsed_s": 511.22880075499415,
+          "valid_episodes_per_hour": null
+        }
+      },
+      "groups": {
+        "base": {
+          "interior_mean": 0.007922379041419262,
+          "boundary_mean": 0.06251651504843261,
+          "boundary_p95": 0.2757137995911762,
+          "boundary_max": 0.5479049682617188,
+          "boundary_ratio": 7.891129005768074,
+          "all_transition_mean": 0.014559313222664023,
+          "boundary_variation_fraction": 0.5220058673939209,
+          "out_of_limit_command_elements": 0,
+          "command_elements": 3072,
+          "tracking": null
+        },
+        "torso": {
+          "interior_mean": 0.00011862010852598168,
+          "boundary_mean": 0.00040749649567173307,
+          "boundary_p95": 0.0009491071105003357,
+          "boundary_max": 0.0026012659072875977,
+          "boundary_ratio": 3.4353070548951488,
+          "all_transition_mean": 0.00015373841441428872,
+          "boundary_variation_fraction": 0.3222277910087041,
+          "out_of_limit_command_elements": 0,
+          "command_elements": 4096,
+          "tracking": {
+            "n": 512,
+            "mean": 2.0842412580629466e-05,
+            "p50": 9.625532442214535e-06,
+            "p95": 4.74520209536422e-05,
+            "p99": 7.453793801687417e-05,
+            "max": 0.002255558967590332
+          }
+        },
+        "left_arm": {
+          "interior_mean": 0.0016663338025407148,
+          "boundary_mean": 0.003169249632709106,
+          "boundary_p95": 0.008361803693696856,
+          "boundary_max": 0.020162425935268402,
+          "boundary_ratio": 1.9019296301118331,
+          "all_transition_mean": 0.0018490412171886367,
+          "boundary_variation_fraction": 0.2083681663320455,
+          "out_of_limit_command_elements": 0,
+          "command_elements": 7168,
+          "tracking": {
+            "n": 896,
+            "mean": 5.527819030654817e-05,
+            "p50": 4.2576342821121216e-05,
+            "p95": 0.0001502293162047863,
+            "p99": 0.00023321053013205522,
+            "max": 0.00038163375575095415
+          }
+        },
+        "right_arm": {
+          "interior_mean": 0.0021868011902959512,
+          "boundary_mean": 0.005472819680715659,
+          "boundary_p95": 0.014355922716276837,
+          "boundary_max": 0.026495310943573713,
+          "boundary_ratio": 2.502659914857186,
+          "all_transition_mean": 0.002586277947954818,
+          "boundary_variation_fraction": 0.2572512275401184,
+          "out_of_limit_command_elements": 0,
+          "command_elements": 7168,
+          "tracking": {
+            "n": 896,
+            "mean": 9.42965965780981e-05,
+            "p50": 6.534438580274582e-05,
+            "p95": 0.0002977326512336731,
+            "p99": 0.0004877746105194089,
+            "max": 0.0007430426776409149
+          }
+        }
+      },
+      "chunks": 128
+    },
+    {
+      "variant": "N16_H16",
+      "inference_steps": 16,
+      "execution_steps": 16,
+      "status": "complete",
+      "job_id": "866636e0425e",
+      "output": "/nvme3/projects/memory_vla/evaluation/V_2_1/ablation_action_fault/task40_eval06",
+      "category": "bounded_fault_diagnostic",
+      "completed_episodes": 4,
+      "total_action_steps": 1024,
+      "elapsed_wall_s": 512.6943784411997,
+      "configuration": {
+        "mode": "dual2",
+        "preset": "fast-debug",
+        "model_name": "groot",
+        "device": "local",
+        "naming_schema": "groot-runs-v2",
+        "evaluation_id": "task40_eval06",
+        "policy_identity": {
+          "version": "V_2_1",
+          "method": "baseline",
+          "training_id": "v2.1__test01__exp14__run001",
+          "train_number": 1,
+          "checkpoint": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v2.1__test01__exp14__run001/run/checkpoints/v2.1__test01__exp14__run001__step006000",
+          "checkpoint_step": "v2.1__test01__exp14__run001__step006000",
+          "source_dir": "/nvme3/projects/memory_vla/deployments/inference_13b51a8721ce3cdca2c4d57c616f0923586baf155e9e4e39cb91cf2b031d1395",
+          "source_digest": "13b51a8721ce3cdca2c4d57c616f0923586baf155e9e4e39cb91cf2b031d1395",
+          "training_seed": 42,
+          "policy_seed": "42",
+          "history_mode": "normal",
+          "task_id": 40,
+          "pid": 1096761,
+          "start_ticks": 1410684709,
+          "host": "172.28.62.17",
+          "port": 5566,
+          "naming_schema": "v2.1-test-experiment-run-step",
+          "task40_diagnostics": false,
+          "task40_trace": false,
+          "gpu_index": "0",
+          "binding": "observed_process"
+        },
+        "method": "baseline",
+        "version": "V_2_1",
+        "group": "ablation_action_fault",
+        "protocol": {
+          "id": "b1k-groot-v1",
+          "sha256": "620ecd00b89129120d3a8c9ffdaa4c7c44aa560991a9da3190e29b0bee940508"
+        },
+        "run_tag": "test02_exp01_stage1_step6000_N16_H16",
+        "task_id": 40,
+        "n_envs_per_gpu": 2,
+        "instances": {
+          "0": [
+            0,
+            1
+          ],
+          "1": [
+            2,
+            3
+          ]
+        },
+        "base_seed": 0,
+        "seed_source": "0",
+        "seed_mode": "fixed",
+        "episodes_per_gpu": 2,
+        "repetitions": 1,
+        "episodes_per_round": 2,
+        "episode_layout": {},
+        "synchronized_start": false,
+        "policy_server": "172.28.62.17:5566",
+        "action_chunk": 16,
+        "record_video": true,
+        "video_steps_per_render": 2,
+        "video_fps": 20,
+        "video_speedup": 1.3333333333333333,
+        "viewer_enabled": true,
+        "task40_stage_trace": true,
+        "runner_max_episode_steps": 256,
+        "diagnostics": false,
+        "wait_for_gpu": true,
+        "gpu_wait_interval": 30.0,
+        "appdata": {
+          "0": "/nvme3/tmp/memory_vla/groot_runtime_gpu0/appdata",
+          "1": "/nvme3/tmp/memory_vla/groot_runtime_gpu1/appdata"
+        },
+        "invocation": [
+          "evaluation/scripts/run_groot_eval.sh",
+          "--action-steps",
+          "16",
+          "--debug-max-steps",
+          "256",
+          "--group",
+          "ablation_action_fault",
+          "--mode",
+          "dual2",
+          "--policy-host",
+          "172.28.62.17",
+          "--policy-port",
+          "5566",
+          "--preset",
+          "fast-debug",
+          "--run-tag",
+          "test02_exp01_stage1_step6000_N16_H16",
+          "--seed",
+          "0",
+          "--seed-mode",
+          "fixed",
+          "--task",
+          "40",
+          "--version",
+          "V_2_1",
+          "--video-steps-per-render",
+          "2",
+          "--record-video",
+          "--wait-for-gpu",
+          "--policy-identity",
+          "{\"version\": \"V_2_1\", \"method\": \"baseline\", \"training_id\": \"v2.1__test01__exp14__run001\", \"train_number\": 1, \"checkpoint\": \"/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v2.1__test01__exp14__run001/run/checkpoints/v2.1__test01__exp14__run001__step006000\", \"checkpoint_step\": \"v2.1__test01__exp14__run001__step006000\", \"source_dir\": \"/nvme3/projects/memory_vla/deployments/inference_13b51a8721ce3cdca2c4d57c616f0923586baf155e9e4e39cb91cf2b031d1395\", \"source_digest\": \"13b51a8721ce3cdca2c4d57c616f0923586baf155e9e4e39cb91cf2b031d1395\", \"training_seed\": 42, \"policy_seed\": \"42\", \"history_mode\": \"normal\", \"task_id\": 40, \"pid\": 1096761, \"start_ticks\": 1410684709, \"host\": \"172.28.62.17\", \"port\": 5566, \"naming_schema\": \"v2.1-test-experiment-run-step\", \"task40_diagnostics\": false, \"task40_trace\": false, \"gpu_index\": \"0\", \"binding\": \"observed_process\"}"
+        ]
+      },
+      "per_gpu_performance": {
+        "0": {
+          "evaluation_mode": "fast-debug",
+          "environment_initialization": {
+            "count": 1,
+            "mean_s": 441.55063892062753,
+            "p95_s": 441.55063892062753
+          },
+          "reset": {
+            "count": 2,
+            "mean_s": 14.332792662084103,
+            "p95_s": 14.348999692965299
+          },
+          "policy_get_action": {
+            "count": 16,
+            "mean_s": 0.4297276738216169,
+            "p95_s": 0.44051019044127315
+          },
+          "env_step": {
+            "count": 16,
+            "mean_s": 2.798433553893119,
+            "p95_s": 3.89208827377297
+          },
+          "environment_step_chunk": {
+            "count": 32,
+            "mean_s": 2.599084022382158,
+            "p95_s": 3.634943674271926
+          },
+          "video_encoding": {
+            "count": 256,
+            "mean_s": 0.018271935876327916,
+            "p95_s": 0.0429062913171947
+          },
+          "episode_total": {
+            "count": 2,
+            "mean_s": 51.075432130368426,
+            "p95_s": 51.16450560975354
+          },
+          "valid_episodes": 2,
+          "elapsed_s": 510.38596269581467,
+          "valid_episodes_per_hour": null
+        },
+        "1": {
+          "evaluation_mode": "fast-debug",
+          "environment_initialization": {
+            "count": 1,
+            "mean_s": 433.18328215554357,
+            "p95_s": 433.18328215554357
+          },
+          "reset": {
+            "count": 2,
+            "mean_s": 14.105096247978508,
+            "p95_s": 14.386606579413638
+          },
+          "policy_get_action": {
+            "count": 16,
+            "mean_s": 0.48365037390612997,
+            "p95_s": 0.6179835236398503
+          },
+          "env_step": {
+            "count": 16,
+            "mean_s": 2.628759233659366,
+            "p95_s": 3.1622932420577854
+          },
+          "environment_step_chunk": {
+            "count": 32,
+            "mean_s": 2.4797876743832603,
+            "p95_s": 3.0079172183293847
+          },
+          "video_encoding": {
+            "count": 256,
+            "mean_s": 0.01692557378555648,
+            "p95_s": 0.03743895539082587
+          },
+          "episode_total": {
+            "count": 2,
+            "mean_s": 49.55571547662839,
+            "p95_s": 49.923215915309264
+          },
+          "valid_episodes": 2,
+          "elapsed_s": 500.4554398348555,
+          "valid_episodes_per_hour": null
+        }
+      },
+      "groups": {
+        "base": {
+          "interior_mean": 0.007251074562084783,
+          "boundary_mean": 0.08772665055808425,
+          "boundary_p95": 0.29271380514837797,
+          "boundary_max": 0.5735100507736206,
+          "boundary_ratio": 12.098434488151455,
+          "all_transition_mean": 0.011984931973614164,
+          "boundary_variation_fraction": 0.4305732582095676,
+          "out_of_limit_command_elements": 0,
+          "command_elements": 3072,
+          "tracking": null
+        },
+        "torso": {
+          "interior_mean": 0.00012896944681552261,
+          "boundary_mean": 0.00039548556398187883,
+          "boundary_p95": 0.0009172350168228147,
+          "boundary_max": 0.0017815828323364258,
+          "boundary_ratio": 3.0665058565970265,
+          "all_transition_mean": 0.0001446468654723671,
+          "boundary_variation_fraction": 0.16083208321759768,
+          "out_of_limit_command_elements": 0,
+          "command_elements": 4096,
+          "tracking": {
+            "n": 256,
+            "mean": 2.114814562670375e-05,
+            "p50": 1.354294704469794e-05,
+            "p95": 5.7014649428310804e-05,
+            "p99": 0.0001108050346374511,
+            "max": 0.00014030933380126953
+          }
+        },
+        "left_arm": {
+          "interior_mean": 0.001693277776079564,
+          "boundary_mean": 0.0030263570164303626,
+          "boundary_p95": 0.008674430102109904,
+          "boundary_max": 0.020057156682014465,
+          "boundary_ratio": 1.7872773499911332,
+          "all_transition_mean": 0.001771694201982552,
+          "boundary_variation_fraction": 0.10048065900271264,
+          "out_of_limit_command_elements": 0,
+          "command_elements": 7168,
+          "tracking": {
+            "n": 448,
+            "mean": 6.378935261608376e-05,
+            "p50": 4.4231699575902894e-05,
+            "p95": 0.00018457514233887195,
+            "p99": 0.0003060227865353217,
+            "max": 0.0004112720489501953
+          }
+        },
+        "right_arm": {
+          "interior_mean": 0.002384949244416627,
+          "boundary_mean": 0.0054671801301992675,
+          "boundary_p95": 0.013697791192680596,
+          "boundary_max": 0.02029775269329548,
+          "boundary_ratio": 2.292367497127417,
+          "all_transition_mean": 0.0025662569435803114,
+          "boundary_variation_fraction": 0.12531825076701547,
+          "out_of_limit_command_elements": 0,
+          "command_elements": 7168,
+          "tracking": {
+            "n": 448,
+            "mean": 0.00013375684204675053,
+            "p50": 8.857157081365585e-05,
+            "p95": 0.0003993941703811285,
+            "p99": 0.0007805417105555519,
+            "max": 0.0012097600847482681
+          }
+        }
+      },
+      "chunks": 64
+    }
+  ]
+}

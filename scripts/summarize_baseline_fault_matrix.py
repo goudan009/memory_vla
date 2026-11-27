@@ -30,7 +30,8 @@ def summarize(directory, mapping):
                 completed_episodes=result.get('completed_episodes'),
                 total_action_steps=result.get('total_action_steps'),
                 elapsed_wall_s=result.get('elapsed_wall_s'),
-                configuration=result.get('configuration'),groups={})
+                configuration=result.get('configuration'),
+                per_gpu_performance={gpu:row.get('performance') for gpu,row in result.get('per_gpu',{}).items()},groups={})
             if status not in ('complete','completed'):
                 trials.append(trial)
                 continue

@@ -1,0 +1,247 @@
+{
+  "left": {
+    "trace": "evaluation/V_2_1/baseline/task40_eval01/stages/actions_task40_gpu1_env1.jsonl",
+    "instance_id": 6,
+    "seed": 2,
+    "episode_number": 2,
+    "physical_joint": "left_arm_joint4",
+    "simulation_index": 16,
+    "action_step": 4183,
+    "decoded_target_rad": 0.5073966979980469,
+    "asset_upper_limit_rad": 0.34909997215033256,
+    "overshoot_rad": 0.15829672584771431,
+    "measured": {
+      "action_step": 4160,
+      "offset_steps": -23,
+      "qpos_rad": 0.34909588098526
+    },
+    "video": {
+      "path": "evaluation/V_2_1/baseline/task40_eval01/videos/gpu1/episode_004_instance6_seed2_gpu1_env1_s0.mp4",
+      "frame_index": 173,
+      "action_step": 4175,
+      "offset_steps": -8,
+      "fps": 20,
+      "recording_id": "c1c6645d71c64b279030f541753fabfe",
+      "image": "Output/test_02/experiment_01/baseline_diagnostic/events/left_elbow_extreme.png"
+    }
+  },
+  "right": {
+    "trace": "evaluation/V_2_1/baseline/task40_eval01/stages/actions_task40_gpu1_env1.jsonl",
+    "instance_id": 6,
+    "seed": 2,
+    "episode_number": 2,
+    "physical_joint": "right_arm_joint4",
+    "simulation_index": 17,
+    "action_step": 2719,
+    "decoded_target_rad": 0.4857720136642456,
+    "asset_upper_limit_rad": 0.34909997215033256,
+    "overshoot_rad": 0.13667204151391305,
+    "measured": {
+      "action_step": 2720,
+      "offset_steps": 1,
+      "qpos_rad": 0.34906160831451416
+    },
+    "video": {
+      "path": "evaluation/V_2_1/baseline/task40_eval01/videos/gpu1/episode_004_instance6_seed2_gpu1_env1_s0.mp4",
+      "frame_index": 112,
+      "action_step": 2711,
+      "offset_steps": -8,
+      "fps": 20,
+      "recording_id": "c1c6645d71c64b279030f541753fabfe",
+      "image": "Output/test_02/experiment_01/baseline_diagnostic/events/right_elbow_extreme.png"
+    }
+  },
+  "instance0_seed0_early_elbow_timeline": [
+    {
+      "action_step": 80,
+      "left_elbow_measured_rad": 0.0370306558907032,
+      "left_elbow_last_requested_rad": 0.03716767206788063,
+      "trace": "evaluation/V_2_1/baseline/task40_eval01/stages/actions_task40_gpu1_env0.jsonl"
+    },
+    {
+      "action_step": 160,
+      "left_elbow_measured_rad": 0.059013642370700836,
+      "left_elbow_last_requested_rad": 0.05887807160615921,
+      "trace": "evaluation/V_2_1/baseline/task40_eval01/stages/actions_task40_gpu1_env0.jsonl"
+    },
+    {
+      "action_step": 240,
+      "left_elbow_measured_rad": 0.08306668698787689,
+      "left_elbow_last_requested_rad": 0.08329709619283676,
+      "trace": "evaluation/V_2_1/baseline/task40_eval01/stages/actions_task40_gpu1_env0.jsonl"
+    },
+    {
+      "action_step": 320,
+      "left_elbow_measured_rad": 0.14246372878551483,
+      "left_elbow_last_requested_rad": 0.1423596888780594,
+      "trace": "evaluation/V_2_1/baseline/task40_eval01/stages/actions_task40_gpu1_env0.jsonl"
+    },
+    {
+      "action_step": 400,
+      "left_elbow_measured_rad": 0.170271098613739,
+      "left_elbow_last_requested_rad": 0.17016035318374634,
+      "trace": "evaluation/V_2_1/baseline/task40_eval01/stages/actions_task40_gpu1_env0.jsonl"
+    },
+    {
+      "action_step": 480,
+      "left_elbow_measured_rad": 0.23230089247226715,
+      "left_elbow_last_requested_rad": 0.2324223518371582,
+      "trace": "evaluation/V_2_1/baseline/task40_eval01/stages/actions_task40_gpu1_env0.jsonl"
+    },
+    {
+      "action_step": 560,
+      "left_elbow_measured_rad": 0.32694199681282043,
+      "left_elbow_last_requested_rad": 0.32702919840812683,
+      "trace": "evaluation/V_2_1/baseline/task40_eval01/stages/actions_task40_gpu1_env0.jsonl"
+    },
+    {
+      "action_step": 640,
+      "left_elbow_measured_rad": 0.34910228848457336,
+      "left_elbow_last_requested_rad": 0.35714444518089294,
+      "trace": "evaluation/V_2_1/baseline/task40_eval01/stages/actions_task40_gpu1_env0.jsonl"
+    },
+    {
+      "action_step": 720,
+      "left_elbow_measured_rad": 0.3490734398365021,
+      "left_elbow_last_requested_rad": 0.35165199637413025,
+      "trace": "evaluation/V_2_1/baseline/task40_eval01/stages/actions_task40_gpu1_env0.jsonl"
+    },
+    {
+      "action_step": 800,
+      "left_elbow_measured_rad": 0.34909313917160034,
+      "left_elbow_last_requested_rad": 0.3584722876548767,
+      "trace": "evaluation/V_2_1/baseline/task40_eval01/stages/actions_task40_gpu1_env0.jsonl"
+    }
+  ],
+  "online_input_alignment": {
+    "input": "Output/test_02/experiment_01/baseline_diagnostic/paired_integrators/input_000000.npz",
+    "matches": [
+      {
+        "trace": "evaluation/V_2_1/ablation_action_fault/task40_eval01/stages/actions_task40_gpu0_env0.jsonl",
+        "input_batch": 0,
+        "groups": {
+          "left_arm": {
+            "max_abs_error": 0.0,
+            "policy_input": [
+              -0.00018455223471391946,
+              2.9545540201070253e-06,
+              0.0001808016822906211,
+              1.0302600458089728e-05,
+              7.606883445987478e-05,
+              -1.735483056108933e-05,
+              9.939369192579761e-06
+            ],
+            "simulation_qpos": [
+              -0.00018455223471391946,
+              2.9545540201070253e-06,
+              0.0001808016822906211,
+              1.0302600458089728e-05,
+              7.606883445987478e-05,
+              -1.735483056108933e-05,
+              9.939369192579761e-06
+            ]
+          },
+          "right_arm": {
+            "max_abs_error": 0.0,
+            "policy_input": [
+              -0.00013170151214580983,
+              4.3477630242705345e-06,
+              0.00021658744663000107,
+              -5.6050146667985246e-05,
+              0.0001037644105963409,
+              6.130771907919552e-06,
+              6.448542080761399e-06
+            ],
+            "simulation_qpos": [
+              -0.00013170151214580983,
+              4.3477630242705345e-06,
+              0.00021658744663000107,
+              -5.6050146667985246e-05,
+              0.0001037644105963409,
+              6.130771907919552e-06,
+              6.448542080761399e-06
+            ]
+          },
+          "torso": {
+            "max_abs_error": 0.0,
+            "policy_input": [
+              1.0254091024398804,
+              -1.449735164642334,
+              -0.4699001610279083,
+              -6.408176886907313e-06
+            ],
+            "simulation_qpos": [
+              1.0254091024398804,
+              -1.449735164642334,
+              -0.4699001610279083,
+              -6.408176886907313e-06
+            ]
+          }
+        }
+      },
+      {
+        "trace": "evaluation/V_2_1/ablation_action_fault/task40_eval01/stages/actions_task40_gpu0_env1.jsonl",
+        "input_batch": 1,
+        "groups": {
+          "left_arm": {
+            "max_abs_error": 0.0,
+            "policy_input": [
+              -0.00018357692169956863,
+              2.8993742944294354e-06,
+              0.00018308745347894728,
+              1.086385418602731e-05,
+              7.398428715532646e-05,
+              -1.7339731130050495e-05,
+              9.488443538430147e-06
+            ],
+            "simulation_qpos": [
+              -0.00018357692169956863,
+              2.8993742944294354e-06,
+              0.00018308745347894728,
+              1.086385418602731e-05,
+              7.398428715532646e-05,
+              -1.7339731130050495e-05,
+              9.488443538430147e-06
+            ]
+          },
+          "right_arm": {
+            "max_abs_error": 0.0,
+            "policy_input": [
+              -0.0001314160763286054,
+              4.2324977584939916e-06,
+              0.00021809074678458273,
+              -5.550439891521819e-05,
+              0.00010224882134934887,
+              6.0034258240193594e-06,
+              6.2531853473046795e-06
+            ],
+            "simulation_qpos": [
+              -0.0001314160763286054,
+              4.2324977584939916e-06,
+              0.00021809074678458273,
+              -5.550439891521819e-05,
+              0.00010224882134934887,
+              6.0034258240193594e-06,
+              6.2531853473046795e-06
+            ]
+          },
+          "torso": {
+            "max_abs_error": 0.0,
+            "policy_input": [
+              1.0253088474273682,
+              -1.4497359991073608,
+              -0.4699004590511322,
+              -6.496144578704843e-06
+            ],
+            "simulation_qpos": [
+              1.0253088474273682,
+              -1.4497359991073608,
+              -0.4699004590511322,
+              -6.496144578704843e-06
+            ]
+          }
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "request": {
+    "checkpoint": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v2.1__test01__exp14__run001/run/checkpoints/v2.1__test01__exp14__run001__step006000",
+    "gpu_index": 0,
+    "port": 5564,
+    "source_dir": "/nvme3/projects/memory_vla/deployments/web_live",
+    "python_path": "/nvme3/projects/memory_vla/envs/n1d6-p0/bin/python",
+    "seed": 42,
+    "inference_steps": 4,
+    "action_diagnostics": true
+  },
+  "preview": {
+    "gpu_index": 0,
+    "host": "172.28.62.17",
+    "port": 5564,
+    "checkpoint": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v2.1__test01__exp14__run001/run/checkpoints/v2.1__test01__exp14__run001__step006000",
+    "inference_steps": 4,
+    "action_diagnostics": true,
+    "serving_module": "v2_1_groot_memoryvla.serve",
+    "requested_source_dir": "/nvme3/projects/memory_vla/deployments/web_live",
+    "source_compatibility": null,
+    "source_dir": "/nvme3/projects/memory_vla/deployments/web_live",
+    "python_path": "/nvme3/projects/memory_vla/envs/n1d6-p0/bin/python",
+    "seed": 42,
+    "history_mode": "normal",
+    "log": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v2.1__test01__exp14__run001/logs/policy_v2.1__test01__exp14__run001_v2.1__test01__exp14__run001__step006000_port5564.log",
+    "command": "/nvme3/projects/memory_vla/envs/n1d6-p0/bin/python -u -m v2_1_groot_memoryvla.serve --model-path /nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v2.1__test01__exp14__run001/run/checkpoints/v2.1__test01__exp14__run001__step006000 --embodiment-tag BEHAVIOR_R1_PRO --device cuda --host 172.28.62.17 --port 5564 --use-sim-policy-wrapper --seed 42 --residual-scale 1 --history-mode normal --inference-steps 4 --action-diagnostics-dir /nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v2.1__test01__exp14__run001/logs/port5564/action_diagnostics",
+    "task40_diagnostics": false,
+    "task40_trace": false,
+    "state": "checked"
+  }
+}
