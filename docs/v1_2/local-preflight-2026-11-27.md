@@ -51,11 +51,27 @@ PYTHONDONTWRITEBYTECODE=1 \
 
 1. **实验身份未分配。** 仓库 task/progress/plan 和工作台记录中未找到本任务的 V1.2 test_id / experiment_id / run_id。Skill 要求“身份缺失时询问，不用默认版本/编号”；本轮没有猜编号，也没有伪造实验目录、计划或 job ID。
 2. **手册与可取得的 tag 不一致。** [官方基线手册](https://behavior.stanford.edu/challenge/baselines)仍指定 v3.9.3，但 [精确 tag API](https://api.github.com/repos/StanfordVL/BEHAVIOR-1K/git/ref/tags/v3.9.3)返回 404，git ls-remote 同样没有该 tag。可取得 v3.9.3-post1（`bd049de3119acdcdf2334fe9e1ebe060fa20c108`）及 v3.9.3-post2（`a8247a8cc1633fe1ca0cc66aa07243d46c64f155`）。两个 post tag 的 `OmniGibson/omnigibson/eval/eval.py` 内容相同，SHA256 均为 `93c4dbf4a6bcdf17f2edcafda7132a3b83bebf6d5dba3dda90d7c157862d4ccd`，包含当前候选 spec 所需参数；**这不证明两套仿真源码或资产相同**。需要明确固定哪个可用 revision，不能悄用 main/post2 冒充 v3.9.3。
-3. **存储约定缺少可写落点。** 本机规则要求代码/数据/模型放 /data，但 /data 与 /data/datasets 均为 root:root 0755，当前 uid=1001 无写权限；约定的 `/data/模型与数据存放速查手册.md` 不存在。现有工作台实际使用 /nvme3。安装独立环境、源码及下载权重前，需给出可写的合规路径，或明确本任务沿用 /nvme3 的例外。
+3. **存储落点已获用户确认，原阻塞解除。** 用户在接续消息中明确“允许/nvme3”，本任务独立环境、源码、数据与权重可沿用 /nvme3。此前 /data 与 /data/datasets 均为 root:root 0755，当前 uid=1001 无写权限；约定的 `/data/模型与数据存放速查手册.md` 不存在。本授权仅针对本任务，不修改全局存储规则。
 4. **权重与新环境未就绪。** 本机/A100 现有注册资源未找到可复用 N1.7 环境、通用权重或官方 radio checkpoint。Hugging Face 访问尝试失败，许可证与下载访问状态尚未验证，不能记成许可已通过或被拒绝。没有产生实体 checkpoint / processor SHA256。
 5. **工作台接入未验收。** 现有 InferenceManager 尚无 N1.7 WebSocket route；LaunchManager 继续拒绝 V1.2 误走 B1K2025。需要在确认上述版本、真实路径及实验身份后接入现有 manager 的生命周期、健康检查、结果 JSON 和视频。当前没有新增可启动路由、没有调用 start，也没有用私人 launcher 代跑。
 
 现有 `/nvme3/projects/GR00T/BEHAVIOR-1K-task-progress` 为带本地改动的 2025 仿真，不作为官方 2026 环境。2026 官方 radio 权重只用于 turning_on_radio，不能进入 2025 Task40。
+
+### 接续核实：v3.9.3 源码与 post2 的区别
+
+精确 v3.9.3 tag 仍返回 404，但已定位 [Bump version to 3.9.3 提交](https://github.com/StanfordVL/BEHAVIOR-1K/commit/6cbf70b075816096e9be53958780769f3264d25d)（2026-09-23，`6cbf70b075816096e9be53958780769f3264d25d`）。它同时将文档安装指令改为 v3.9.3。这里将该提交作为可核实的源码参照，不声称找到缺失 tag 的历史指向。
+
+上游 [完整比较](https://github.com/StanfordVL/BEHAVIOR-1K/compare/6cbf70b075816096e9be53958780769f3264d25d...a8247a8cc1633fe1ca0cc66aa07243d46c64f155)确认 post2 比该提交前进 3 个 commit、落后 0 个，改动 5 个文件：
+
+| 提交 | 实质改动 | 对基线的含义 |
+|---|---|---|
+| bd049de / #2357 | light_utils.py 两处 `ToggledOn.value` 改为 `ToggledOn.get_value()` | 修复评估灯光同步的状态读取；已包含在 post1 |
+| 40162fc / #2362 | GitHub Actions runner 2.320.0 → 2.337.0 | CI 基础设施，不改变本机仿真配方 |
+| a8247a8 / #2361 | evaluator.py、behavior_task.py 与评估文档增加可选的预采样起点 key | 自定义机器人可复用 r1pro 等机器人起点；默认仍先选通用 robot key，再选自身模型，匹配统一转为小写 |
+
+这三个提交没有修改 eval.py CLI、r1pro.yaml、控制器、物理动作维度或 metrics 评分实现；不过 evaluator.py 的起点加载确实改动，不能因 eval.py 相同就称整个评估器完全一致。标准 R1Pro 不设置新增的起点覆盖选项时，起点选择预期保持原行为；这是源码推断，仍需真实运行核对。
+
+[官方 post2 release](https://github.com/StanfordVL/BEHAVIOR-1K/releases/tag/v3.9.3-post2)发布于 2026-10-07。当前建议将其固定为确切 commit a8247a8，保留默认 R1Pro 配置并记录真实版本；用户此时仅确认 /nvme3，尚未明确选择仿真 revision。
 
 ## 工作台与 V2.1 保护记录
 
