@@ -208,7 +208,7 @@ def prepare(dataset, split_path, base, out, mode):
         raise ValueError("unexpected generic checkpoint / codec contract")
     info, modality = read(dataset/"meta/info.json"), read(dataset/"meta/modality.json")
     if (info["fps"] != 30 or len(modality["video"]) != 3 or
-        set(info["features"][k]["shape"][0] for k in ("observation.state","action")) != {82,23}):
+        (info["features"]["observation.state"]["shape"],info["features"]["action"]["shape"]) != ([82],[23])):
         raise ValueError("expected converted 30Hz R1Pro data")
     episodes = [json.loads(l) for l in (dataset/"meta/episodes.jsonl").read_text().splitlines() if l.strip()]
     meta = {int(e["episode_index"]):e for e in episodes}
@@ -257,9 +257,19 @@ def prepare(dataset, split_path, base, out, mode):
 def verify_prepared(path):
     path=Path(path)
     m=read(path/"PREPARED.json")
+    if sha(Path(m["base"])/"config.json")!=m["base_config_sha256"]:
+        raise ValueError("original base config changed")
     for f,digest in m["hashes"].items():
         if sha(path/f)!=digest:
             raise ValueError(f"prepared artifact changed: {f}")
+    # The official stats generator globs data/*/*.parquet; ensure the
+    # physical view cannot accidentally contain held-out files.
+    split=read(path/"data_split.json")
+    for partition, key in (("train","train"),("validation","validation")):
+        paths=list((path/partition).glob("data/*/*.parquet"))
+        ids=[int(p.stem.rsplit("_",1)[1]) for p in paths]
+        if len(ids)!=len(split[key]) or set(ids)!=set(split[key]) or any(not p.is_symlink() or not p.is_file() for p in paths):
+            raise ValueError("prepared parquet view changed: "+partition)
     return m
 
 
