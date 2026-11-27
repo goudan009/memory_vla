@@ -1,0 +1,5 @@
+{
+  "step": 3000,
+  "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v2_1__test02__exp01__run001/run/checkpoints/v2_1__test02__exp01__run001__step003000",
+  "world_size": 4
+}

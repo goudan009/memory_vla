@@ -1,0 +1,16 @@
+{
+  "run": "v2_1__test02__exp01__run001",
+  "arm": "baseline",
+  "steps": 3000,
+  "resume_step": 10,
+  "checkpoint": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v2_1__test02__exp01__run001/run/checkpoints/v2_1__test02__exp01__run001__step000010",
+  "source": "/nvme3/projects/memory_vla/deployments/v2_1__test02__exp01__run001",
+  "gpus": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "enqueue": true,
+  "requested_at": "2026-11-27T12:20:28.739941"
+}

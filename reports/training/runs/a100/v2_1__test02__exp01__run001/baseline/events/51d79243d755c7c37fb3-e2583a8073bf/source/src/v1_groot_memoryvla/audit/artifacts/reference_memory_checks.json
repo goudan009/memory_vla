@@ -1,0 +1,187 @@
+{
+  "source": "/nvme3/projects/memory_vla/src/references_code/memoryvla/vla/memory_vla.py",
+  "feature_width": 32,
+  "checks": {
+    "CogMemBank": {
+      "output_shape": [
+        16,
+        1,
+        32
+      ],
+      "history_lengths_first_group": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      "query_17_reads": 16,
+      "post_write_17_capacity": 16,
+      "merge_test_pair": [
+        5,
+        6
+      ],
+      "retained_timestamp": 5,
+      "stored_fused_detached": true,
+      "current_input_gradient": 1.2227613925933838,
+      "past_input_gradient": 0.0,
+      "parameter_gradient_norms": {
+        "retrieval_blocks.0.q_proj.weight": 0.14209839701652527,
+        "retrieval_blocks.0.q_proj.bias": 0.026244204491376877,
+        "retrieval_blocks.0.k_proj.weight": 0.1485431045293808,
+        "retrieval_blocks.0.k_proj.bias": 2.8223242409808336e-08,
+        "retrieval_blocks.0.v_proj.weight": 1.1037876605987549,
+        "retrieval_blocks.0.v_proj.bias": 0.6052061319351196,
+        "retrieval_blocks.0.attn_norm.weight": 0.4249890148639679,
+        "retrieval_blocks.0.attn_norm.bias": 0.5903574824333191,
+        "retrieval_blocks.0.ffn.0.weight": 1.1168577671051025,
+        "retrieval_blocks.0.ffn.0.bias": 0.19743546843528748,
+        "retrieval_blocks.0.ffn.2.weight": 1.9753100872039795,
+        "retrieval_blocks.0.ffn.2.bias": 0.5766898989677429,
+        "retrieval_blocks.0.ffn_norm.weight": 0.3920442759990692,
+        "retrieval_blocks.0.ffn_norm.bias": 0.5954278707504272,
+        "retrieval_blocks.1.q_proj.weight": 0.5124872326850891,
+        "retrieval_blocks.1.q_proj.bias": 0.09059622138738632,
+        "retrieval_blocks.1.k_proj.weight": 0.4443615972995758,
+        "retrieval_blocks.1.k_proj.bias": 6.6421326216925536e-09,
+        "retrieval_blocks.1.v_proj.weight": 1.0401782989501953,
+        "retrieval_blocks.1.v_proj.bias": 0.6020179986953735,
+        "retrieval_blocks.1.attn_norm.weight": 0.3971979022026062,
+        "retrieval_blocks.1.attn_norm.bias": 0.6251146197319031,
+        "retrieval_blocks.1.ffn.0.weight": 1.1686413288116455,
+        "retrieval_blocks.1.ffn.0.bias": 0.2065895050764084,
+        "retrieval_blocks.1.ffn.2.weight": 2.5239484310150146,
+        "retrieval_blocks.1.ffn.2.bias": 0.6254655122756958,
+        "retrieval_blocks.1.ffn_norm.weight": 0.5538685917854309,
+        "retrieval_blocks.1.ffn_norm.bias": 0.6627882719039917,
+        "gate_fusion_blocks.proj.weight": 1.3295559883117676,
+        "gate_fusion_blocks.proj.bias": 0.1697927713394165,
+        "timestep_encoder.mlp.0.weight": 0.008459336124360561,
+        "timestep_encoder.mlp.0.bias": 0.0013198929373174906,
+        "timestep_encoder.mlp.2.weight": 0.017605459317564964,
+        "timestep_encoder.mlp.2.bias": 1.934709636941534e-08
+      },
+      "group_reset_and_episode_isolation": true
+    },
+    "PerMemBank": {
+      "output_shape": [
+        16,
+        4,
+        32
+      ],
+      "history_lengths_first_group": [
+        4,
+        8,
+        12,
+        16,
+        20,
+        24,
+        28,
+        32,
+        36,
+        40,
+        44,
+        48,
+        52,
+        56,
+        60
+      ],
+      "query_17_reads": 16,
+      "post_write_17_capacity": 16,
+      "merge_test_pair": [
+        5,
+        6
+      ],
+      "retained_timestamp": 5,
+      "stored_fused_detached": true,
+      "current_input_gradient": 2.0529003143310547,
+      "past_input_gradient": 0.0,
+      "parameter_gradient_norms": {
+        "retrieval_blocks.0.q_proj.weight": 0.4733848571777344,
+        "retrieval_blocks.0.q_proj.bias": 0.0784439891576767,
+        "retrieval_blocks.0.k_proj.weight": 0.3691241145133972,
+        "retrieval_blocks.0.k_proj.bias": 7.785006417293516e-09,
+        "retrieval_blocks.0.v_proj.weight": 1.1816436052322388,
+        "retrieval_blocks.0.v_proj.bias": 1.1808290481567383,
+        "retrieval_blocks.0.attn_norm.weight": 0.83205246925354,
+        "retrieval_blocks.0.attn_norm.bias": 1.1813828945159912,
+        "retrieval_blocks.0.ffn.0.weight": 2.179074764251709,
+        "retrieval_blocks.0.ffn.0.bias": 0.38370734453201294,
+        "retrieval_blocks.0.ffn.2.weight": 4.139877796173096,
+        "retrieval_blocks.0.ffn.2.bias": 1.1578351259231567,
+        "retrieval_blocks.0.ffn_norm.weight": 0.7597715854644775,
+        "retrieval_blocks.0.ffn_norm.bias": 1.162392497062683,
+        "retrieval_blocks.1.q_proj.weight": 0.6058997511863708,
+        "retrieval_blocks.1.q_proj.bias": 0.1332276612520218,
+        "retrieval_blocks.1.k_proj.weight": 0.4751432538032532,
+        "retrieval_blocks.1.k_proj.bias": 6.7742722542618594e-09,
+        "retrieval_blocks.1.v_proj.weight": 1.1739542484283447,
+        "retrieval_blocks.1.v_proj.bias": 1.1714460849761963,
+        "retrieval_blocks.1.attn_norm.weight": 0.7820040583610535,
+        "retrieval_blocks.1.attn_norm.bias": 1.161764144897461,
+        "retrieval_blocks.1.ffn.0.weight": 2.0178396701812744,
+        "retrieval_blocks.1.ffn.0.bias": 0.38687410950660706,
+        "retrieval_blocks.1.ffn.2.weight": 3.750323534011841,
+        "retrieval_blocks.1.ffn.2.bias": 1.0117391347885132,
+        "retrieval_blocks.1.ffn_norm.weight": 0.9890748858451843,
+        "retrieval_blocks.1.ffn_norm.bias": 1.0335781574249268,
+        "gate_fusion_blocks.proj.weight": 1.3072543144226074,
+        "gate_fusion_blocks.proj.bias": 0.16847799718379974,
+        "timestep_encoder.mlp.0.weight": 0.008103297092020512,
+        "timestep_encoder.mlp.0.bias": 0.0012172829592600465,
+        "timestep_encoder.mlp.2.weight": 0.01743958331644535,
+        "timestep_encoder.mlp.2.bias": 8.776445348246398e-09
+      },
+      "group_reset_and_episode_isolation": true
+    }
+  },
+  "bottleneck_se": {
+    "input_per_camera": [
+      3,
+      81,
+      2048
+    ],
+    "output_per_camera": [
+      3,
+      81,
+      2048
+    ],
+    "rejected_concatenated_token_counts": [
+      243,
+      972
+    ],
+    "weights": "random; dimensional compatibility only"
+  },
+  "scatter": {
+    "synthetic_features_on_real_masks": true,
+    "rows": [
+      {
+        "batch": 0,
+        "sequence_length": 323,
+        "image_tokens": 243,
+        "cognitive_position": 321,
+        "image_attention_count": 243,
+        "text_attention_count": 80
+      },
+      {
+        "batch": 1,
+        "sequence_length": 323,
+        "image_tokens": 243,
+        "cognitive_position": 321,
+        "image_attention_count": 243,
+        "text_attention_count": 39
+      }
+    ],
+    "shape_mask_and_untouched_positions_preserved": true
+  }
+}
