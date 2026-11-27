@@ -113,3 +113,28 @@ def test_plan_batch_and_steps(tmp_path):
     assert p["global_batch"]==64==p["num_gpus"]*p["per_device_batch"]*p["accumulation"]
     assert p["steps"]==6000 and p["inference_steps"]==4 and p["execute_steps"]==8
     assert p["learning_rate"]==1e-4 and p["lr_scheduler"]=="cosine"
+
+
+def test_workbench_identity_and_canonical_checkpoint(tmp_path):
+    from stage1_native_train import canonical_checkpoint, require_workbench_integration
+    # Synthetic run number for tests only; never allocated on any device.
+    run="v2_1__test02__exp01__run999"
+    root=tmp_path/run
+    cfg=dict(version="V_2_1",stage="stage1",recipe="native_random_v2",
+             run_id=run,run_name=run,preflight_only=False)
+    write(root/"config/web_launch.json",cfg)
+    assert canonical_checkpoint(root,6000)==root/"run/checkpoints"/(run+"__step006000")
+    cfg["run_id"]="v2.1__test01__exp14__run001"
+    write(root/"config/web_launch.json",cfg)
+    with pytest.raises(ValueError):canonical_checkpoint(root,6000)
+    with pytest.raises(RuntimeError,match="BLOCKED_WORKBENCH_INTEGRATION"):
+        require_workbench_integration()
+
+def test_no_native_cli_bypass():
+    import subprocess,sys
+    repo=Path(__file__).resolve().parents[1]
+    for name in ("stage1_native_prepare.py","stage1_native_train.py"):
+        result=subprocess.run([sys.executable,str(repo/"scripts"/name),"--execute"],
+                              capture_output=True,text=True)
+        assert result.returncode!=0
+        assert "BLOCKED_WORKBENCH_INTEGRATION" in result.stderr
