@@ -10,6 +10,7 @@ MODEL_VERSIONS = {
     'V_1': dict(prefix='v1', backend='v1', description='V1 方法及其已记录的历史适配'),
     'V_2': dict(prefix='v2', backend='v1', description='历史 V2；新任务仍须锁定具体方法配置'),
     'V_2_1': dict(prefix='v2_1', backend='v2_1', description='V2.1 方法；使用专用训练入口'),
+    'V_1_2': dict(prefix='v1_2', backend='v1_2', description='GR00T N1.7 原生无记忆基线；独立环境', launch_ready=False),
 }
 RUN_PATTERN = r'v[0-9]+(?:_[0-9]+)*__test[0-9]{2}__exp[0-9]{2}__run(?!0{3,}(?:__|$))[0-9]{3,}'
 EXPERIMENT_12_RUN = re.compile(r'v1__test01__exp12__run(?!000)[0-9]{3}')
