@@ -276,6 +276,11 @@ def launch(args):
     steps=3 if args.preflight else STEPS
     print(json.dumps(dict(plan=plan(args,steps),identity=ident,
                           normalization=manifest["accepted_cells"]),indent=2),flush=True)
+    if args.finalize_only:
+        if args.execute or args.preflight:raise ValueError("finalize-only is a separate offline validation action")
+        if read(args.output/"identity.json")!=ident:raise ValueError("existing run identity mismatch")
+        finalize(args,manifest)
+        return
     if not args.execute:
         return
     import torch
@@ -311,25 +316,33 @@ def launch(args):
         write(args.output/"preflight.json",dict(passed=True,identity=ident,video_backend=args.video_backend,
             workers=args.workers,loss_rows=rows,reload_validation=val))
     else:
-        # Native factory does not provide eval; use the fixed held-out set
-        # on saved checkpoints after training, not as part of the train sampler.
-        for step in range(1000,STEPS+1,1000):
-            checkpoint=native/f"checkpoint-{step}"
-            val=validate(checkpoint,args.prepared,args.video_backend)
-            write(args.output/f"validation-{step:06d}.json",val)
-        final=export_final(args,manifest)
-        print(f"Stage1 completed: {final}",flush=True)
+        finalize(args,manifest)
+
+
+def finalize(args,manifest):
+    # Native factory does not provide eval; use the fixed held-out set
+    # on saved checkpoints after training, not as part of the train sampler.
+    if read(args.output/"native"/f"checkpoint-{STEPS}"/"trainer_state.json")["global_step"]!=STEPS:
+        raise RuntimeError("formal training did not reach 6000")
+    for step in range(1000,STEPS+1,1000):
+        checkpoint=args.output/"native"/f"checkpoint-{step}"
+        dest=args.output/f"validation-{step:06d}.json"
+        val=validate(checkpoint,args.prepared,args.video_backend)
+        write(dest,val)
+    final=export_final(args,manifest)
+    print(f"Stage1 completed: {final}",flush=True)
 
 
 def main():
     p=argparse.ArgumentParser(__doc__)
     for key in ("official-root","prepared","output"):
         p.add_argument("--"+key,type=Path,required=True)
-    p.add_argument("--video-backend",choices=["torchcodec","pyav","decord"],default="pyav")
+    p.add_argument("--video-backend",choices=["torchcodec","decord","ffmpeg"],default="torchcodec")
     p.add_argument("--workers",type=int,default=2)
     p.add_argument("--preflight",action="store_true")
     p.add_argument("--accept-preflight",type=Path)
     p.add_argument("--execute",action="store_true")
+    p.add_argument("--finalize-only",action="store_true",help="Run held-out validation/export on an already completed formal run; no training")
     p.add_argument("--worker",action="store_true",help=argparse.SUPPRESS)
     a=p.parse_args()
     if a.workers<0:raise ValueError("workers must be nonnegative")
