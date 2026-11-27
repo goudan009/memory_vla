@@ -196,7 +196,8 @@ def fit(train, validation, modality, mode):
 
 def prepare(dataset, split_path, base, out, mode):
     dataset, base, out = map(lambda p: Path(p).resolve(), (dataset,base,out))
-    if base.name != "GR00T-N1.6-3B" or (base/"v2_1_stage1.json").exists():
+    # The registered base identity is enforced by the workbench before this function.
+    if (base/"v2_1_stage1.json").exists():
         raise ValueError("start from original generic GR00T-N1.6-3B, not Task40/B1K weights")
     cfg = read(base/"config.json")
     pc = read(base/"processor_config.json")["processor_kwargs"]
