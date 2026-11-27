@@ -1,60 +1,28 @@
-# Stage1 基线重新训练（native-random-v2）
+# V2_1 Stage1 原生训练重训接入说明
 
-独立实验入口，原 V2.1-6000 和 Stage2 不改、不覆盖。使用本地 NVIDIA Isaac-GR00T N1.6 原生 `experiment.run`、`Gr00tTrainer`、随机分片数据集；不复用之前的自定义顺序训练循环。原生默认微调参数不是 B1K 冠军训练配方。
+> 当前状态：**BLOCKED_WORKBENCH_INTEGRATION**。上一提交 724d3c0 的独立CLI、手写输出地址、非规范 checkpoint 名称及非严格续训方案不符合仓库执行规则，已撤销其启动授权。候选科学配置保留，不能直接执行；原有训练/推理/评估记录保持不变。
 
-| 参数 | 本次 |
-|---|---|
-| 初始化 | 原通用 GR00T-N1.6-3B |
-| 数据 | 原 Task40 180/20 固定划分 |
-| 采样 | 官方 sharded random，episode_sampling_rate=0.1，shuffle，非固定 phase0 |
-| A100 | 4卡 DDP，microbatch 2，累积8，全局64 |
-| LR | 1e-4，Cosine，warmup 300（5%） |
-| AdamW | 官方 adamw_torch_fused，weight decay 1e-5，clip 1 |
-| 训练 | 6000 optimizer steps，BF16，FP32可训练参数 |
-| 冻结 | 全部 Eagle（明确 top_llm_layers=0）；训练 action head/projector/VLLN |
-| 动作 | 50×128 padding，有效32×23；相对动作定义不变 |
-| 保存 | 1000步一次，保留全部6个权重 |
-| 推理 | Euler4、执行8帧不变 |
+## 唯一执行依据
 
-## 归一化决定
+先读 [AGENTS.md](../../AGENTS.md)、[robot-vla-experiment-ops Skill](../../.agents/skills/robot-vla-experiment-ops/robot-vla-experiment-ops/SKILL.md) 和 [工作台手册](../workbench/agent.md)；接续实验读取 [当前任务书](../../Output/test_02/experiment_01/task.md)、[plan-v004](../../Output/test_02/experiment_01/workflow/plan-v004.json)、progress 及诊断证据。任何本机环境及存储约定还需本地 Agent 读取 ~/.agent-rules.md。
 
-官方处理器相对动作会直接读取 relative_action 中的 min/max，设置 use_percentiles=True 不会改变这条路径。本方案仅针对相对动作的躯干/双臂，每个未来offset、每个关节独立比较全训练集 min/max 与 Q01/Q99。正常状态、底盘、夹爪保持 Min-Max；候选区间包含零（若原范围包含零）、宽度至少0.02 rad；只有范围缩小至少4倍、训练裁剪≤2.1%、超过0.1rad裁剪≤0.1%、平均裁剪误差≤0.001rad 才接受。阈值是保守工程选择，不代表已验证能改善效果。原始统计和候选数值、极端样本及验证集裁剪误差均记录；不删除示教，不用验证集决定范围。未达条件保持原始 Min-Max。新 checkpoint 保存实际生效范围，processor use_percentiles=False 不变，以兼容原解码和 Stage2。也可显式使用 --normalization minmax 作纯原生对照；本轮默认 guarded。
+## 身份与路径
 
-## 本地执行
+- 已登记方法 V_2_1，Test02 / Exp01；本次独立重训是新 run，不是新方法版本。完整身份格式 `v2_1__test02__exp01__runNNN`；NNN仅为占位，不是已分配编号。查实际工作台 jobs、目标设备训练目录、deployments、回收站及已保留身份，避免重用，显式锁定。
+- 预检使用同一新谱系的规范 `__preflightNNN` 后缀；正式作业由工作台 preview/start 分配路径。作业根为工作台实际 TRAINING / run_id；实际训练目录为作业根/run；正式 checkpoint 为作业根/run/checkpoints/<run_id>__stepNNNNNN。示例仅为结构，不指定任何绝对目录。
+- 数据、初始化权重、标签、Python、源码快照和 GPU UUID 从本机规则、工作台 options/preview、历史任务证据核实。历史 `v2.1__test01__exp14__run001__step006000` 保留原路径，仅用于历史划分和对照，不用于新初始化。不得复制或改名历史产物。
+- 实验文档维护在 `Output/test_02/experiment_01/`；执行证据、数据清单、job ID、配置、日志和实际 checkpoint hash 依既有规则归档。工作台是唯一提交、暂停、续跑、队列和资源入口。
 
-从仓库根目录运行，先使用工作台确认4张A100确实可用并分配，记录新实验 ID；不要覆盖现有目录。以下路径来自原诊断报告，实际路径由本地 Agent 核验。PY 指向**官方 N1.6 已安装完整依赖的 Python**，不是未验证的系统解释器。
+## 已确认训练配方（不变）
 
-```bash
-PY=/path/to/official/n1d6/python
-OFFICIAL=/nvme3/projects/GR00T/Isaac-GR00T-n1d6-9b37aa1
-DATA=/nvme3/data_wyh/datasets/b1k2025_groot_task40_v1_200
-BASE=/nvme3/huggingface/train_model/GR00T/GR00T-N1.6-3B
-OLD=/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v2.1__test01__exp14__run001/run/checkpoints/v2.1__test01__exp14__run001__step006000
-# OUT 必须为全新目录；选择本地工作台认可的路径。
-OUT=/nvme3/data_wyh/outputs/memory_vla/stage1_native_random_v2
+官方原生 GR00T N1.6 训练器及随机分片采样；通用 GR00T-N1.6-3B 起点、Task40原180/20、seed42、四A100 DDP、microbatch2×accum8、全局64、6000 optimizer steps、LR1e-4、Cosine、300步warmup、WD1e-5、AdamW fused、clip1、BF16、全部Eagle冻结、动作专家/projector/VLLN训练；预测50、有效32×23、积分4、执行8、保存间隔1000。不是B1K冠军配方。候选相对动作归一化：只用训练集拟合逐offset/关节原始Min-Max和Q01–Q99，范围缩小≥4倍、宽度≥0.02rad、裁剪≤2.1%、>0.1rad裁剪≤0.1%、平均裁剪误差≤0.001rad才接受候选，否则Min-Max；保留原始统计，不删除示教。阈值为已提出的保守工程选择，实际数据需检查。
 
-"$PY" scripts/stage1_native_prepare.py --dataset "$DATA" \
-  --split "$OLD/v2_1_stage1.json" --base "$BASE" \
-  --output "$OUT/prepared" --normalization guarded
+## 本地 Agent 接入与验收
 
-# 检查 PREPARED.json 和 normalization_audit.json：
-# 有多少 offset/channel 采用保守分位区间，实际训练/验证截断量如何。
-# 若数据异常需要人工核实，不应盲目启动。
-# CUDA_VISIBLE_DEVICES 由本地工作台按已分配的4张A100设置。
-"$PY" scripts/stage1_native_train.py --official-root "$OFFICIAL" \
-  --prepared "$OUT/prepared" --output "$OUT/preflight" --preflight
-# 上述不加 --execute 只打印计划。确认无误后：
-"$PY" scripts/stage1_native_train.py --official-root "$OFFICIAL" \
-  --prepared "$OUT/prepared" --output "$OUT/preflight" --preflight --execute
+1. 先通过工作台只读 services/options/jobs 核对身份、已有作业、资源及路径，记录当前实验计划与真实状态。
+2. 接入现有 `train/v21_workbench.py` 的专用 V_2_1 recipe（`native_random_v2`）。将候选逻辑放在版本源码快照可同步范围，沿用 workbench controller、queue、日志、status、metrics 和现有 checkpoint 发现/暂停恢复机制，不新增私人调度或直接CLI；保留旧recipe默认行为。当前该recipe明确拒绝预览/启动，不会静默回退。
+3. 解决上游 Gr00tTrainer 的 resume 重置种子与忽略数据跳过问题，保证保存/恢复模型、optimizer、scheduler、适用scaler、各rank RNG、采样游标、累计step及hash。完整 checkpoint 使用规范命名和现有 COMPLETE/training_state 合同；原生内部 checkpoint-N 不对外发布。不得用仅重载权重冒充严格续训。
+4. 在同一工作台执行真实四卡≤100步工程预检、暂停释放资源、同run恢复后实际继续更新；归档证据并依规则清理临时产物。核对真实训练配置、有效batch、冻结梯度、归一化统计和动作解码。只有通过后才使用同一配置 preview/start 正式6000步。
+5. 完成后用既有工作台推理及 Task40 闭环（实例0–9，10有效回合，seed0 sequence，原协议），与旧基线和官方参考对比。内部检查仅服务具体故障，不派发独立离线MAE评估。结果保存实际路径和 ID；不自动重启旧Stage2。
 
-# 预检通过后，正式6000步；独立原始通用权重，不继承短测权重。
-"$PY" scripts/stage1_native_train.py --official-root "$OFFICIAL" \
-  --prepared "$OUT/prepared" --output "$OUT/run" \
-  --accept-preflight "$OUT/preflight/preflight.json" --execute
-```
-
-原生默认视频后端 torchcodec；若本地官方环境不支持，允许显式 --video-backend decord 或 ffmpeg，必须重做预检，不能用旧 preflight.json。预检3次真实 optimizer update、检查梯度/损失、冻结、有效Batch、实际保存的统计、重新加载和 held-out 10个动作块的真实推理。不会启动仿真。
-
-原生分片训练器没有在线 eval dataset 接口（Factory 明确要求 eval_strategy=no），所以在正式训练结束后，对每1000步保存权重独立做固定验证集20条 × 5个动作块的 FM loss 及前8帧物理MAE，避免验证泄漏。两种归一化下的 normalized FM loss 不可直接等量比较，以物理MAE及闭环为准。最终6000步生成 Stage2 所需的 v2_1_stage1.json、COMPLETE.json，保留原生 HF 格式。若后处理出错，可使用相同参数和输出目录、去掉 --execute、改用 --finalize-only，仅重新做验证和导出，无需重训。正式训练断点恢复遵循原生 Trainer 语义（重置随机采样种子，不承诺逐步复现）；此新入口暂不提供 resume，不覆盖已有目录。
-
-正式权重路径：`$OUT/run/native/checkpoint-6000`。在现有 V2.1 推理服务或 Stage2 使用前，先实际用原 `loading.load_base` 和 `Gr00tN1d6Processor` 严格加载并短测。现有 Stage2 检查6000步、固定split、统计hash和 raw82 边界，不应为了适配而放松。此代码未注册旧工作台的 HTTP/GUI 路由，使用已分配资源上的显式 CLI，现有入口和实验均不动。本次不自动启动训练。
+候选文件 `scripts/stage1_native_prepare.py`、`scripts/stage1_native_train.py` 的辅助函数保留供接入；直接执行路径已关闭。此前5项CPU测试仅覆盖候选统计和配置，不能作为真实工作台、A100或严格暂停恢复验收。没有启动训练。
