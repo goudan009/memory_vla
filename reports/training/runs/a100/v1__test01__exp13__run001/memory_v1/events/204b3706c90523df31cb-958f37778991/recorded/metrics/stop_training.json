@@ -1,0 +1,6 @@
+{
+  "stop_after_step": 16000,
+  "reason": "User requested checkpoint-boundary stop from training dashboard",
+  "requested_at": "2026-11-26T23:50:22.700139",
+  "arm": "memory_v1"
+}

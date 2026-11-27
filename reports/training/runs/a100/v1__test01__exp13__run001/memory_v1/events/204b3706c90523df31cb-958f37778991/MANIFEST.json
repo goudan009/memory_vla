@@ -1,0 +1,2858 @@
+{
+  "arm": "memory_v1",
+  "captured_at": "2026-11-27T06:20:13.960485+00:00",
+  "device": "a100",
+  "event": "204b3706c90523df31cb-958f37778991",
+  "files": {
+    "recorded/config/data_split.json": {
+      "bytes": 456897,
+      "origin": {
+        "bytes": 456897,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/config/data_split.json",
+        "selection": "complete file",
+        "sha256": "b4e8ef482d2c84cb29ff020bf605ae0bbe0597893fd3c5d688a3b32e1d6b1555"
+      },
+      "sha256": "b4e8ef482d2c84cb29ff020bf605ae0bbe0597893fd3c5d688a3b32e1d6b1555"
+    },
+    "recorded/config/ddp_launch.json": {
+      "bytes": 3431,
+      "origin": {
+        "bytes": 3431,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/config/ddp_launch.json",
+        "selection": "complete file",
+        "sha256": "2c8e462a27e16b4b40036938e325fa4ec4c2ca7b8207d6d805c5d0829d7dda24"
+      },
+      "sha256": "2c8e462a27e16b4b40036938e325fa4ec4c2ca7b8207d6d805c5d0829d7dda24"
+    },
+    "recorded/config/source_manifest.json": {
+      "bytes": 383630,
+      "origin": {
+        "bytes": 383630,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/config/source_manifest.json",
+        "selection": "complete file",
+        "sha256": "15e4371af941296db2c78e8174d21fb881cec3e49ca6468a5fba025aad1db2f7"
+      },
+      "sha256": "15e4371af941296db2c78e8174d21fb881cec3e49ca6468a5fba025aad1db2f7"
+    },
+    "recorded/config/web_launch.json": {
+      "bytes": 417975,
+      "origin": {
+        "bytes": 417975,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/config/web_launch.json",
+        "selection": "complete file",
+        "sha256": "30038572dc8916e1d5767d53ea6ee99cf0b7c5468cd79f5d206e1d29efee24dc"
+      },
+      "sha256": "30038572dc8916e1d5767d53ea6ee99cf0b7c5468cd79f5d206e1d29efee24dc"
+    },
+    "recorded/config/web_process.json": {
+      "bytes": 1969,
+      "origin": {
+        "bytes": 1969,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/config/web_process.json",
+        "selection": "complete file",
+        "sha256": "22e08c8925cf1ba155428aabe2b0636badb01c47ddcf3683f812a5df1cd12843"
+      },
+      "sha256": "22e08c8925cf1ba155428aabe2b0636badb01c47ddcf3683f812a5df1cd12843"
+    },
+    "recorded/config/web_resume_latest.json": {
+      "bytes": 4776,
+      "origin": {
+        "bytes": 4776,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/config/web_resume_latest.json",
+        "selection": "complete file",
+        "sha256": "df0fe2e1abc209d2a4299759e16c69f9ef78d2d7ec60f742ebd0dfe3753fe3d0"
+      },
+      "sha256": "df0fe2e1abc209d2a4299759e16c69f9ef78d2d7ec60f742ebd0dfe3753fe3d0"
+    },
+    "recorded/config/web_resumes/resume-001/engineering_revision.json": {
+      "bytes": 635,
+      "origin": {
+        "bytes": 635,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/config/web_resumes/resume-001/engineering_revision.json",
+        "selection": "complete file",
+        "sha256": "2ffe631ddc72b8adbf8ee30659ca5879d7d37cc9a03e02a7ea8f5c612fcf7668"
+      },
+      "sha256": "2ffe631ddc72b8adbf8ee30659ca5879d7d37cc9a03e02a7ea8f5c612fcf7668"
+    },
+    "recorded/config/web_resumes/resume-001/request.json": {
+      "bytes": 4816,
+      "origin": {
+        "bytes": 4816,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/config/web_resumes/resume-001/request.json",
+        "selection": "complete file",
+        "sha256": "ccf10a022b23c43e89218d929d418b76eb787de5812fa32339640ec56cd5e52d"
+      },
+      "sha256": "ccf10a022b23c43e89218d929d418b76eb787de5812fa32339640ec56cd5e52d"
+    },
+    "recorded/config/web_resumes/resume-002/engineering_revision.json": {
+      "bytes": 642,
+      "origin": {
+        "bytes": 642,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/config/web_resumes/resume-002/engineering_revision.json",
+        "selection": "complete file",
+        "sha256": "68dd3641807e5887a1da745abbd03b9a019904ad0ac8942b8bb28b2d5ee9d526"
+      },
+      "sha256": "68dd3641807e5887a1da745abbd03b9a019904ad0ac8942b8bb28b2d5ee9d526"
+    },
+    "recorded/config/web_resumes/resume-002/request.json": {
+      "bytes": 4794,
+      "origin": {
+        "bytes": 4794,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/config/web_resumes/resume-002/request.json",
+        "selection": "complete file",
+        "sha256": "29716d8e37d245f85a40d85d5391810cd724388ff6d027981f64376f0fd83f98"
+      },
+      "sha256": "29716d8e37d245f85a40d85d5391810cd724388ff6d027981f64376f0fd83f98"
+    },
+    "recorded/config/web_resumes/resume-003/request.json": {
+      "bytes": 4742,
+      "origin": {
+        "bytes": 4742,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/config/web_resumes/resume-003/request.json",
+        "selection": "complete file",
+        "sha256": "099ba977bc8325d820c87516a5fa505c867aafad402564825537f75bc06fc954"
+      },
+      "sha256": "099ba977bc8325d820c87516a5fa505c867aafad402564825537f75bc06fc954"
+    },
+    "recorded/config/web_resumes/resume-004/request.json": {
+      "bytes": 4773,
+      "origin": {
+        "bytes": 4773,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/config/web_resumes/resume-004/request.json",
+        "selection": "complete file",
+        "sha256": "fcfa0dda37a815f7546f2acd1177dc24be2a07c07c0ae6817e659165072d41b2"
+      },
+      "sha256": "fcfa0dda37a815f7546f2acd1177dc24be2a07c07c0ae6817e659165072d41b2"
+    },
+    "recorded/config/web_resumes/resume-005/request.json": {
+      "bytes": 4776,
+      "origin": {
+        "bytes": 4776,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/config/web_resumes/resume-005/request.json",
+        "selection": "complete file",
+        "sha256": "df0fe2e1abc209d2a4299759e16c69f9ef78d2d7ec60f742ebd0dfe3753fe3d0"
+      },
+      "sha256": "df0fe2e1abc209d2a4299759e16c69f9ef78d2d7ec60f742ebd0dfe3753fe3d0"
+    },
+    "recorded/dataset/meta/info.json": {
+      "bytes": 139182,
+      "origin": {
+        "bytes": 139182,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/dataset/meta/info.json",
+        "selection": "complete file",
+        "sha256": "6cb262009fb304d6b3b98ae72cd4eef5ee34112a75fd97eb83ea27eea603a4e0"
+      },
+      "sha256": "6cb262009fb304d6b3b98ae72cd4eef5ee34112a75fd97eb83ea27eea603a4e0"
+    },
+    "recorded/dataset/meta/tasks.jsonl": {
+      "bytes": 14254,
+      "origin": {
+        "bytes": 14254,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/dataset/meta/tasks.jsonl",
+        "selection": "complete file",
+        "sha256": "fb6717bbb4fa503ac5d2bbf220d13727e29d6d320e5cd0d4a4e9b2200483943b"
+      },
+      "sha256": "fb6717bbb4fa503ac5d2bbf220d13727e29d6d320e5cd0d4a4e9b2200483943b"
+    },
+    "recorded/logs/controller.log": {
+      "bytes": 3431,
+      "origin": {
+        "bytes": 3431,
+        "offset": 0,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/logs/controller.log",
+        "selection": "last bytes",
+        "sha256": "2c8e462a27e16b4b40036938e325fa4ec4c2ca7b8207d6d805c5d0829d7dda24",
+        "source_bytes": 3431
+      },
+      "sha256": "2c8e462a27e16b4b40036938e325fa4ec4c2ca7b8207d6d805c5d0829d7dda24"
+    },
+    "recorded/logs/memory_v1_torchrun.log": {
+      "bytes": 262144,
+      "origin": {
+        "bytes": 262144,
+        "offset": 1942070,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/logs/memory_v1_torchrun.log",
+        "selection": "last bytes",
+        "sha256": "9cfbb0c90040c6c44ffe88a2533ef1a23ee3bd67eea71e6a996bbc0c010b29eb",
+        "source_bytes": 2204214
+      },
+      "sha256": "9cfbb0c90040c6c44ffe88a2533ef1a23ee3bd67eea71e6a996bbc0c010b29eb"
+    },
+    "recorded/logs/policy_v1__test01__exp13__run001_v1__test01__exp13__run001__step016000_port5557.log": {
+      "bytes": 63008,
+      "origin": {
+        "bytes": 63008,
+        "offset": 0,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/logs/policy_v1__test01__exp13__run001_v1__test01__exp13__run001__step016000_port5557.log",
+        "selection": "last bytes",
+        "sha256": "3ea0113b8e1242d6879d60d14a057eed58da1373ed0a9750b4200e8829fce938",
+        "source_bytes": 63008
+      },
+      "sha256": "3ea0113b8e1242d6879d60d14a057eed58da1373ed0a9750b4200e8829fce938"
+    },
+    "recorded/memory_v1/checkpoints/latest.json": {
+      "bytes": 282,
+      "origin": {
+        "bytes": 282,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/latest.json",
+        "selection": "complete file",
+        "sha256": "f0e063b8f503ebbaf585b685cf708fe95fd315017e4dd0426f31c04bca3d16ca"
+      },
+      "sha256": "f0e063b8f503ebbaf585b685cf708fe95fd315017e4dd0426f31c04bca3d16ca"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step000034/COMPLETE.json": {
+      "bytes": 131,
+      "origin": {
+        "bytes": 131,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step000034/COMPLETE.json",
+        "selection": "complete file",
+        "sha256": "b4cc47bfdba213605bfc629b10ce152552306ee0463191ebd0438d943382b3af"
+      },
+      "sha256": "b4cc47bfdba213605bfc629b10ce152552306ee0463191ebd0438d943382b3af"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step000034/config.json": {
+      "bytes": 3125,
+      "origin": {
+        "bytes": 3125,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step000034/config.json",
+        "selection": "complete file",
+        "sha256": "ebb759c88ffa5c11e82a62e65c58d52af73ef4ce6972553862a8eade2c739414"
+      },
+      "sha256": "ebb759c88ffa5c11e82a62e65c58d52af73ef4ce6972553862a8eade2c739414"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step000034/embodiment_id.json": {
+      "bytes": 191,
+      "origin": {
+        "bytes": 191,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step000034/embodiment_id.json",
+        "selection": "complete file",
+        "sha256": "be6f2e2539fe4ec97b03d0f838afeeac74de7d074a4a01fe4bd4607fce36981e"
+      },
+      "sha256": "be6f2e2539fe4ec97b03d0f838afeeac74de7d074a4a01fe4bd4607fce36981e"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step000034/model.safetensors.index.json": {
+      "bytes": 129056,
+      "origin": {
+        "bytes": 129056,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step000034/model.safetensors.index.json",
+        "selection": "complete file",
+        "sha256": "0cba458e0d3e25a4af78548a7e9eeb9e0496c59d2b40954862d3417c63481827"
+      },
+      "sha256": "0cba458e0d3e25a4af78548a7e9eeb9e0496c59d2b40954862d3417c63481827"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step000034/processor_config.json": {
+      "bytes": 30167,
+      "origin": {
+        "bytes": 30167,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step000034/processor_config.json",
+        "selection": "complete file",
+        "sha256": "826ac4c50de426b4b1fba25f060b7baf15b2cc2781729618828a2bce0bd74405"
+      },
+      "sha256": "826ac4c50de426b4b1fba25f060b7baf15b2cc2781729618828a2bce0bd74405"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step000034/statistics.json": {
+      "bytes": 262849,
+      "origin": {
+        "bytes": 262849,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step000034/statistics.json",
+        "selection": "complete file",
+        "sha256": "cefa9f4c612a350a4d406a501c6640d0a2371004d63d7b7e3c9703aac41a455b"
+      },
+      "sha256": "cefa9f4c612a350a4d406a501c6640d0a2371004d63d7b7e3c9703aac41a455b"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step000034/training_state/scheduler.json": {
+      "bytes": 209,
+      "origin": {
+        "bytes": 209,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step000034/training_state/scheduler.json",
+        "selection": "complete file",
+        "sha256": "915ef6fe483c90f93f9a6add2077918454d7164596d6b45ac781e515997f7882"
+      },
+      "sha256": "915ef6fe483c90f93f9a6add2077918454d7164596d6b45ac781e515997f7882"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step000046/COMPLETE.json": {
+      "bytes": 131,
+      "origin": {
+        "bytes": 131,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step000046/COMPLETE.json",
+        "selection": "complete file",
+        "sha256": "ff0046a890c3a7b10d137582622435b9451e82865dd085056efe3e65624caa5e"
+      },
+      "sha256": "ff0046a890c3a7b10d137582622435b9451e82865dd085056efe3e65624caa5e"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step000046/config.json": {
+      "bytes": 3126,
+      "origin": {
+        "bytes": 3126,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step000046/config.json",
+        "selection": "complete file",
+        "sha256": "afcefa5bfe3be865ca6fe09663d112004fc05080a74cb77b084b8fc771a432bc"
+      },
+      "sha256": "afcefa5bfe3be865ca6fe09663d112004fc05080a74cb77b084b8fc771a432bc"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step000046/embodiment_id.json": {
+      "bytes": 191,
+      "origin": {
+        "bytes": 191,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step000046/embodiment_id.json",
+        "selection": "complete file",
+        "sha256": "be6f2e2539fe4ec97b03d0f838afeeac74de7d074a4a01fe4bd4607fce36981e"
+      },
+      "sha256": "be6f2e2539fe4ec97b03d0f838afeeac74de7d074a4a01fe4bd4607fce36981e"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step000046/model.safetensors.index.json": {
+      "bytes": 129056,
+      "origin": {
+        "bytes": 129056,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step000046/model.safetensors.index.json",
+        "selection": "complete file",
+        "sha256": "0cba458e0d3e25a4af78548a7e9eeb9e0496c59d2b40954862d3417c63481827"
+      },
+      "sha256": "0cba458e0d3e25a4af78548a7e9eeb9e0496c59d2b40954862d3417c63481827"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step000046/processor_config.json": {
+      "bytes": 30167,
+      "origin": {
+        "bytes": 30167,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step000046/processor_config.json",
+        "selection": "complete file",
+        "sha256": "826ac4c50de426b4b1fba25f060b7baf15b2cc2781729618828a2bce0bd74405"
+      },
+      "sha256": "826ac4c50de426b4b1fba25f060b7baf15b2cc2781729618828a2bce0bd74405"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step000046/statistics.json": {
+      "bytes": 262849,
+      "origin": {
+        "bytes": 262849,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step000046/statistics.json",
+        "selection": "complete file",
+        "sha256": "cefa9f4c612a350a4d406a501c6640d0a2371004d63d7b7e3c9703aac41a455b"
+      },
+      "sha256": "cefa9f4c612a350a4d406a501c6640d0a2371004d63d7b7e3c9703aac41a455b"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step000046/training_state/scheduler.json": {
+      "bytes": 209,
+      "origin": {
+        "bytes": 209,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step000046/training_state/scheduler.json",
+        "selection": "complete file",
+        "sha256": "f91b622ee8a822f567c797a0d1309506607172c8651720565a6c3fd75711a35d"
+      },
+      "sha256": "f91b622ee8a822f567c797a0d1309506607172c8651720565a6c3fd75711a35d"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step002000/COMPLETE.json": {
+      "bytes": 133,
+      "origin": {
+        "bytes": 133,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step002000/COMPLETE.json",
+        "selection": "complete file",
+        "sha256": "dfa4e4dc59403fad734b456dd8a3c347787961bf21b89e41be52cb7c06aa6802"
+      },
+      "sha256": "dfa4e4dc59403fad734b456dd8a3c347787961bf21b89e41be52cb7c06aa6802"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step002000/config.json": {
+      "bytes": 3126,
+      "origin": {
+        "bytes": 3126,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step002000/config.json",
+        "selection": "complete file",
+        "sha256": "afcefa5bfe3be865ca6fe09663d112004fc05080a74cb77b084b8fc771a432bc"
+      },
+      "sha256": "afcefa5bfe3be865ca6fe09663d112004fc05080a74cb77b084b8fc771a432bc"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step002000/embodiment_id.json": {
+      "bytes": 191,
+      "origin": {
+        "bytes": 191,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step002000/embodiment_id.json",
+        "selection": "complete file",
+        "sha256": "be6f2e2539fe4ec97b03d0f838afeeac74de7d074a4a01fe4bd4607fce36981e"
+      },
+      "sha256": "be6f2e2539fe4ec97b03d0f838afeeac74de7d074a4a01fe4bd4607fce36981e"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step002000/model.safetensors.index.json": {
+      "bytes": 129056,
+      "origin": {
+        "bytes": 129056,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step002000/model.safetensors.index.json",
+        "selection": "complete file",
+        "sha256": "0cba458e0d3e25a4af78548a7e9eeb9e0496c59d2b40954862d3417c63481827"
+      },
+      "sha256": "0cba458e0d3e25a4af78548a7e9eeb9e0496c59d2b40954862d3417c63481827"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step002000/processor_config.json": {
+      "bytes": 30167,
+      "origin": {
+        "bytes": 30167,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step002000/processor_config.json",
+        "selection": "complete file",
+        "sha256": "826ac4c50de426b4b1fba25f060b7baf15b2cc2781729618828a2bce0bd74405"
+      },
+      "sha256": "826ac4c50de426b4b1fba25f060b7baf15b2cc2781729618828a2bce0bd74405"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step002000/statistics.json": {
+      "bytes": 262849,
+      "origin": {
+        "bytes": 262849,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step002000/statistics.json",
+        "selection": "complete file",
+        "sha256": "cefa9f4c612a350a4d406a501c6640d0a2371004d63d7b7e3c9703aac41a455b"
+      },
+      "sha256": "cefa9f4c612a350a4d406a501c6640d0a2371004d63d7b7e3c9703aac41a455b"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step002000/training_state/scheduler.json": {
+      "bytes": 213,
+      "origin": {
+        "bytes": 213,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step002000/training_state/scheduler.json",
+        "selection": "complete file",
+        "sha256": "8099b232a01366ef36b254effa601adcc31576246b9437ab1031a3d787f39546"
+      },
+      "sha256": "8099b232a01366ef36b254effa601adcc31576246b9437ab1031a3d787f39546"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step004000/COMPLETE.json": {
+      "bytes": 133,
+      "origin": {
+        "bytes": 133,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step004000/COMPLETE.json",
+        "selection": "complete file",
+        "sha256": "d6edb753640bc6fdb423828f7897da20ceee98e772a7f05234f1ef94f11dea6f"
+      },
+      "sha256": "d6edb753640bc6fdb423828f7897da20ceee98e772a7f05234f1ef94f11dea6f"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step004000/config.json": {
+      "bytes": 3126,
+      "origin": {
+        "bytes": 3126,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step004000/config.json",
+        "selection": "complete file",
+        "sha256": "afcefa5bfe3be865ca6fe09663d112004fc05080a74cb77b084b8fc771a432bc"
+      },
+      "sha256": "afcefa5bfe3be865ca6fe09663d112004fc05080a74cb77b084b8fc771a432bc"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step004000/embodiment_id.json": {
+      "bytes": 191,
+      "origin": {
+        "bytes": 191,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step004000/embodiment_id.json",
+        "selection": "complete file",
+        "sha256": "be6f2e2539fe4ec97b03d0f838afeeac74de7d074a4a01fe4bd4607fce36981e"
+      },
+      "sha256": "be6f2e2539fe4ec97b03d0f838afeeac74de7d074a4a01fe4bd4607fce36981e"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step004000/model.safetensors.index.json": {
+      "bytes": 129056,
+      "origin": {
+        "bytes": 129056,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step004000/model.safetensors.index.json",
+        "selection": "complete file",
+        "sha256": "0cba458e0d3e25a4af78548a7e9eeb9e0496c59d2b40954862d3417c63481827"
+      },
+      "sha256": "0cba458e0d3e25a4af78548a7e9eeb9e0496c59d2b40954862d3417c63481827"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step004000/processor_config.json": {
+      "bytes": 30167,
+      "origin": {
+        "bytes": 30167,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step004000/processor_config.json",
+        "selection": "complete file",
+        "sha256": "826ac4c50de426b4b1fba25f060b7baf15b2cc2781729618828a2bce0bd74405"
+      },
+      "sha256": "826ac4c50de426b4b1fba25f060b7baf15b2cc2781729618828a2bce0bd74405"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step004000/statistics.json": {
+      "bytes": 262849,
+      "origin": {
+        "bytes": 262849,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step004000/statistics.json",
+        "selection": "complete file",
+        "sha256": "cefa9f4c612a350a4d406a501c6640d0a2371004d63d7b7e3c9703aac41a455b"
+      },
+      "sha256": "cefa9f4c612a350a4d406a501c6640d0a2371004d63d7b7e3c9703aac41a455b"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step004000/training_state/scheduler.json": {
+      "bytes": 213,
+      "origin": {
+        "bytes": 213,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step004000/training_state/scheduler.json",
+        "selection": "complete file",
+        "sha256": "8147e5de043b7911816b955ed3522eb66bd8378d416d8326d3c95d6afc0bee28"
+      },
+      "sha256": "8147e5de043b7911816b955ed3522eb66bd8378d416d8326d3c95d6afc0bee28"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step006000/COMPLETE.json": {
+      "bytes": 133,
+      "origin": {
+        "bytes": 133,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step006000/COMPLETE.json",
+        "selection": "complete file",
+        "sha256": "8ac274fc22a5546d331927f3710cb2cd1a3a86d6de4a7c84445fd2ad2f09069a"
+      },
+      "sha256": "8ac274fc22a5546d331927f3710cb2cd1a3a86d6de4a7c84445fd2ad2f09069a"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step006000/config.json": {
+      "bytes": 3126,
+      "origin": {
+        "bytes": 3126,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step006000/config.json",
+        "selection": "complete file",
+        "sha256": "afcefa5bfe3be865ca6fe09663d112004fc05080a74cb77b084b8fc771a432bc"
+      },
+      "sha256": "afcefa5bfe3be865ca6fe09663d112004fc05080a74cb77b084b8fc771a432bc"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step006000/embodiment_id.json": {
+      "bytes": 191,
+      "origin": {
+        "bytes": 191,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step006000/embodiment_id.json",
+        "selection": "complete file",
+        "sha256": "be6f2e2539fe4ec97b03d0f838afeeac74de7d074a4a01fe4bd4607fce36981e"
+      },
+      "sha256": "be6f2e2539fe4ec97b03d0f838afeeac74de7d074a4a01fe4bd4607fce36981e"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step006000/model.safetensors.index.json": {
+      "bytes": 129056,
+      "origin": {
+        "bytes": 129056,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step006000/model.safetensors.index.json",
+        "selection": "complete file",
+        "sha256": "0cba458e0d3e25a4af78548a7e9eeb9e0496c59d2b40954862d3417c63481827"
+      },
+      "sha256": "0cba458e0d3e25a4af78548a7e9eeb9e0496c59d2b40954862d3417c63481827"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step006000/processor_config.json": {
+      "bytes": 30167,
+      "origin": {
+        "bytes": 30167,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step006000/processor_config.json",
+        "selection": "complete file",
+        "sha256": "826ac4c50de426b4b1fba25f060b7baf15b2cc2781729618828a2bce0bd74405"
+      },
+      "sha256": "826ac4c50de426b4b1fba25f060b7baf15b2cc2781729618828a2bce0bd74405"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step006000/statistics.json": {
+      "bytes": 262849,
+      "origin": {
+        "bytes": 262849,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step006000/statistics.json",
+        "selection": "complete file",
+        "sha256": "cefa9f4c612a350a4d406a501c6640d0a2371004d63d7b7e3c9703aac41a455b"
+      },
+      "sha256": "cefa9f4c612a350a4d406a501c6640d0a2371004d63d7b7e3c9703aac41a455b"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step006000/training_state/scheduler.json": {
+      "bytes": 213,
+      "origin": {
+        "bytes": 213,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step006000/training_state/scheduler.json",
+        "selection": "complete file",
+        "sha256": "bb717273bf1e3d32e7f42fbbc11d42246a9f280ef747f5412dbbab976a6fc6f3"
+      },
+      "sha256": "bb717273bf1e3d32e7f42fbbc11d42246a9f280ef747f5412dbbab976a6fc6f3"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step007000/COMPLETE.json": {
+      "bytes": 133,
+      "origin": {
+        "bytes": 133,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step007000/COMPLETE.json",
+        "selection": "complete file",
+        "sha256": "27b86bedc760a9705e2229df06b9af38b94e1bc4f4f30d0c3457d9b70c791d95"
+      },
+      "sha256": "27b86bedc760a9705e2229df06b9af38b94e1bc4f4f30d0c3457d9b70c791d95"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step007000/config.json": {
+      "bytes": 3126,
+      "origin": {
+        "bytes": 3126,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step007000/config.json",
+        "selection": "complete file",
+        "sha256": "afcefa5bfe3be865ca6fe09663d112004fc05080a74cb77b084b8fc771a432bc"
+      },
+      "sha256": "afcefa5bfe3be865ca6fe09663d112004fc05080a74cb77b084b8fc771a432bc"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step007000/embodiment_id.json": {
+      "bytes": 191,
+      "origin": {
+        "bytes": 191,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step007000/embodiment_id.json",
+        "selection": "complete file",
+        "sha256": "be6f2e2539fe4ec97b03d0f838afeeac74de7d074a4a01fe4bd4607fce36981e"
+      },
+      "sha256": "be6f2e2539fe4ec97b03d0f838afeeac74de7d074a4a01fe4bd4607fce36981e"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step007000/model.safetensors.index.json": {
+      "bytes": 129056,
+      "origin": {
+        "bytes": 129056,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step007000/model.safetensors.index.json",
+        "selection": "complete file",
+        "sha256": "0cba458e0d3e25a4af78548a7e9eeb9e0496c59d2b40954862d3417c63481827"
+      },
+      "sha256": "0cba458e0d3e25a4af78548a7e9eeb9e0496c59d2b40954862d3417c63481827"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step007000/processor_config.json": {
+      "bytes": 30167,
+      "origin": {
+        "bytes": 30167,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step007000/processor_config.json",
+        "selection": "complete file",
+        "sha256": "826ac4c50de426b4b1fba25f060b7baf15b2cc2781729618828a2bce0bd74405"
+      },
+      "sha256": "826ac4c50de426b4b1fba25f060b7baf15b2cc2781729618828a2bce0bd74405"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step007000/statistics.json": {
+      "bytes": 262849,
+      "origin": {
+        "bytes": 262849,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step007000/statistics.json",
+        "selection": "complete file",
+        "sha256": "cefa9f4c612a350a4d406a501c6640d0a2371004d63d7b7e3c9703aac41a455b"
+      },
+      "sha256": "cefa9f4c612a350a4d406a501c6640d0a2371004d63d7b7e3c9703aac41a455b"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step007000/training_state/scheduler.json": {
+      "bytes": 213,
+      "origin": {
+        "bytes": 213,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step007000/training_state/scheduler.json",
+        "selection": "complete file",
+        "sha256": "ff48d2c4574682d52c0469cb789bbd57031295d85840247de91e868ba87b34d8"
+      },
+      "sha256": "ff48d2c4574682d52c0469cb789bbd57031295d85840247de91e868ba87b34d8"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step008000/COMPLETE.json": {
+      "bytes": 133,
+      "origin": {
+        "bytes": 133,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step008000/COMPLETE.json",
+        "selection": "complete file",
+        "sha256": "31aa53129b9877a046673243f401b149953f7ebe4bd2c989f6e9e9aea2fd8e3c"
+      },
+      "sha256": "31aa53129b9877a046673243f401b149953f7ebe4bd2c989f6e9e9aea2fd8e3c"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step008000/config.json": {
+      "bytes": 3126,
+      "origin": {
+        "bytes": 3126,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step008000/config.json",
+        "selection": "complete file",
+        "sha256": "afcefa5bfe3be865ca6fe09663d112004fc05080a74cb77b084b8fc771a432bc"
+      },
+      "sha256": "afcefa5bfe3be865ca6fe09663d112004fc05080a74cb77b084b8fc771a432bc"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step008000/embodiment_id.json": {
+      "bytes": 191,
+      "origin": {
+        "bytes": 191,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step008000/embodiment_id.json",
+        "selection": "complete file",
+        "sha256": "be6f2e2539fe4ec97b03d0f838afeeac74de7d074a4a01fe4bd4607fce36981e"
+      },
+      "sha256": "be6f2e2539fe4ec97b03d0f838afeeac74de7d074a4a01fe4bd4607fce36981e"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step008000/model.safetensors.index.json": {
+      "bytes": 129056,
+      "origin": {
+        "bytes": 129056,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step008000/model.safetensors.index.json",
+        "selection": "complete file",
+        "sha256": "0cba458e0d3e25a4af78548a7e9eeb9e0496c59d2b40954862d3417c63481827"
+      },
+      "sha256": "0cba458e0d3e25a4af78548a7e9eeb9e0496c59d2b40954862d3417c63481827"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step008000/processor_config.json": {
+      "bytes": 30167,
+      "origin": {
+        "bytes": 30167,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step008000/processor_config.json",
+        "selection": "complete file",
+        "sha256": "826ac4c50de426b4b1fba25f060b7baf15b2cc2781729618828a2bce0bd74405"
+      },
+      "sha256": "826ac4c50de426b4b1fba25f060b7baf15b2cc2781729618828a2bce0bd74405"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step008000/statistics.json": {
+      "bytes": 262849,
+      "origin": {
+        "bytes": 262849,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step008000/statistics.json",
+        "selection": "complete file",
+        "sha256": "cefa9f4c612a350a4d406a501c6640d0a2371004d63d7b7e3c9703aac41a455b"
+      },
+      "sha256": "cefa9f4c612a350a4d406a501c6640d0a2371004d63d7b7e3c9703aac41a455b"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step008000/training_state/scheduler.json": {
+      "bytes": 213,
+      "origin": {
+        "bytes": 213,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step008000/training_state/scheduler.json",
+        "selection": "complete file",
+        "sha256": "6132a1d2081771e619586f7173256a79e3bdaa128a78cf8adf1f6a8d55fb2e6f"
+      },
+      "sha256": "6132a1d2081771e619586f7173256a79e3bdaa128a78cf8adf1f6a8d55fb2e6f"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step009000/COMPLETE.json": {
+      "bytes": 133,
+      "origin": {
+        "bytes": 133,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step009000/COMPLETE.json",
+        "selection": "complete file",
+        "sha256": "2a5d0fdae27d472cc45beaec83c1ddae737308167d564c647d4a0eae971a29c1"
+      },
+      "sha256": "2a5d0fdae27d472cc45beaec83c1ddae737308167d564c647d4a0eae971a29c1"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step009000/config.json": {
+      "bytes": 3126,
+      "origin": {
+        "bytes": 3126,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step009000/config.json",
+        "selection": "complete file",
+        "sha256": "afcefa5bfe3be865ca6fe09663d112004fc05080a74cb77b084b8fc771a432bc"
+      },
+      "sha256": "afcefa5bfe3be865ca6fe09663d112004fc05080a74cb77b084b8fc771a432bc"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step009000/embodiment_id.json": {
+      "bytes": 191,
+      "origin": {
+        "bytes": 191,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step009000/embodiment_id.json",
+        "selection": "complete file",
+        "sha256": "be6f2e2539fe4ec97b03d0f838afeeac74de7d074a4a01fe4bd4607fce36981e"
+      },
+      "sha256": "be6f2e2539fe4ec97b03d0f838afeeac74de7d074a4a01fe4bd4607fce36981e"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step009000/model.safetensors.index.json": {
+      "bytes": 129056,
+      "origin": {
+        "bytes": 129056,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step009000/model.safetensors.index.json",
+        "selection": "complete file",
+        "sha256": "0cba458e0d3e25a4af78548a7e9eeb9e0496c59d2b40954862d3417c63481827"
+      },
+      "sha256": "0cba458e0d3e25a4af78548a7e9eeb9e0496c59d2b40954862d3417c63481827"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step009000/processor_config.json": {
+      "bytes": 30167,
+      "origin": {
+        "bytes": 30167,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step009000/processor_config.json",
+        "selection": "complete file",
+        "sha256": "826ac4c50de426b4b1fba25f060b7baf15b2cc2781729618828a2bce0bd74405"
+      },
+      "sha256": "826ac4c50de426b4b1fba25f060b7baf15b2cc2781729618828a2bce0bd74405"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step009000/statistics.json": {
+      "bytes": 262849,
+      "origin": {
+        "bytes": 262849,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step009000/statistics.json",
+        "selection": "complete file",
+        "sha256": "cefa9f4c612a350a4d406a501c6640d0a2371004d63d7b7e3c9703aac41a455b"
+      },
+      "sha256": "cefa9f4c612a350a4d406a501c6640d0a2371004d63d7b7e3c9703aac41a455b"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step009000/training_state/scheduler.json": {
+      "bytes": 213,
+      "origin": {
+        "bytes": 213,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step009000/training_state/scheduler.json",
+        "selection": "complete file",
+        "sha256": "4ec95b920e9884d29b99155c78a63234d56af829cc508cafee493136af444d8d"
+      },
+      "sha256": "4ec95b920e9884d29b99155c78a63234d56af829cc508cafee493136af444d8d"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step010000/COMPLETE.json": {
+      "bytes": 134,
+      "origin": {
+        "bytes": 134,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step010000/COMPLETE.json",
+        "selection": "complete file",
+        "sha256": "0db0c2384c160b5d32780e6ccf64a1775cdc50d1fda2e825ad22bfb6b49e2702"
+      },
+      "sha256": "0db0c2384c160b5d32780e6ccf64a1775cdc50d1fda2e825ad22bfb6b49e2702"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step010000/config.json": {
+      "bytes": 3126,
+      "origin": {
+        "bytes": 3126,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step010000/config.json",
+        "selection": "complete file",
+        "sha256": "afcefa5bfe3be865ca6fe09663d112004fc05080a74cb77b084b8fc771a432bc"
+      },
+      "sha256": "afcefa5bfe3be865ca6fe09663d112004fc05080a74cb77b084b8fc771a432bc"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step010000/embodiment_id.json": {
+      "bytes": 191,
+      "origin": {
+        "bytes": 191,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step010000/embodiment_id.json",
+        "selection": "complete file",
+        "sha256": "be6f2e2539fe4ec97b03d0f838afeeac74de7d074a4a01fe4bd4607fce36981e"
+      },
+      "sha256": "be6f2e2539fe4ec97b03d0f838afeeac74de7d074a4a01fe4bd4607fce36981e"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step010000/model.safetensors.index.json": {
+      "bytes": 129056,
+      "origin": {
+        "bytes": 129056,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step010000/model.safetensors.index.json",
+        "selection": "complete file",
+        "sha256": "0cba458e0d3e25a4af78548a7e9eeb9e0496c59d2b40954862d3417c63481827"
+      },
+      "sha256": "0cba458e0d3e25a4af78548a7e9eeb9e0496c59d2b40954862d3417c63481827"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step010000/processor_config.json": {
+      "bytes": 30167,
+      "origin": {
+        "bytes": 30167,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step010000/processor_config.json",
+        "selection": "complete file",
+        "sha256": "826ac4c50de426b4b1fba25f060b7baf15b2cc2781729618828a2bce0bd74405"
+      },
+      "sha256": "826ac4c50de426b4b1fba25f060b7baf15b2cc2781729618828a2bce0bd74405"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step010000/statistics.json": {
+      "bytes": 262849,
+      "origin": {
+        "bytes": 262849,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step010000/statistics.json",
+        "selection": "complete file",
+        "sha256": "cefa9f4c612a350a4d406a501c6640d0a2371004d63d7b7e3c9703aac41a455b"
+      },
+      "sha256": "cefa9f4c612a350a4d406a501c6640d0a2371004d63d7b7e3c9703aac41a455b"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step010000/training_state/scheduler.json": {
+      "bytes": 215,
+      "origin": {
+        "bytes": 215,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step010000/training_state/scheduler.json",
+        "selection": "complete file",
+        "sha256": "292ed35af738a56682a352a026851117874d5d1f60732eb062a84d6714b80c81"
+      },
+      "sha256": "292ed35af738a56682a352a026851117874d5d1f60732eb062a84d6714b80c81"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step011000/COMPLETE.json": {
+      "bytes": 134,
+      "origin": {
+        "bytes": 134,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step011000/COMPLETE.json",
+        "selection": "complete file",
+        "sha256": "28a08692d2785f89bc700f84be8c42fc9203e824cf013e6a667e5a3b9def8325"
+      },
+      "sha256": "28a08692d2785f89bc700f84be8c42fc9203e824cf013e6a667e5a3b9def8325"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step011000/config.json": {
+      "bytes": 3126,
+      "origin": {
+        "bytes": 3126,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step011000/config.json",
+        "selection": "complete file",
+        "sha256": "afcefa5bfe3be865ca6fe09663d112004fc05080a74cb77b084b8fc771a432bc"
+      },
+      "sha256": "afcefa5bfe3be865ca6fe09663d112004fc05080a74cb77b084b8fc771a432bc"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step011000/embodiment_id.json": {
+      "bytes": 191,
+      "origin": {
+        "bytes": 191,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step011000/embodiment_id.json",
+        "selection": "complete file",
+        "sha256": "be6f2e2539fe4ec97b03d0f838afeeac74de7d074a4a01fe4bd4607fce36981e"
+      },
+      "sha256": "be6f2e2539fe4ec97b03d0f838afeeac74de7d074a4a01fe4bd4607fce36981e"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step011000/model.safetensors.index.json": {
+      "bytes": 129056,
+      "origin": {
+        "bytes": 129056,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step011000/model.safetensors.index.json",
+        "selection": "complete file",
+        "sha256": "0cba458e0d3e25a4af78548a7e9eeb9e0496c59d2b40954862d3417c63481827"
+      },
+      "sha256": "0cba458e0d3e25a4af78548a7e9eeb9e0496c59d2b40954862d3417c63481827"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step011000/processor_config.json": {
+      "bytes": 30167,
+      "origin": {
+        "bytes": 30167,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step011000/processor_config.json",
+        "selection": "complete file",
+        "sha256": "826ac4c50de426b4b1fba25f060b7baf15b2cc2781729618828a2bce0bd74405"
+      },
+      "sha256": "826ac4c50de426b4b1fba25f060b7baf15b2cc2781729618828a2bce0bd74405"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step011000/statistics.json": {
+      "bytes": 262849,
+      "origin": {
+        "bytes": 262849,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step011000/statistics.json",
+        "selection": "complete file",
+        "sha256": "cefa9f4c612a350a4d406a501c6640d0a2371004d63d7b7e3c9703aac41a455b"
+      },
+      "sha256": "cefa9f4c612a350a4d406a501c6640d0a2371004d63d7b7e3c9703aac41a455b"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step011000/training_state/scheduler.json": {
+      "bytes": 215,
+      "origin": {
+        "bytes": 215,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step011000/training_state/scheduler.json",
+        "selection": "complete file",
+        "sha256": "d379251c101783a88ed196a9a7024190fc1548488b45c470ff3f2418503f9400"
+      },
+      "sha256": "d379251c101783a88ed196a9a7024190fc1548488b45c470ff3f2418503f9400"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step012000/COMPLETE.json": {
+      "bytes": 134,
+      "origin": {
+        "bytes": 134,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step012000/COMPLETE.json",
+        "selection": "complete file",
+        "sha256": "b7a3793b4dd8fc41ea1c7437b2efbde0a639409b5a61afe9f516dc1d63fa2c92"
+      },
+      "sha256": "b7a3793b4dd8fc41ea1c7437b2efbde0a639409b5a61afe9f516dc1d63fa2c92"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step012000/config.json": {
+      "bytes": 3126,
+      "origin": {
+        "bytes": 3126,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step012000/config.json",
+        "selection": "complete file",
+        "sha256": "afcefa5bfe3be865ca6fe09663d112004fc05080a74cb77b084b8fc771a432bc"
+      },
+      "sha256": "afcefa5bfe3be865ca6fe09663d112004fc05080a74cb77b084b8fc771a432bc"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step012000/embodiment_id.json": {
+      "bytes": 191,
+      "origin": {
+        "bytes": 191,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step012000/embodiment_id.json",
+        "selection": "complete file",
+        "sha256": "be6f2e2539fe4ec97b03d0f838afeeac74de7d074a4a01fe4bd4607fce36981e"
+      },
+      "sha256": "be6f2e2539fe4ec97b03d0f838afeeac74de7d074a4a01fe4bd4607fce36981e"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step012000/model.safetensors.index.json": {
+      "bytes": 129056,
+      "origin": {
+        "bytes": 129056,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step012000/model.safetensors.index.json",
+        "selection": "complete file",
+        "sha256": "0cba458e0d3e25a4af78548a7e9eeb9e0496c59d2b40954862d3417c63481827"
+      },
+      "sha256": "0cba458e0d3e25a4af78548a7e9eeb9e0496c59d2b40954862d3417c63481827"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step012000/processor_config.json": {
+      "bytes": 30167,
+      "origin": {
+        "bytes": 30167,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step012000/processor_config.json",
+        "selection": "complete file",
+        "sha256": "826ac4c50de426b4b1fba25f060b7baf15b2cc2781729618828a2bce0bd74405"
+      },
+      "sha256": "826ac4c50de426b4b1fba25f060b7baf15b2cc2781729618828a2bce0bd74405"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step012000/statistics.json": {
+      "bytes": 262849,
+      "origin": {
+        "bytes": 262849,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step012000/statistics.json",
+        "selection": "complete file",
+        "sha256": "cefa9f4c612a350a4d406a501c6640d0a2371004d63d7b7e3c9703aac41a455b"
+      },
+      "sha256": "cefa9f4c612a350a4d406a501c6640d0a2371004d63d7b7e3c9703aac41a455b"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step012000/training_state/scheduler.json": {
+      "bytes": 215,
+      "origin": {
+        "bytes": 215,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step012000/training_state/scheduler.json",
+        "selection": "complete file",
+        "sha256": "5ac159f636e065bfed5e52785fc56a59af3960899e446c7d8fd72853045feefc"
+      },
+      "sha256": "5ac159f636e065bfed5e52785fc56a59af3960899e446c7d8fd72853045feefc"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step013000/COMPLETE.json": {
+      "bytes": 134,
+      "origin": {
+        "bytes": 134,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step013000/COMPLETE.json",
+        "selection": "complete file",
+        "sha256": "fb2493673d99108455c73e3fe04f473ddc8276bbdfd19d9a4e29e2a70df05c7c"
+      },
+      "sha256": "fb2493673d99108455c73e3fe04f473ddc8276bbdfd19d9a4e29e2a70df05c7c"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step013000/config.json": {
+      "bytes": 3126,
+      "origin": {
+        "bytes": 3126,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step013000/config.json",
+        "selection": "complete file",
+        "sha256": "afcefa5bfe3be865ca6fe09663d112004fc05080a74cb77b084b8fc771a432bc"
+      },
+      "sha256": "afcefa5bfe3be865ca6fe09663d112004fc05080a74cb77b084b8fc771a432bc"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step013000/embodiment_id.json": {
+      "bytes": 191,
+      "origin": {
+        "bytes": 191,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step013000/embodiment_id.json",
+        "selection": "complete file",
+        "sha256": "be6f2e2539fe4ec97b03d0f838afeeac74de7d074a4a01fe4bd4607fce36981e"
+      },
+      "sha256": "be6f2e2539fe4ec97b03d0f838afeeac74de7d074a4a01fe4bd4607fce36981e"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step013000/model.safetensors.index.json": {
+      "bytes": 129056,
+      "origin": {
+        "bytes": 129056,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step013000/model.safetensors.index.json",
+        "selection": "complete file",
+        "sha256": "0cba458e0d3e25a4af78548a7e9eeb9e0496c59d2b40954862d3417c63481827"
+      },
+      "sha256": "0cba458e0d3e25a4af78548a7e9eeb9e0496c59d2b40954862d3417c63481827"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step013000/processor_config.json": {
+      "bytes": 30167,
+      "origin": {
+        "bytes": 30167,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step013000/processor_config.json",
+        "selection": "complete file",
+        "sha256": "826ac4c50de426b4b1fba25f060b7baf15b2cc2781729618828a2bce0bd74405"
+      },
+      "sha256": "826ac4c50de426b4b1fba25f060b7baf15b2cc2781729618828a2bce0bd74405"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step013000/statistics.json": {
+      "bytes": 262849,
+      "origin": {
+        "bytes": 262849,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step013000/statistics.json",
+        "selection": "complete file",
+        "sha256": "cefa9f4c612a350a4d406a501c6640d0a2371004d63d7b7e3c9703aac41a455b"
+      },
+      "sha256": "cefa9f4c612a350a4d406a501c6640d0a2371004d63d7b7e3c9703aac41a455b"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step013000/training_state/scheduler.json": {
+      "bytes": 215,
+      "origin": {
+        "bytes": 215,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step013000/training_state/scheduler.json",
+        "selection": "complete file",
+        "sha256": "0d4d0acd8d7f875b658bf0de063eaf415f8efac208f4f7f081006493fec3ccf5"
+      },
+      "sha256": "0d4d0acd8d7f875b658bf0de063eaf415f8efac208f4f7f081006493fec3ccf5"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step014000/COMPLETE.json": {
+      "bytes": 134,
+      "origin": {
+        "bytes": 134,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step014000/COMPLETE.json",
+        "selection": "complete file",
+        "sha256": "603364817bc76f5d56755e73fea8efa8bcdc2e397d9d9031ec2b8c8adaa7fef3"
+      },
+      "sha256": "603364817bc76f5d56755e73fea8efa8bcdc2e397d9d9031ec2b8c8adaa7fef3"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step014000/config.json": {
+      "bytes": 3126,
+      "origin": {
+        "bytes": 3126,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step014000/config.json",
+        "selection": "complete file",
+        "sha256": "afcefa5bfe3be865ca6fe09663d112004fc05080a74cb77b084b8fc771a432bc"
+      },
+      "sha256": "afcefa5bfe3be865ca6fe09663d112004fc05080a74cb77b084b8fc771a432bc"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step014000/embodiment_id.json": {
+      "bytes": 191,
+      "origin": {
+        "bytes": 191,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step014000/embodiment_id.json",
+        "selection": "complete file",
+        "sha256": "be6f2e2539fe4ec97b03d0f838afeeac74de7d074a4a01fe4bd4607fce36981e"
+      },
+      "sha256": "be6f2e2539fe4ec97b03d0f838afeeac74de7d074a4a01fe4bd4607fce36981e"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step014000/model.safetensors.index.json": {
+      "bytes": 129056,
+      "origin": {
+        "bytes": 129056,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step014000/model.safetensors.index.json",
+        "selection": "complete file",
+        "sha256": "0cba458e0d3e25a4af78548a7e9eeb9e0496c59d2b40954862d3417c63481827"
+      },
+      "sha256": "0cba458e0d3e25a4af78548a7e9eeb9e0496c59d2b40954862d3417c63481827"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step014000/processor_config.json": {
+      "bytes": 30167,
+      "origin": {
+        "bytes": 30167,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step014000/processor_config.json",
+        "selection": "complete file",
+        "sha256": "826ac4c50de426b4b1fba25f060b7baf15b2cc2781729618828a2bce0bd74405"
+      },
+      "sha256": "826ac4c50de426b4b1fba25f060b7baf15b2cc2781729618828a2bce0bd74405"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step014000/statistics.json": {
+      "bytes": 262849,
+      "origin": {
+        "bytes": 262849,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step014000/statistics.json",
+        "selection": "complete file",
+        "sha256": "cefa9f4c612a350a4d406a501c6640d0a2371004d63d7b7e3c9703aac41a455b"
+      },
+      "sha256": "cefa9f4c612a350a4d406a501c6640d0a2371004d63d7b7e3c9703aac41a455b"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step014000/training_state/scheduler.json": {
+      "bytes": 215,
+      "origin": {
+        "bytes": 215,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step014000/training_state/scheduler.json",
+        "selection": "complete file",
+        "sha256": "c503b405d435f36999db2f76e98baef135a4eaaa61225c8902aefac3d5384a29"
+      },
+      "sha256": "c503b405d435f36999db2f76e98baef135a4eaaa61225c8902aefac3d5384a29"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step015000/COMPLETE.json": {
+      "bytes": 134,
+      "origin": {
+        "bytes": 134,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step015000/COMPLETE.json",
+        "selection": "complete file",
+        "sha256": "f3db1118ca5b2cc3c8a182820645cdaa6b940a707bc32abb3681c5d5974eb3d6"
+      },
+      "sha256": "f3db1118ca5b2cc3c8a182820645cdaa6b940a707bc32abb3681c5d5974eb3d6"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step015000/config.json": {
+      "bytes": 3126,
+      "origin": {
+        "bytes": 3126,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step015000/config.json",
+        "selection": "complete file",
+        "sha256": "afcefa5bfe3be865ca6fe09663d112004fc05080a74cb77b084b8fc771a432bc"
+      },
+      "sha256": "afcefa5bfe3be865ca6fe09663d112004fc05080a74cb77b084b8fc771a432bc"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step015000/embodiment_id.json": {
+      "bytes": 191,
+      "origin": {
+        "bytes": 191,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step015000/embodiment_id.json",
+        "selection": "complete file",
+        "sha256": "be6f2e2539fe4ec97b03d0f838afeeac74de7d074a4a01fe4bd4607fce36981e"
+      },
+      "sha256": "be6f2e2539fe4ec97b03d0f838afeeac74de7d074a4a01fe4bd4607fce36981e"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step015000/model.safetensors.index.json": {
+      "bytes": 129056,
+      "origin": {
+        "bytes": 129056,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step015000/model.safetensors.index.json",
+        "selection": "complete file",
+        "sha256": "0cba458e0d3e25a4af78548a7e9eeb9e0496c59d2b40954862d3417c63481827"
+      },
+      "sha256": "0cba458e0d3e25a4af78548a7e9eeb9e0496c59d2b40954862d3417c63481827"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step015000/processor_config.json": {
+      "bytes": 30167,
+      "origin": {
+        "bytes": 30167,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step015000/processor_config.json",
+        "selection": "complete file",
+        "sha256": "826ac4c50de426b4b1fba25f060b7baf15b2cc2781729618828a2bce0bd74405"
+      },
+      "sha256": "826ac4c50de426b4b1fba25f060b7baf15b2cc2781729618828a2bce0bd74405"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step015000/statistics.json": {
+      "bytes": 262849,
+      "origin": {
+        "bytes": 262849,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step015000/statistics.json",
+        "selection": "complete file",
+        "sha256": "cefa9f4c612a350a4d406a501c6640d0a2371004d63d7b7e3c9703aac41a455b"
+      },
+      "sha256": "cefa9f4c612a350a4d406a501c6640d0a2371004d63d7b7e3c9703aac41a455b"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step015000/training_state/scheduler.json": {
+      "bytes": 215,
+      "origin": {
+        "bytes": 215,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step015000/training_state/scheduler.json",
+        "selection": "complete file",
+        "sha256": "f5c206e22f69b8431645a2960532929942e74e4a7813d60d44826ccc6726ef89"
+      },
+      "sha256": "f5c206e22f69b8431645a2960532929942e74e4a7813d60d44826ccc6726ef89"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step016000/COMPLETE.json": {
+      "bytes": 134,
+      "origin": {
+        "bytes": 134,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step016000/COMPLETE.json",
+        "selection": "complete file",
+        "sha256": "78aa863b3bb1fa226a11e7f6c8a561e52292e5f049f820a0f82a067a7b293990"
+      },
+      "sha256": "78aa863b3bb1fa226a11e7f6c8a561e52292e5f049f820a0f82a067a7b293990"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step016000/config.json": {
+      "bytes": 3126,
+      "origin": {
+        "bytes": 3126,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step016000/config.json",
+        "selection": "complete file",
+        "sha256": "afcefa5bfe3be865ca6fe09663d112004fc05080a74cb77b084b8fc771a432bc"
+      },
+      "sha256": "afcefa5bfe3be865ca6fe09663d112004fc05080a74cb77b084b8fc771a432bc"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step016000/embodiment_id.json": {
+      "bytes": 191,
+      "origin": {
+        "bytes": 191,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step016000/embodiment_id.json",
+        "selection": "complete file",
+        "sha256": "be6f2e2539fe4ec97b03d0f838afeeac74de7d074a4a01fe4bd4607fce36981e"
+      },
+      "sha256": "be6f2e2539fe4ec97b03d0f838afeeac74de7d074a4a01fe4bd4607fce36981e"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step016000/model.safetensors.index.json": {
+      "bytes": 129056,
+      "origin": {
+        "bytes": 129056,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step016000/model.safetensors.index.json",
+        "selection": "complete file",
+        "sha256": "0cba458e0d3e25a4af78548a7e9eeb9e0496c59d2b40954862d3417c63481827"
+      },
+      "sha256": "0cba458e0d3e25a4af78548a7e9eeb9e0496c59d2b40954862d3417c63481827"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step016000/processor_config.json": {
+      "bytes": 30167,
+      "origin": {
+        "bytes": 30167,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step016000/processor_config.json",
+        "selection": "complete file",
+        "sha256": "826ac4c50de426b4b1fba25f060b7baf15b2cc2781729618828a2bce0bd74405"
+      },
+      "sha256": "826ac4c50de426b4b1fba25f060b7baf15b2cc2781729618828a2bce0bd74405"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step016000/statistics.json": {
+      "bytes": 262849,
+      "origin": {
+        "bytes": 262849,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step016000/statistics.json",
+        "selection": "complete file",
+        "sha256": "cefa9f4c612a350a4d406a501c6640d0a2371004d63d7b7e3c9703aac41a455b"
+      },
+      "sha256": "cefa9f4c612a350a4d406a501c6640d0a2371004d63d7b7e3c9703aac41a455b"
+    },
+    "recorded/memory_v1/checkpoints/v1__test01__exp13__run001__step016000/training_state/scheduler.json": {
+      "bytes": 215,
+      "origin": {
+        "bytes": 215,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step016000/training_state/scheduler.json",
+        "selection": "complete file",
+        "sha256": "41150e6b859cdfcf4df441634e9669dc76c3c01c2deeb18de0e4f46c89bdb048"
+      },
+      "sha256": "41150e6b859cdfcf4df441634e9669dc76c3c01c2deeb18de0e4f46c89bdb048"
+    },
+    "recorded/memory_v1/config/ddp.json": {
+      "bytes": 2771,
+      "origin": {
+        "bytes": 2771,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/config/ddp.json",
+        "selection": "complete file",
+        "sha256": "345f81c7d9b7f1de8d130dade1a715e9ab10568db6df41a8cbb2fa14331344a6"
+      },
+      "sha256": "345f81c7d9b7f1de8d130dade1a715e9ab10568db6df41a8cbb2fa14331344a6"
+    },
+    "recorded/memory_v1/config/finetuning.json": {
+      "bytes": 1106,
+      "origin": {
+        "bytes": 1106,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/config/finetuning.json",
+        "selection": "complete file",
+        "sha256": "f0d397d08f239207ac3d69d4f6ca7ce409373912c2025405b43c1351db3c85d9"
+      },
+      "sha256": "f0d397d08f239207ac3d69d4f6ca7ce409373912c2025405b43c1351db3c85d9"
+    },
+    "recorded/memory_v1/config/resume-step-000034.json": {
+      "bytes": 392,
+      "origin": {
+        "bytes": 392,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/config/resume-step-000034.json",
+        "selection": "complete file",
+        "sha256": "27965db41e0273637ee3505493a41cd0ad94569ccef297e73774db99639d6686"
+      },
+      "sha256": "27965db41e0273637ee3505493a41cd0ad94569ccef297e73774db99639d6686"
+    },
+    "recorded/memory_v1/config/resume-step-000046.json": {
+      "bytes": 392,
+      "origin": {
+        "bytes": 392,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/config/resume-step-000046.json",
+        "selection": "complete file",
+        "sha256": "57ca5962ff1abec3b0fb1c3fefd93c63e4cbed0f45cdce9fb93872afe52a9165"
+      },
+      "sha256": "57ca5962ff1abec3b0fb1c3fefd93c63e4cbed0f45cdce9fb93872afe52a9165"
+    },
+    "recorded/memory_v1/config/resume-step-004000.json": {
+      "bytes": 394,
+      "origin": {
+        "bytes": 394,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/config/resume-step-004000.json",
+        "selection": "complete file",
+        "sha256": "b95fecb69f9b7ad4c0d4b8bda0e4d924c58b5efb5fa6c26acc1c0c6a1cb81545"
+      },
+      "sha256": "b95fecb69f9b7ad4c0d4b8bda0e4d924c58b5efb5fa6c26acc1c0c6a1cb81545"
+    },
+    "recorded/memory_v1/config/resume-step-006000.json": {
+      "bytes": 394,
+      "origin": {
+        "bytes": 394,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/config/resume-step-006000.json",
+        "selection": "complete file",
+        "sha256": "17fd13f59e2ae36e509d97ec584cfd5a5440b01b1f2e171a78385e5a078cb845"
+      },
+      "sha256": "17fd13f59e2ae36e509d97ec584cfd5a5440b01b1f2e171a78385e5a078cb845"
+    },
+    "recorded/memory_v1/config/resume-step-011000.json": {
+      "bytes": 395,
+      "origin": {
+        "bytes": 395,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/config/resume-step-011000.json",
+        "selection": "complete file",
+        "sha256": "e0b440e6a8fd15e6e89d773b5d4ed6c4565d0326fa01f5d77b2310b6955b08a4"
+      },
+      "sha256": "e0b440e6a8fd15e6e89d773b5d4ed6c4565d0326fa01f5d77b2310b6955b08a4"
+    },
+    "recorded/memory_v1/config/runtime-step-000034.json": {
+      "bytes": 251,
+      "origin": {
+        "bytes": 251,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/config/runtime-step-000034.json",
+        "selection": "complete file",
+        "sha256": "0f44d4ecfb656b8d55ec6e6e2769ea6211087b97074da6dd8542716779c6f461"
+      },
+      "sha256": "0f44d4ecfb656b8d55ec6e6e2769ea6211087b97074da6dd8542716779c6f461"
+    },
+    "recorded/memory_v1/config/runtime-step-000046.json": {
+      "bytes": 278,
+      "origin": {
+        "bytes": 278,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/config/runtime-step-000046.json",
+        "selection": "complete file",
+        "sha256": "ece16d54c89e1c679755cbe85aef701be4cecb66f94f8d5a05c88f946d1b30c4"
+      },
+      "sha256": "ece16d54c89e1c679755cbe85aef701be4cecb66f94f8d5a05c88f946d1b30c4"
+    },
+    "recorded/memory_v1/config/runtime-step-004000.json": {
+      "bytes": 280,
+      "origin": {
+        "bytes": 280,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/config/runtime-step-004000.json",
+        "selection": "complete file",
+        "sha256": "f0efaad7f76cd9ed8910f6c1eb7b402e0cf1a8b793612656916161ae99662bb1"
+      },
+      "sha256": "f0efaad7f76cd9ed8910f6c1eb7b402e0cf1a8b793612656916161ae99662bb1"
+    },
+    "recorded/memory_v1/config/runtime-step-006000.json": {
+      "bytes": 280,
+      "origin": {
+        "bytes": 280,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/config/runtime-step-006000.json",
+        "selection": "complete file",
+        "sha256": "873f0679913fd0ac0994d1f11266f58c00b157269af6045097e62fbec9b84a15"
+      },
+      "sha256": "873f0679913fd0ac0994d1f11266f58c00b157269af6045097e62fbec9b84a15"
+    },
+    "recorded/memory_v1/config/runtime-step-011000.json": {
+      "bytes": 281,
+      "origin": {
+        "bytes": 281,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/config/runtime-step-011000.json",
+        "selection": "complete file",
+        "sha256": "755a7ca1263a56c4f87aeee54c712bfbabdf6c6255c273ef853871b01fd81bae"
+      },
+      "sha256": "755a7ca1263a56c4f87aeee54c712bfbabdf6c6255c273ef853871b01fd81bae"
+    },
+    "recorded/memory_v1/status.json": {
+      "bytes": 90,
+      "origin": {
+        "bytes": 90,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/status.json",
+        "selection": "complete file",
+        "sha256": "57c2dcca7dae0c2b990914ca31cded85d06f5718840d1279044e5ec15f3cab00"
+      },
+      "sha256": "57c2dcca7dae0c2b990914ca31cded85d06f5718840d1279044e5ec15f3cab00"
+    },
+    "recorded/metrics/stop_training.json": {
+      "bytes": 179,
+      "origin": {
+        "bytes": 179,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/metrics/stop_training.json",
+        "selection": "complete file",
+        "sha256": "d68fa54c8cfe4e56847afed8b1e00dca93ef211d23882cd8e7a26a764a7285e3"
+      },
+      "sha256": "d68fa54c8cfe4e56847afed8b1e00dca93ef211d23882cd8e7a26a764a7285e3"
+    },
+    "recorded/status.json": {
+      "bytes": 50,
+      "origin": {
+        "bytes": 50,
+        "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/status.json",
+        "selection": "complete file",
+        "sha256": "c1c2b7e1defa5e135446e39a9cbb3e435b19fa62bc63d2a5721b05f6b5407adf"
+      },
+      "sha256": "c1c2b7e1defa5e135446e39a9cbb3e435b19fa62bc63d2a5721b05f6b5407adf"
+    },
+    "source/pyproject.toml": {
+      "bytes": 1309,
+      "origin": {
+        "bytes": 1309,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/pyproject.toml",
+        "selection": "complete file",
+        "sha256": "8c15ad6011f6bd0c609f7244d8b1723a8c215f5dc86a3b2494264d0ab334fee4"
+      },
+      "sha256": "8c15ad6011f6bd0c609f7244d8b1723a8c215f5dc86a3b2494264d0ab334fee4"
+    },
+    "source/src/v1_groot_memoryvla/__init__.py": {
+      "bytes": 71,
+      "origin": {
+        "bytes": 71,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/__init__.py",
+        "selection": "complete file",
+        "sha256": "cce712c66e9f599dfe57a4301df6b662677872aa00a3f9357bdb36f8b83d0434"
+      },
+      "sha256": "cce712c66e9f599dfe57a4301df6b662677872aa00a3f9357bdb36f8b83d0434"
+    },
+    "source/src/v1_groot_memoryvla/audit/action_smoke.py": {
+      "bytes": 6845,
+      "origin": {
+        "bytes": 6845,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/audit/action_smoke.py",
+        "selection": "complete file",
+        "sha256": "fe3be2b3a398f2cdb60b75097c3f92e7d82d2b1da4e6e28ae66017c943ad62d2"
+      },
+      "sha256": "fe3be2b3a398f2cdb60b75097c3f92e7d82d2b1da4e6e28ae66017c943ad62d2"
+    },
+    "source/src/v1_groot_memoryvla/audit/analyze_first_training.py": {
+      "bytes": 6196,
+      "origin": {
+        "bytes": 6196,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/audit/analyze_first_training.py",
+        "selection": "complete file",
+        "sha256": "27c55ef03c04c1f8c2ee3b76bb14cedf523ef4fa4da4b71c7438aa0c93959467"
+      },
+      "sha256": "27c55ef03c04c1f8c2ee3b76bb14cedf523ef4fa4da4b71c7438aa0c93959467"
+    },
+    "source/src/v1_groot_memoryvla/audit/analyze_task21_diagnostic.py": {
+      "bytes": 6868,
+      "origin": {
+        "bytes": 6868,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/audit/analyze_task21_diagnostic.py",
+        "selection": "complete file",
+        "sha256": "dc7293efb1e9f79654745ef2901fd88a92937dc4dcadd0ee651e8041a8666fe6"
+      },
+      "sha256": "dc7293efb1e9f79654745ef2901fd88a92937dc4dcadd0ee651e8041a8666fe6"
+    },
+    "source/src/v1_groot_memoryvla/audit/artifacts/config.json": {
+      "bytes": 1839,
+      "origin": {
+        "bytes": 1839,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/audit/artifacts/config.json",
+        "selection": "complete file",
+        "sha256": "cd265fe9f1c037188a09d317155d3a4c28d1db1a5d8f0bb129934b5e170fdd27"
+      },
+      "sha256": "cd265fe9f1c037188a09d317155d3a4c28d1db1a5d8f0bb129934b5e170fdd27"
+    },
+    "source/src/v1_groot_memoryvla/audit/artifacts/input_audit.json": {
+      "bytes": 250737,
+      "origin": {
+        "bytes": 250737,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/audit/artifacts/input_audit.json",
+        "selection": "complete file",
+        "sha256": "fc893605afdb889341fc03a98c164acc7ae389b1903c44d4fa48b08da2055014"
+      },
+      "sha256": "fc893605afdb889341fc03a98c164acc7ae389b1903c44d4fa48b08da2055014"
+    },
+    "source/src/v1_groot_memoryvla/audit/artifacts/processor_config.json": {
+      "bytes": 9556,
+      "origin": {
+        "bytes": 9556,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/audit/artifacts/processor_config.json",
+        "selection": "complete file",
+        "sha256": "488e7354be8b88a6a7161d04c0b7e8887aca067d541dc9a8f55492c62216748e"
+      },
+      "sha256": "488e7354be8b88a6a7161d04c0b7e8887aca067d541dc9a8f55492c62216748e"
+    },
+    "source/src/v1_groot_memoryvla/audit/artifacts/reference_memory_checks.json": {
+      "bytes": 6646,
+      "origin": {
+        "bytes": 6646,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/audit/artifacts/reference_memory_checks.json",
+        "selection": "complete file",
+        "sha256": "d8393630e2148004ce70a676cafdfdafa121c31052b41a746bd8ed396b745b40"
+      },
+      "sha256": "d8393630e2148004ce70a676cafdfdafa121c31052b41a746bd8ed396b745b40"
+    },
+    "source/src/v1_groot_memoryvla/audit/check_ddp_checkpoint.py": {
+      "bytes": 6466,
+      "origin": {
+        "bytes": 6466,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/audit/check_ddp_checkpoint.py",
+        "selection": "complete file",
+        "sha256": "18bc7c40472ac9ba8b099376c73bff84e29326e15f244939160db356784e8493"
+      },
+      "sha256": "18bc7c40472ac9ba8b099376c73bff84e29326e15f244939160db356784e8493"
+    },
+    "source/src/v1_groot_memoryvla/audit/check_reference_memory.py": {
+      "bytes": 7353,
+      "origin": {
+        "bytes": 7353,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/audit/check_reference_memory.py",
+        "selection": "complete file",
+        "sha256": "5133743a8a7ba5e28aa00b51b9660e0629ab5571a319bbe798df3b19735480cc"
+      },
+      "sha256": "5133743a8a7ba5e28aa00b51b9660e0629ab5571a319bbe798df3b19735480cc"
+    },
+    "source/src/v1_groot_memoryvla/audit/plot_task21_loss.py": {
+      "bytes": 2741,
+      "origin": {
+        "bytes": 2741,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/audit/plot_task21_loss.py",
+        "selection": "complete file",
+        "sha256": "9ddf389bc8ab3aabc91c2f13e3d8a2e29110003963f0f5e19ccea890c347f172"
+      },
+      "sha256": "9ddf389bc8ab3aabc91c2f13e3d8a2e29110003963f0f5e19ccea890c347f172"
+    },
+    "source/src/v1_groot_memoryvla/audit/recompute_task21_mae.py": {
+      "bytes": 10885,
+      "origin": {
+        "bytes": 10885,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/audit/recompute_task21_mae.py",
+        "selection": "complete file",
+        "sha256": "968c312e9818d091b3541f58558a4c224f46f17c4089cd8022d5470528b7b50f"
+      },
+      "sha256": "968c312e9818d091b3541f58558a4c224f46f17c4089cd8022d5470528b7b50f"
+    },
+    "source/src/v1_groot_memoryvla/audit/retrieval_benchmark.py": {
+      "bytes": 4172,
+      "origin": {
+        "bytes": 4172,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/audit/retrieval_benchmark.py",
+        "selection": "complete file",
+        "sha256": "8901d04e0bdc88617641affbe1e21ac9606eb98365ad1b9177b8245a52277d16"
+      },
+      "sha256": "8901d04e0bdc88617641affbe1e21ac9606eb98365ad1b9177b8245a52277d16"
+    },
+    "source/src/v1_groot_memoryvla/audit/task21_segments.py": {
+      "bytes": 2324,
+      "origin": {
+        "bytes": 2324,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/audit/task21_segments.py",
+        "selection": "complete file",
+        "sha256": "0340c23c6f16e9be1fab837c491d6b04244f30db806f21ba28e2f75366a30aa4"
+      },
+      "sha256": "0340c23c6f16e9be1fab837c491d6b04244f30db806f21ba28e2f75366a30aa4"
+    },
+    "source/src/v1_groot_memoryvla/audit/trace_b1k_inputs.py": {
+      "bytes": 14285,
+      "origin": {
+        "bytes": 14285,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/audit/trace_b1k_inputs.py",
+        "selection": "complete file",
+        "sha256": "34d7b49a1a8acbfba870f915c1ae8a52d97a7ed54b376a7e76ebe193932bd363"
+      },
+      "sha256": "34d7b49a1a8acbfba870f915c1ae8a52d97a7ed54b376a7e76ebe193932bd363"
+    },
+    "source/src/v1_groot_memoryvla/audit/train_official_batch.py": {
+      "bytes": 4893,
+      "origin": {
+        "bytes": 4893,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/audit/train_official_batch.py",
+        "selection": "complete file",
+        "sha256": "37cb17f1fa778e1a4c1d33da55ae739470241503a02c0b6dae12d66c65df74c6"
+      },
+      "sha256": "37cb17f1fa778e1a4c1d33da55ae739470241503a02c0b6dae12d66c65df74c6"
+    },
+    "source/src/v1_groot_memoryvla/audit/validate_memory_v1.py": {
+      "bytes": 9453,
+      "origin": {
+        "bytes": 9453,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/audit/validate_memory_v1.py",
+        "selection": "complete file",
+        "sha256": "4d4088ea803614495334e093a385dab0fe22c11d7d36f5a97ff5090abdb646c4"
+      },
+      "sha256": "4d4088ea803614495334e093a385dab0fe22c11d7d36f5a97ff5090abdb646c4"
+    },
+    "source/src/v1_groot_memoryvla/audit/validate_online_policy.py": {
+      "bytes": 3026,
+      "origin": {
+        "bytes": 3026,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/audit/validate_online_policy.py",
+        "selection": "complete file",
+        "sha256": "b903f85251aac443a4fb46c07c99df6d1e45a0dd9901c5174d669c835d7f2588"
+      },
+      "sha256": "b903f85251aac443a4fb46c07c99df6d1e45a0dd9901c5174d669c835d7f2588"
+    },
+    "source/src/v1_groot_memoryvla/benchmarks/__init__.py": {
+      "bytes": 69,
+      "origin": {
+        "bytes": 69,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/benchmarks/__init__.py",
+        "selection": "complete file",
+        "sha256": "e5aac7f982c3a7587a616749644a05c50c3f88191057250b034022ced5a5a689"
+      },
+      "sha256": "e5aac7f982c3a7587a616749644a05c50c3f88191057250b034022ced5a5a689"
+    },
+    "source/src/v1_groot_memoryvla/benchmarks/libero/__init__.py": {
+      "bytes": 62,
+      "origin": {
+        "bytes": 62,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/benchmarks/libero/__init__.py",
+        "selection": "complete file",
+        "sha256": "1cbe3dab446f104c3405e9a6b42eecff6fb4b3d3f60aec865c49bcdd32f58e63"
+      },
+      "sha256": "1cbe3dab446f104c3405e9a6b42eecff6fb4b3d3f60aec865c49bcdd32f58e63"
+    },
+    "source/src/v1_groot_memoryvla/benchmarks/libero/dataset.py": {
+      "bytes": 4410,
+      "origin": {
+        "bytes": 4410,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/benchmarks/libero/dataset.py",
+        "selection": "complete file",
+        "sha256": "69922f7ae4e1a6d63d29a187797554d39724c08e830e03297d38f905ff9fc0e0"
+      },
+      "sha256": "69922f7ae4e1a6d63d29a187797554d39724c08e830e03297d38f905ff9fc0e0"
+    },
+    "source/src/v1_groot_memoryvla/benchmarks/libero/evaluate.py": {
+      "bytes": 4462,
+      "origin": {
+        "bytes": 4462,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/benchmarks/libero/evaluate.py",
+        "selection": "complete file",
+        "sha256": "212d19e3e5f384205bab9453d91f33c26a331f7ae94883d6dd3e340262b0a341"
+      },
+      "sha256": "212d19e3e5f384205bab9453d91f33c26a331f7ae94883d6dd3e340262b0a341"
+    },
+    "source/src/v1_groot_memoryvla/benchmarks/libero/prepare.py": {
+      "bytes": 5243,
+      "origin": {
+        "bytes": 5243,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/benchmarks/libero/prepare.py",
+        "selection": "complete file",
+        "sha256": "b366c9a584a22fd27a510b8a1927019c121dd14c41c4d032ab7ca55c09b05ff3"
+      },
+      "sha256": "b366c9a584a22fd27a510b8a1927019c121dd14c41c4d032ab7ca55c09b05ff3"
+    },
+    "source/src/v1_groot_memoryvla/benchmarks/libero/protocol.py": {
+      "bytes": 3129,
+      "origin": {
+        "bytes": 3129,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/benchmarks/libero/protocol.py",
+        "selection": "complete file",
+        "sha256": "db74781f27ce750ff9ee66adec4b69aeb9670926393fba708b9c537ce68ebe8f"
+      },
+      "sha256": "db74781f27ce750ff9ee66adec4b69aeb9670926393fba708b9c537ce68ebe8f"
+    },
+    "source/src/v1_groot_memoryvla/benchmarks/libero/train.py": {
+      "bytes": 6906,
+      "origin": {
+        "bytes": 6906,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/benchmarks/libero/train.py",
+        "selection": "complete file",
+        "sha256": "fa80321ce838858dcc50972e53e041e0034503a6bd5ea74f40bce2134f552c9f"
+      },
+      "sha256": "fa80321ce838858dcc50972e53e041e0034503a6bd5ea74f40bce2134f552c9f"
+    },
+    "source/src/v1_groot_memoryvla/configs/__init__.py": {
+      "bytes": 0,
+      "origin": {
+        "bytes": 0,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/configs/__init__.py",
+        "selection": "complete file",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source/src/v1_groot_memoryvla/configs/base_config.py": {
+      "bytes": 5529,
+      "origin": {
+        "bytes": 5529,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/configs/base_config.py",
+        "selection": "complete file",
+        "sha256": "e8e8cebfe734ae392586c3bba09700e9a2b32c78b41d35bf6919a863acd0db7e"
+      },
+      "sha256": "e8e8cebfe734ae392586c3bba09700e9a2b32c78b41d35bf6919a863acd0db7e"
+    },
+    "source/src/v1_groot_memoryvla/configs/data/__init__.py": {
+      "bytes": 0,
+      "origin": {
+        "bytes": 0,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/configs/data/__init__.py",
+        "selection": "complete file",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source/src/v1_groot_memoryvla/configs/data/data_config.py": {
+      "bytes": 3016,
+      "origin": {
+        "bytes": 3016,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/configs/data/data_config.py",
+        "selection": "complete file",
+        "sha256": "56d4d58ae5ec52d7217f59fd2a7cfe83a9c64b6a5386f4db70878a03eec99248"
+      },
+      "sha256": "56d4d58ae5ec52d7217f59fd2a7cfe83a9c64b6a5386f4db70878a03eec99248"
+    },
+    "source/src/v1_groot_memoryvla/configs/data/embodiment_configs.py": {
+      "bytes": 10879,
+      "origin": {
+        "bytes": 10879,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/configs/data/embodiment_configs.py",
+        "selection": "complete file",
+        "sha256": "b9a8b47fd3c331d67f7128205b15cee6d436019a821e8a7daf893b50d107713e"
+      },
+      "sha256": "b9a8b47fd3c331d67f7128205b15cee6d436019a821e8a7daf893b50d107713e"
+    },
+    "source/src/v1_groot_memoryvla/configs/deepspeed/zero2_config.json": {
+      "bytes": 828,
+      "origin": {
+        "bytes": 828,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/configs/deepspeed/zero2_config.json",
+        "selection": "complete file",
+        "sha256": "8b0cd28759c69f399c559e906c2f3337db52450a6da61c763e02009a687d42dd"
+      },
+      "sha256": "8b0cd28759c69f399c559e906c2f3337db52450a6da61c763e02009a687d42dd"
+    },
+    "source/src/v1_groot_memoryvla/configs/deepspeed/zero3_config.json": {
+      "bytes": 848,
+      "origin": {
+        "bytes": 848,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/configs/deepspeed/zero3_config.json",
+        "selection": "complete file",
+        "sha256": "1e197fb4e8712cb8d726198f980877bf674688b3bade41af3779b3135e311fa9"
+      },
+      "sha256": "1e197fb4e8712cb8d726198f980877bf674688b3bade41af3779b3135e311fa9"
+    },
+    "source/src/v1_groot_memoryvla/configs/finetune_config.py": {
+      "bytes": 5602,
+      "origin": {
+        "bytes": 5602,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/configs/finetune_config.py",
+        "selection": "complete file",
+        "sha256": "056ea26616885e374993f0b6096bebeed78e8ad8c83f0ff74caaf01f6e79917a"
+      },
+      "sha256": "056ea26616885e374993f0b6096bebeed78e8ad8c83f0ff74caaf01f6e79917a"
+    },
+    "source/src/v1_groot_memoryvla/configs/model/__init__.py": {
+      "bytes": 970,
+      "origin": {
+        "bytes": 970,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/configs/model/__init__.py",
+        "selection": "complete file",
+        "sha256": "1347a3e46f9f8226c982e0aed624c3dd32f1794321054fbee6c67af9212d5186"
+      },
+      "sha256": "1347a3e46f9f8226c982e0aed624c3dd32f1794321054fbee6c67af9212d5186"
+    },
+    "source/src/v1_groot_memoryvla/configs/model/gr00t_n1d6.py": {
+      "bytes": 7664,
+      "origin": {
+        "bytes": 7664,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/configs/model/gr00t_n1d6.py",
+        "selection": "complete file",
+        "sha256": "357775593a2d64a36c59e380ff5293698a31399247e306c417af0bfb068e63b5"
+      },
+      "sha256": "357775593a2d64a36c59e380ff5293698a31399247e306c417af0bfb068e63b5"
+    },
+    "source/src/v1_groot_memoryvla/configs/training/__init__.py": {
+      "bytes": 0,
+      "origin": {
+        "bytes": 0,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/configs/training/__init__.py",
+        "selection": "complete file",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source/src/v1_groot_memoryvla/configs/training/training_config.py": {
+      "bytes": 3161,
+      "origin": {
+        "bytes": 3161,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/configs/training/training_config.py",
+        "selection": "complete file",
+        "sha256": "73c62024a432ec885055c1adf6e750bbcd838189554f48c60ab0b2ab4df0905f"
+      },
+      "sha256": "73c62024a432ec885055c1adf6e750bbcd838189554f48c60ab0b2ab4df0905f"
+    },
+    "source/src/v1_groot_memoryvla/data/__init__.py": {
+      "bytes": 0,
+      "origin": {
+        "bytes": 0,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/data/__init__.py",
+        "selection": "complete file",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source/src/v1_groot_memoryvla/data/collator/__init__.py": {
+      "bytes": 41,
+      "origin": {
+        "bytes": 41,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/data/collator/__init__.py",
+        "selection": "complete file",
+        "sha256": "590f4db2cd5400dba0fb6095780287a5c8b94c0cdf665616a76e8bbed45c532a"
+      },
+      "sha256": "590f4db2cd5400dba0fb6095780287a5c8b94c0cdf665616a76e8bbed45c532a"
+    },
+    "source/src/v1_groot_memoryvla/data/collator/collators.py": {
+      "bytes": 333,
+      "origin": {
+        "bytes": 333,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/data/collator/collators.py",
+        "selection": "complete file",
+        "sha256": "01676de0337943fffbd74307f421ac63c0ff2f88e6d4d812cbe9f2b709d7f323"
+      },
+      "sha256": "01676de0337943fffbd74307f421ac63c0ff2f88e6d4d812cbe9f2b709d7f323"
+    },
+    "source/src/v1_groot_memoryvla/data/convert_b1k.py": {
+      "bytes": 10384,
+      "origin": {
+        "bytes": 10384,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/data/convert_b1k.py",
+        "selection": "complete file",
+        "sha256": "dcf215ff88ac4f2be0691c67b92107c6256ebb52c063b7b16bfa8765fbdccd6d"
+      },
+      "sha256": "dcf215ff88ac4f2be0691c67b92107c6256ebb52c063b7b16bfa8765fbdccd6d"
+    },
+    "source/src/v1_groot_memoryvla/data/dataset/__init__.py": {
+      "bytes": 0,
+      "origin": {
+        "bytes": 0,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/data/dataset/__init__.py",
+        "selection": "complete file",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source/src/v1_groot_memoryvla/data/dataset/episode_windows.py": {
+      "bytes": 2160,
+      "origin": {
+        "bytes": 2160,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/data/dataset/episode_windows.py",
+        "selection": "complete file",
+        "sha256": "437a46c325c0fcc210a7a0a5fca4b2edbaf0183c85067578d76473de05bec1ec"
+      },
+      "sha256": "437a46c325c0fcc210a7a0a5fca4b2edbaf0183c85067578d76473de05bec1ec"
+    },
+    "source/src/v1_groot_memoryvla/data/dataset/factory.py": {
+      "bytes": 4374,
+      "origin": {
+        "bytes": 4374,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/data/dataset/factory.py",
+        "selection": "complete file",
+        "sha256": "73e75387e5d70c93f61f5659f8157e71d079baf4195595f8dcd0b308be759dd7"
+      },
+      "sha256": "73e75387e5d70c93f61f5659f8157e71d079baf4195595f8dcd0b308be759dd7"
+    },
+    "source/src/v1_groot_memoryvla/data/dataset/history_dataset.py": {
+      "bytes": 7864,
+      "origin": {
+        "bytes": 7864,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/data/dataset/history_dataset.py",
+        "selection": "complete file",
+        "sha256": "ac7f82cf82435f033f16f5088c6d4112ec55ad680b1d2b285eae49ef63b87d5c"
+      },
+      "sha256": "ac7f82cf82435f033f16f5088c6d4112ec55ad680b1d2b285eae49ef63b87d5c"
+    },
+    "source/src/v1_groot_memoryvla/data/dataset/lerobot_episode_loader.py": {
+      "bytes": 24691,
+      "origin": {
+        "bytes": 24691,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/data/dataset/lerobot_episode_loader.py",
+        "selection": "complete file",
+        "sha256": "9c1c1467630117b1f6454c02c94b3fbc5c27d12b25b44708431b725bb5456246"
+      },
+      "sha256": "9c1c1467630117b1f6454c02c94b3fbc5c27d12b25b44708431b725bb5456246"
+    },
+    "source/src/v1_groot_memoryvla/data/dataset/sharded_mixture_dataset.py": {
+      "bytes": 19559,
+      "origin": {
+        "bytes": 19559,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/data/dataset/sharded_mixture_dataset.py",
+        "selection": "complete file",
+        "sha256": "eeb8abc24489a5e865e99513d187959681205a2f61003ce4585186717a36677d"
+      },
+      "sha256": "eeb8abc24489a5e865e99513d187959681205a2f61003ce4585186717a36677d"
+    },
+    "source/src/v1_groot_memoryvla/data/dataset/sharded_single_step_dataset.py": {
+      "bytes": 11765,
+      "origin": {
+        "bytes": 11765,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/data/dataset/sharded_single_step_dataset.py",
+        "selection": "complete file",
+        "sha256": "bc994109fcba23046a33cb03f0eeea51ade3bd637f4f8932b042b6f4227f8ac0"
+      },
+      "sha256": "bc994109fcba23046a33cb03f0eeea51ade3bd637f4f8932b042b6f4227f8ac0"
+    },
+    "source/src/v1_groot_memoryvla/data/embodiment_tags.py": {
+      "bytes": 1222,
+      "origin": {
+        "bytes": 1222,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/data/embodiment_tags.py",
+        "selection": "complete file",
+        "sha256": "d408d311490f693258d0d73f0ebf0c7b0ae0148fc2a379529a7a56dbfd857b6f"
+      },
+      "sha256": "d408d311490f693258d0d73f0ebf0c7b0ae0148fc2a379529a7a56dbfd857b6f"
+    },
+    "source/src/v1_groot_memoryvla/data/episode_split.py": {
+      "bytes": 1346,
+      "origin": {
+        "bytes": 1346,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/data/episode_split.py",
+        "selection": "complete file",
+        "sha256": "556eb50f8fdd7ed60ef4dda18962393f845267f0ad06f92499195f8e6006cf52"
+      },
+      "sha256": "556eb50f8fdd7ed60ef4dda18962393f845267f0ad06f92499195f8e6006cf52"
+    },
+    "source/src/v1_groot_memoryvla/data/interfaces.py": {
+      "bytes": 4590,
+      "origin": {
+        "bytes": 4590,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/data/interfaces.py",
+        "selection": "complete file",
+        "sha256": "1d236a479ca40f331b37c68953e45823bb3a5b31a2eadb74367c5365e858ece8"
+      },
+      "sha256": "1d236a479ca40f331b37c68953e45823bb3a5b31a2eadb74367c5365e858ece8"
+    },
+    "source/src/v1_groot_memoryvla/data/prepare_task21_diagnostic.py": {
+      "bytes": 8264,
+      "origin": {
+        "bytes": 8264,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/data/prepare_task21_diagnostic.py",
+        "selection": "complete file",
+        "sha256": "901d48474eb238c4bbefb123a8f80df972bfba9e30a5c2847c7094b9ea2c1b89"
+      },
+      "sha256": "901d48474eb238c4bbefb123a8f80df972bfba9e30a5c2847c7094b9ea2c1b89"
+    },
+    "source/src/v1_groot_memoryvla/data/prepare_task21_formal.py": {
+      "bytes": 5690,
+      "origin": {
+        "bytes": 5690,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/data/prepare_task21_formal.py",
+        "selection": "complete file",
+        "sha256": "b2513ac56dbc82f13eea6acd7f3341c0f7fee1b6ad9865257698afa2ed75c86f"
+      },
+      "sha256": "b2513ac56dbc82f13eea6acd7f3341c0f7fee1b6ad9865257698afa2ed75c86f"
+    },
+    "source/src/v1_groot_memoryvla/data/state_action/__init__.py": {
+      "bytes": 46,
+      "origin": {
+        "bytes": 46,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/data/state_action/__init__.py",
+        "selection": "complete file",
+        "sha256": "b6b5dd5de1945b8d417c7ecc86842a585e9a52a79b07b42131f177c5612fa293"
+      },
+      "sha256": "b6b5dd5de1945b8d417c7ecc86842a585e9a52a79b07b42131f177c5612fa293"
+    },
+    "source/src/v1_groot_memoryvla/data/state_action/action_chunking.py": {
+      "bytes": 25770,
+      "origin": {
+        "bytes": 25770,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/data/state_action/action_chunking.py",
+        "selection": "complete file",
+        "sha256": "b1afab3369351b4316a838f86f0e61003f138427c3c5a615644b87368469cc8f"
+      },
+      "sha256": "b1afab3369351b4316a838f86f0e61003f138427c3c5a615644b87368469cc8f"
+    },
+    "source/src/v1_groot_memoryvla/data/state_action/pose.py": {
+      "bytes": 23353,
+      "origin": {
+        "bytes": 23353,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/data/state_action/pose.py",
+        "selection": "complete file",
+        "sha256": "e9040458163417f1a00a3a44da3a1ef34776609bac162e2303dab1e937b94589"
+      },
+      "sha256": "e9040458163417f1a00a3a44da3a1ef34776609bac162e2303dab1e937b94589"
+    },
+    "source/src/v1_groot_memoryvla/data/state_action/state_action_processor.py": {
+      "bytes": 28158,
+      "origin": {
+        "bytes": 28158,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/data/state_action/state_action_processor.py",
+        "selection": "complete file",
+        "sha256": "dce7c730fa98d353c6621e981576307d6c50499b785e1917edb142494567f045"
+      },
+      "sha256": "dce7c730fa98d353c6621e981576307d6c50499b785e1917edb142494567f045"
+    },
+    "source/src/v1_groot_memoryvla/data/stats.py": {
+      "bytes": 10403,
+      "origin": {
+        "bytes": 10403,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/data/stats.py",
+        "selection": "complete file",
+        "sha256": "119e1197561cb6fe39b8a06f5581682d29a6cc8518b8b18df89c24b06c0b42f1"
+      },
+      "sha256": "119e1197561cb6fe39b8a06f5581682d29a6cc8518b8b18df89c24b06c0b42f1"
+    },
+    "source/src/v1_groot_memoryvla/data/types.py": {
+      "bytes": 3881,
+      "origin": {
+        "bytes": 3881,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/data/types.py",
+        "selection": "complete file",
+        "sha256": "f80981fe89452b93c7e1649bcdf7ff1c3b7492aac92b5683740e4aafa7ab347b"
+      },
+      "sha256": "f80981fe89452b93c7e1649bcdf7ff1c3b7492aac92b5683740e4aafa7ab347b"
+    },
+    "source/src/v1_groot_memoryvla/data/utils.py": {
+      "bytes": 11333,
+      "origin": {
+        "bytes": 11333,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/data/utils.py",
+        "selection": "complete file",
+        "sha256": "8f4caed97a56517684ef0d68416eabc71efc45c7c45bd906842f264215025785"
+      },
+      "sha256": "8f4caed97a56517684ef0d68416eabc71efc45c7c45bd906842f264215025785"
+    },
+    "source/src/v1_groot_memoryvla/experiment/__init__.py": {
+      "bytes": 0,
+      "origin": {
+        "bytes": 0,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/experiment/__init__.py",
+        "selection": "complete file",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source/src/v1_groot_memoryvla/experiment/dist_utils.py": {
+      "bytes": 412,
+      "origin": {
+        "bytes": 412,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/experiment/dist_utils.py",
+        "selection": "complete file",
+        "sha256": "058a041ab655b52a8df4e6e821c137ff9a18e8e97aa78ba2e336262936e59b08"
+      },
+      "sha256": "058a041ab655b52a8df4e6e821c137ff9a18e8e97aa78ba2e336262936e59b08"
+    },
+    "source/src/v1_groot_memoryvla/experiment/experiment.py": {
+      "bytes": 11921,
+      "origin": {
+        "bytes": 11921,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/experiment/experiment.py",
+        "selection": "complete file",
+        "sha256": "ca94e5dbd16e80929fc60f5363c3266d550e27e43aa1307f35ed5c5dccc14d63"
+      },
+      "sha256": "ca94e5dbd16e80929fc60f5363c3266d550e27e43aa1307f35ed5c5dccc14d63"
+    },
+    "source/src/v1_groot_memoryvla/experiment/finetuning.py": {
+      "bytes": 7112,
+      "origin": {
+        "bytes": 7112,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/experiment/finetuning.py",
+        "selection": "complete file",
+        "sha256": "c0cce703c994c27946c74f887f081d4183fc362ee995e6db02a8faf8751b2c56"
+      },
+      "sha256": "c0cce703c994c27946c74f887f081d4183fc362ee995e6db02a8faf8751b2c56"
+    },
+    "source/src/v1_groot_memoryvla/experiment/finetuning_options.py": {
+      "bytes": 5215,
+      "origin": {
+        "bytes": 5215,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/experiment/finetuning_options.py",
+        "selection": "complete file",
+        "sha256": "daed5da57538aa02c757ac99ebae616b67dfda75bc5b4d2f8710c7a705816e18"
+      },
+      "sha256": "daed5da57538aa02c757ac99ebae616b67dfda75bc5b4d2f8710c7a705816e18"
+    },
+    "source/src/v1_groot_memoryvla/experiment/first_training.py": {
+      "bytes": 27791,
+      "origin": {
+        "bytes": 27791,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/experiment/first_training.py",
+        "selection": "complete file",
+        "sha256": "69576682e3a4431732b7906281f601e63b61c9651aaebeb72566e4967e8e9c08"
+      },
+      "sha256": "69576682e3a4431732b7906281f601e63b61c9651aaebeb72566e4967e8e9c08"
+    },
+    "source/src/v1_groot_memoryvla/experiment/launch_finetune.py": {
+      "bytes": 5706,
+      "origin": {
+        "bytes": 5706,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/experiment/launch_finetune.py",
+        "selection": "complete file",
+        "sha256": "dd7d63971362afccafa81dca8dc814720dcd4660cbe7ed94a626c28f404467f5"
+      },
+      "sha256": "dd7d63971362afccafa81dca8dc814720dcd4660cbe7ed94a626c28f404467f5"
+    },
+    "source/src/v1_groot_memoryvla/experiment/launch_task21_ddp.py": {
+      "bytes": 18986,
+      "origin": {
+        "bytes": 18986,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/experiment/launch_task21_ddp.py",
+        "selection": "complete file",
+        "sha256": "32dbdc813052f40de534aceb975493a28f1e1a20ede32a92950826b3d4b9feae"
+      },
+      "sha256": "32dbdc813052f40de534aceb975493a28f1e1a20ede32a92950826b3d4b9feae"
+    },
+    "source/src/v1_groot_memoryvla/experiment/launch_task21_formal.py": {
+      "bytes": 12886,
+      "origin": {
+        "bytes": 12886,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/experiment/launch_task21_formal.py",
+        "selection": "complete file",
+        "sha256": "ae3a0aad0ea8303607633c52bc0faffcb07800e14a6727e78e36284071a24034"
+      },
+      "sha256": "ae3a0aad0ea8303607633c52bc0faffcb07800e14a6727e78e36284071a24034"
+    },
+    "source/src/v1_groot_memoryvla/experiment/launch_train.py": {
+      "bytes": 1024,
+      "origin": {
+        "bytes": 1024,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/experiment/launch_train.py",
+        "selection": "complete file",
+        "sha256": "720d21e59192505ccc928e3c1327441af889d7c51a1af0d5a2b2ea3e1e5eb80c"
+      },
+      "sha256": "720d21e59192505ccc928e3c1327441af889d7c51a1af0d5a2b2ea3e1e5eb80c"
+    },
+    "source/src/v1_groot_memoryvla/experiment/memory_training_options.py": {
+      "bytes": 3530,
+      "origin": {
+        "bytes": 3530,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/experiment/memory_training_options.py",
+        "selection": "complete file",
+        "sha256": "d0b0fbf59a1ab6dc597240492d77c11c41d5e7bcfaac8f65ab30958215296f61"
+      },
+      "sha256": "d0b0fbf59a1ab6dc597240492d77c11c41d5e7bcfaac8f65ab30958215296f61"
+    },
+    "source/src/v1_groot_memoryvla/experiment/openvla_preflight.py": {
+      "bytes": 8501,
+      "origin": {
+        "bytes": 8501,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/experiment/openvla_preflight.py",
+        "selection": "complete file",
+        "sha256": "bd5ed79d092227f968ba23737489ae32cf2d27dca44fb6423a9620d00829cf16"
+      },
+      "sha256": "bd5ed79d092227f968ba23737489ae32cf2d27dca44fb6423a9620d00829cf16"
+    },
+    "source/src/v1_groot_memoryvla/experiment/output.py": {
+      "bytes": 1121,
+      "origin": {
+        "bytes": 1121,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/experiment/output.py",
+        "selection": "complete file",
+        "sha256": "92a26e6184703603099edcb8b8dafea5b0b7820013578ac80da1f4f8cc5ab79a"
+      },
+      "sha256": "92a26e6184703603099edcb8b8dafea5b0b7820013578ac80da1f4f8cc5ab79a"
+    },
+    "source/src/v1_groot_memoryvla/experiment/task21_async.py": {
+      "bytes": 13167,
+      "origin": {
+        "bytes": 13167,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/experiment/task21_async.py",
+        "selection": "complete file",
+        "sha256": "f646c922283661f7c07d746b3d532d6519e67493aa79db6af221d55c3a48a209"
+      },
+      "sha256": "f646c922283661f7c07d746b3d532d6519e67493aa79db6af221d55c3a48a209"
+    },
+    "source/src/v1_groot_memoryvla/experiment/task21_ddp.py": {
+      "bytes": 54527,
+      "origin": {
+        "bytes": 54527,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/experiment/task21_ddp.py",
+        "selection": "complete file",
+        "sha256": "48810ccd6c11d8550e8e3ad592481c3e5906346444c5083f315a4bd3773adbe0"
+      },
+      "sha256": "48810ccd6c11d8550e8e3ad592481c3e5906346444c5083f315a4bd3773adbe0"
+    },
+    "source/src/v1_groot_memoryvla/experiment/task21_diagnostic.py": {
+      "bytes": 29109,
+      "origin": {
+        "bytes": 29109,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/experiment/task21_diagnostic.py",
+        "selection": "complete file",
+        "sha256": "26e690bc67df5c224e7d2aa18f98f4b0062cbcd089c96eb47cfeb17947da9f06"
+      },
+      "sha256": "26e690bc67df5c224e7d2aa18f98f4b0062cbcd089c96eb47cfeb17947da9f06"
+    },
+    "source/src/v1_groot_memoryvla/experiment/task21_formal.py": {
+      "bytes": 32668,
+      "origin": {
+        "bytes": 32668,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/experiment/task21_formal.py",
+        "selection": "complete file",
+        "sha256": "7c26cee218b6f8b69e6cf2e7da333bab09f3a7d98b557c28ceccf845160f9123"
+      },
+      "sha256": "7c26cee218b6f8b69e6cf2e7da333bab09f3a7d98b557c28ceccf845160f9123"
+    },
+    "source/src/v1_groot_memoryvla/experiment/task40_fusion_check.py": {
+      "bytes": 6160,
+      "origin": {
+        "bytes": 6160,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/experiment/task40_fusion_check.py",
+        "selection": "complete file",
+        "sha256": "b109213ab0e06567bd21127c8e13c9ec88f3ee00a7920695dff27dd1ea23278a"
+      },
+      "sha256": "b109213ab0e06567bd21127c8e13c9ec88f3ee00a7920695dff27dd1ea23278a"
+    },
+    "source/src/v1_groot_memoryvla/experiment/task40_state_training.py": {
+      "bytes": 5867,
+      "origin": {
+        "bytes": 5867,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/experiment/task40_state_training.py",
+        "selection": "complete file",
+        "sha256": "c375928be009eab9799733d7896f914518dc93637e563ef186ffea0f675e0ead"
+      },
+      "sha256": "c375928be009eab9799733d7896f914518dc93637e563ef186ffea0f675e0ead"
+    },
+    "source/src/v1_groot_memoryvla/experiment/trainer.py": {
+      "bytes": 12460,
+      "origin": {
+        "bytes": 12460,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/experiment/trainer.py",
+        "selection": "complete file",
+        "sha256": "9793a73cb0dd6fb4b4a642d8e06cf886aa5fb88ed8d3c3df831f96dba51b53fb"
+      },
+      "sha256": "9793a73cb0dd6fb4b4a642d8e06cf886aa5fb88ed8d3c3df831f96dba51b53fb"
+    },
+    "source/src/v1_groot_memoryvla/experiment/utils.py": {
+      "bytes": 4824,
+      "origin": {
+        "bytes": 4824,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/experiment/utils.py",
+        "selection": "complete file",
+        "sha256": "e24e80310ca56d157d546dc3d288cc0e270aa984b1656ae788a26ce850ce7a3b"
+      },
+      "sha256": "e24e80310ca56d157d546dc3d288cc0e270aa984b1656ae788a26ce850ce7a3b"
+    },
+    "source/src/v1_groot_memoryvla/model/__init__.py": {
+      "bytes": 85,
+      "origin": {
+        "bytes": 85,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/model/__init__.py",
+        "selection": "complete file",
+        "sha256": "12e3a3a539655b9efc3855453ce43b656ba106c79c7b5a96056cdcd849ab8aaf"
+      },
+      "sha256": "12e3a3a539655b9efc3855453ce43b656ba106c79c7b5a96056cdcd849ab8aaf"
+    },
+    "source/src/v1_groot_memoryvla/model/base/__init__.py": {
+      "bytes": 33,
+      "origin": {
+        "bytes": 33,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/model/base/__init__.py",
+        "selection": "complete file",
+        "sha256": "205dfc708504e9a21b458ab3391f8b36ee151a9862726c1e1e20396a57abadb4"
+      },
+      "sha256": "205dfc708504e9a21b458ab3391f8b36ee151a9862726c1e1e20396a57abadb4"
+    },
+    "source/src/v1_groot_memoryvla/model/base/model_pipeline.py": {
+      "bytes": 3737,
+      "origin": {
+        "bytes": 3737,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/model/base/model_pipeline.py",
+        "selection": "complete file",
+        "sha256": "fccf4c34739b078c215a530e847ff101ac9ca798ab38a18435144d9c00669d7d"
+      },
+      "sha256": "fccf4c34739b078c215a530e847ff101ac9ca798ab38a18435144d9c00669d7d"
+    },
+    "source/src/v1_groot_memoryvla/model/gr00t_n1d6/__init__.py": {
+      "bytes": 38,
+      "origin": {
+        "bytes": 38,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/model/gr00t_n1d6/__init__.py",
+        "selection": "complete file",
+        "sha256": "4f74d07f6b85aae7b24440d87a63c64045ee617bc55441fc8322669ae7d589e1"
+      },
+      "sha256": "4f74d07f6b85aae7b24440d87a63c64045ee617bc55441fc8322669ae7d589e1"
+    },
+    "source/src/v1_groot_memoryvla/model/gr00t_n1d6/gr00t_n1d6.py": {
+      "bytes": 32958,
+      "origin": {
+        "bytes": 32958,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/model/gr00t_n1d6/gr00t_n1d6.py",
+        "selection": "complete file",
+        "sha256": "51417f25c4c30709552345811ddc7fcc00aff1314870f91c0befc14880b869ae"
+      },
+      "sha256": "51417f25c4c30709552345811ddc7fcc00aff1314870f91c0befc14880b869ae"
+    },
+    "source/src/v1_groot_memoryvla/model/gr00t_n1d6/image_augmentations.py": {
+      "bytes": 21828,
+      "origin": {
+        "bytes": 21828,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/model/gr00t_n1d6/image_augmentations.py",
+        "selection": "complete file",
+        "sha256": "7d3c7fabaf7c42183d45b909588c65f6a433c30937b3faba9f2569f2a7a92651"
+      },
+      "sha256": "7d3c7fabaf7c42183d45b909588c65f6a433c30937b3faba9f2569f2a7a92651"
+    },
+    "source/src/v1_groot_memoryvla/model/gr00t_n1d6/language.py": {
+      "bytes": 884,
+      "origin": {
+        "bytes": 884,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/model/gr00t_n1d6/language.py",
+        "selection": "complete file",
+        "sha256": "42dc392cf713a5a20aaeb22bb37701d7af30f0b60e3ba6f5a3a78cc1a30aa04e"
+      },
+      "sha256": "42dc392cf713a5a20aaeb22bb37701d7af30f0b60e3ba6f5a3a78cc1a30aa04e"
+    },
+    "source/src/v1_groot_memoryvla/model/gr00t_n1d6/processing_gr00t_n1d6.py": {
+      "bytes": 23364,
+      "origin": {
+        "bytes": 23364,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/model/gr00t_n1d6/processing_gr00t_n1d6.py",
+        "selection": "complete file",
+        "sha256": "e6255fec60ce9e44d282110e77f03a414a2a5f367db7ca42f565b16b096e46a3"
+      },
+      "sha256": "e6255fec60ce9e44d282110e77f03a414a2a5f367db7ca42f565b16b096e46a3"
+    },
+    "source/src/v1_groot_memoryvla/model/gr00t_n1d6/setup.py": {
+      "bytes": 10929,
+      "origin": {
+        "bytes": 10929,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/model/gr00t_n1d6/setup.py",
+        "selection": "complete file",
+        "sha256": "6ad8e27d4f8503172369addc7ab9930c15bf02052d60e238ef1ee24f720a3ad1"
+      },
+      "sha256": "6ad8e27d4f8503172369addc7ab9930c15bf02052d60e238ef1ee24f720a3ad1"
+    },
+    "source/src/v1_groot_memoryvla/model/memory/__init__.py": {
+      "bytes": 138,
+      "origin": {
+        "bytes": 138,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/model/memory/__init__.py",
+        "selection": "complete file",
+        "sha256": "5de6472a25e87883067c907ae6b4e301d63b1eddc712ffc4de547147bf369b1a"
+      },
+      "sha256": "5de6472a25e87883067c907ae6b4e301d63b1eddc712ffc4de547147bf369b1a"
+    },
+    "source/src/v1_groot_memoryvla/model/memory/adapter.py": {
+      "bytes": 14367,
+      "origin": {
+        "bytes": 14367,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/model/memory/adapter.py",
+        "selection": "complete file",
+        "sha256": "28a2a6925aa7d43b2b5700b816105f0509f3384b0efc8a483f9b2452de6fbbc0"
+      },
+      "sha256": "28a2a6925aa7d43b2b5700b816105f0509f3384b0efc8a483f9b2452de6fbbc0"
+    },
+    "source/src/v1_groot_memoryvla/model/memory/bank.py": {
+      "bytes": 10333,
+      "origin": {
+        "bytes": 10333,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/model/memory/bank.py",
+        "selection": "complete file",
+        "sha256": "e1807e7534524be0d3d7d43ded29271df524642852fb94df32d1e266b9defbd7"
+      },
+      "sha256": "e1807e7534524be0d3d7d43ded29271df524642852fb94df32d1e266b9defbd7"
+    },
+    "source/src/v1_groot_memoryvla/model/memory/diagnostics.py": {
+      "bytes": 3575,
+      "origin": {
+        "bytes": 3575,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/model/memory/diagnostics.py",
+        "selection": "complete file",
+        "sha256": "51d3ef5b508ac0a3c221ddd8bd0967e962e8c13937552f5882711e038c0953a7"
+      },
+      "sha256": "51d3ef5b508ac0a3c221ddd8bd0967e962e8c13937552f5882711e038c0953a7"
+    },
+    "source/src/v1_groot_memoryvla/model/memory/fusion.py": {
+      "bytes": 2460,
+      "origin": {
+        "bytes": 2460,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/model/memory/fusion.py",
+        "selection": "complete file",
+        "sha256": "d43883ad380389139cab761044475cdbec3603d616127b556f271d7c82cfc4d4"
+      },
+      "sha256": "d43883ad380389139cab761044475cdbec3603d616127b556f271d7c82cfc4d4"
+    },
+    "source/src/v1_groot_memoryvla/model/modules/__init__.py": {
+      "bytes": 44,
+      "origin": {
+        "bytes": 44,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/model/modules/__init__.py",
+        "selection": "complete file",
+        "sha256": "29fbbb56dea59476d5da80bb836cd458e1f0d9ed257caa39dcf5218521bdad92"
+      },
+      "sha256": "29fbbb56dea59476d5da80bb836cd458e1f0d9ed257caa39dcf5218521bdad92"
+    },
+    "source/src/v1_groot_memoryvla/model/modules/dit.py": {
+      "bytes": 18961,
+      "origin": {
+        "bytes": 18961,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/model/modules/dit.py",
+        "selection": "complete file",
+        "sha256": "12cfa70194a943dc1b54fbe1092fc9674e338fa07ca16c6a5de4471aac7e462a"
+      },
+      "sha256": "12cfa70194a943dc1b54fbe1092fc9674e338fa07ca16c6a5de4471aac7e462a"
+    },
+    "source/src/v1_groot_memoryvla/model/modules/eagle_backbone.py": {
+      "bytes": 6667,
+      "origin": {
+        "bytes": 6667,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/model/modules/eagle_backbone.py",
+        "selection": "complete file",
+        "sha256": "b3524f93239093d5dbff1d202510f879d43689c664a055474433c88130234404"
+      },
+      "sha256": "b3524f93239093d5dbff1d202510f879d43689c664a055474433c88130234404"
+    },
+    "source/src/v1_groot_memoryvla/model/modules/embodiment_conditioned_mlp.py": {
+      "bytes": 8281,
+      "origin": {
+        "bytes": 8281,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/model/modules/embodiment_conditioned_mlp.py",
+        "selection": "complete file",
+        "sha256": "16ce8c4da96834a3844a4a892df5b6a66aa717fcc2d91e6f6e95b741847508a1"
+      },
+      "sha256": "16ce8c4da96834a3844a4a892df5b6a66aa717fcc2d91e6f6e95b741847508a1"
+    },
+    "source/src/v1_groot_memoryvla/model/modules/flowmatching_modules.py": {
+      "bytes": 3140,
+      "origin": {
+        "bytes": 3140,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/model/modules/flowmatching_modules.py",
+        "selection": "complete file",
+        "sha256": "fee7ad04ad5132efd798e0d578d7e292d3108cdee238ae50235e554a1b8a4adb"
+      },
+      "sha256": "fee7ad04ad5132efd798e0d578d7e292d3108cdee238ae50235e554a1b8a4adb"
+    },
+    "source/src/v1_groot_memoryvla/model/modules/lora.py": {
+      "bytes": 1742,
+      "origin": {
+        "bytes": 1742,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/model/modules/lora.py",
+        "selection": "complete file",
+        "sha256": "72a378a5e51430acbdac6d4cffeec857f7c808ac215ae7440ab5b3871c053b80"
+      },
+      "sha256": "72a378a5e51430acbdac6d4cffeec857f7c808ac215ae7440ab5b3871c053b80"
+    },
+    "source/src/v1_groot_memoryvla/model/modules/nvidia/Eagle-Block2A-2B-v2/added_tokens.json": {
+      "bytes": 941,
+      "origin": {
+        "bytes": 941,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/model/modules/nvidia/Eagle-Block2A-2B-v2/added_tokens.json",
+        "selection": "complete file",
+        "sha256": "4dd6146d2eccfb4a5c8e147df8876eb92be19ed60a3e65aab4d5d3e9f51f6d6a"
+      },
+      "sha256": "4dd6146d2eccfb4a5c8e147df8876eb92be19ed60a3e65aab4d5d3e9f51f6d6a"
+    },
+    "source/src/v1_groot_memoryvla/model/modules/nvidia/Eagle-Block2A-2B-v2/chat_template.json": {
+      "bytes": 1023,
+      "origin": {
+        "bytes": 1023,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/model/modules/nvidia/Eagle-Block2A-2B-v2/chat_template.json",
+        "selection": "complete file",
+        "sha256": "6f8531a4671423abfe39617975d3be5d5ef57e95aabc81610279b9bbf7be1044"
+      },
+      "sha256": "6f8531a4671423abfe39617975d3be5d5ef57e95aabc81610279b9bbf7be1044"
+    },
+    "source/src/v1_groot_memoryvla/model/modules/nvidia/Eagle-Block2A-2B-v2/config.json": {
+      "bytes": 2321,
+      "origin": {
+        "bytes": 2321,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/model/modules/nvidia/Eagle-Block2A-2B-v2/config.json",
+        "selection": "complete file",
+        "sha256": "2212673538fb6802d9d7d03380a3d4ae66cf230cf29a7955b3aea097f06a535b"
+      },
+      "sha256": "2212673538fb6802d9d7d03380a3d4ae66cf230cf29a7955b3aea097f06a535b"
+    },
+    "source/src/v1_groot_memoryvla/model/modules/nvidia/Eagle-Block2A-2B-v2/configuration_eagle3_vl.py": {
+      "bytes": 4258,
+      "origin": {
+        "bytes": 4258,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/model/modules/nvidia/Eagle-Block2A-2B-v2/configuration_eagle3_vl.py",
+        "selection": "complete file",
+        "sha256": "7f59c991eefeb9e0bba7e1f95d09e22b56c92af0cf333e30798c935e2462442c"
+      },
+      "sha256": "7f59c991eefeb9e0bba7e1f95d09e22b56c92af0cf333e30798c935e2462442c"
+    },
+    "source/src/v1_groot_memoryvla/model/modules/nvidia/Eagle-Block2A-2B-v2/generation_config.json": {
+      "bytes": 121,
+      "origin": {
+        "bytes": 121,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/model/modules/nvidia/Eagle-Block2A-2B-v2/generation_config.json",
+        "selection": "complete file",
+        "sha256": "f15f5de33244a61325923e99bad2c061029acb8d6dd5c57f8458b3949ddd8f97"
+      },
+      "sha256": "f15f5de33244a61325923e99bad2c061029acb8d6dd5c57f8458b3949ddd8f97"
+    },
+    "source/src/v1_groot_memoryvla/model/modules/nvidia/Eagle-Block2A-2B-v2/image_processing_eagle3_vl_fast.py": {
+      "bytes": 9195,
+      "origin": {
+        "bytes": 9195,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/model/modules/nvidia/Eagle-Block2A-2B-v2/image_processing_eagle3_vl_fast.py",
+        "selection": "complete file",
+        "sha256": "18e10b4d36d4695d59f478fe8b9aea3b3f363d7262587c11bdc7a48390149db0"
+      },
+      "sha256": "18e10b4d36d4695d59f478fe8b9aea3b3f363d7262587c11bdc7a48390149db0"
+    },
+    "source/src/v1_groot_memoryvla/model/modules/nvidia/Eagle-Block2A-2B-v2/modeling_eagle3_vl.py": {
+      "bytes": 19886,
+      "origin": {
+        "bytes": 19886,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/model/modules/nvidia/Eagle-Block2A-2B-v2/modeling_eagle3_vl.py",
+        "selection": "complete file",
+        "sha256": "9480ff1101c79e9ab62c109aa9947d4091356488930ef95682c76236b40c07f5"
+      },
+      "sha256": "9480ff1101c79e9ab62c109aa9947d4091356488930ef95682c76236b40c07f5"
+    },
+    "source/src/v1_groot_memoryvla/model/modules/nvidia/Eagle-Block2A-2B-v2/modeling_siglip2.py": {
+      "bytes": 62946,
+      "origin": {
+        "bytes": 62946,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/model/modules/nvidia/Eagle-Block2A-2B-v2/modeling_siglip2.py",
+        "selection": "complete file",
+        "sha256": "e6ead7558cd66c098a9faa9edc594c44a7328fcaf578fad1b1e05f9d2e38c128"
+      },
+      "sha256": "e6ead7558cd66c098a9faa9edc594c44a7328fcaf578fad1b1e05f9d2e38c128"
+    },
+    "source/src/v1_groot_memoryvla/model/modules/nvidia/Eagle-Block2A-2B-v2/preprocessor_config.json": {
+      "bytes": 781,
+      "origin": {
+        "bytes": 781,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/model/modules/nvidia/Eagle-Block2A-2B-v2/preprocessor_config.json",
+        "selection": "complete file",
+        "sha256": "f8762cfe6cc0d430fb17d9ff2d36590c1e53fa32d2a4b8b4b00da95b81a700c5"
+      },
+      "sha256": "f8762cfe6cc0d430fb17d9ff2d36590c1e53fa32d2a4b8b4b00da95b81a700c5"
+    },
+    "source/src/v1_groot_memoryvla/model/modules/nvidia/Eagle-Block2A-2B-v2/processing_eagle3_vl.py": {
+      "bytes": 43947,
+      "origin": {
+        "bytes": 43947,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/model/modules/nvidia/Eagle-Block2A-2B-v2/processing_eagle3_vl.py",
+        "selection": "complete file",
+        "sha256": "2c5fcd6a09c24ee083697eb6ee73dd003d8068b0092ab2560eb792eb2f9964da"
+      },
+      "sha256": "2c5fcd6a09c24ee083697eb6ee73dd003d8068b0092ab2560eb792eb2f9964da"
+    },
+    "source/src/v1_groot_memoryvla/model/modules/nvidia/Eagle-Block2A-2B-v2/processor_config.json": {
+      "bytes": 394,
+      "origin": {
+        "bytes": 394,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/model/modules/nvidia/Eagle-Block2A-2B-v2/processor_config.json",
+        "selection": "complete file",
+        "sha256": "a4ef98b2fd4caa9d492101867effa4f094c2c1a9754cdb49782b287e9688040b"
+      },
+      "sha256": "a4ef98b2fd4caa9d492101867effa4f094c2c1a9754cdb49782b287e9688040b"
+    },
+    "source/src/v1_groot_memoryvla/model/modules/nvidia/Eagle-Block2A-2B-v2/special_tokens_map.json": {
+      "bytes": 781,
+      "origin": {
+        "bytes": 781,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/model/modules/nvidia/Eagle-Block2A-2B-v2/special_tokens_map.json",
+        "selection": "complete file",
+        "sha256": "1f7a26d4bd862741d920097c370aaac4010b483c0dec3c85e2b42954cd8ea342"
+      },
+      "sha256": "1f7a26d4bd862741d920097c370aaac4010b483c0dec3c85e2b42954cd8ea342"
+    },
+    "source/src/v1_groot_memoryvla/model/modules/nvidia/Eagle-Block2A-2B-v2/tokenizer_config.json": {
+      "bytes": 12035,
+      "origin": {
+        "bytes": 12035,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/model/modules/nvidia/Eagle-Block2A-2B-v2/tokenizer_config.json",
+        "selection": "complete file",
+        "sha256": "82e01decc6a6a7c36bcb238cf6dbc315d68455436ca1ac2171060626ede2082b"
+      },
+      "sha256": "82e01decc6a6a7c36bcb238cf6dbc315d68455436ca1ac2171060626ede2082b"
+    },
+    "source/src/v1_groot_memoryvla/model/modules/nvidia/Eagle-Block2A-2B-v2/vocab.json": {
+      "bytes": 3383407,
+      "origin": {
+        "bytes": 3383407,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/model/modules/nvidia/Eagle-Block2A-2B-v2/vocab.json",
+        "selection": "complete file",
+        "sha256": "87a257b04b17642a0688c98cd1df89c398bda4fee532d6f88b38a659ecb4ac8d"
+      },
+      "sha256": "87a257b04b17642a0688c98cd1df89c398bda4fee532d6f88b38a659ecb4ac8d"
+    },
+    "source/src/v1_groot_memoryvla/model/registry.py": {
+      "bytes": 238,
+      "origin": {
+        "bytes": 238,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/model/registry.py",
+        "selection": "complete file",
+        "sha256": "504bf69871f0ad1e8494718a0720b062a7c887a0c6da0f58d0be115115fcbe17"
+      },
+      "sha256": "504bf69871f0ad1e8494718a0720b062a7c887a0c6da0f58d0be115115fcbe17"
+    },
+    "source/src/v1_groot_memoryvla/policy/__init__.py": {
+      "bytes": 158,
+      "origin": {
+        "bytes": 158,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/policy/__init__.py",
+        "selection": "complete file",
+        "sha256": "6b11d20333db8b5cbf8c4a9574ab16961bf4aac20fdc6e28d3fdccafc657ee7a"
+      },
+      "sha256": "6b11d20333db8b5cbf8c4a9574ab16961bf4aac20fdc6e28d3fdccafc657ee7a"
+    },
+    "source/src/v1_groot_memoryvla/policy/gr00t_policy.py": {
+      "bytes": 32070,
+      "origin": {
+        "bytes": 32070,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/policy/gr00t_policy.py",
+        "selection": "complete file",
+        "sha256": "650147a8e346d3969afa7e44d5116dc3959134b2ee6b17fa62ebd005c98f38a5"
+      },
+      "sha256": "650147a8e346d3969afa7e44d5116dc3959134b2ee6b17fa62ebd005c98f38a5"
+    },
+    "source/src/v1_groot_memoryvla/policy/memory_state.py": {
+      "bytes": 1975,
+      "origin": {
+        "bytes": 1975,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/policy/memory_state.py",
+        "selection": "complete file",
+        "sha256": "eea64fc61bbb24af0814b1fb6de72667c99d3d660ae480b9b24dff4a304ffdf3"
+      },
+      "sha256": "eea64fc61bbb24af0814b1fb6de72667c99d3d660ae480b9b24dff4a304ffdf3"
+    },
+    "source/src/v1_groot_memoryvla/policy/policy.py": {
+      "bytes": 4055,
+      "origin": {
+        "bytes": 4055,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/policy/policy.py",
+        "selection": "complete file",
+        "sha256": "fee193265384c7544ca0f84246dc366ef5dfcc8d23ab0f8b427d039faf6460e6"
+      },
+      "sha256": "fee193265384c7544ca0f84246dc366ef5dfcc8d23ab0f8b427d039faf6460e6"
+    },
+    "source/src/v1_groot_memoryvla/policy/replay_policy.py": {
+      "bytes": 17963,
+      "origin": {
+        "bytes": 17963,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/policy/replay_policy.py",
+        "selection": "complete file",
+        "sha256": "796e3c4e90fd3e4cd823a781c5c90f1312ea56b4550ba3e854404db6715ec2cc"
+      },
+      "sha256": "796e3c4e90fd3e4cd823a781c5c90f1312ea56b4550ba3e854404db6715ec2cc"
+    },
+    "source/src/v1_groot_memoryvla/policy/server_client.py": {
+      "bytes": 8501,
+      "origin": {
+        "bytes": 8501,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/policy/server_client.py",
+        "selection": "complete file",
+        "sha256": "6401b152e3d67cad081679a659b93152dba877a2dca96d0bfb823fb6a8552256"
+      },
+      "sha256": "6401b152e3d67cad081679a659b93152dba877a2dca96d0bfb823fb6a8552256"
+    },
+    "source/src/v1_groot_memoryvla/serve.py": {
+      "bytes": 3839,
+      "origin": {
+        "bytes": 3839,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/serve.py",
+        "selection": "complete file",
+        "sha256": "39a203c84c386d55d66b95c2b2c36104ea481ef506102f4de5692ccdc0de5e36"
+      },
+      "sha256": "39a203c84c386d55d66b95c2b2c36104ea481ef506102f4de5692ccdc0de5e36"
+    },
+    "source/src/v1_groot_memoryvla/train.py": {
+      "bytes": 215,
+      "origin": {
+        "bytes": 215,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/train.py",
+        "selection": "complete file",
+        "sha256": "6b817dd0851bdd1038150adc0804e0fb6d26c09b0b4e3f4a21ecc88d157bf904"
+      },
+      "sha256": "6b817dd0851bdd1038150adc0804e0fb6d26c09b0b4e3f4a21ecc88d157bf904"
+    },
+    "source/src/v1_groot_memoryvla/utils/__init__.py": {
+      "bytes": 31,
+      "origin": {
+        "bytes": 31,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/utils/__init__.py",
+        "selection": "complete file",
+        "sha256": "d51ba3c4eba31e5a3915af29fbea5b27c66c67dedb054c82a7cfa81e02100ae8"
+      },
+      "sha256": "d51ba3c4eba31e5a3915af29fbea5b27c66c67dedb054c82a7cfa81e02100ae8"
+    },
+    "source/src/v1_groot_memoryvla/utils/initial_actions.py": {
+      "bytes": 1134,
+      "origin": {
+        "bytes": 1134,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/utils/initial_actions.py",
+        "selection": "complete file",
+        "sha256": "7f305ca0050891c1a7887b5ba51470d0c42624a93284392159989bf7d4f602a4"
+      },
+      "sha256": "7f305ca0050891c1a7887b5ba51470d0c42624a93284392159989bf7d4f602a4"
+    },
+    "source/src/v1_groot_memoryvla/utils/video_utils.py": {
+      "bytes": 23300,
+      "origin": {
+        "bytes": 23300,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/src/v1_groot_memoryvla/utils/video_utils.py",
+        "selection": "complete file",
+        "sha256": "1569d61de8309dfb28a04b141b41dd323929a14e31dcc17e6b8586f93f10e155"
+      },
+      "sha256": "1569d61de8309dfb28a04b141b41dd323929a14e31dcc17e6b8586f93f10e155"
+    },
+    "source/train/run_groot_train.sh": {
+      "bytes": 2482,
+      "origin": {
+        "bytes": 2482,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/train/run_groot_train.sh",
+        "selection": "complete file",
+        "sha256": "c8648b561019a4bc9dd982ed0131b5681178acb8697e025b855dff2d38a5c886"
+      },
+      "sha256": "c8648b561019a4bc9dd982ed0131b5681178acb8697e025b855dff2d38a5c886"
+    },
+    "source/train/run_identity.py": {
+      "bytes": 5360,
+      "origin": {
+        "bytes": 5360,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/train/run_identity.py",
+        "selection": "complete file",
+        "sha256": "c5a89aa96bb9f92fe2b09b39d146f23a94ddca225fb1f7e8219fb97d39795d36"
+      },
+      "sha256": "c5a89aa96bb9f92fe2b09b39d146f23a94ddca225fb1f7e8219fb97d39795d36"
+    },
+    "source/train/web_training_resume.py": {
+      "bytes": 11686,
+      "origin": {
+        "bytes": 11686,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/train/web_training_resume.py",
+        "selection": "complete file",
+        "sha256": "4aa245f5cd2e16226a1b276433ceda36a9aace5cc339485c8e5563a2e9487bd8"
+      },
+      "sha256": "4aa245f5cd2e16226a1b276433ceda36a9aace5cc339485c8e5563a2e9487bd8"
+    },
+    "source/web_source_manifest.json": {
+      "bytes": 373956,
+      "origin": {
+        "bytes": 373956,
+        "path": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002/web_source_manifest.json",
+        "selection": "complete file",
+        "sha256": "aef92a98ce38fd7b14529ac0a6430056d5afbcd10bd2537f92fc6a41d998645e"
+      },
+      "sha256": "aef92a98ce38fd7b14529ac0a6430056d5afbcd10bd2537f92fc6a41d998645e"
+    },
+    "workbench.json": {
+      "bytes": 61724,
+      "origin": {
+        "path": "workbench training/jobs and training/detail",
+        "selection": "JSON snapshot"
+      },
+      "sha256": "3e4277c9ae0b6c6243c165fdf415ae69b7b1b23b8649b0129d8e8da1888dce41"
+    }
+  },
+  "metrics": {
+    "bytes": 24708800,
+    "origin": {
+      "bytes": 24708800,
+      "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/metrics/metrics.jsonl",
+      "selection": "complete file",
+      "sha256": "8557ae96dd6bb98c7dbdc4e8e178ecdb28a4ac2d3569327110fd89eae8ca2969"
+    },
+    "parts": [
+      {
+        "bytes": 1556352,
+        "first_line": 1,
+        "lines": 1000,
+        "path": "raw_metrics/bb56e5d2acf7c7494391c4310f5648a16dc89a3b30fcdc5a35cd43f0e6c9ad8d.jsonl",
+        "sha256": "bb56e5d2acf7c7494391c4310f5648a16dc89a3b30fcdc5a35cd43f0e6c9ad8d"
+      },
+      {
+        "bytes": 1540933,
+        "first_line": 1001,
+        "lines": 1000,
+        "path": "raw_metrics/5dbaebcc074999ff91ae69619c430c91a4e1d5191230ae6f0da0ff046f2100b5.jsonl",
+        "sha256": "5dbaebcc074999ff91ae69619c430c91a4e1d5191230ae6f0da0ff046f2100b5"
+      },
+      {
+        "bytes": 1540929,
+        "first_line": 2001,
+        "lines": 1000,
+        "path": "raw_metrics/eb00bd4cd07eb22a746bd857c766a6cd135ca74ea3690e8d1e7fc86fa89edbaa.jsonl",
+        "sha256": "eb00bd4cd07eb22a746bd857c766a6cd135ca74ea3690e8d1e7fc86fa89edbaa"
+      },
+      {
+        "bytes": 1541144,
+        "first_line": 3001,
+        "lines": 1000,
+        "path": "raw_metrics/608ae1d986dc6762ea9d0b923f2d2eae6e42a2c191c18e5f133b7540b13b58bb.jsonl",
+        "sha256": "608ae1d986dc6762ea9d0b923f2d2eae6e42a2c191c18e5f133b7540b13b58bb"
+      },
+      {
+        "bytes": 1547252,
+        "first_line": 4001,
+        "lines": 1000,
+        "path": "raw_metrics/61e474448abf33475e9288a7b1f25eaffd543b11e3bd74b73248b101a7ba0d73.jsonl",
+        "sha256": "61e474448abf33475e9288a7b1f25eaffd543b11e3bd74b73248b101a7ba0d73"
+      },
+      {
+        "bytes": 1541219,
+        "first_line": 5001,
+        "lines": 1000,
+        "path": "raw_metrics/197715c4ae15d8ae07f793b27b08ccb0b82a70476b0b059b4e746e5a73ccc89a.jsonl",
+        "sha256": "197715c4ae15d8ae07f793b27b08ccb0b82a70476b0b059b4e746e5a73ccc89a"
+      },
+      {
+        "bytes": 1548214,
+        "first_line": 6001,
+        "lines": 1000,
+        "path": "raw_metrics/7a93e14ff5465afa3fd2401ee16a52dfd1214c3b14b206959b14d9a801b5b709.jsonl",
+        "sha256": "7a93e14ff5465afa3fd2401ee16a52dfd1214c3b14b206959b14d9a801b5b709"
+      },
+      {
+        "bytes": 1542921,
+        "first_line": 7001,
+        "lines": 1000,
+        "path": "raw_metrics/93122f6753caf55b75c0fe0efd8c13d377d112287f24b679b6933550887fe8f3.jsonl",
+        "sha256": "93122f6753caf55b75c0fe0efd8c13d377d112287f24b679b6933550887fe8f3"
+      },
+      {
+        "bytes": 1542723,
+        "first_line": 8001,
+        "lines": 1000,
+        "path": "raw_metrics/19b2327ab2c72de26014db296314ac4bc896cd1938299a1326424a1ea59590cc.jsonl",
+        "sha256": "19b2327ab2c72de26014db296314ac4bc896cd1938299a1326424a1ea59590cc"
+      },
+      {
+        "bytes": 1542782,
+        "first_line": 9001,
+        "lines": 1000,
+        "path": "raw_metrics/9361f3b29165997819b01dec023d3335cfc311dcaf9eff88bc370977a4f471d6.jsonl",
+        "sha256": "9361f3b29165997819b01dec023d3335cfc311dcaf9eff88bc370977a4f471d6"
+      },
+      {
+        "bytes": 1544130,
+        "first_line": 10001,
+        "lines": 1000,
+        "path": "raw_metrics/b758707dd5e534629fe1832c085cdbac4c1c58f4efb43cebf6bd56b9f5cd2824.jsonl",
+        "sha256": "b758707dd5e534629fe1832c085cdbac4c1c58f4efb43cebf6bd56b9f5cd2824"
+      },
+      {
+        "bytes": 1544276,
+        "first_line": 11001,
+        "lines": 1000,
+        "path": "raw_metrics/00187b7705b80e355ee8f00bc3137c9772e8a20eec2c5ff3a10c8aaaf979dd38.jsonl",
+        "sha256": "00187b7705b80e355ee8f00bc3137c9772e8a20eec2c5ff3a10c8aaaf979dd38"
+      },
+      {
+        "bytes": 1543779,
+        "first_line": 12001,
+        "lines": 1000,
+        "path": "raw_metrics/5735a5bdf03c2a69c0e00511a1f6fa65b857634925802f51ddcb1eda09561430.jsonl",
+        "sha256": "5735a5bdf03c2a69c0e00511a1f6fa65b857634925802f51ddcb1eda09561430"
+      },
+      {
+        "bytes": 1543758,
+        "first_line": 13001,
+        "lines": 1000,
+        "path": "raw_metrics/358fc0eeda8c33ba563637467144486460c6587b3306c94fefeb171fd6c55f70.jsonl",
+        "sha256": "358fc0eeda8c33ba563637467144486460c6587b3306c94fefeb171fd6c55f70"
+      },
+      {
+        "bytes": 1544068,
+        "first_line": 14001,
+        "lines": 1000,
+        "path": "raw_metrics/a2e7a6ca18eac1fdd7127b5b689f31a596e5c81949e648dc49e604e3ba897ed7.jsonl",
+        "sha256": "a2e7a6ca18eac1fdd7127b5b689f31a596e5c81949e648dc49e604e3ba897ed7"
+      },
+      {
+        "bytes": 1544320,
+        "first_line": 15001,
+        "lines": 1000,
+        "path": "raw_metrics/2409a6221e67345f755c028748571ff45868e357d1c0b5b1dbfd1081bd679c6d.jsonl",
+        "sha256": "2409a6221e67345f755c028748571ff45868e357d1c0b5b1dbfd1081bd679c6d"
+      }
+    ],
+    "sha256": "8557ae96dd6bb98c7dbdc4e8e178ecdb28a4ac2d3569327110fd89eae8ca2969"
+  },
+  "run": "v1__test01__exp13__run001",
+  "schema": 1
+}

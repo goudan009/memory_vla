@@ -1,0 +1,50 @@
+{
+  "fine_tuning_mode": "full",
+  "freeze_llm": false,
+  "freeze_vision": false,
+  "freeze_vision_projector": false,
+  "freeze_action_dit": false,
+  "freeze_action_projector": false,
+  "freeze_action_vlln": false,
+  "freeze_memory": false,
+  "lora_targets": "llm,action_dit",
+  "lora_rank": 16,
+  "lora_alpha": 32.0,
+  "lora_dropout": 0.0,
+  "llm_last_n_layers": 0,
+  "gradient_checkpointing": true,
+  "trainable_parameters": 3400431328,
+  "total_parameters": 3400431328,
+  "components": {
+    "llm": {
+      "total": 1426659328,
+      "trainable": 1426659328
+    },
+    "vision": {
+      "total": 427680704,
+      "trainable": 427680704
+    },
+    "vision_projector": {
+      "total": 13644800,
+      "trainable": 13644800
+    },
+    "action_dit": {
+      "total": 1091722240,
+      "trainable": 1091722240
+    },
+    "action_projector": {
+      "total": 330573312,
+      "trainable": 330573312
+    },
+    "action_vlln": {
+      "total": 4096,
+      "trainable": 4096
+    },
+    "memory": {
+      "total": 110146848,
+      "trainable": 110146848
+    }
+  },
+  "lora_modules": [],
+  "frozen_eagle": false
+}

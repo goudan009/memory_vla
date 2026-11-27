@@ -1,0 +1,581 @@
+{
+  "processor_class": "Gr00tN1d6Processor",
+  "processor_kwargs": {
+    "modality_configs": {
+      "behavior_r1_pro": {
+        "video": {
+          "delta_indices": [
+            0
+          ],
+          "modality_keys": [
+            "observation.images.rgb.head_256_256",
+            "observation.images.rgb.left_wrist_256_256",
+            "observation.images.rgb.right_wrist_256_256"
+          ],
+          "sin_cos_embedding_keys": null,
+          "mean_std_embedding_keys": null,
+          "action_configs": null
+        },
+        "state": {
+          "delta_indices": [
+            0
+          ],
+          "modality_keys": [
+            "robot_pos",
+            "robot_ori_cos",
+            "robot_ori_sin",
+            "robot_2d_ori",
+            "robot_2d_ori_cos",
+            "robot_2d_ori_sin",
+            "robot_lin_vel",
+            "robot_ang_vel",
+            "arm_left_qpos",
+            "arm_left_qpos_sin",
+            "arm_left_qpos_cos",
+            "eef_left_pos",
+            "eef_left_quat",
+            "gripper_left_qpos",
+            "arm_right_qpos",
+            "arm_right_qpos_sin",
+            "arm_right_qpos_cos",
+            "eef_right_pos",
+            "eef_right_quat",
+            "gripper_right_qpos",
+            "trunk_qpos"
+          ],
+          "sin_cos_embedding_keys": null,
+          "mean_std_embedding_keys": null,
+          "action_configs": null
+        },
+        "action": {
+          "delta_indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31
+          ],
+          "modality_keys": [
+            "base",
+            "torso",
+            "left_arm",
+            "left_gripper",
+            "right_arm",
+            "right_gripper"
+          ],
+          "sin_cos_embedding_keys": null,
+          "mean_std_embedding_keys": null,
+          "action_configs": [
+            {
+              "rep": "ABSOLUTE",
+              "type": "NON_EEF",
+              "format": "DEFAULT",
+              "state_key": null
+            },
+            {
+              "rep": "RELATIVE",
+              "type": "NON_EEF",
+              "format": "DEFAULT",
+              "state_key": "trunk_qpos"
+            },
+            {
+              "rep": "RELATIVE",
+              "type": "NON_EEF",
+              "format": "DEFAULT",
+              "state_key": "arm_left_qpos"
+            },
+            {
+              "rep": "ABSOLUTE",
+              "type": "NON_EEF",
+              "format": "DEFAULT",
+              "state_key": null
+            },
+            {
+              "rep": "RELATIVE",
+              "type": "NON_EEF",
+              "format": "DEFAULT",
+              "state_key": "arm_right_qpos"
+            },
+            {
+              "rep": "ABSOLUTE",
+              "type": "NON_EEF",
+              "format": "DEFAULT",
+              "state_key": null
+            }
+          ]
+        },
+        "language": {
+          "delta_indices": [
+            0
+          ],
+          "modality_keys": [
+            "annotation.human.coarse_action"
+          ],
+          "sin_cos_embedding_keys": null,
+          "mean_std_embedding_keys": null,
+          "action_configs": null
+        }
+      },
+      "gr1": {
+        "video": {
+          "delta_indices": [
+            0
+          ],
+          "modality_keys": [
+            "ego_view_bg_crop_pad_res256_freq20"
+          ],
+          "sin_cos_embedding_keys": null,
+          "mean_std_embedding_keys": null,
+          "action_configs": null
+        },
+        "state": {
+          "delta_indices": [
+            0
+          ],
+          "modality_keys": [
+            "left_arm",
+            "right_arm",
+            "left_hand",
+            "right_hand",
+            "waist"
+          ],
+          "sin_cos_embedding_keys": [
+            "left_arm",
+            "right_arm",
+            "left_hand",
+            "right_hand",
+            "waist"
+          ],
+          "mean_std_embedding_keys": null,
+          "action_configs": null
+        },
+        "action": {
+          "delta_indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15
+          ],
+          "modality_keys": [
+            "left_arm",
+            "right_arm",
+            "left_hand",
+            "right_hand",
+            "waist"
+          ],
+          "sin_cos_embedding_keys": null,
+          "mean_std_embedding_keys": null,
+          "action_configs": [
+            {
+              "rep": "RELATIVE",
+              "type": "NON_EEF",
+              "format": "DEFAULT",
+              "state_key": null
+            },
+            {
+              "rep": "RELATIVE",
+              "type": "NON_EEF",
+              "format": "DEFAULT",
+              "state_key": null
+            },
+            {
+              "rep": "RELATIVE",
+              "type": "NON_EEF",
+              "format": "DEFAULT",
+              "state_key": null
+            },
+            {
+              "rep": "RELATIVE",
+              "type": "NON_EEF",
+              "format": "DEFAULT",
+              "state_key": null
+            },
+            {
+              "rep": "ABSOLUTE",
+              "type": "NON_EEF",
+              "format": "DEFAULT",
+              "state_key": null
+            }
+          ]
+        },
+        "language": {
+          "delta_indices": [
+            0
+          ],
+          "modality_keys": [
+            "task"
+          ],
+          "sin_cos_embedding_keys": null,
+          "mean_std_embedding_keys": null,
+          "action_configs": null
+        }
+      },
+      "robocasa_panda_omron": {
+        "video": {
+          "delta_indices": [
+            0
+          ],
+          "modality_keys": [
+            "res256_image_side_0",
+            "res256_image_side_1",
+            "res256_image_wrist_0"
+          ],
+          "sin_cos_embedding_keys": null,
+          "mean_std_embedding_keys": null,
+          "action_configs": null
+        },
+        "state": {
+          "delta_indices": [
+            0
+          ],
+          "modality_keys": [
+            "end_effector_position_relative",
+            "end_effector_rotation_relative",
+            "gripper_qpos",
+            "base_position",
+            "base_rotation"
+          ],
+          "sin_cos_embedding_keys": null,
+          "mean_std_embedding_keys": null,
+          "action_configs": null
+        },
+        "action": {
+          "delta_indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15
+          ],
+          "modality_keys": [
+            "end_effector_position",
+            "end_effector_rotation",
+            "gripper_close",
+            "base_motion",
+            "control_mode"
+          ],
+          "sin_cos_embedding_keys": null,
+          "mean_std_embedding_keys": null,
+          "action_configs": [
+            {
+              "rep": "ABSOLUTE",
+              "type": "NON_EEF",
+              "format": "DEFAULT",
+              "state_key": null
+            },
+            {
+              "rep": "ABSOLUTE",
+              "type": "NON_EEF",
+              "format": "DEFAULT",
+              "state_key": null
+            },
+            {
+              "rep": "ABSOLUTE",
+              "type": "NON_EEF",
+              "format": "DEFAULT",
+              "state_key": null
+            },
+            {
+              "rep": "ABSOLUTE",
+              "type": "NON_EEF",
+              "format": "DEFAULT",
+              "state_key": null
+            },
+            {
+              "rep": "ABSOLUTE",
+              "type": "NON_EEF",
+              "format": "DEFAULT",
+              "state_key": null
+            }
+          ]
+        },
+        "language": {
+          "delta_indices": [
+            0
+          ],
+          "modality_keys": [
+            "annotation.human.action.task_description"
+          ],
+          "sin_cos_embedding_keys": null,
+          "mean_std_embedding_keys": null,
+          "action_configs": null
+        }
+      }
+    },
+    "image_crop_size": null,
+    "image_target_size": null,
+    "use_albumentations": true,
+    "random_rotation_angle": null,
+    "color_jitter_params": {
+      "brightness": 0.3,
+      "contrast": 0.4,
+      "saturation": 0.5,
+      "hue": 0.08
+    },
+    "shortest_image_edge": 256,
+    "crop_fraction": 0.95,
+    "letter_box_transform": false,
+    "model_name": "nvidia/Eagle-Block2A-2B-v2",
+    "model_type": "eagle",
+    "formalize_language": true,
+    "language_instruction_mapping": {
+      "Turn on the radio receiver that's on the table in the living room.": "Turning on radio.",
+      "turning_on_radio": "Turning on radio.",
+      "Turning on radio.": "Turning on radio.",
+      "Turning on radio": "Turning on radio.",
+      "Put the three can of soda from the living room inside the tash can in the kitchen.": "Picking up trash.",
+      "picking_up_trash": "Picking up trash.",
+      "Picking up trash.": "Picking up trash.",
+      "Picking up trash": "Picking up trash.",
+      "Place each of the two pumpkins and all three candles from the living room inside a cabinet in the living room (use any cabinet), then make sure every cabinet is closed, and position the cauldron so it is next to a table in the living room.": "Putting away halloween decorations.",
+      "putting_away_Halloween_decorations": "Putting away halloween decorations.",
+      "Putting away halloween decorations.": "Putting away halloween decorations.",
+      "Putting away halloween decorations": "Putting away halloween decorations.",
+      "From the breakfast table in the kitchen, move both pizzas - keeping each on its plate - into the same refrigerator, put both bowls into one sink, and make sure the refrigerator is closed.": "Cleaning up plates and food.",
+      "cleaning_up_plates_and_food": "Cleaning up plates and food.",
+      "Cleaning up plates and food.": "Cleaning up plates and food.",
+      "Cleaning up plates and food": "Cleaning up plates and food.",
+      "Open the kitchen cabinet, take out the two hinged jars, open them, place exactly two cooked bratwursts from the chopping board on the countertop into each jar, then close both jars, put them back inside the cabinet, and close the cabinet.": "Can meat.",
+      "can_meat": "Can meat.",
+      "Can meat.": "Can meat.",
+      "Can meat": "Can meat.",
+      "Take the four mousetraps from the cabinet in the bathroom and place them on the bathroom floor. Make sure all four end up on the same floor surface, and ensure that at least two of them are either under or directly next to the same bathroom sink.": "Setting mousetraps.",
+      "setting_mousetraps": "Setting mousetraps.",
+      "Setting mousetraps.": "Setting mousetraps.",
+      "Setting mousetraps": "Setting mousetraps.",
+      "Take the three Easter eggs out of the wicker basket on the lawn in the garden, then place them on the lawn next to a single tree (choose any tree) so that all three eggs are next to the same tree and none are left in the basket.": "Hiding easter eggs.",
+      "hiding_Easter_eggs": "Hiding easter eggs.",
+      "Hiding easter eggs.": "Hiding easter eggs.",
+      "Hiding easter eggs": "Hiding easter eggs.",
+      "Put all the toys in the child's room - the three board games (two on the bed and one on the table), the two jigsaw puzzles on the table, and the tennis ball on the table - inside the toy box on the table in the child's room.": "Picking up toys.",
+      "picking_up_toys": "Picking up toys.",
+      "Picking up toys.": "Picking up toys.",
+      "Picking up toys": "Picking up toys.",
+      "Move the toaster, food processor, and French press from the kitchen countertop into the same kitchen cabinet, and make sure that cabinet is closed at the end.": "Rearranging kitchen furniture.",
+      "rearranging_kitchen_furniture": "Rearranging kitchen furniture.",
+      "Rearranging kitchen furniture.": "Rearranging kitchen furniture.",
+      "Rearranging kitchen furniture": "Rearranging kitchen furniture.",
+      "In the living room, take the wreath, three candy canes, and two pillar candles out of the wicker basket. Place the wreath and two of the candy canes on the same living-room sofa. Put the remaining candy cane on top of a dining-room table. Put both pillar candles together on top of one dining-room table (they can share the same table). Finally, place all three gift boxes under or right next to the Christmas tree in the living room.": "Putting up christmas decorations inside.",
+      "putting_up_Christmas_decorations_inside": "Putting up christmas decorations inside.",
+      "Putting up christmas decorations inside.": "Putting up christmas decorations inside.",
+      "Putting up christmas decorations inside": "Putting up christmas decorations inside.",
+      "Set up a coffee station on the kitchen countertop: keep the coffee maker on the countertop, move the bottle of coffee from the kitchen shelf to the counter next to the coffee maker, place a paper coffee filter on top of the coffee maker, put the saucer next to the coffee maker with the coffee cup on the saucer, and place the electric kettle next to the coffee maker.": "Set up a coffee station in your kitchen.",
+      "set_up_a_coffee_station_in_your_kitchen": "Set up a coffee station in your kitchen.",
+      "Set up a coffee station in your kitchen.": "Set up a coffee station in your kitchen.",
+      "Set up a coffee station in your kitchen": "Set up a coffee station in your kitchen.",
+      "In the kitchen, gather all eight plates from the two countertops, place them all inside a single cabinet (either one), and make sure all cabinets are closed when you're done.": "Putting dishes away after cleaning.",
+      "putting_dishes_away_after_cleaning": "Putting dishes away after cleaning.",
+      "Putting dishes away after cleaning.": "Putting dishes away after cleaning.",
+      "Putting dishes away after cleaning": "Putting dishes away after cleaning.",
+      "Put both apple halves, the club sandwich, and the chocolate chip cookie from the chopping board on the kitchen countertop into the packing box on the countertop. Then take the bottle of tea out of the refrigerator, put it into the same box, and close the refrigerator when you're done.": "Preparing lunch box.",
+      "preparing_lunch_box": "Preparing lunch box.",
+      "Preparing lunch box.": "Preparing lunch box.",
+      "Preparing lunch box": "Preparing lunch box.",
+      "Put the digital camera from the living room table into the container on the living room floor. Then take the container and the tennis racket to the garage, place both in the car trunk, and close it.": "Loading the car.",
+      "loading_the_car": "Loading the car.",
+      "Loading the car.": "Loading the car.",
+      "Loading the car": "Loading the car.",
+      "Take the sack of groceries out of the car trunk in the garage, bring it to the kitchen, and put both the tomato and the carton of milk into the refrigerator in the kitchen. When you're done, close the car trunk and make sure the refrigerator in the kitchen is closed.": "Carrying in groceries.",
+      "carrying_in_groceries": "Carrying in groceries.",
+      "Carrying in groceries.": "Carrying in groceries.",
+      "Carrying in groceries": "Carrying in groceries.",
+      "Bring the three plywood sheets from the garden into the corridor and place them on the floor there.": "Bringing in wood.",
+      "bringing_in_wood": "Bringing in wood.",
+      "Bringing in wood.": "Bringing in wood.",
+      "Bringing in wood": "Bringing in wood.",
+      "Move the two storage containers from the living room to the garage. In the garage, place one container on the floor and stack the other container on top of it (either order is fine).": "Moving boxes to storage.",
+      "moving_boxes_to_storage": "Moving boxes to storage.",
+      "Moving boxes to storage.": "Moving boxes to storage.",
+      "Moving boxes to storage": "Moving boxes to storage.",
+      "Retrieve the two bottles from the refrigerator in the kitchen, bring them to the living room, and place both on the coffee table. Make sure the refrigerator is closed when you finish.": "Bringing water.",
+      "bringing_water": "Bringing water.",
+      "Bringing water.": "Bringing water.",
+      "Bringing water": "Bringing water.",
+      "In the bedroom, move the book from the bed onto either nightstand, and place the two sandals side by side next to the bed.": "Tidying bedroom.",
+      "tidying_bedroom": "Tidying bedroom.",
+      "Tidying bedroom.": "Tidying bedroom.",
+      "Tidying bedroom": "Tidying bedroom.",
+      "In the utility room, put the drill, pliers, flashlight, Allen wrench, and screwdriver from the tabletop into the toolbox, keep the toolbox on the tabletop, and close the toolbox.": "Outfit a basic toolbox.",
+      "outfit_a_basic_toolbox": "Outfit a basic toolbox.",
+      "Outfit a basic toolbox.": "Outfit a basic toolbox.",
+      "Outfit a basic toolbox": "Outfit a basic toolbox.",
+      "Sort the vegetables from the two wicker baskets on the kitchen floor into the mixing bowls on the kitchen countertop: put all three bok choy and all three Vidalia onions together into one mixing bowl; put both leeks and both broccoli together into a second mixing bowl; and put all three sweet corn into a third mixing bowl.": "Sorting vegetables.",
+      "sorting_vegetables": "Sorting vegetables.",
+      "Sorting vegetables.": "Sorting vegetables.",
+      "Sorting vegetables": "Sorting vegetables.",
+      "Pick up the two dice from the bed, the two teddy bears from the floor, and the two board games (one from the desk and one from the bed), and place them all inside the same bookcase in the child's room.": "Collecting childrens toys.",
+      "collecting_childrens_toys": "Collecting childrens toys.",
+      "Collecting childrens toys.": "Collecting childrens toys.",
+      "Collecting childrens toys": "Collecting childrens toys.",
+      "Pick up the two gym shoes and the two sandals from the corridor floor and place them onto the hallstand (shoe rack) in the corridor, making sure they are on the rack and not on the floor. Arrange them so the two gym shoes are next to each other and the two sandals are next to each other.": "Putting shoes on rack.",
+      "putting_shoes_on_rack": "Putting shoes on rack.",
+      "Putting shoes on rack.": "Putting shoes on rack.",
+      "Putting shoes on rack": "Putting shoes on rack.",
+      "Put all six books from the bookcases in the living room into the box on the living room floor.": "Boxing books up for storage.",
+      "boxing_books_up_for_storage": "Boxing books up for storage.",
+      "Boxing books up for storage.": "Boxing books up for storage.",
+      "Boxing books up for storage": "Boxing books up for storage.",
+      "Put away all the food on the kitchen countertop by storing it inside the kitchen cabinets: move the two boxes of oatmeal, two bags of chips, two bottles of olive oil, and two jars of sugar from the countertop into the kitchen cabinets (each item can go into either cabinet).": "Storing food.",
+      "storing_food": "Storing food.",
+      "Storing food.": "Storing food.",
+      "Storing food": "Storing food.",
+      "Pack the half chicken and the half apple pie from the plates on the breakfast table into the two tupperware containers from the countertop, then put both tupperware containers inside the refrigerator in the kitchen and make sure the refrigerator is closed at the end.": "Clearing food from table into fridge.",
+      "clearing_food_from_table_into_fridge": "Clearing food from table into fridge.",
+      "Clearing food from table into fridge.": "Clearing food from table into fridge.",
+      "Clearing food from table into fridge": "Clearing food from table into fridge.",
+      "Place one candle, one butter cookie, one piece of Swiss cheese, and one bow from the table into each of the four wicker baskets on the floor in the living room.": "Assembling gift baskets.",
+      "assembling_gift_baskets": "Assembling gift baskets.",
+      "Assembling gift baskets.": "Assembling gift baskets.",
+      "Assembling gift baskets": "Assembling gift baskets.",
+      "From the two baskets on the bedroom floor, take out the items and organize them in the bathroom: place both detergent bottles under the bathroom sink next to each other; put the box of sanitary napkins on the bathroom shelf; set the soap dispenser on the sink; make sure the cup remains on the sink; put both the toothpaste tube and the toothbrush inside the cup.": "Sorting household items.",
+      "sorting_household_items": "Sorting household items.",
+      "Sorting household items.": "Sorting household items.",
+      "Sorting household items": "Sorting household items.",
+      "In the bedroom, organize the workspace by keeping the computer under the desk, ensuring the monitor is on the desk, placing the keyboard on the desk next to the monitor, placing the mouse on the desk next to the keyboard, moving the folder from the swivel chair onto the desk next to the mouse, stacking the notebook on top of the folder with the pen on top of the notebook, and positioning the swivel chair next to the desk.": "Getting organized for work.",
+      "getting_organized_for_work": "Getting organized for work.",
+      "Getting organized for work.": "Getting organized for work.",
+      "Getting organized for work": "Getting organized for work.",
+      "In the child's room, clean up the desk: put both folders and both paperback books into the bookcase; put the pencil and both pens into the pencil case and leave the case on the desk; take the stapler out of the bookcase and place it on the desk; move the laptop from the bed onto the desk and close it.": "Clean up your desk.",
+      "clean_up_your_desk": "Clean up your desk.",
+      "Clean up your desk.": "Clean up your desk.",
+      "Clean up your desk": "Clean up your desk.",
+      "In the living room, place the newspaper from the table into the wood fireplace, then put both pieces of firewood from the floor on top of the newspaper. Use the cigar lighter to ignite any one of the items so that the whole pile catches fire, and then turn the lighter off.": "Setting the fire.",
+      "setting_the_fire": "Setting the fire.",
+      "Setting the fire.": "Setting the fire.",
+      "Setting the fire": "Setting the fire.",
+      "Wash the two dusty boxing gloves from the countertop in the utility room in the washer until they are no longer covered with dust.": "Clean boxing gloves.",
+      "clean_boxing_gloves": "Clean boxing gloves.",
+      "Clean boxing gloves.": "Clean boxing gloves.",
+      "Clean boxing gloves": "Clean boxing gloves.",
+      "Wash the two baseball caps on the countertop in the utility room using the washer until they are no longer dirty.": "Wash a baseball cap.",
+      "wash_a_baseball_cap": "Wash a baseball cap.",
+      "Wash a baseball cap.": "Wash a baseball cap.",
+      "Wash a baseball cap": "Wash a baseball cap.",
+      "In the utility room, take the two teddy toys, the tennis ball, and the softball out of the cabinet and wash them in the washer so that both teddies are free of dirt and dust, the tennis ball has no debris, and the softball has no dirt.": "Wash dog toys.",
+      "wash_dog_toys": "Wash dog toys.",
+      "Wash dog toys.": "Wash dog toys.",
+      "Wash dog toys": "Wash dog toys.",
+      "Pick up the poster from the kitchen countertop and hang it on one of the wall nails in the kitchen.": "Hanging pictures.",
+      "hanging_pictures": "Hanging pictures.",
+      "Hanging pictures.": "Hanging pictures.",
+      "Hanging pictures": "Hanging pictures.",
+      "Attach the digital camera to the camera tripod in the bedroom.": "Attach a camera to a tripod.",
+      "attach_a_camera_to_a_tripod": "Attach a camera to a tripod.",
+      "Attach a camera to a tripod.": "Attach a camera to a tripod.",
+      "Attach a camera to a tripod": "Attach a camera to a tripod.",
+      "Pick up the broom in the garden and sweep the mud off the patio floor until the floor is no longer covered in mud.": "Clean a patio.",
+      "clean_a_patio": "Clean a patio.",
+      "Clean a patio.": "Clean a patio.",
+      "Clean a patio": "Clean a patio.",
+      "In the bedroom, pick up the scrub brush from the desk and scrub the cornet (trumpet) on the desk until it's no longer covered in dust.": "Clean a trumpet.",
+      "clean_a_trumpet": "Clean a trumpet.",
+      "Clean a trumpet.": "Clean a trumpet.",
+      "Clean a trumpet": "Clean a trumpet.",
+      "Pick up the pesticide atomizer in the garden and spray insectifuge to fully cover both potted plants in the garden.": "Spraying for bugs.",
+      "spraying_for_bugs": "Spraying for bugs.",
+      "Spraying for bugs.": "Spraying for bugs.",
+      "Spraying for bugs": "Spraying for bugs.",
+      "In the garden, pick up the pesticide atomizer on the floor and spray pesticide onto both trees until each tree trunk is fully covered.": "Spraying fruit trees.",
+      "spraying_fruit_trees": "Spraying fruit trees.",
+      "Spraying fruit trees.": "Spraying fruit trees.",
+      "Spraying fruit trees": "Spraying fruit trees.",
+      "In the kitchen, take the popcorn bag from the countertop, put it into the microwave, and heat it until the popcorn is cooked so the cooked popcorn ends up inside the bag.": "Make microwave popcorn.",
+      "make_microwave_popcorn": "Make microwave popcorn.",
+      "Make microwave popcorn.": "Make microwave popcorn.",
+      "Make microwave popcorn": "Make microwave popcorn.",
+      "From the kitchen refrigerator, take the cabbage and the chili, dice them on the chopping board with the knife, cook the diced cabbage and diced chili in the frying pan on the stove, and leave the cooked, diced cabbage and cooked, diced chili in the frying pan.": "Cook cabbage.",
+      "cook_cabbage": "Cook cabbage.",
+      "Cook cabbage.": "Cook cabbage.",
+      "Cook cabbage": "Cook cabbage.",
+      "In the kitchen, take the Vidalia onion out of the sink, dice it on the chopping board with the paring knife, put the diced onion into the bowl on the countertop, then place both the paring knife and the chopping board into the sink.": "Chop an onion.",
+      "chop_an_onion": "Chop an onion.",
+      "Chop an onion.": "Chop an onion.",
+      "Chop an onion": "Chop an onion.",
+      "From the refrigerator in the kitchen, take out the two bell peppers, the two beets, and the zucchini. Then, on either chopping board on the countertop, use the parer to dice all of them so that only diced bell pepper, diced beet, and diced zucchini remain. Make sure the refrigerator is closed when you finish.": "Slicing vegetables.",
+      "slicing_vegetables": "Slicing vegetables.",
+      "Slicing vegetables.": "Slicing vegetables.",
+      "Slicing vegetables": "Slicing vegetables.",
+      "Chop the four logs on the driveway in the garden into eight half logs using the axe and the chopping block.": "Chopping wood.",
+      "chopping_wood": "Chopping wood.",
+      "Chopping wood.": "Chopping wood.",
+      "Chopping wood": "Chopping wood.",
+      "Take the two hot dogs out of the refrigerator in the kitchen and cook them in the microwave until both are cooked.": "Cook hot dogs.",
+      "cook_hot_dogs": "Cook hot dogs.",
+      "Cook hot dogs.": "Cook hot dogs.",
+      "Cook hot dogs": "Cook hot dogs.",
+      "Take the tray with six slices of bacon out of the refrigerator in the kitchen, cook all six slices in the frying pan on the stove until they're cooked, and make sure the refrigerator is closed when you're done.": "Cook bacon.",
+      "cook_bacon": "Cook bacon.",
+      "Cook bacon.": "Cook bacon.",
+      "Cook bacon": "Cook bacon.",
+      "In the kitchen, take the two apple pies from the plates on the countertop, put each pie into a separate tupperware container taken from the cabinet, place both tupperwares inside the refrigerator, close the refrigerator, and leave them until the pies are frozen.": "Freeze pies.",
+      "freeze_pies": "Freeze pies.",
+      "Freeze pies.": "Freeze pies.",
+      "Freeze pies": "Freeze pies.",
+      "In the kitchen, open the refrigerator and the cabinet. Take the steak and the pineapple out of the refrigerator and take two bowls from the cabinet. On the chopping board on the countertop, use the carving knife to dice the steak and to dice the pineapple. Put only the diced steak into one bowl and only the diced pineapple into the other bowl - do not mix them. Place both bowls back inside the cabinet, then close the refrigerator and close the cabinet.": "Canning food.",
+      "canning_food": "Canning food.",
+      "Canning food.": "Canning food.",
+      "Canning food": "Canning food.",
+      "Make a pizza on the cookie sheet in the kitchen: take the grated cheese, the four pieces of pepperoni, and the two mushrooms from their tupperware containers in the refrigerator; chop the Vidalia onion on the chopping board with the knife, and also chop the two whole mushrooms in half; top the pizza dough that's already on the cookie sheet with the cheese, pepperoni, halved mushrooms, and chopped onion; bake it in the oven until it becomes a pizza, and leave the finished pizza on the cookie sheet.": "Make pizza.",
+      "make_pizza": "Make pizza.",
+      "Make pizza.": "Make pizza.",
+      "Make pizza": "Make pizza."
+    },
+    "max_state_dim": 128,
+    "max_action_dim": 128,
+    "max_action_horizon": 50,
+    "use_percentiles": false,
+    "clip_outliers": true,
+    "apply_sincos_state_encoding": true,
+    "use_relative_action": true
+  }
+}

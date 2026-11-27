@@ -1,0 +1,6 @@
+{
+  "step": 12000,
+  "world_size": 4,
+  "training_protocol": "memoryvla_openvla_b1k_group16_raw_v2",
+  "rank_states_complete": true
+}

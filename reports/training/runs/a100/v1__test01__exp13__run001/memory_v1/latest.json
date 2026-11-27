@@ -1,0 +1,1120 @@
+{
+  "arm": "memory_v1",
+  "checkpoints": [
+    {
+      "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step016000",
+      "step": 16000
+    },
+    {
+      "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step015000",
+      "step": 15000
+    },
+    {
+      "path": "/nvme2/memory_vla_exp13_retained_checkpoints/v1__test01__exp13__run001__step014000",
+      "step": 14000
+    },
+    {
+      "path": "/nvme2/memory_vla_exp13_retained_checkpoints/v1__test01__exp13__run001__step013000",
+      "step": 13000
+    },
+    {
+      "path": "/nvme2/memory_vla_exp13_retained_checkpoints/v1__test01__exp13__run001__step012000",
+      "step": 12000
+    },
+    {
+      "path": "/nvme2/memory_vla_exp13_retained_checkpoints/v1__test01__exp13__run001__step011000",
+      "step": 11000
+    },
+    {
+      "path": "/nvme2/memory_vla_exp13_retained_checkpoints/v1__test01__exp13__run001__step010000",
+      "step": 10000
+    },
+    {
+      "path": "/nvme2/memory_vla_exp13_retained_checkpoints/v1__test01__exp13__run001__step009000",
+      "step": 9000
+    },
+    {
+      "path": "/nvme2/memory_vla_exp13_retained_checkpoints/v1__test01__exp13__run001__step008000",
+      "step": 8000
+    },
+    {
+      "path": "/nvme2/memory_vla_exp13_retained_checkpoints/v1__test01__exp13__run001__step007000",
+      "step": 7000
+    },
+    {
+      "path": "/nvme2/memory_vla_exp13_retained_checkpoints/v1__test01__exp13__run001__step006000",
+      "step": 6000
+    },
+    {
+      "path": "/nvme2/memory_vla_exp13_retained_checkpoints/v1__test01__exp13__run001__step004000",
+      "step": 4000
+    },
+    {
+      "path": "/nvme2/memory_vla_exp13_retained_checkpoints/v1__test01__exp13__run001__step002000",
+      "step": 2000
+    },
+    {
+      "path": "/nvme2/memory_vla_exp13_retained_checkpoints/v1__test01__exp13__run001__step000046",
+      "step": 46
+    },
+    {
+      "path": "/nvme2/memory_vla_exp13_retained_checkpoints/v1__test01__exp13__run001__step000034",
+      "step": 34
+    }
+  ],
+  "device": "a100",
+  "event": "204b3706c90523df31cb-958f37778991",
+  "initial_weights": {
+    "checkpoint": "/nvme3/huggingface/train_model/GR00T/GR00T-N1.6-3B",
+    "label": "官方 GR00T N1.6-3B · 通用预训练",
+    "mode": "resume",
+    "optimizer_restored": true,
+    "resume_checkpoint": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step011000",
+    "resume_record": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/config/web_resume_latest.json",
+    "resume_step": 11000,
+    "source_file": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/config/ddp.json"
+  },
+  "job": {
+    "arm": "memory_v1",
+    "can_cancel": false,
+    "can_delete": true,
+    "can_delete_files": true,
+    "can_stop": false,
+    "checkpoint_interval": 1000,
+    "delete_block_reason": "",
+    "experiment_id": "exp13",
+    "gpus": "0,1,2,3",
+    "last": {
+      "decisions_per_second_end_to_end": 13.302456417166228,
+      "gradient_norm": 0.07139796018600464,
+      "loss": 0.009701681655801755,
+      "peak_allocated_gib": 37.332096099853516,
+      "seconds": 19.244565963745117,
+      "step": 16000
+    },
+    "max_steps": 16000,
+    "method": "memory",
+    "method_description": "Author-default raw feature writes; same-Episode random ordered group16 on the B1K stride8 decision clock; clean generic GR00T initialization.",
+    "model_version": "V_1",
+    "name": "v1__test01__exp13__run001",
+    "naming_schema": "groot-runs-v2",
+    "notes": "User confirmed 2026-11-25. Direct four-A100 start, no queue; resumable full checkpoints every 2000 steps.",
+    "output": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001",
+    "queue": null,
+    "resume": {
+      "available": true,
+      "checkpoint": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step016000",
+      "checkpoint_interval": 1000,
+      "checkpoint_interval_editable": true,
+      "default_checkpoint_interval": 1000,
+      "default_steps": 20000,
+      "fixed_budget": false,
+      "gpus": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "min_steps": 20000,
+      "reason": "",
+      "seed": 42,
+      "source": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002",
+      "step": 16000,
+      "step_interval": 2000,
+      "training_protocol": "memoryvla_openvla_b1k_group16_raw_v2",
+      "validation_enabled": false,
+      "validation_gpu": null
+    },
+    "run": "v1__test01__exp13__run001",
+    "source": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002",
+    "source_digest": "68b6d82b8ed2608046b86ab39c58442d22f122f5e46fc4e62c2dafc05324fc85",
+    "source_dir": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002",
+    "status": "completed",
+    "step": 16000,
+    "stop_after_step": 16000,
+    "stop_reason": "User requested checkpoint-boundary stop from training dashboard",
+    "task": null,
+    "task_id": "0_1_2_3_4_5_6_7_8_9_10_11_12_13_14_15_16_17_18_19_20_21_22_23_24_25_26_27_28_29_30_31_32_33_34_35_36_37_38_39_40_41_42_43_44_45_46_47_48_49",
+    "test_id": "test01",
+    "train_number": 1,
+    "training_complete": true,
+    "training_id": "v1__test01__exp13__run001",
+    "training_run": "run001",
+    "training_seed": 42,
+    "validation": {},
+    "validation_enabled": false,
+    "version": "V_1"
+  },
+  "metrics_recorded": true,
+  "parameter_sources": [
+    "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/config/web_launch.json",
+    "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/config/ddp_launch.json",
+    "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/config/ddp.json",
+    "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/config/web_resume_latest.json"
+  ],
+  "parameters": {
+    "checkpoint": "/nvme3/huggingface/train_model/GR00T/GR00T-N1.6-3B",
+    "checkpoint_interval": 1000,
+    "dataloader_workers": 4,
+    "dataset": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/dataset",
+    "disable_early_stopping": true,
+    "fine_tuning_mode": "full",
+    "freeze_action_dit": false,
+    "freeze_action_projector": false,
+    "freeze_action_vlln": false,
+    "freeze_llm": false,
+    "freeze_memory": false,
+    "freeze_vision": false,
+    "freeze_vision_projector": false,
+    "frozen_eagle": false,
+    "fsdp_accumulation": "retain",
+    "global_decisions_max": 256,
+    "global_windows_per_step": 16,
+    "gpus": "0,1,2,3",
+    "gradient_accumulation_steps": 8,
+    "gradient_checkpointing": false,
+    "history_sampling": "random_ordered",
+    "image_augmentation": true,
+    "learning_rate": 2e-05,
+    "llm_last_n_layers": 0,
+    "lora_alpha": 32.0,
+    "lora_dropout": 0.0,
+    "lora_rank": 16,
+    "lora_targets": "llm,action_dit",
+    "max_grad_norm": 1.0,
+    "memory_cognitive_qk_norm": "none",
+    "memory_cognitive_residual_projection": false,
+    "memory_cognitive_residual_scope": "eos",
+    "memory_conditioning": "openvla",
+    "memory_length": 16,
+    "memory_residual_readout": "delta",
+    "memory_update_fused": false,
+    "microbatch": 8,
+    "optimizer_eps": 1e-08,
+    "original_steps": 20000,
+    "scheduler": "constant",
+    "seed": 42,
+    "sharding": "SHARD_GRAD_OP",
+    "steps": 20000,
+    "stop_after_step": 16000,
+    "tasks": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42,
+      43,
+      44,
+      45,
+      46,
+      47,
+      48,
+      49
+    ],
+    "train_episodes": 10000,
+    "training_protocol": "memoryvla_openvla_b1k_group16_raw_v2",
+    "validation_enabled": false,
+    "validation_episodes": 0,
+    "validation_gpu": null,
+    "validation_interval": 500,
+    "warmup_steps": 0,
+    "weight_decay": 0.0
+  },
+  "run": "v1__test01__exp13__run001",
+  "statistics": {
+    "duplicate_steps": 0,
+    "epochs": {
+      "0": {
+        "mean_loss": 0.015410646515847256,
+        "records": 625
+      },
+      "1": {
+        "mean_loss": 0.013825723599314346,
+        "records": 625
+      },
+      "10": {
+        "mean_loss": 0.011463125678922131,
+        "records": 625
+      },
+      "11": {
+        "mean_loss": 0.011407739050828817,
+        "records": 625
+      },
+      "12": {
+        "mean_loss": 0.011343611339370384,
+        "records": 625
+      },
+      "13": {
+        "mean_loss": 0.011404520027984156,
+        "records": 625
+      },
+      "14": {
+        "mean_loss": 0.01121011897396822,
+        "records": 625
+      },
+      "15": {
+        "mean_loss": 0.01122721454363818,
+        "records": 625
+      },
+      "16": {
+        "mean_loss": 0.011015365044866486,
+        "records": 625
+      },
+      "17": {
+        "mean_loss": 0.01090367173017447,
+        "records": 625
+      },
+      "18": {
+        "mean_loss": 0.010841211801510093,
+        "records": 625
+      },
+      "19": {
+        "mean_loss": 0.011204489272791354,
+        "records": 625
+      },
+      "2": {
+        "mean_loss": 0.013435058860579184,
+        "records": 625
+      },
+      "20": {
+        "mean_loss": 0.01103173844001577,
+        "records": 625
+      },
+      "21": {
+        "mean_loss": 0.010884837869930766,
+        "records": 625
+      },
+      "22": {
+        "mean_loss": 0.010837296954292665,
+        "records": 625
+      },
+      "23": {
+        "mean_loss": 0.0107216749955506,
+        "records": 625
+      },
+      "24": {
+        "mean_loss": 0.010597325653547773,
+        "records": 625
+      },
+      "25": {
+        "mean_loss": 0.01058358586617442,
+        "records": 375
+      },
+      "3": {
+        "mean_loss": 0.012984534145461898,
+        "records": 625
+      },
+      "4": {
+        "mean_loss": 0.012610433568335978,
+        "records": 625
+      },
+      "5": {
+        "mean_loss": 0.012453777737378888,
+        "records": 625
+      },
+      "6": {
+        "mean_loss": 0.012078032400746183,
+        "records": 625
+      },
+      "7": {
+        "mean_loss": 0.011897154534142631,
+        "records": 625
+      },
+      "8": {
+        "mean_loss": 0.011890788078762477,
+        "records": 625
+      },
+      "9": {
+        "mean_loss": 0.011642271248649335,
+        "records": 625
+      }
+    },
+    "fields": {
+      "body_flow_mse.base": {
+        "finite": 16000,
+        "maximum": 0.10330421595911805,
+        "mean": 0.04613590791927492,
+        "minimum": 0.02134687718050701,
+        "missing_or_nonfinite": 0,
+        "zero": 0
+      },
+      "body_flow_mse.left_arm": {
+        "finite": 16000,
+        "maximum": 0.008899318568312862,
+        "mean": 0.0037072392785647904,
+        "minimum": 0.00100085087584904,
+        "missing_or_nonfinite": 0,
+        "zero": 0
+      },
+      "body_flow_mse.left_gripper": {
+        "finite": 16000,
+        "maximum": 0.12042695928539615,
+        "mean": 0.014358658758446404,
+        "minimum": 0.0004159217990390306,
+        "missing_or_nonfinite": 0,
+        "zero": 0
+      },
+      "body_flow_mse.right_arm": {
+        "finite": 16000,
+        "maximum": 0.01175854316360607,
+        "mean": 0.003761307358521996,
+        "minimum": 0.001374327801126388,
+        "missing_or_nonfinite": 0,
+        "zero": 0
+      },
+      "body_flow_mse.right_gripper": {
+        "finite": 16000,
+        "maximum": 0.4819729384845313,
+        "mean": 0.0211512769539002,
+        "minimum": 0.0005870323630468435,
+        "missing_or_nonfinite": 0,
+        "zero": 0
+      },
+      "body_flow_mse.torso": {
+        "finite": 16000,
+        "maximum": 0.04196695284609414,
+        "mean": 0.010984493885741244,
+        "minimum": 0.003241104458887469,
+        "missing_or_nonfinite": 0,
+        "zero": 0
+      },
+      "component_grad_norms.action_head.memory_": {
+        "finite": 1606,
+        "maximum": 0.6772217750549316,
+        "mean": 0.014034947393761292,
+        "minimum": 0.006351297255605459,
+        "missing_or_nonfinite": 14394,
+        "zero": 0
+      },
+      "component_grad_norms.action_head.model": {
+        "finite": 1606,
+        "maximum": 0.33657991886138916,
+        "mean": 0.017741879485408365,
+        "minimum": 0.010104266926646233,
+        "missing_or_nonfinite": 14394,
+        "zero": 0
+      },
+      "component_grad_norms.backbone": {
+        "finite": 1606,
+        "maximum": 0.846277117729187,
+        "mean": 0.0358841069904417,
+        "minimum": 0.012273718602955341,
+        "missing_or_nonfinite": 14394,
+        "zero": 0
+      },
+      "component_grad_norms.memory.cognitive": {
+        "finite": 1606,
+        "maximum": 0.24329322576522827,
+        "mean": 0.0003467866020050854,
+        "minimum": 1.7388116248184815e-05,
+        "missing_or_nonfinite": 14394,
+        "zero": 0
+      },
+      "component_grad_norms.memory.perceptual": {
+        "finite": 1606,
+        "maximum": 1.343174934387207,
+        "mean": 0.017951810712187294,
+        "minimum": 0.0074211969040334225,
+        "missing_or_nonfinite": 14394,
+        "zero": 0
+      },
+      "decisions_per_second_end_to_end": {
+        "finite": 16000,
+        "maximum": 42.087168824864776,
+        "mean": 27.396738701403887,
+        "minimum": 3.6985743686165997,
+        "missing_or_nonfinite": 0,
+        "zero": 0
+      },
+      "gradient_norm": {
+        "finite": 16000,
+        "maximum": 3.58008074760437,
+        "mean": 0.09729310976341367,
+        "minimum": 0.040563974529504776,
+        "missing_or_nonfinite": 0,
+        "zero": 0
+      },
+      "gradient_norm_after_clip": {
+        "finite": 16000,
+        "maximum": 1.0,
+        "mean": 0.09693128622695804,
+        "minimum": 0.040563974529504776,
+        "missing_or_nonfinite": 0,
+        "zero": 0
+      },
+      "learning_rate": {
+        "finite": 1606,
+        "maximum": 2e-05,
+        "mean": 1.9999999999999395e-05,
+        "minimum": 2e-05,
+        "missing_or_nonfinite": 14394,
+        "zero": 0
+      },
+      "loss": {
+        "finite": 16000,
+        "maximum": 0.04746452096052023,
+        "mean": 0.011745020061965403,
+        "minimum": 0.006879067776026204,
+        "missing_or_nonfinite": 0,
+        "zero": 0
+      },
+      "memory_gradients.cognitive.gate_fusion_blocks.proj.bias": {
+        "finite": 1606,
+        "maximum": 0.00118713837582618,
+        "mean": 1.7397562904353348e-06,
+        "minimum": 7.142029545548212e-08,
+        "missing_or_nonfinite": 14394,
+        "zero": 0
+      },
+      "memory_gradients.cognitive.gate_fusion_blocks.proj.weight": {
+        "finite": 1606,
+        "maximum": 0.2363421767950058,
+        "mean": 0.0003328540893610174,
+        "minimum": 1.4074206774239428e-05,
+        "missing_or_nonfinite": 14394,
+        "zero": 0
+      },
+      "memory_gradients.cognitive.retrieval_blocks.0._fsdp_wrapped_module.attn_norm.bias": {
+        "finite": 0,
+        "maximum": null,
+        "mean": null,
+        "minimum": null,
+        "missing_or_nonfinite": 16000,
+        "zero": 0
+      },
+      "memory_gradients.cognitive.retrieval_blocks.0._fsdp_wrapped_module.attn_norm.weight": {
+        "finite": 0,
+        "maximum": null,
+        "mean": null,
+        "minimum": null,
+        "missing_or_nonfinite": 16000,
+        "zero": 0
+      },
+      "memory_gradients.cognitive.retrieval_blocks.0._fsdp_wrapped_module.ffn.0.bias": {
+        "finite": 0,
+        "maximum": null,
+        "mean": null,
+        "minimum": null,
+        "missing_or_nonfinite": 16000,
+        "zero": 0
+      },
+      "memory_gradients.cognitive.retrieval_blocks.0._fsdp_wrapped_module.ffn.0.weight": {
+        "finite": 0,
+        "maximum": null,
+        "mean": null,
+        "minimum": null,
+        "missing_or_nonfinite": 16000,
+        "zero": 0
+      },
+      "memory_gradients.cognitive.retrieval_blocks.0._fsdp_wrapped_module.ffn.2.bias": {
+        "finite": 0,
+        "maximum": null,
+        "mean": null,
+        "minimum": null,
+        "missing_or_nonfinite": 16000,
+        "zero": 0
+      },
+      "memory_gradients.cognitive.retrieval_blocks.0._fsdp_wrapped_module.ffn.2.weight": {
+        "finite": 0,
+        "maximum": null,
+        "mean": null,
+        "minimum": null,
+        "missing_or_nonfinite": 16000,
+        "zero": 0
+      },
+      "memory_gradients.cognitive.retrieval_blocks.0._fsdp_wrapped_module.ffn_norm.bias": {
+        "finite": 0,
+        "maximum": null,
+        "mean": null,
+        "minimum": null,
+        "missing_or_nonfinite": 16000,
+        "zero": 0
+      },
+      "memory_gradients.cognitive.retrieval_blocks.0._fsdp_wrapped_module.ffn_norm.weight": {
+        "finite": 0,
+        "maximum": null,
+        "mean": null,
+        "minimum": null,
+        "missing_or_nonfinite": 16000,
+        "zero": 0
+      },
+      "memory_gradients.cognitive.retrieval_blocks.0._fsdp_wrapped_module.k_proj.bias": {
+        "finite": 1606,
+        "maximum": 1.0459650923166919e-08,
+        "mean": 3.686445618129219e-11,
+        "minimum": 2.7143220397013446e-12,
+        "missing_or_nonfinite": 14394,
+        "zero": 0
+      },
+      "memory_gradients.cognitive.retrieval_blocks.0._fsdp_wrapped_module.k_proj.weight": {
+        "finite": 1606,
+        "maximum": 0.0004982771351933479,
+        "mean": 7.786802334774939e-07,
+        "minimum": 1.9706300591337822e-08,
+        "missing_or_nonfinite": 14394,
+        "zero": 0
+      },
+      "memory_gradients.cognitive.retrieval_blocks.0._fsdp_wrapped_module.q_proj.bias": {
+        "finite": 1606,
+        "maximum": 4.200911462248769e-06,
+        "mean": 5.8037600518684925e-09,
+        "minimum": 1.0233006109139353e-10,
+        "missing_or_nonfinite": 14394,
+        "zero": 0
+      },
+      "memory_gradients.cognitive.retrieval_blocks.0._fsdp_wrapped_module.q_proj.weight": {
+        "finite": 1606,
+        "maximum": 0.0004867087409365922,
+        "mean": 7.862373386988788e-07,
+        "minimum": 2.022945899682327e-08,
+        "missing_or_nonfinite": 14394,
+        "zero": 0
+      },
+      "memory_gradients.cognitive.retrieval_blocks.0._fsdp_wrapped_module.v_proj.bias": {
+        "finite": 0,
+        "maximum": null,
+        "mean": null,
+        "minimum": null,
+        "missing_or_nonfinite": 16000,
+        "zero": 0
+      },
+      "memory_gradients.cognitive.retrieval_blocks.0._fsdp_wrapped_module.v_proj.weight": {
+        "finite": 1606,
+        "maximum": 0.009035690687596798,
+        "mean": 1.400649724805765e-05,
+        "minimum": 1.2328613365752972e-06,
+        "missing_or_nonfinite": 14394,
+        "zero": 0
+      },
+      "memory_gradients.cognitive.retrieval_blocks.1._fsdp_wrapped_module.attn_norm.bias": {
+        "finite": 0,
+        "maximum": null,
+        "mean": null,
+        "minimum": null,
+        "missing_or_nonfinite": 16000,
+        "zero": 0
+      },
+      "memory_gradients.cognitive.retrieval_blocks.1._fsdp_wrapped_module.attn_norm.weight": {
+        "finite": 0,
+        "maximum": null,
+        "mean": null,
+        "minimum": null,
+        "missing_or_nonfinite": 16000,
+        "zero": 0
+      },
+      "memory_gradients.cognitive.retrieval_blocks.1._fsdp_wrapped_module.ffn.0.bias": {
+        "finite": 0,
+        "maximum": null,
+        "mean": null,
+        "minimum": null,
+        "missing_or_nonfinite": 16000,
+        "zero": 0
+      },
+      "memory_gradients.cognitive.retrieval_blocks.1._fsdp_wrapped_module.ffn.0.weight": {
+        "finite": 0,
+        "maximum": null,
+        "mean": null,
+        "minimum": null,
+        "missing_or_nonfinite": 16000,
+        "zero": 0
+      },
+      "memory_gradients.cognitive.retrieval_blocks.1._fsdp_wrapped_module.ffn.2.bias": {
+        "finite": 0,
+        "maximum": null,
+        "mean": null,
+        "minimum": null,
+        "missing_or_nonfinite": 16000,
+        "zero": 0
+      },
+      "memory_gradients.cognitive.retrieval_blocks.1._fsdp_wrapped_module.ffn.2.weight": {
+        "finite": 0,
+        "maximum": null,
+        "mean": null,
+        "minimum": null,
+        "missing_or_nonfinite": 16000,
+        "zero": 0
+      },
+      "memory_gradients.cognitive.retrieval_blocks.1._fsdp_wrapped_module.ffn_norm.bias": {
+        "finite": 0,
+        "maximum": null,
+        "mean": null,
+        "minimum": null,
+        "missing_or_nonfinite": 16000,
+        "zero": 0
+      },
+      "memory_gradients.cognitive.retrieval_blocks.1._fsdp_wrapped_module.ffn_norm.weight": {
+        "finite": 0,
+        "maximum": null,
+        "mean": null,
+        "minimum": null,
+        "missing_or_nonfinite": 16000,
+        "zero": 0
+      },
+      "memory_gradients.cognitive.retrieval_blocks.1._fsdp_wrapped_module.k_proj.bias": {
+        "finite": 1606,
+        "maximum": 1.474538713353013e-08,
+        "mean": 7.622054003864422e-11,
+        "minimum": 4.907347531807327e-12,
+        "missing_or_nonfinite": 14394,
+        "zero": 0
+      },
+      "memory_gradients.cognitive.retrieval_blocks.1._fsdp_wrapped_module.k_proj.weight": {
+        "finite": 1606,
+        "maximum": 0.0006332460907287896,
+        "mean": 1.5928521774116903e-06,
+        "minimum": 3.9980918131732324e-08,
+        "missing_or_nonfinite": 14394,
+        "zero": 0
+      },
+      "memory_gradients.cognitive.retrieval_blocks.1._fsdp_wrapped_module.q_proj.bias": {
+        "finite": 1606,
+        "maximum": 1.4269465282268357e-05,
+        "mean": 3.296674892056323e-08,
+        "minimum": 8.485714353412277e-10,
+        "missing_or_nonfinite": 14394,
+        "zero": 0
+      },
+      "memory_gradients.cognitive.retrieval_blocks.1._fsdp_wrapped_module.q_proj.weight": {
+        "finite": 1606,
+        "maximum": 0.0006409304914996028,
+        "mean": 1.4952272222205963e-06,
+        "minimum": 3.85050533679987e-08,
+        "missing_or_nonfinite": 14394,
+        "zero": 0
+      },
+      "memory_gradients.cognitive.retrieval_blocks.1._fsdp_wrapped_module.v_proj.bias": {
+        "finite": 0,
+        "maximum": null,
+        "mean": null,
+        "minimum": null,
+        "missing_or_nonfinite": 16000,
+        "zero": 0
+      },
+      "memory_gradients.cognitive.retrieval_blocks.1._fsdp_wrapped_module.v_proj.weight": {
+        "finite": 1606,
+        "maximum": 0.04393814876675606,
+        "mean": 6.964139411869144e-05,
+        "minimum": 7.285816991497995e-06,
+        "missing_or_nonfinite": 14394,
+        "zero": 0
+      },
+      "memory_gradients.cognitive.timestep_encoder.mlp.0.bias": {
+        "finite": 1606,
+        "maximum": 3.6676246395472845e-07,
+        "mean": 2.026279126767774e-09,
+        "minimum": 1.342056604736186e-10,
+        "missing_or_nonfinite": 14394,
+        "zero": 0
+      },
+      "memory_gradients.cognitive.timestep_encoder.mlp.0.weight": {
+        "finite": 1606,
+        "maximum": 1.7708996892906725e-05,
+        "mean": 9.368450826371373e-08,
+        "minimum": 6.554934817160074e-09,
+        "missing_or_nonfinite": 14394,
+        "zero": 0
+      },
+      "memory_gradients.cognitive.timestep_encoder.mlp.2.bias": {
+        "finite": 1606,
+        "maximum": 1.1522298670740838e-08,
+        "mean": 7.125609671703473e-11,
+        "minimum": 5.061173702358701e-12,
+        "missing_or_nonfinite": 14394,
+        "zero": 0
+      },
+      "memory_gradients.cognitive.timestep_encoder.mlp.2.weight": {
+        "finite": 1606,
+        "maximum": 3.368738543940708e-05,
+        "mean": 1.7901431479665592e-07,
+        "minimum": 1.2152374218032946e-08,
+        "missing_or_nonfinite": 14394,
+        "zero": 0
+      },
+      "memory_gradients.perceptual.gate_fusion_blocks.proj.bias": {
+        "finite": 1606,
+        "maximum": 0.004407030530273914,
+        "mean": 8.426959300535145e-05,
+        "minimum": 3.44381551258266e-05,
+        "missing_or_nonfinite": 14394,
+        "zero": 0
+      },
+      "memory_gradients.perceptual.gate_fusion_blocks.proj.weight": {
+        "finite": 1606,
+        "maximum": 0.06698410958051682,
+        "mean": 0.0011684852346715866,
+        "minimum": 0.0004844738868996501,
+        "missing_or_nonfinite": 14394,
+        "zero": 0
+      },
+      "memory_gradients.perceptual.retrieval_blocks.0._fsdp_wrapped_module.attn_norm.bias": {
+        "finite": 0,
+        "maximum": null,
+        "mean": null,
+        "minimum": null,
+        "missing_or_nonfinite": 16000,
+        "zero": 0
+      },
+      "memory_gradients.perceptual.retrieval_blocks.0._fsdp_wrapped_module.attn_norm.weight": {
+        "finite": 0,
+        "maximum": null,
+        "mean": null,
+        "minimum": null,
+        "missing_or_nonfinite": 16000,
+        "zero": 0
+      },
+      "memory_gradients.perceptual.retrieval_blocks.0._fsdp_wrapped_module.ffn.0.bias": {
+        "finite": 0,
+        "maximum": null,
+        "mean": null,
+        "minimum": null,
+        "missing_or_nonfinite": 16000,
+        "zero": 0
+      },
+      "memory_gradients.perceptual.retrieval_blocks.0._fsdp_wrapped_module.ffn.0.weight": {
+        "finite": 0,
+        "maximum": null,
+        "mean": null,
+        "minimum": null,
+        "missing_or_nonfinite": 16000,
+        "zero": 0
+      },
+      "memory_gradients.perceptual.retrieval_blocks.0._fsdp_wrapped_module.ffn.2.bias": {
+        "finite": 0,
+        "maximum": null,
+        "mean": null,
+        "minimum": null,
+        "missing_or_nonfinite": 16000,
+        "zero": 0
+      },
+      "memory_gradients.perceptual.retrieval_blocks.0._fsdp_wrapped_module.ffn.2.weight": {
+        "finite": 0,
+        "maximum": null,
+        "mean": null,
+        "minimum": null,
+        "missing_or_nonfinite": 16000,
+        "zero": 0
+      },
+      "memory_gradients.perceptual.retrieval_blocks.0._fsdp_wrapped_module.ffn_norm.bias": {
+        "finite": 0,
+        "maximum": null,
+        "mean": null,
+        "minimum": null,
+        "missing_or_nonfinite": 16000,
+        "zero": 0
+      },
+      "memory_gradients.perceptual.retrieval_blocks.0._fsdp_wrapped_module.ffn_norm.weight": {
+        "finite": 0,
+        "maximum": null,
+        "mean": null,
+        "minimum": null,
+        "missing_or_nonfinite": 16000,
+        "zero": 0
+      },
+      "memory_gradients.perceptual.retrieval_blocks.0._fsdp_wrapped_module.k_proj.bias": {
+        "finite": 1606,
+        "maximum": 2.8393789541780734e-09,
+        "mean": 8.40157685102986e-10,
+        "minimum": 3.648944757461692e-10,
+        "missing_or_nonfinite": 14394,
+        "zero": 0
+      },
+      "memory_gradients.perceptual.retrieval_blocks.0._fsdp_wrapped_module.k_proj.weight": {
+        "finite": 1606,
+        "maximum": 5.274126669974066e-05,
+        "mean": 1.132513118744209e-05,
+        "minimum": 2.748589395196177e-06,
+        "missing_or_nonfinite": 14394,
+        "zero": 0
+      },
+      "memory_gradients.perceptual.retrieval_blocks.0._fsdp_wrapped_module.q_proj.bias": {
+        "finite": 1606,
+        "maximum": 1.5850613635848276e-05,
+        "mean": 3.0525966220493965e-06,
+        "minimum": 1.0629017879182356e-06,
+        "missing_or_nonfinite": 14394,
+        "zero": 0
+      },
+      "memory_gradients.perceptual.retrieval_blocks.0._fsdp_wrapped_module.q_proj.weight": {
+        "finite": 1606,
+        "maximum": 3.9186015783343464e-05,
+        "mean": 9.151724222147831e-06,
+        "minimum": 2.53026996688277e-06,
+        "missing_or_nonfinite": 14394,
+        "zero": 0
+      },
+      "memory_gradients.perceptual.retrieval_blocks.0._fsdp_wrapped_module.v_proj.bias": {
+        "finite": 0,
+        "maximum": null,
+        "mean": null,
+        "minimum": null,
+        "missing_or_nonfinite": 16000,
+        "zero": 0
+      },
+      "memory_gradients.perceptual.retrieval_blocks.0._fsdp_wrapped_module.v_proj.weight": {
+        "finite": 1606,
+        "maximum": 0.13236960768699646,
+        "mean": 0.0019870113911528192,
+        "minimum": 0.0006895017577335238,
+        "missing_or_nonfinite": 14394,
+        "zero": 0
+      },
+      "memory_gradients.perceptual.retrieval_blocks.1._fsdp_wrapped_module.attn_norm.bias": {
+        "finite": 0,
+        "maximum": null,
+        "mean": null,
+        "minimum": null,
+        "missing_or_nonfinite": 16000,
+        "zero": 0
+      },
+      "memory_gradients.perceptual.retrieval_blocks.1._fsdp_wrapped_module.attn_norm.weight": {
+        "finite": 0,
+        "maximum": null,
+        "mean": null,
+        "minimum": null,
+        "missing_or_nonfinite": 16000,
+        "zero": 0
+      },
+      "memory_gradients.perceptual.retrieval_blocks.1._fsdp_wrapped_module.ffn.0.bias": {
+        "finite": 0,
+        "maximum": null,
+        "mean": null,
+        "minimum": null,
+        "missing_or_nonfinite": 16000,
+        "zero": 0
+      },
+      "memory_gradients.perceptual.retrieval_blocks.1._fsdp_wrapped_module.ffn.0.weight": {
+        "finite": 0,
+        "maximum": null,
+        "mean": null,
+        "minimum": null,
+        "missing_or_nonfinite": 16000,
+        "zero": 0
+      },
+      "memory_gradients.perceptual.retrieval_blocks.1._fsdp_wrapped_module.ffn.2.bias": {
+        "finite": 0,
+        "maximum": null,
+        "mean": null,
+        "minimum": null,
+        "missing_or_nonfinite": 16000,
+        "zero": 0
+      },
+      "memory_gradients.perceptual.retrieval_blocks.1._fsdp_wrapped_module.ffn.2.weight": {
+        "finite": 0,
+        "maximum": null,
+        "mean": null,
+        "minimum": null,
+        "missing_or_nonfinite": 16000,
+        "zero": 0
+      },
+      "memory_gradients.perceptual.retrieval_blocks.1._fsdp_wrapped_module.ffn_norm.bias": {
+        "finite": 0,
+        "maximum": null,
+        "mean": null,
+        "minimum": null,
+        "missing_or_nonfinite": 16000,
+        "zero": 0
+      },
+      "memory_gradients.perceptual.retrieval_blocks.1._fsdp_wrapped_module.ffn_norm.weight": {
+        "finite": 0,
+        "maximum": null,
+        "mean": null,
+        "minimum": null,
+        "missing_or_nonfinite": 16000,
+        "zero": 0
+      },
+      "memory_gradients.perceptual.retrieval_blocks.1._fsdp_wrapped_module.k_proj.bias": {
+        "finite": 1606,
+        "maximum": 2.2241701813641157e-09,
+        "mean": 7.008613606106347e-10,
+        "minimum": 3.5371758300151157e-10,
+        "missing_or_nonfinite": 14394,
+        "zero": 0
+      },
+      "memory_gradients.perceptual.retrieval_blocks.1._fsdp_wrapped_module.k_proj.weight": {
+        "finite": 1606,
+        "maximum": 4.5961518480908126e-05,
+        "mean": 8.726406845187327e-06,
+        "minimum": 2.8936728995176964e-06,
+        "missing_or_nonfinite": 14394,
+        "zero": 0
+      },
+      "memory_gradients.perceptual.retrieval_blocks.1._fsdp_wrapped_module.q_proj.bias": {
+        "finite": 1606,
+        "maximum": 2.9165601063141366e-06,
+        "mean": 5.76577020783328e-07,
+        "minimum": 2.0670040612458251e-07,
+        "missing_or_nonfinite": 14394,
+        "zero": 0
+      },
+      "memory_gradients.perceptual.retrieval_blocks.1._fsdp_wrapped_module.q_proj.weight": {
+        "finite": 1606,
+        "maximum": 5.148264972376637e-05,
+        "mean": 8.43092720375536e-06,
+        "minimum": 2.888921471821959e-06,
+        "missing_or_nonfinite": 14394,
+        "zero": 0
+      },
+      "memory_gradients.perceptual.retrieval_blocks.1._fsdp_wrapped_module.v_proj.bias": {
+        "finite": 0,
+        "maximum": null,
+        "mean": null,
+        "minimum": null,
+        "missing_or_nonfinite": 16000,
+        "zero": 0
+      },
+      "memory_gradients.perceptual.retrieval_blocks.1._fsdp_wrapped_module.v_proj.weight": {
+        "finite": 1606,
+        "maximum": 0.02573358826339245,
+        "mean": 0.00044701956188599644,
+        "minimum": 0.000196172870346345,
+        "missing_or_nonfinite": 14394,
+        "zero": 0
+      },
+      "memory_gradients.perceptual.timestep_encoder.mlp.0.bias": {
+        "finite": 1606,
+        "maximum": 3.2059383556770626e-06,
+        "mean": 2.60305781090109e-07,
+        "minimum": 3.545678950445108e-08,
+        "missing_or_nonfinite": 14394,
+        "zero": 0
+      },
+      "memory_gradients.perceptual.timestep_encoder.mlp.0.weight": {
+        "finite": 1606,
+        "maximum": 4.6182190999388695e-05,
+        "mean": 4.274753837881188e-06,
+        "minimum": 5.872107067261823e-07,
+        "missing_or_nonfinite": 14394,
+        "zero": 0
+      },
+      "memory_gradients.perceptual.timestep_encoder.mlp.2.bias": {
+        "finite": 1606,
+        "maximum": 2.4014628507984526e-08,
+        "mean": 3.133385100263822e-09,
+        "minimum": 8.719565069981172e-10,
+        "missing_or_nonfinite": 14394,
+        "zero": 0
+      },
+      "memory_gradients.perceptual.timestep_encoder.mlp.2.weight": {
+        "finite": 1606,
+        "maximum": 4.685749809141271e-05,
+        "mean": 4.992494205660949e-06,
+        "minimum": 1.0510595984669635e-06,
+        "missing_or_nonfinite": 14394,
+        "zero": 0
+      },
+      "memory_gradients.perceptual_encoder.excite.1.bias": {
+        "finite": 1606,
+        "maximum": 0.0023295539431273937,
+        "mean": 4.262544870474572e-05,
+        "minimum": 1.499360405432526e-05,
+        "missing_or_nonfinite": 14394,
+        "zero": 0
+      },
+      "memory_gradients.perceptual_encoder.excite.1.weight": {
+        "finite": 1606,
+        "maximum": 0.027345435693860054,
+        "mean": 0.00045077872927869514,
+        "minimum": 0.00020290818065404892,
+        "missing_or_nonfinite": 14394,
+        "zero": 0
+      },
+      "memory_gradients.perceptual_encoder.excite.3.bias": {
+        "finite": 1606,
+        "maximum": 0.005527872126549482,
+        "mean": 0.00010810407624996916,
+        "minimum": 4.9648362619336694e-05,
+        "missing_or_nonfinite": 14394,
+        "zero": 0
+      },
+      "memory_gradients.perceptual_encoder.excite.3.weight": {
+        "finite": 1606,
+        "maximum": 0.008093957789242268,
+        "mean": 0.00012683639023898798,
+        "minimum": 6.315386417554691e-05,
+        "missing_or_nonfinite": 14394,
+        "zero": 0
+      },
+      "memory_gradients.perceptual_encoder.expand.weight": {
+        "finite": 1606,
+        "maximum": 0.43769651651382446,
+        "mean": 0.008509727273916926,
+        "minimum": 0.0038583308923989534,
+        "missing_or_nonfinite": 14394,
+        "zero": 0
+      },
+      "memory_gradients.perceptual_encoder.reduce.weight": {
+        "finite": 1606,
+        "maximum": 1.2436821460723877,
+        "mean": 0.015144081766558242,
+        "minimum": 0.005990171805024147,
+        "missing_or_nonfinite": 14394,
+        "zero": 0
+      },
+      "peak_allocated_gib": {
+        "finite": 16000,
+        "maximum": 37.45477294921875,
+        "mean": 37.315463657438755,
+        "minimum": 14.271565437316895,
+        "missing_or_nonfinite": 0,
+        "zero": 0
+      },
+      "seconds": {
+        "finite": 16000,
+        "maximum": 69.21585845947266,
+        "mean": 10.358076474040747,
+        "minimum": 6.082613945007324,
+        "missing_or_nonfinite": 0,
+        "zero": 0
+      }
+    },
+    "finite_loss": 16000,
+    "first_step": 1,
+    "incomplete_tail_records": 0,
+    "interior_missing_steps": 0,
+    "last_step": 16000,
+    "loss_first100": 0.018298336659366157,
+    "loss_last100": 0.010263367971816057,
+    "loss_min": 0.006879067776026204,
+    "nonincreasing_transitions": 0,
+    "records": 16000,
+    "unique_steps": 16000
+  }
+}

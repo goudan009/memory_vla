@@ -1,0 +1,17 @@
+{
+  "run": "v1__test01__exp13__run001",
+  "training_id": "v1__test01__exp13__run001",
+  "version": "V_1",
+  "method": "memory",
+  "train_number": 1,
+  "arm": "memory_v1",
+  "pid": 2872354,
+  "output": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001",
+  "source": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002",
+  "source_digest": "68b6d82b8ed2608046b86ab39c58442d22f122f5e46fc4e62c2dafc05324fc85",
+  "command": "/nvme3/projects/memory_vla/envs/n1d6-p0/bin/python -u -m torch.distributed.run --standalone --nnodes=1 --nproc-per-node=4 --module v1_groot_memoryvla.experiment.task21_ddp --dataset /nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/dataset --checkpoint /nvme3/huggingface/train_model/GR00T/GR00T-N1.6-3B --output /nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001 --arm memory_v1 --global-windows-per-step 16 --seed 42 --learning-rate 2e-05 --eval-interval 500 --history-sampling random_ordered --optimizer-eps 1e-08 --no-memory-cognitive-residual-projection --memory-cognitive-residual-scope eos --memory-conditioning openvla --memory-residual-readout delta --memory-cognitive-qk-norm none --memory-length 16 --image-augmentation --fine-tuning-mode full --no-freeze-llm --no-freeze-vision --no-freeze-vision-projector --no-freeze-action-dit --no-freeze-action-projector --no-freeze-action-vlln --no-freeze-memory --lora-targets llm,action_dit --lora-rank 16 --lora-alpha 32.0 --lora-dropout 0.0 --llm-last-n-layers 0 --weight-decay 0.0 --max-grad-norm 1.0 --no-validation --steps 20000 --resume-step 11000 --checkpoint-interval 1000 --microbatch 8 --fsdp-accumulation retain --no-gradient-checkpointing",
+  "status": "resuming",
+  "resume_step": 11000,
+  "steps": 20000,
+  "attempt": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/config/web_resumes/resume-005"
+}

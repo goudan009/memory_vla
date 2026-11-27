@@ -1,0 +1,11 @@
+{
+  "previous_source": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001",
+  "source": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume001",
+  "source_digest": "f127c947e1efca76d304f687ce3e3e9b547a1d87d18ed0e9cd986345fd50c97c",
+  "previous_fsdp_accumulation": "shard_each",
+  "fsdp_accumulation": "retain",
+  "optimizer_layout": "same world size, wrap policy and original parameter order",
+  "gradient_checkpointing": false,
+  "microbatch": 8,
+  "original_scientific_config": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/config/ddp.json"
+}

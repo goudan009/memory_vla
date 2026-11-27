@@ -1,0 +1,9 @@
+{
+  "step": 16000,
+  "epoch": 25,
+  "position": 375,
+  "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step016000",
+  "world_size": 4,
+  "global_windows_per_step": 16,
+  "seed": 42
+}
