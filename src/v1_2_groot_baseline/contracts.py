@@ -5,6 +5,9 @@ checkpoint is not a 2025 Task40 checkpoint. All absolute paths, run identities,
 GPU assignments and output allocations must come from the existing workbench.
 """
 import json
+import hashlib
+import math
+import re
 import subprocess
 from pathlib import Path
 
@@ -42,7 +45,6 @@ def absolute(value):
 
 def inspect_upstream(root):
     """Check source identity without modifying a checkout or importing torch."""
-    import hashlib
     root = absolute(root)
     head = subprocess.check_output(["git", "-C", str(root), "rev-parse", "HEAD"],
                                    text=True, timeout=10).strip()
@@ -64,7 +66,7 @@ def model_files(checkpoint):
     checkpoint = absolute(checkpoint)
     index = checkpoint/"model.safetensors.index.json"
     names = sorted(set(read(index)["weight_map"].values())) if index.is_file() else ["model.safetensors"]
-    if not names or any(Path(n).name != n for n in names):
+    if not names or any(not isinstance(n,str) or Path(n).name != n or not n.endswith('.safetensors') for n in names):
         raise ValueError("unsafe or empty model index")
     for name in names:
         f = checkpoint/name
@@ -81,12 +83,20 @@ def inspect_checkpoint(checkpoint, *, role):
         raise ValueError("expected GR00T N1.7; N1.6 is not compatible")
     weights = model_files(checkpoint)
     processor = checkpoint if (checkpoint/"processor_config.json").is_file() else checkpoint/"processor"
-    pc = read(processor/"processor_config.json")["processor_kwargs"]
+    saved = read(processor/"processor_config.json")
+    if saved.get("processor_class") != "Gr00tN1d7Processor":
+        raise ValueError("expected native N1.7 processor class")
+    pc = saved["processor_kwargs"]
     stats = read(processor/"statistics.json")
+    if not isinstance(stats,dict) or not stats:
+        raise ValueError("missing processor statistics")
+    if pc.get("max_action_horizon") != config.get("action_horizon") or pc.get("max_action_dim") != config.get("max_action_dim") or pc.get("max_state_dim") != config.get("max_state_dim"):
+        raise ValueError("model/processor padded dimension mismatch")
     result = dict(path=str(checkpoint),processor=str(processor),role=role,weights=weights,
                   model_horizon=config.get("action_horizon"),max_action_dim=config.get("max_action_dim"),
                   max_state_dim=config.get("max_state_dim"),inference_steps=config.get("num_inference_timesteps"))
-    if role == "generic":
+    if role in ('generic','family_only'):
+        # This is a family/schema check, not evidence of the pretrained origin.
         return result
     if role != "official_2026_radio":
         raise ValueError("checkpoint role not yet supported")
@@ -100,12 +110,54 @@ def inspect_checkpoint(checkpoint, *, role):
             raise ValueError("2026 modality order mismatch: "+kind)
         if modes[kind]["delta_indices"] != (list(range(16)) if kind=="action" else [0]):
             raise ValueError("2026 modality horizon mismatch: "+kind)
+    if not pc.get("use_relative_action"):
+        raise ValueError("expected native relative arm/torso representation")
+    configs=modes["action"].get("action_configs") or []
+    if len(configs)!=len(ACTION_GROUPS):
+        raise ValueError("missing action representation contract")
+    for key,item in zip(ACTION_GROUPS,configs):
+        relative=key in ("torso","left_arm","right_arm")
+        if (item.get("rep")!=("RELATIVE" if relative else "ABSOLUTE")
+            or item.get("type")!="NON_EEF" or item.get("format")!="DEFAULT"
+            or (relative and item.get("state_key")!=key)
+            or bool(item.get("is_gripper"))!=("gripper" in key)):
+            raise ValueError("incorrect physical action representation: "+key)
+    for group,layout in (("state",STATE_GROUPS_2026),("action",ACTION_GROUPS),
+                         ("relative_action",{k:ACTION_GROUPS[k] for k in ("torso","left_arm","right_arm")})):
+        table=stats["new_embodiment"].get(group,{})
+        for key,(lo,hi) in layout.items():
+            entry=table.get(key,{})
+            # Upstream accepts vector absolute stats, and per-offset relative
+            # stats. Do not accept empty or nonfinite normalization ranges.
+            def vector(x):
+                return isinstance(x,list) and len(x)==hi-lo and all(type(v) in (int,float) and math.isfinite(v) for v in x)
+            a,b=entry.get("min"),entry.get("max")
+            pairs=[(a,b)] if vector(a) and vector(b) else list(zip(a,b)) if isinstance(a,list) and isinstance(b,list) and len(a)==len(b)==16 and group=="relative_action" else []
+            if not pairs or any(not vector(x) or not vector(y) or any(v>w for v,w in zip(x,y)) for x,y in pairs):
+                raise ValueError("invalid normalization range: "+group+"/"+key)
     result.update(valid_action_steps=16,physical_action_dim=23,
-                  raw_state_dim=61,selected_state_dim=25,protocol=B1K2026)
+                  raw_state_dim=61,selected_state_dim=sum(b-a for a,b in STATE_GROUPS_2026.values()),protocol=B1K2026)
     return result
 
 
-def official_serve_spec(*, python, upstream, checkpoint, host, port, gpu_index):
+def checkpoint_digest(checkpoint):
+    """Hash actual weights + processor config/statistics; no trust in labels."""
+    checkpoint=absolute(checkpoint)
+    processor=checkpoint if (checkpoint/"processor_config.json").is_file() else checkpoint/"processor"
+    files=[checkpoint/"config.json",*(checkpoint/n for n in model_files(checkpoint)),
+           processor/"processor_config.json",processor/"statistics.json"]
+    for optional in (checkpoint/"model.safetensors.index.json",processor/"embodiment_id.json"):
+        if optional.is_file():files.append(optional)
+    digest=hashlib.sha256()
+    for f in sorted(files):
+        h=hashlib.sha256()
+        with f.open("rb") as stream:
+            for block in iter(lambda:stream.read(1024*1024),b""):h.update(block)
+        digest.update(str(f.relative_to(checkpoint)).encode()+b"\0"+h.digest())
+    return digest.hexdigest()
+
+
+def official_serve_spec(*, python, upstream, checkpoint, host, port, gpu_index, verified_radio_sha256):
     """Native official reference process spec; never launches a service."""
     python, upstream, checkpoint = map(absolute,(python,upstream,checkpoint))
     if not python.is_file() or not isinstance(host,str) or not host.strip():
@@ -114,12 +166,18 @@ def official_serve_spec(*, python, upstream, checkpoint, host, port, gpu_index):
         raise ValueError("invalid workbench port/GPU")
     source = inspect_upstream(upstream)
     identity = inspect_checkpoint(checkpoint,role="official_2026_radio")
+    actual=checkpoint_digest(checkpoint)
+    # A local Agent must establish this digest from the actual official
+    # download and archive its provenance. Matching modality alone cannot
+    # distinguish a radio checkpoint from any other R1Pro task.
+    if actual!=verified_radio_sha256:
+        raise ValueError("official radio download identity mismatch")
     argv = [str(python),"-u",str(upstream/"scripts/b1k/serve_b1k.py"),
             "--model-path",str(checkpoint),"--modality-config-path",str(upstream/"examples/b1k/r1pro.py"),
             "--embodiment-tag","NEW_EMBODIMENT","--device","cuda","--control-mode","temporal_ensemble",
             "--host",host,"--port",str(port)]
     return dict(version=VERSION,method="official",task_name="turning_on_radio",protocol=B1K2026,
-                source=source,checkpoint=identity,argv=argv,cwd=str(upstream),
+                source=source,checkpoint=identity,checkpoint_sha256=actual,argv=argv,cwd=str(upstream),
                 env={"PYTHONPATH":str(upstream),"CUDA_VISIBLE_DEVICES":str(gpu_index),
                      "PYTHONNOUSERSITE":"1","PYTHONDONTWRITEBYTECODE":"1",
                      "HF_HUB_OFFLINE":"1","TRANSFORMERS_OFFLINE":"1"},
@@ -138,8 +196,10 @@ def official_eval_spec(*, python, behavior_root, output, endpoint, instance, rol
         raise ValueError("expected fresh workbench-reserved evaluation output")
     if endpoint.get("protocol")!=B1K2026 or endpoint.get("task_name")!="turning_on_radio" or endpoint.get("state")!="ready":
         raise ValueError("must bind a verified ready official 2026 radio service")
-    if not endpoint.get("checkpoint_sha256"):
-        raise ValueError("bind actual checkpoint hash before evaluation")
+    if endpoint.get("version")!=VERSION or endpoint.get("method")!="official" or not re.fullmatch(r"[0-9a-f]{64}",str(endpoint.get("checkpoint_sha256",""))):
+        raise ValueError("bind actual V1.2 official checkpoint hash before evaluation")
+    if not isinstance(endpoint.get("host"),str) or not endpoint["host"].strip() or type(endpoint.get("port")) is not int or not 1<=endpoint["port"]<=65535:
+        raise ValueError("invalid observed policy endpoint")
     if type(instance) is not int or not 0<=instance<20 or type(rollouts) is not int or rollouts<1:
         raise ValueError("explicit public-test index and rollout budget required")
     # Local pinned evaluator version and flags must be checked during the
