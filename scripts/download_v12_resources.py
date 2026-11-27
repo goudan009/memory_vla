@@ -7,6 +7,7 @@ import json
 import os
 from pathlib import Path
 import subprocess
+import shutil
 import threading
 import time
 from urllib.parse import quote
@@ -84,7 +85,7 @@ def verify(path, entry):
 
 
 def resume_large_file(resource, entry, path):
-    """Use one stable partial; hub 2.4.0 intentionally discards process-unique partials."""
+    """Resume through small HTTP ranges so the local proxy does not kill LFS streams."""
     path.parent.mkdir(parents=True, exist_ok=True)
     partial = path.with_suffix(path.suffix + '.part')
     if not partial.exists() and entry['sha256']:
@@ -93,11 +94,45 @@ def resume_large_file(resource, entry, path):
             max(candidates, key=lambda p: p.stat().st_size).replace(partial)
     prefix = 'datasets/' if resource['repo_type'] == 'dataset' else ''
     url = 'https://huggingface.co/' + prefix + resource['repo'] + '/resolve/' + resource['revision'] + '/' + quote(entry['path'])
-    result = subprocess.run(['curl', '--fail', '--location', '--silent', '--show-error', '--connect-timeout', '30',
-                             '--max-time', '900', '--speed-time', '60', '--speed-limit', '1024',
-                             '--continue-at', '-', '--output', str(partial), url])
-    if result.returncode:
-        raise RuntimeError('curl exit ' + str(result.returncode) + '; partial preserved: ' + str(partial))
+    chunk_size = 64 * 1024 * 1024
+    offset = partial.stat().st_size if partial.exists() else 0
+    def fetch_range(start, end):
+        chunk = partial.with_suffix(partial.suffix + f'.{start}.chunk')
+        received = chunk.stat().st_size if chunk.is_file() else 0
+        while received < end - start:
+            request_start = start + received
+            piece = chunk.with_suffix(chunk.suffix + '.piece')
+            result = subprocess.run(['curl', '--fail', '--location', '--silent', '--show-error', '--connect-timeout', '30',
+                                     '--max-time', '120', '--range', f'{request_start}-{end - 1}', '--output', str(piece),
+                                     url])
+            actual = piece.stat().st_size if piece.is_file() else 0
+            if actual > end - request_start:
+                piece.unlink(missing_ok=True)
+                chunk.unlink(missing_ok=True)
+                raise RuntimeError(f'curl exit {result.returncode}; range too large: {actual}')
+            if actual == 0:
+                piece.unlink(missing_ok=True)
+                chunk.unlink(missing_ok=True)
+                raise RuntimeError(f'curl exit {result.returncode}; empty range at {request_start}')
+            with piece.open('rb') as source, chunk.open('ab') as destination:
+                shutil.copyfileobj(source, destination, length=1024 * 1024)
+            piece.unlink()
+            received = chunk.stat().st_size
+        return chunk
+
+    while offset < entry['bytes']:
+        ranges = [(start, min(start + chunk_size, entry['bytes']))
+                  for start in range(offset, entry['bytes'], chunk_size)][:2]
+        with ThreadPoolExecutor(max_workers=len(ranges)) as pool:
+            chunks = list(pool.map(lambda r: (r, fetch_range(*r)), ranges))
+        with partial.open('ab') as destination:
+            for (start, end), chunk in chunks:
+                if chunk.stat().st_size != end - start:
+                    raise RuntimeError(f'range incomplete: {start}-{end}')
+                with chunk.open('rb') as source:
+                    shutil.copyfileobj(source, destination, length=1024 * 1024)
+                chunk.unlink()
+                offset = end
     verify(partial, entry)
     partial.replace(path)
     return path
