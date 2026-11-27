@@ -2836,6 +2836,11 @@
   },
   "radio": {
     "url": "https://drive.google.com/file/d/1OXNm3SPLvWOSJR1e8In6xHMHxOYDp789/view",
-    "target": "/nvme3/checkpoints/memory_vla/official-n17-radio"
+    "target": "/nvme3/checkpoints/memory_vla/official-n17-radio",
+    "archive": "turning_on_radio_GR00T-checkpoint-150000.zip",
+    "archive_bytes": 6917651266,
+    "archive_sha256": "74eab585f4cf0f92326c9d4d74732343f6d789b05e945d3e71afe46bac69cb46",
+    "checkpoint": "turning_on_radio_GR00T-checkpoint-150000",
+    "checkpoint_identity_sha256": "cd97a22ff74bd91838350e18fe94b48e1902d407f1256f5d48eb20befe277dc3"
   }
 }

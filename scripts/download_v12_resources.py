@@ -126,7 +126,9 @@ def download():
         key = resource['name'] + '/' + entry['path']
         with mutex:
             state['files'][key] = {'status': 'downloading', 'bytes': entry['bytes']}
-        for attempt in range(1, 4):
+        # Transient proxy resets are common on multi-GB HF objects; every retry
+        # resumes the same stable .part path rather than starting a new object.
+        for attempt in range(1, 11):
             try:
                 path = Path(resource['target']) / entry['path']
                 reused = False
@@ -150,11 +152,11 @@ def download():
                 return
             except Exception as error:
                 with mutex:
-                    state['files'][key] = {'status': 'retrying' if attempt < 3 else 'failed', 'attempt': attempt,
+                    state['files'][key] = {'status': 'retrying' if attempt < 10 else 'failed', 'attempt': attempt,
                                            'error': type(error).__name__ + ': ' + str(error)[:600]}
                 save()
                 print('ERROR', key, type(error).__name__, flush=True)
-                if attempt < 3:
+                if attempt < 10:
                     time.sleep(5 * attempt)
     save()
     def fetch_resource(resource):
