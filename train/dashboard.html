@@ -242,7 +242,10 @@
     <div class="train-form-section">
     <h3 class="train-form-heading">实验与模型</h3>
     <div class="train-config-fields train-identity">
-     <label>实验版本<input id="train-version" value="V_1" pattern="V_[0-9]+" required></label>
+     <label>模型方法版本<select id="train-version" required><option value="V_1">V_1</option><option value="V_2">V_2（历史方法）</option></select></label>
+     <label>测试编号<input id="train-test-id" type="number" min="1" max="99" required placeholder="如 2"></label>
+     <label>实验编号<input id="train-experiment-id" type="number" min="1" max="99" required placeholder="如 1"></label>
+     <label>独立训练次数<input id="train-run-number" type="number" min="1" value="1" required></label>
      <label>方法<select id="train-arm"><option value="baseline">Baseline · 无记忆微调</option><option value="memory_v1">Memory · 完整记忆</option></select></label>
      <label class="train-initial-weights">初始权重<select id="train-checkpoint-choice" required><option value="" disabled selected>正在读取设备权重列表…</option></select><span id="train-checkpoint-note"></span></label>
      <label id="train-checkpoint-custom" class="train-wide" hidden>自定义设备权重路径<input id="train-checkpoint" list="train-checkpoints" required><datalist id="train-checkpoints"></datalist></label>

@@ -2,7 +2,7 @@
 
 在 4090 仓库所在主机使用 `http://127.0.0.1:8765`。设备的训练、推理与仿真能力见 [设备说明](../../train/DEVICES.md)。实际在线状态、支持任务、GPU 和路径以当前 API 响应为准。
 
-设备用途和训练分级见 [robot-vla-experiment-ops](../../.agents/skills/robot-vla-experiment-ops/robot-vla-experiment-ops/SKILL.md)。当前推理接口支持 A100 和 RTX 6000 Ada，4090 的 `local` 入口目前用于仿真评估。
+Agent先完整读取 [robot-vla-experiment-ops](../../.agents/skills/robot-vla-experiment-ops/robot-vla-experiment-ops/SKILL.md)，其规定执行、设备用途和验收；本手册只说明工作台接口。具体配方及授权以当前实验任务为准。当前推理接口支持 A100 和 RTX 6000 Ada，4090 的 `local` 入口目前用于仿真评估。
 
 新部署时，将 [设备模板](../../configs/workbench_devices.example.json) 和 [外部源码模板](../../configs/workbench_sources.example.json) 分别复制为 `configs/workbench_devices.json` 和 `configs/workbench_sources.json`，填写实际 SSH 地址和绝对路径。这两个本机配置受 Git 忽略规则保护。
 
@@ -17,11 +17,19 @@ Task 40 的采集和检查点恢复还需要实验存储中的仿真检查点、
 5. 有余量时提交已明确要求、相互独立且能放下的下一项。当前无合适设备时使用已有排队功能，例如训练的 `enqueue` 和评估的 `wait_for_gpu`。在资源释放、作业完成或故障后重新查资源，再调度后续任务。
 6. 每批评估或诊断结束后，核对本次启动的推理服务。按设备和端口确认没有运行中、排队中或已安排续跑的作业依赖后，及时通过工作台停止该服务，并复查端口和显存是否释放。仍有依赖、用户要求保留或归属不明的服务不停止；不要仅凭 GPU 利用率判定服务空闲。
 
-V2本机真实标签验证训练使用同一BenchmarkManager的`kind=v2_train`，GPU0，1000 optimizer steps，类别为exploratory_validation。worker依次执行全200条官方原始状态导出（仅started）、认证、真实梯度与完整HF重载前检、训练、末尾重载；不是人工标签短测。标签或前检失败即终止，不会跳过前置条件。作业的run.log、state.json、labels.json、train_config.json、train_monitor.csv、training_status.json及规范命名末尾checkpoint均在原工作台记录目录。运行中stage显示当前阶段，step只在真实更新时增长；stage尚为导出时不能称训练已开始。
-
-V2集中评估使用同一管理器`kind=v2_evaluate`，指定已完成的`training_job`及GPU。prepare核对1000步结果和末尾COMPLETE后，按已锁定evaluation_protocol.json执行留出集状态评分/100窗口机制诊断，再执行12组V1/V2恢复配对。两权重各自重建原始历史，V2完整事件运行态参与快照；恢复画面默认按Skill接受近似一致，只有超出既有物理/控制器及RGB容差的尝试才记invalid并从科学对照分母排除，不默认要求逐像素相同。相关记录仍由原worker管理，不能把入口就绪当作评估完成。
+旧Benchmark入口`v2_train`/`v2_evaluate`的仅started标签、固定1000步及离线评分/机制诊断均为历史实验细节，不是当前执行步骤，也不授权重启旧配方。V2.1划分和预算见当前task；正式训练按已批准用途和预算分类，不设通用最少步数。
 
 ## 调用工作台接口
+
+训练身份分为方法版本、测试号、实验号和独立训练号。规范 run ID 为 `v2_1__test02__exp01__run001`，checkpoint 再追加累计 optimizer step，如 `__step003000`；对应目录为 `Output/test_02/experiment_01/`。`V_1` / `V_2_1` 是展示名，`v1` / `v2_1` 是 ID 前缀。源码模块名 `v2_1_groot_memoryvla` 和 CLI 的 `--source-version v2_1` 只是代码入口，不是模型版本登记。
+
+工作台 `options.model_versions` 是唯一可启动版本目录；新训练必须显式传已登记的 `version` 与 `run_id`。preview/start 校验版本登记、版本与 ID 一致、目录唯一；身份缺失或校验失败即停止，不得猜编号或换旧入口绕过。通用训练表单分别填写模型版本、测试编号、实验编号和独立训练次数；V2.1 仍走专用入口。方法小版本（如未来的 `V_2_2` 或 `V_2_1_1`）只有在用户确认其方法含义并登记后才可用，实验编号、seed、重训次数、恢复作业和工程修复都不能自动增加版本。历史已核实的 `V_12_memory_task40_train01/02` 仅显示映射到 V1/Exp12，原作业 ID、配置和目录不改。
+
+自动配对队列和独立分支续训同样必须携带 `test_id` / `experiment_id`；旧记录缺失这两个字段时不得推测并创建新 run。所有入口均以 `train/run_identity.py` 校验身份。
+
+普通闭环评估支持 `repetitions`（正整数，默认1）和 `episodes_per_gpu`（每轮每卡回合数，默认单卡10、双卡各5），CLI 对应 `--repetitions`、`--episodes-per-gpu`。默认设置下5轮共50回合，仍归入一个评估目录。实例ID仍为0–9；多回合按环境的原生实例分区循环，保存每槽配额、偏移和逐回合seed。sequence/random模式为同一实例后续回合产生新seed，fixed模式的重复不能作为独立随机样本。单卡中断续跑保留原实例池与各槽偏移；旧版单轮续跑规则保持兼容。双卡续跑及剩余回合少于原环境数的续跑暂不支持。
+
+早期 V_2_1 Stage1/baseline 的训练源码快照只包含记忆模型推理入口。对这类 checkpoint，工作台优先推荐已同步的兼容推理源码；启动器也检查该兼容性，必要时使用 `deployments/web_live` 并冻结为独立推理快照，实际路径和哈希保存在服务记录中。原训练源码和 checkpoint 保留；缺少兼容源码时，预检明确提示先同步源码。
 
 实验台账的「数据权重」页支持逐层打开实际目录、当前目录文件名筛选、分页和 UTF-8 文本预览（最多 64 KiB），二进制权重显示文件信息，可继续查看同目录配置。磁盘卡片实时显示所在设备的总容量、已用与剩余空间；设备不可达时保留带有「上次扫描」标记的数据。目录总占用按需点击「统计目录大小」，浏览时不递归扫描整个数据盘。
 

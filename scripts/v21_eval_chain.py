@@ -1,4 +1,4 @@
-"""Persistent-client evaluation stages for the existing V2.1 workbench.
+"""Persistent-client evaluation stages for the existing V2_1 workbench.
 
 No simulator or model is launched directly: every mutation uses workbench HTTP.
 The caller owns the lock, durable state, timer and checkpoint dependency gates.
@@ -73,10 +73,11 @@ def check_plan(plan, checkpoint, tag):
 def discover_outputs(tag):
     """Canonical CLI persists run_tag; recover even if the UI lost its jobs."""
     matches = []
-    for path in (EVALUATION / 'V_2_1/experment_14').glob('task40_eval*/results.json'):
-        result = read(path, {})
-        if result.get('configuration', {}).get('run_tag') == tag:
-            matches.append(path.parent)
+    for root in (EVALUATION / 'V2_1/experiment_14', EVALUATION / 'V_2_1/experment_14'):
+        for path in root.glob('task40_eval*/results.json'):
+            result = read(path, {})
+            if result.get('configuration', {}).get('run_tag') == tag:
+                matches.append(path.parent)
     return matches
 
 
@@ -186,11 +187,14 @@ def _stop_owned(api, state, save):
     return True
 
 
-def tick(api, state, save, checkpoints):
+def tick(api, state, save, checkpoints, allow_subset=False):
     """Advance at most one model stage; caller persists state atomically."""
     if state.get('status') == 'blocked' or state.get('paused'):
         return False
-    if [c['name'] for c in checkpoints] != ['stage1', 'memory', 'continued']:
+    names = [c['name'] for c in checkpoints]
+    if (not names or len(set(names)) != len(names)
+            or (not allow_subset and names != ['stage1', 'memory', 'continued'])
+            or (allow_subset and any(n not in ('stage1', 'memory', 'continued') for n in names))):
         raise ValueError('evaluation dependencies must contain all three locked checkpoints')
     stages = state.setdefault('models', {})
     for checkpoint in checkpoints:

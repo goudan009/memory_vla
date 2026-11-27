@@ -219,12 +219,18 @@ def stream(ds,seed):
 def calibration(ds,base,model,labels,pos,args):
     # Save CPU master weights, isolate preflight from formal training entirely.
     initial={k:v.detach().cpu().clone() for k,v in model.state_dict().items() if not k.startswith("base.")}
+    diagnostic=dict(passed=False,passes=[])
+    def record():jsonwrite(args.output/"calibration_diagnostics.json",diagnostic)
     def once():
         model.reset();opt=optimizer_for(base,model,args);seq=stream(ds,args.seed);rows=[]
+        entry=dict(lambda_s=args.state_weight,steps=rows)
+        diagnostic["passes"].append(entry);record()
         for step in range(20):
             _,pair=next(seq);rows.append(run_update(ds,pair,args.seed+step*100000,base,model,labels,pos,args,opt,True))
+            record()
         model.load_state_dict(initial,strict=False);model.reset();del opt;seeded(args.seed)
         f=float(np.median([x["fm_shared_grad"] for x in rows]));s=float(np.median([x["state_shared_grad"] for x in rows]))
+        entry.update(fm=f,state=s,ratio=args.state_weight*s/f if f>0 else None);record()
         return f,s,rows
     f,s,rows=once()
     if min(f,s)<=0 or not np.isfinite([f,s]).all():raise RuntimeError("shared gradients not established")
@@ -235,6 +241,7 @@ def calibration(ds,base,model,labels,pos,args):
         ratio=args.state_weight*s/f
         if not .1<=ratio<=10:raise RuntimeError("state/FM calibration failed")
     else:rows2=None
+    diagnostic["passed"]=True;record()
     return dict(fm=f,state=s,ratio=ratio,lambda_s=args.state_weight,initial=rows,recheck=rows2)
 
 def validate(ds,base,model,labels,pos,args,step):
@@ -312,8 +319,10 @@ def main():
     p.add_argument("--resume",type=Path,help="Completed checkpoint from this same output run (trusted local file)")
     p.add_argument("--execute",action="store_true");p.add_argument("--preflight-only",action="store_true")
     p.add_argument("--accept-preflight",type=Path,help="Required signed-off local preflight evidence for formal run")
-    p.add_argument("--checkpoint-prefix",default="v2.1__test01__exp14__run001")
+    p.add_argument("--checkpoint-prefix",help="Explicit V2_1 run ID prefix supplied by the workbench")
     args=p.parse_args()
+    if args.execute and not args.checkpoint_prefix:
+        raise SystemExit("--execute requires an explicit --checkpoint-prefix; select the experiment identity through the workbench")
     # Preserve the requested configuration while calibration/resume changes the effective loss.
     args.requested_state_weight=args.state_weight
     args.steps=(6000 if args.stage=="stage1" else 3000) if args.steps is None else args.steps

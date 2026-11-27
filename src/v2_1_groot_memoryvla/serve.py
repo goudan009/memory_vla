@@ -1,4 +1,4 @@
-"""V2.1 dedicated policy service; original V1 service remains unchanged."""
+"""V2_1 dedicated policy service; original V1 service remains unchanged."""
 import argparse
 import json
 from pathlib import Path
@@ -19,7 +19,7 @@ def main():
         run_file=Path(args.model_path)/'v2_1_run.json'
         run=json.loads(run_file.read_text()) if run_file.is_file() else {}
         if not (Path(args.model_path)/'v2_1_stage1.json').is_file() and run.get('stage')!='continued':
-            p.error('Expected V2.1 memory sidecar or Stage1 lineage metadata')
+            p.error('Expected V2_1 memory sidecar or Stage1 lineage metadata')
         from .baseline_policy import BaselinePolicy as Policy
     from v1_groot_memoryvla.data.embodiment_tags import EmbodimentTag
     from v1_groot_memoryvla.policy.gr00t_policy import Gr00tSimPolicyWrapper

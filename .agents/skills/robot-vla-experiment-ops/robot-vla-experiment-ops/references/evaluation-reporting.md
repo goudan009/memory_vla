@@ -4,7 +4,7 @@
 
 ## 评估前冻结身份
 
-记录：模型checkpoint规范ID（v1__test01__exp12__run001__step002000）、路径/hash/训练步数、Memory模型版本、推理进程配置、策略会话ID、仿真版本、Task ID、scene instance、seed、动作chunk执行步数、max decision/physical steps、物理成功判据、控制器参数。所有配对对照必须用同一套可核查协议。
+记录：模型checkpoint规范ID（如v2_1__test02__exp01__run001__step003000）、路径/hash/训练步数、方法版本、推理进程配置、策略会话ID、仿真版本、Task ID、scene instance、seed、动作chunk执行步数、max decision/physical steps、物理成功判据、控制器参数。所有配对对照必须用同一套可核查协议。历史ID保持原样并关联身份映射，不因展示更名移动原始产物。
 
 ## 标准闭环记录
 

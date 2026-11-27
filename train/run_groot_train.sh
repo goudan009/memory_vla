@@ -39,7 +39,7 @@ done
 
 case "$source_version" in
     v1) module=v1_groot_memoryvla.experiment.launch_task21_ddp; entry=src/v1_groot_memoryvla/experiment/launch_task21_ddp.py ;;
-    v2.1) module=v2_1_groot_memoryvla.train; entry=src/v2_1_groot_memoryvla/train.py ;;
+    v2_1|v2.1) module=v2_1_groot_memoryvla.train; entry=src/v2_1_groot_memoryvla/train.py ;;
     *) echo "Unknown source version: $source_version" >&2; exit 2 ;;
 esac
 if [[ ! -f "$source_dir/$entry" ]]; then
@@ -55,7 +55,7 @@ python_path="$(cd -- "$(dirname -- "$python_path")" && pwd)/$(basename -- "$pyth
 if $show_help; then
     echo "Usage: train/run_groot_train.sh [--source-dir DIR] [--python-path PYTHON] TRAIN_ARGS"
     echo "Source version: $source_version"
-    echo "V2.1: --source-version v2.1 --stage stage1|memory|continued (preview unless --execute)"
+    echo "V2_1: --source-version v2_1 --stage stage1|memory|continued (preview unless --execute)"
     echo "Source: $source_dir"
     echo "Python: $python_path"
     echo "--dry-run prints the launch plan without starting training."
@@ -68,7 +68,7 @@ export PYTHONPATH="$source_dir/src${PYTHONPATH:+:$PYTHONPATH}"
 export PYTHONNOUSERSITE=1 PYTHONDONTWRITEBYTECODE=1 NO_ALBUMENTATIONS_UPDATE=1
 export HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 OMP_NUM_THREADS="${OMP_NUM_THREADS:-4}"
 cd -- "$source_dir"
-if [[ "$source_version" == v2.1 ]]; then
+if [[ "$source_version" == v2_1 || "$source_version" == v2.1 ]]; then
     args=(); dry=false; execute=false
     for arg in "${train_args[@]}"; do
         case "$arg" in --dry-run) dry=true ;; --execute) execute=true; args+=("$arg") ;; *) args+=("$arg") ;; esac

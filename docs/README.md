@@ -11,6 +11,6 @@
 | [archive/](archive/README.md) | 早期诊断、评估说明和命令快照 |
 | [research_progress.md](research_progress.md) | 带时间戳的研究进展快照 |
 
-V2.1 的网页、架构说明和实施协议分别为 `v2/2.1.html`、`v2/2.1.md`、`v2/2.1-protocol.md`。同一主版本的旧稿放在该目录的 `archive/`，通用历史材料放在顶层 `archive/`。
+V2_1 的网页、架构说明和实施协议分别为 `v2/2.1.html`、`v2/2.1.md`、`v2/2.1-protocol.md`。同一主版本的旧稿放在该目录的 `archive/`，通用历史材料放在顶层 `archive/`。
 
 实验任务和报告仍在 [Output/](../Output/README.md)，代码使用说明随对应源码维护。

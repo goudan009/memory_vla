@@ -476,7 +476,7 @@
                   <label>新服务端口<input id="inference-port" type="number" min="1" max="65535" value="5557" required></label>
                 </div>
                 <details class="compact-fold"><summary>推理高级设置 · 源码、环境与种子</summary><div class="launch-fields">
-                  <label class="wide">模型源码<input id="inference-source" list="inference-sources" required><datalist id="inference-sources"></datalist><small>与训练该权重使用的代码版本对应。</small></label>
+                  <label class="wide">模型源码<input id="inference-source" list="inference-sources" required><datalist id="inference-sources"></datalist><small id="inference-source-hint">与训练该权重使用的代码版本对应。</small></label>
                   <label class="wide">Python 环境<input id="inference-python" required></label>
                   <label>推理种子<input id="inference-seed" type="number" min="0" max="4294967295" value="42" required></label>
                   <label>历史对照<select id="inference-history-mode"><option value="normal">正确历史 · 正常读取</option><option value="empty">无历史 · 关闭读取</option><option value="other_episode">错误历史 · 读取另一环境的历史</option></select><small>错误历史需要单卡双环境；当前观测和模型权重保持一致。</small></label>
@@ -504,6 +504,7 @@
                   <label>评估协议<select id="launch-preset"><option value="official-eval">正式评估 · 完整回合</option><option value="fast-debug">快速调试 · 不计正式成绩</option></select></label>
                   <label>环境种子<input id="launch-seed" value="0" required placeholder="整数或 random"></label>
                   <label id="launch-debug-field" hidden>调试动作步数上限<input id="launch-debug-steps" type="number" min="1" value="1200" disabled></label>
+                  <label>评估轮数<input id="launch-repetitions" type="number" min="1" step="1" value="1" required><small>默认每轮 10 回合，5 轮共 50 回合。</small></label>
                   <div class="wide mode-note" id="launch-mode-hint">默认10集，保留原生任务判定与timeout。</div>
                 </div>
                 </div>
@@ -513,7 +514,7 @@
                 </div></div>
                 <details class="compact-fold"><summary>更多设置 · 录像、回合数、实例与复制配置</summary><div class="launch-fields">
                   <label class="wide">复制已有配置<select id="launch-template"><option value="">手动设置</option></select></label>
-                  <label>每卡回合数<input id="launch-episodes" type="number" min="1" max="10" placeholder="默认共10集"></label>
+                  <label>每轮每卡回合数<input id="launch-episodes" type="number" min="1" step="1" placeholder="单卡10，双卡各5"><small>可填写超过 10；总量再乘评估轮数。</small></label>
                   <label>种子方式<select id="launch-seed-mode"><option value="sequence">逐集递增（默认）</option><option value="fixed">每集同一种子</option><option value="random">由基础种子派生</option></select></label>
                   <label>GPU0 实例<input id="launch-instances0" placeholder="留空自动分配"></label>
                   <label>GPU1 实例<input id="launch-instances1" placeholder="留空自动分配"></label>
@@ -735,7 +736,8 @@
   }
   function applyInferenceCheckpoint() {
     const known=inferenceOptions?.checkpoints.find(c=>c.path===$('inference-checkpoint').value);
-    if(known && 'source_dir' in known) $('inference-source').value=known.source_dir||inferenceOptions.source_dir;
+    if(known && 'source_dir' in known) $('inference-source').value=known.inference_source_dir||known.source_dir||inferenceOptions.source_dir;
+    $('inference-source-hint').textContent=known?.source_compatibility||'与训练该权重使用的代码版本对应。';
     if($('inference-task40').checked){
       const source=inferenceOptions?.task40_diagnostics?.source_dir ||
         inferenceOptions?.sources.find(path=>path.split('/').at(-1).startsWith('task40_exp07_diagnostic_'));
@@ -1089,9 +1091,11 @@
     $('launch-host').disabled=resume||restore;$('launch-port').disabled=resume||restore;
     $('launch-gpu').disabled=dual;
     $('launch-debug-field').hidden=!debug;$('launch-debug-steps').disabled=!debug;
-    $('launch-mode-hint').textContent=debug?'快速调试不计正式成绩；默认每环境运行一个窗口。':
-      dual?'默认每卡 5 集，共 10 集；两卡实例自动错开。':$('launch-mode').value==='single2'?
-        '默认共 10 集，每环境 5 集；完整原生 timeout，action chunk=8。':'默认 10 集；完整原生 timeout，action chunk=8。';
+    const rounds=Number($('launch-repetitions').value)||1;
+    const perGPU=Number($('launch-episodes').value)||(debug?Number($('launch-mode').value.at(-1)):dual?5:10);
+    $('launch-mode-hint').textContent=`${rounds} 轮 × 每卡每轮 ${perGPU} 回合 × ${dual?2:1} 张卡 = 共 ${rounds*perGPU*(dual?2:1)} 回合。`+
+      (debug?'快速调试不计正式成绩。':'场景循环运行，保留原生任务判定与 timeout。')+
+      ($('launch-seed-mode').value==='fixed'?'固定种子的重复不视为独立随机样本。':'同一场景后续回合使用新的种子。');
     $('launch-mode-hint').textContent+=' 共卡准入：每卡空闲显存须大于 '+($('launch-mode').value.endsWith('2')?'24':'10')+' GiB。';
     $('launch-video-steps').disabled=!$('launch-video').checked;
     if(collect) updateCollectionDevice();
@@ -1166,6 +1170,9 @@
     if(!request.mode.startsWith('dual')) request.gpu_index=Number($('launch-gpu').value);
     if(request.preset==='fast-debug') request.debug_max_steps=Number($('launch-debug-steps').value);
     if($('launch-episodes').value) request.episodes_per_gpu=Number($('launch-episodes').value);
+    const repetitions=Number($('launch-repetitions').value);
+    if(!Number.isInteger(repetitions)||repetitions<1) throw Error('评估轮数必须是正整数');
+    if(repetitions>1) request.repetitions=repetitions;
     if($('launch-tag').value.trim()) request.run_tag=$('launch-tag').value.trim();
     for(const gpu of [0,1]){
       const text=$('launch-instances'+gpu).value.trim();
@@ -1184,7 +1191,8 @@
     const device=c.device||'local';
     if($('launch-device').value!==device){$('launch-device').value=device;launchOptions=null;void loadLaunchOptions();}
     const values={version:r.version,group:r.group,task:r.task_id,mode:c.mode,preset:r.evaluation_mode,
-      seed:c.base_seed, 'seed-mode':c.seed_mode,model:r.model_name,episodes:c.episodes_per_gpu,tag:c.run_tag};
+      seed:c.base_seed, 'seed-mode':c.seed_mode,model:r.model_name,
+      episodes:c.episodes_per_round??c.episodes_per_gpu,repetitions:c.repetitions??1,tag:c.run_tag};
     for(const [key,value] of Object.entries(values)) if(value!=null) $('launch-'+key).value=String(value);
     $('launch-gpu').value=Object.keys(c.instances||{})[0]||'1';
     for(const gpu of [0,1]) $('launch-instances'+gpu).value=(c.instances?.[gpu]||[]).join(' ');
@@ -1282,7 +1290,7 @@
         plan&&request.restore_checkpoint?`仿真 GPU ${esc(request.sim_gpu)} · 恢复 ${esc(request.restore_checkpoint)} · 重复 ${esc(request.restore_repeats)} 次 · 每次最多 ${esc(request.cycles)} 次决策<br>${endpoint}`:
         plan&&collect?`${request.controlled_reclosure?'受控重关 · ':''}仿真 GPU ${esc(request.sim_gpu)} · 实例 ${esc(request.instances.join(', '))} · 每实例 ${esc(request.repetitions||1)} 次 · 基础种子 ${esc(request.seed)} · 每条最多 ${esc(request.cycles)} 次决策<br>${endpoint}`:
         plan?.kind==='task40_restore'?'GPU 仿真/策略：'+esc(JSON.stringify(plan.instances))+' · 决策 '+esc(plan.cycles)+' · '+esc(plan.memory_mode):
-        plan?'实例分配：'+esc(JSON.stringify(plan.instances))+' · 种子 '+esc(plan.base_seed)+' · '+esc(plan.preset):'';
+        plan?`${esc(plan.repetitions||1)} 轮 · 总计 ${Number(plan.episodes_per_gpu)*Object.keys(plan.instances||{}).length} 回合 · 实例分配：${esc(JSON.stringify(plan.instances))} · 种子 ${esc(plan.base_seed)} · ${esc(plan.preset)}`:'';
       $('launch-plan').hidden=false;
       $('launch-plan').innerHTML=`<details><summary>查看实际启动命令</summary><pre>${esc(result.command)}</pre></details>`+(plan?
         `<div class="subtle">预计输出：${esc(plan.output)}<br>${info}</div>`:'');
@@ -1571,6 +1579,7 @@
     $("detail-mode").textContent=debug?"调试 · 不计正式成绩":r.evaluation_mode==="official-eval"?"正式评估":"历史记录";
     const facts=[["结果",`${r.successful_episodes??0} 成功 / ${r.completed_episodes??0} 有效 / ${r.invalid_episodes??0} 无效`],["总动作步",Number(r.total_action_steps||0).toLocaleString()],["随机种子",`${c.base_seed??"-"} (${c.seed_mode??"-"})`],["Policy Server",c.policy_server]];
     facts.push(["Q 记录覆盖",`${r.q_score_episodes??0} / ${r.completed_episodes??0} 有效回合（缺失不按0计算）`]);
+    if(c.repetitions) facts.push(['评估规模',`${c.repetitions} 轮 · 共 ${r.requested_episodes} 回合`]);
     facts.push(["版本 / 分组",`${r.version??"legacy"} / ${r.group??"-"}`],["协议",r.protocol?.id??"legacy-unrecorded"]);
     const identity=r.policy_identity||c.policy_identity||{};
     facts.push(['实际方法',r.method||identity.method||'未核对'],['所属训练',identity.training_id||'未关联 / 官方模型'],
@@ -2041,6 +2050,7 @@
   $('inference-device').onchange=()=>void selectInferenceDevice($('inference-device').value);
   $('launch-version').oninput=updateLaunchGroups;
   $('launch-template').onchange=copyLaunchTemplate;
+  for(const id of ['launch-repetitions','launch-episodes','launch-seed-mode']) $(id).oninput=updateLaunchForm;
   $('collect-gpu').onchange=updateCollectionSlots;
   $('collect-source').onchange=updateCollectionSource;
   $('collect-experiment').onchange=()=>renderCollectionPolicies();

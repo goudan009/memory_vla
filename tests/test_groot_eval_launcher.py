@@ -154,11 +154,12 @@ def test_debug_step_limit_is_only_available_for_fast_debug(tmp_path):
     assert "requires --preset fast-debug" in official.stderr
 
 
-def test_explicit_instance_partition_rejects_duplicates_and_excess_episodes(tmp_path):
+def test_explicit_instance_partition_rejects_duplicates_and_allows_repeated_episodes(tmp_path):
     duplicate = _run_dry_run(tmp_path, "--tasks", "21", "--instance-ids", "1", "1")
     excess = _run_dry_run(tmp_path, "--tasks", "21", "--instance-ids", "1", "2", "--episodes", "3")
     assert duplicate.returncode != 0 and "must not contain duplicates" in duplicate.stderr
-    assert excess.returncode != 0 and "cannot exceed" in excess.stderr
+    assert excess.returncode == 0, excess.stderr
+    assert '--n_episodes 3' in excess.stdout
 
 
 @pytest.mark.parametrize("n_envs", [1, 2, 4])

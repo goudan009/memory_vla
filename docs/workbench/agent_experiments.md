@@ -8,7 +8,7 @@
 
 ## 先排计划，再开始任务
 
-Agent 接到实验任务后，在本实验的 `workflow/plan-v001.json` 写明目标、主线、并行依赖和验收条件，提交到当前实验的 Git 分支后执行。接续任务先读取最新版本。调整步骤、依赖或验收时，复制当前版本为 `plan-v002.json`，更新日期和调整原因，保留历史文件。作业步数、回合数和状态更新写入 `progress.md`。
+Agent 接到实验任务后，在本实验的 `workflow/plan-v001.json` 写明目标、主线、并行依赖和验收条件，默认提交到 `main` 后执行。未经用户明确要求，不得为实验新建 Git 分支；计划中的并行依赖不代表 Git 分支。接续任务先读取最新版本。调整步骤、依赖或验收时，复制当前版本为 `plan-v002.json`，更新日期和调整原因，保留历史文件。作业步数、回合数和状态更新写入 `progress.md`。
 
 ```json
 {
@@ -20,13 +20,13 @@ Agent 接到实验任务后，在本实验的 `workflow/plan-v001.json` 写明�
   "nodes": [
     {"id": "setup", "title": "锁定评估协议", "after": [], "acceptance": "固定实例、种子和判据"},
     {"id": "eval", "title": "配对闭环", "after": ["setup"], "acceptance": "归档两组独立回合"},
-    {"id": "probe", "title": "机制诊断", "after": ["setup"], "acceptance": "归档固定输入对照"},
-    {"id": "report", "title": "验收报告", "after": ["eval", "probe"], "acceptance": "提交指标与复现路径"}
+    {"id": "video", "title": "视频与物理事件复核", "after": ["setup"], "acceptance": "归档闭环视频及同一时刻物理状态"},
+    {"id": "report", "title": "验收报告", "after": ["eval", "video"], "acceptance": "提交闭环指标、视频与复现路径"}
   ]
 }
 ```
 
-`after` 写直接前置节点的 `id`。主线中的相邻节点须有直接依赖，闭环和诊断可并行，报告等待两者。进度表使用节点标题，已有不同阶段名时用节点的 `record` 指定对应行。`review_experiment` 可指向同一测试下的前置实验目录名。看板从其报告核对 `EXPERIMENT_编号_ACCEPTED=true`，执行 Agent 再核对证据并标记该节点完成。
+`after` 写直接前置节点的 `id`。主线中的相邻节点须有直接依赖，闭环与视频复核可并行，报告等待两者。进度表使用节点标题，已有不同阶段名时用节点的 `record` 指定对应行。`review_experiment` 可指向同一测试下的前置实验目录名。看板从其报告核对 `EXPERIMENT_编号_ACCEPTED=true`，执行 Agent 再核对证据并标记该节点完成。
 
 打开「运行进度」可查看当前主线，点击节点可看验收条件、依赖、进度记录和已关联的训练作业。切换「计划版本」可查看旧流程及调整原因。历史版本展示当时的计划结构。
 

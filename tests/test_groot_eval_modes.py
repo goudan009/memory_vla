@@ -98,6 +98,57 @@ def test_no_flags_means_official_single_gpu_single_env():
     assert plan['video_fps'] == 20 and plan['video_speedup'] == 16
 
 
+@pytest.mark.parametrize('mode', ['single1', 'single2', 'dual1', 'dual2'])
+def test_multiple_rounds_cover_each_instance_equally(mode):
+    result = run('--mode', mode, '--repetitions', '5', '--seed', '123')
+    assert result.returncode == 0, result.stderr
+    plan, _ = json.JSONDecoder().raw_decode(result.stdout)
+    assert plan['episodes_per_gpu'] * len(plan['commands']) == 50
+    assert plan['repetitions'] == 5
+    for gpu, command in zip(plan['instances'], plan['commands']):
+        layout = json.loads(command[command.index('--episode-layout') + 1])
+        assert sum(slot['quota'] for slot in layout) == plan['episodes_per_gpu']
+        assert all(slot['quota'] == len(slot['instances']) * 5 for slot in layout)
+        child = subprocess.run(command + ['--dry-run'], capture_output=True, text=True)
+        assert child.returncode == 0, child.stderr
+    assert run('--repetitions', '0').returncode != 0
+
+
+def test_explicit_budget_can_exceed_ten():
+    result = run('--mode', 'single2', '--episodes-per-gpu', '100')
+    assert result.returncode == 0, result.stderr
+    plan, _ = json.JSONDecoder().raw_decode(result.stdout)
+    assert plan['episodes_per_gpu'] == 100
+    assert [slot['quota'] for slot in plan['episode_layout']['1']] == [50, 50]
+
+
+def test_repeated_resume_uses_full_instance_pool_and_per_environment_offsets(tmp_path):
+    result = run('--mode', 'single2', '--gpu-index', '0', '--repetitions', '5', '--seed', '42')
+    config, _ = json.JSONDecoder().raw_decode(result.stdout)
+    source = tmp_path/'repeat_eval'
+    source.mkdir()
+    config.update(policy_server='172.28.62.17:5556')
+    (source/'results.json').write_text(json.dumps(dict(status='interrupted', evaluation_mode='official-eval',
+        task_id=21, model_name='groot', requested_episodes=50, recorded_episodes=13, configuration=config)))
+    records = []
+    for env_idx, count in enumerate([6, 7]):
+        for i in range(count):
+            records.append(dict(gpu_index=0, env_idx=env_idx, instance_id=env_idx*5+i%5, seed=42+env_idx+i, valid=True))
+    (source/'episodes.jsonl').write_text(''.join(json.dumps(row)+'\n' for row in records))
+    resumed = run('--resume-from', str(source))
+    assert resumed.returncode == 0, resumed.stderr
+    plan, _ = json.JSONDecoder().raw_decode(resumed.stdout)
+    command = plan['commands'][0]
+    layout = json.loads(command[command.index('--episode-layout')+1])
+    assert [slot['offset'] for slot in layout] == [6, 7]
+    assert [slot['quota'] for slot in layout] == [19, 18]
+    assert plan['instances'] == {'0': list(range(10))}
+    assert plan['base_seed'] == 42
+    assert plan['episode_layout'] == config['episode_layout']
+    child = subprocess.run(command+['--dry-run'], capture_output=True, text=True)
+    assert child.returncode == 0, child.stderr
+
+
 def test_video_can_be_disabled_or_recorded_at_a_different_interval():
     disabled = run('--no-record-video')
     assert disabled.returncode == 0, disabled.stderr
@@ -312,6 +363,7 @@ def prepare_stub_entry(tmp_path):
     shutil.copy2(ENTRY.parents[1] / 'evaluation/scripts/run_groot_eval.sh', tools / ENTRY.name)
     shutil.copy2(ENTRY.parents[1] / 'evaluation/scripts/groot_tasks.py', tools / 'groot_tasks.py')
     shutil.copy2(ENTRY.parent / 'groot_eval_output.py', scripts / 'groot_eval_output.py')
+    shutil.copy2(ENTRY.parents[1] / 'evaluation/scripts/b1k_metrics.py', scripts / 'b1k_metrics.py')
     # Exercise real directory allocation, publication, aggregation and cleanup.
     # Only the simulator queue is stubbed; no GPU or policy service is contacted.
     (scripts / 'run_groot_priority_eval.sh').write_text(r'''#!/bin/bash

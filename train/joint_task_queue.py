@@ -16,7 +16,7 @@ import shutil
 import subprocess
 import time
 
-from run_identity import NAMING_SCHEMA, reserve_training
+from run_identity import NAMING_SCHEMA, reserve_training, validate_run_namespace
 
 
 def read(path, default=None):
@@ -164,20 +164,26 @@ def command(config, job, allowed):
 
 
 def reserve(config):
+    version, test_id, experiment_id = validate_run_namespace(
+        config.get('version'), config.get('test_id'), config.get('experiment_id'))
+    if version != 'V_1':
+        raise ValueError('joint_task_queue仅支持V_1，其他方法请使用其登记的工作台入口')
     verify_source(config)
     split = prepare_dataset(config)
     jobs = []
     task_label = '_'.join(map(str, split['tasks']))
     for arm, method, gpus, validator in [('baseline', 'baseline', [0, 1], 0),
                                          ('memory_v1', 'memory', [2, 3], 3)]:
-        name, number = reserve_training(config['training_root'], config['deployments'], 'V_1', task_label, method)
+        name, number = reserve_training(config['training_root'], config['deployments'], version,
+                                        test_id=test_id, experiment_id=experiment_id)
         output, source = Path(config['training_root'])/name, Path(config['deployments'])/name
         shutil.copytree(config['source'], source)
         job = dict(run=name, training_id=name, train_number=number, arm=arm, method=method,
                    output=str(output), source=str(source), gpus=gpus, validation_gpu=validator)
         write(output/'config/data_split.json', split)
         write(output/'config/source_manifest.json', read(source/'web_source_manifest.json'))
-        write(output/'config/web_launch.json', dict(job, version='V_1', tasks=split['tasks'],
+        write(output/'config/web_launch.json', dict(job, version=version, test_id=test_id,
+            experiment_id=experiment_id, tasks=split['tasks'],
             task=task_label, naming_schema=NAMING_SCHEMA, seed=config['seed'], steps=config['steps'],
             dataset=config['dataset'], checkpoint=config['checkpoint'],
             global_windows_per_step=config['global_windows_per_step'],

@@ -48,7 +48,7 @@ def test_completed_without_final_checkpoint_blocks():
     assert not any(c[0]=='POST' for c in w.calls)
 
 
-def test_complete_stage1_dispatches_only_memory_preflight_preview_first():
+def test_complete_stage1_dispatches_training_preflight_before_eval():
     w=Fake();w.details[M.RUNS['stage1']]=detail(status='completed',step=6000)
     state={};chain(w,state).tick()
     posts=[c for c in w.calls if c[0]=='POST']

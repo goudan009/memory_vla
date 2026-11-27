@@ -313,8 +313,7 @@ def checkpoint(model, processor, optimizer, root, args, step, epoch, position, c
                state_head=None, scheduler=None, sharded=None, before_save=None):
     rank, world = dist.get_rank(), dist.get_world_size()
     run = root.parent.name
-    canonical = (getattr(args, "training_protocol", None) in (OPENVLA_PROTOCOL, EXP13_PROTOCOL)
-                 and re.fullmatch(r"v1__test01__exp(?:12|13)__run(?!000)[0-9]{3}", run))
+    canonical = re.fullmatch(r"v[0-9]+(?:_[0-9]+)*__test[0-9]{2}__exp[0-9]{2}__run(?!0{3,}$)[0-9]{3,}", run)
     name = f"{run}__step{step:06d}" if canonical else f"step-{step:06d}"
     directory = root / "checkpoints" / name
     tick = time.monotonic()

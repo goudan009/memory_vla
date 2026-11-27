@@ -25,7 +25,7 @@
 
 ## checkpoint 命名及训练运行身份
 
-每个checkpoint的规范ID为`v1__test01__exp12__run001__step002000`这种五段结构；详细规则见[checkpoint-naming.md](checkpoint-naming.md)。独立训练运行的`run001`与模型版本`v1`不混淆，恢复同一训练谱系不递增`run`。工作台保存`training_run_id`、`resume_event_id`、`attempt_id`；累积optimizer step不中断归零。
+每个checkpoint采用`v2_1__test02__exp01__run001__step003000`式五段结构；详细规则见[checkpoint-naming.md](checkpoint-naming.md)。小版本与实验编号分开，独立训练与恢复尝试分开。保存稳定训练ID、resume_event_id、attempt_id；累计optimizer step不中断归零。步数、保存周期和数据划分来自当前任务书。
 
 ## 必须保存的训练状态
 

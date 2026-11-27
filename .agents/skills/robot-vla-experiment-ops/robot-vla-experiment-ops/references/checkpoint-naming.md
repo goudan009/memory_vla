@@ -1,41 +1,64 @@
-# 模型版本、测试/实验编号、训练次数与 checkpoint 命名
+# 版本、实验、训练运行与 checkpoint 身份
 
-## 唯一、稳定、可追溯的五段名称
+## 规范格式
 
-规范：`v{model_version}__test{test_index}__exp{experiment_number}__run{training_run}__step{optimizer_step}`。
+训练运行 ID：`v{version}__test{NN}__exp{NN}__run{NNN}`；checkpoint ID：`v{version}__test{NN}__exp{NN}__run{NNN}__step{NNNNNN}`。
 
-| 字段 | 示例 | 含义 | 是否因续训改变 |
-|---|---|---|---|
-| `v1` | `v1` | V1模型方法版本；V2须由用户确认方法变更 | 否 |
-| `test01` | `test01` | `Output/test_01`的测试序号 | 否 |
-| `exp12` | `exp12` | 第12组科研实验，与模型版本无关 | 否 |
-| `run001` | `run001` | 该实验下第1次独立训练运行（seed/数据/独立启动） | 严格续训否；独立新运行才加1 |
-| `step002000` | `step002000` | 该训练谱系累计第2000个optimizer更新步 | 续训后随step增长 |
-
-实例：
+例如，展示方法版本 `V_2_1` 对应运行前缀 `v2_1`：
 
 ```text
-Output/test_01/experiment_12/train_runs/run001/checkpoints/
-  v1__test01__exp12__run001__step002000/
-  v1__test01__exp12__run001__step004000/
-  v1__test01__exp12__run001__step006000/
-Output/test_01/experiment_13/train_runs/run001/checkpoints/
-  v1__test01__exp13__run001__step002000/
-  v1__test01__exp13__run001__step004000/
-Output/test_01/experiment_13/train_runs/run002/checkpoints/
-  v1__test01__exp13__run002__step002000/
+v2_1__test02__exp01__run001
+v2_1__test02__exp01__run001__step003000
 ```
 
-## 判定规则
+| 字段 | 表示什么 | 例子 |
+| --- | --- | --- |
+| `v2_1` | 用户确认并登记的方法版本 | `V_2_1` |
+| `test02` | 实验存储中的测试编号 | `Output/test_02/` |
+| `exp01` | 该测试中的实验编号 | `Output/test_02/experiment_01/` |
+| `run001` | 该实验下一个独立训练谱系 | 新的独立启动为 `run002` |
+| `step003000` | 从该谱系开始累计的 optimizer 更新步数 | 续训后继续递增 |
 
-1. **绝不自动生成`V12`,`V13`,`V10`,`V11`**作为新模型版本。Experiment 12/13是`exp12`/`exp13`；算法为V1时一直用`v1`。旧V1残差版与新V1忠实适配采用`method_variant`、代码commit、谱系ID等元数据区分，不能把历史版本编号等同于实验编号。
-2. **暂停/恢复/重新排队或工作台Job ID变更不产生新run编号。** 同一实验、相同可续训模型及优化器状态，`run001`继续在新step处保存。每次暂停恢复保留`resume_event_id`, `attempt_id`, `previous_job_id`, `resumed_from_checkpoint_id`及审计日志。
-3. 独立随机种子训练、从官方权重重启或发生影响可比性的配置变化时，开新`run002`及新的训练谱系；禁止混入`run001`目录。单纯提高max optimizer steps仍为同一run。
-4. 同步分布式/FSDP的model shards、optimizer shards、scheduler、RNG、sampler和meta归档在相同checkpoint目录。避免只命名单个权重文件，漏了严格续训状态。
-5. `latest`、`best`保留为引用真实checkpoint ID的索引/软链接，不当成正式checkpoint名字；业务接口从索引解析唯一ID及hash后再加载。
-6. 确认`checkpoint_index.csv`含所有五段字段、配置指纹、基座权重hash、代码commit、train job ID、retry attempt ID、准确step、保存校验状态。评估工件用独立`eval_run_id`并反向关联准确checkpoint ID。
-7. 旧权重路径不挪动、不覆盖；新增`legacy_alias`映射到其真实来源，无法核实的一律标`unverified`。
+测试编号、实验编号和方法版本是不同字段。Experiment 12 仍是 `exp12`，绝不能据此生成 `V_12`；`run` 和 `step` 也不参与方法版本推导。
 
-## 工作台展示
+## 如何决定是否新建小版本
 
-工作台模型版本显示为`V1`，实验显示为`test_01 / experiment_12`，训练次数显示为`run001`，checkpoint显示规范完整ID。暂停续训按钮链接到原训练谱系和最近一个`COMPLETE`的checkpoint，避免出现多个伪造的新版本。
+模型版本表达**用户认可的研究方法身份**，不是代码提交号或作业计数。
+
+- 若架构、训练目标或关键方法改变，且用户希望把它作为不同方法比较，先说明相对父版本的差异和研究含义，等待用户确认；确认后才在 `train/run_identity.py` 登记，并从工作台 `options.model_versions` 验证已生效。
+- 例如 `V_2_1` 是 V2 的一个经确认的方法版本。未来若出现另一个经确认的 V2 方法分支，通常使用 `V_2_2`；只有用户明确规定层级语义并要求时，才使用类似 `V_2_1_1` 的更细版本。版本号本身不能说明方法内容。
+- 新实验编号、新 seed、从头重训或影响可比性的训练配置表示新的实验/训练运行，不自动表示新方法版本。
+- bug fix、日志或性能工程、工作台修复、源码快照更新、暂停恢复和作业重试，记录代码 revision/hash、`attempt_id` 或 `resume_event_id`，不自动升小版本。
+- 注册版本不等于批准训练。未登记版本、方法含义不明或用户尚未确认时，不预览/启动该方法；不得换旧接口绕过校验。
+
+`train/run_identity.py` 是版本和身份的单一登记/校验处。版本别名可以归一化供历史读取，但新作业必须使用已登记版本的规范前缀；当前工作台选项才是可启动版本集合。
+
+## 新运行与续训的分界
+
+- 使用新的 seed、独立初始化权重、独立重训，或会影响科学可比性的配置时，创建新 `runNNN`，保留原运行目录和记录。
+- 同一训练谱系的暂停恢复、进程重启、队列重派或增加已批准的累计步数，使用原 `run_id`，另记 attempt/resume 事件；不能从 step 归零或覆盖旧 checkpoint。
+- 如果从旧 checkpoint 派生出有意不同的方法版本，先确认并登记版本；新分支保留父运行 ID 和父 checkpoint ID，再分配该版本下的独立 `runNNN`。旧历史运行缺少 test/experiment 字段时，不得猜测用于派生新 ID。
+- `step` 是累计 optimizer 更新数，不是 microstep、epoch 或恢复后局部计数。目录、清单和工作台列表须使用同一个完整 checkpoint ID。
+- `preflight` 是获批工作流明确标记的作业类别，不替代 `version/test/exp/run` 身份。不得把一次短预检伪装成新的模型版本。
+
+## 启动前和历史处理
+
+1. 从当前实验任务书核对方法版本及 `testNN` / `expNN`；接续任务同时核对已有计划、progress 和真实工作台作业。
+2. 在工作台 `options.model_versions` 确认版本已登记；明确填写版本和完整 `run_id`，用同一请求执行 `preview`，确认输出路径和 ID 都属于目标实验。
+3. preview/start 对身份、版本一致性和唯一性任一校验失败时，停止并修正源字段。不能删除已存在目录来“腾出” ID，也不能切到另一入口绕开检查。
+4. 推理与评估绑定确切 checkpoint ID、绝对路径及 hash；`latest` 只能是解析到实体 checkpoint 的索引，不是评估身份。
+5. 旧作业 ID、路径和 checkpoint 保持不变。仅在来源证据核实后添加只读身份映射，保留原始名称和原始配置；不批量改名，不把多次历史运行合并到一个新 ID。
+
+归档至少关联 `model_version`、`test_id`、`experiment_id`、`run_id`、`optimizer_step`、`checkpoint_id`、父 checkpoint（如适用）、seed、数据清单、源码 revision/hash、配置 hash、工作台 job ID、attempt/resume 事件、产物路径和校验状态。
+
+## 已有方法上下文
+
+本节只帮助识别历史工作，不构成启动新训练/评估的独立授权。执行前仍须核对当前用户指令、对应 `task.md`、最新计划、代码和工作台状态。
+
+- `V_1` 忠实适配与历史 Residual V1 属于既有不同代码/方法谱系；用任务书、源码 revision 和权重血缘区分。Experiment 12/13 是实验编号，不是方法版本。
+- 旧 V2 重做曾采用官方 50 任务联合训练底座、重新初始化新增记忆/状态模块和 Task40 200 条示教全训练。这是特定历史选择，不能推广到 V2.1 或其他任务。
+- 用户在 2026-11-27 确认的 V2.1 任务上下文为通用 GR00T-N1.6-3B、Task40 180/20 训练验证切分，并保留其已锁定的 V2.1 架构和训练配置。只对对应任务书仍明确指向该方案的工作适用；新目标、起点、切分或比较方案按当前任务确认。
+- 已有 `Output/test_01/experiment_14/` 与 `Output/test_02/experiment_01/` 的阶段安排，以各自最新任务书和版本化计划为准，不能从目录名或本摘要推算。
+- 已取消的预检、旧 Benchmark 标签和早期离线诊断只作历史记录，不代表新任务授权，也不应从 Skill 自动重启；已有产物保持只读。
+
+若目录/版本对应关系不确定，停止推断并向用户核实。

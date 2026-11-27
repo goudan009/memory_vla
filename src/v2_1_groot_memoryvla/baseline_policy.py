@@ -1,4 +1,4 @@
-"""V2.1 no-memory serving with the training checkpoint's FP32 action expert."""
+"""V2_1 no-memory serving with the training checkpoint's FP32 action expert."""
 import torch
 
 from v1_groot_memoryvla.policy.gr00t_policy import Gr00tPolicy
@@ -11,9 +11,9 @@ from .loading import load_base
 class BaselinePolicy(Gr00tPolicy):
     def __init__(self, embodiment_tag, model_path, *, device, strict=True, history_mode='normal', **kwargs):
         if history_mode != 'normal':
-            raise ValueError('No-memory V2.1 checkpoint requires normal history mode')
+            raise ValueError('No-memory V2_1 checkpoint requires normal history mode')
         if embodiment_tag.value != 'behavior_r1_pro':
-            raise ValueError('V2.1 currently supports the audited R1Pro mapping')
+            raise ValueError('V2_1 currently supports the audited R1Pro mapping')
         BasePolicy.__init__(self, strict=strict)
         self.model = load_base(model_path, 'memory', device=device).eval()
         self.processor = Gr00tN1d6Processor.from_pretrained(model_path)

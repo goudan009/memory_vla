@@ -1,4 +1,4 @@
-"""V2.1 adapter for the existing training workbench and resource queue.
+"""V2_1 adapter for the existing training workbench and resource queue.
 
 No model imports. The controller invokes the same torchrun CLI in an immutable
 workbench source snapshot, records progress, and never signals other jobs.
@@ -13,10 +13,17 @@ import shutil
 import subprocess
 import sys
 import time
+from run_identity import canonical_version, validate_run_identity, run_fields, NAMING_SCHEMA
 
-VERSION = 'v2.1'
+VERSION = 'V_2_1'
+LEGACY_VERSION = 'v2.1'
 TERMINAL = {'completed', 'complete', 'failed', 'stopped', 'paused', 'cancelled'}
-RUN = re.compile(r'v2\.1__test01__exp14__run(?!000)[0-9]{3}(?:__preflight[0-9]{3})?')
+RUN = re.compile(r'v2_1__test[0-9]{2}__exp[0-9]{2}__run(?!000)[0-9]{3}(?:__preflight[0-9]{3})?')
+LEGACY_RUN = re.compile(r'v2\.1__test01__exp14__run(?!000)[0-9]{3}(?:__preflight[0-9]{3})?')
+
+
+def valid_run(name):
+    return isinstance(name, str) and bool(RUN.fullmatch(name) or LEGACY_RUN.fullmatch(name))
 
 
 def read(path, default=None):
@@ -43,23 +50,23 @@ class Backend:
         self.python = Path(remote['PYTHON'])
 
     def owns(self, request):
-        if request.get('version') == VERSION:
+        if canonical_version(request.get('version')) == VERSION:
             return True
         name = request.get('run', '')
-        if not isinstance(name, str) or not RUN.fullmatch(name):
+        if not valid_run(name):
             return False
-        return read(self.training/name/'config/web_launch.json', {}).get('version') == VERSION
+        return canonical_version(read(self.training/name/'config/web_launch.json', {}).get('version')) == VERSION
 
     def root(self, request):
         name = request.get('run', '')
-        if not isinstance(name, str) or not RUN.fullmatch(name):
-            raise ValueError('V2.1 run_id格式错误')
+        if not valid_run(name):
+            raise ValueError('V2_1 run_id格式错误')
         root = self.training/name
         launch = read(root/'config/web_launch.json', {})
-        if root.is_symlink() or root.resolve().parent != self.training.resolve() or launch.get('version') != VERSION:
-            raise ValueError('V2.1运行不存在或路径不正确')
+        if root.is_symlink() or root.resolve().parent != self.training.resolve() or canonical_version(launch.get('version')) != VERSION:
+            raise ValueError('V2_1运行不存在或路径不正确')
         if request.get('arm', launch['arm']) != launch['arm']:
-            raise ValueError('V2.1训练组不匹配')
+            raise ValueError('V2_1训练组不匹配')
         return root, launch
 
     def prepare(self, request):
@@ -68,31 +75,32 @@ class Backend:
                    'weak_weight','state_weight','states','split','calibration_reference','preflight_only',
                    'accept_preflight','enqueue','share_existing','notes','arm'}
         if set(request)-allowed:
-            raise ValueError('不支持的V2.1参数: '+','.join(sorted(set(request)-allowed)))
-        if request.get('version') != VERSION or request.get('task',40) != 40:
-            raise ValueError('该入口仅支持V2.1 Task40')
+            raise ValueError('不支持的V2_1参数: '+','.join(sorted(set(request)-allowed)))
+        if canonical_version(request.get('version')) != VERSION or request.get('task',40) != 40:
+            raise ValueError('该入口仅支持V2_1 Task40')
         stage = request.get('stage','stage1')
         if stage not in ('stage1','memory','continued'):
-            raise ValueError('invalid V2.1 stage')
+            raise ValueError('invalid V2_1 stage')
         preflight = request.get('preflight_only',False)
         if type(preflight) is not bool:
             raise ValueError('preflight_only必须为开关')
         run = request.get('run_id')
         if not isinstance(run,str) or not RUN.fullmatch(run) or ('__preflight' in run) != preflight:
-            raise ValueError('V2.1训练标识须为v2.1__test01__exp14__run001，预检追加__preflight001')
+            raise ValueError('新训练标识须为v2_1__testNN__expNN__runNNN，预检追加__preflightNNN')
+        identity = validate_run_identity(run, request['version'], preflight=preflight)
         if any(p.exists() for p in (self.training/run,self.training/'.trash'/run,self.project/'deployments'/run)):
             raise ValueError('该训练标识已存在，请从原作业续跑')
         fixed = {'seed':42,'microbatch':2,'learning_rate':1e-5,'global_windows_per_step':2,
                  'weak_weight':.5,'state_weight':.01}
         for key,value in fixed.items():
             if request.get(key,value) != value or isinstance(request.get(key),bool):
-                raise ValueError('V2.1研究参数固定: '+key)
+                raise ValueError('V2_1研究参数固定: '+key)
         budget = 6000 if stage == 'stage1' else 3000
         if request.get('steps',budget) != budget:
-            raise ValueError('V2.1训练预算固定；preflight_only由训练器限制实际更新次数')
+            raise ValueError('V2_1训练预算固定；preflight_only由训练器限制实际更新次数')
         gpus = request.get('gpus')
         if not isinstance(gpus,list) or len(gpus)!=4 or len(set(gpus))!=4 or any(type(g) is not int for g in gpus):
-            raise ValueError('V2.1 A100适配要求四个不同GPU rank')
+            raise ValueError('V2_1 A100适配要求四个不同GPU rank')
         if not set(gpus) <= {g['index'] for g in self.r['gpu_info']()}:
             raise ValueError('所选GPU不存在')
         for key in ('enqueue','share_existing'):
@@ -116,13 +124,13 @@ class Backend:
             raise ValueError('Task40需要200条唯一示教')
         config = read(checkpoint/'config.json')
         if config is None or config.get('memory_enabled') or config.get('finetuning_lora'):
-            raise ValueError('V2.1需要原始完整无记忆GR00T权重')
+            raise ValueError('V2_1需要原始完整无记忆GR00T权重')
         index = read(checkpoint/'model.safetensors.index.json',{})
         weights = set(index.get('weight_map',{}).values()) or {'model.safetensors'}
         if any(not (checkpoint/p).is_file() for p in weights):
             raise ValueError('GR00T权重文件不完整')
         if stage == 'stage1' and checkpoint.resolve()!=Path(self.r['BASE_CHECKPOINT']).resolve():
-            raise ValueError('V2.1 Stage1必须使用通用GR00T-N1.6-3B起点')
+            raise ValueError('V2_1 Stage1必须使用通用GR00T-N1.6-3B起点')
         if stage != 'stage1':
             meta=read(checkpoint/'v2_1_stage1.json',{})
             complete=read(checkpoint/'COMPLETE.json',{})
@@ -131,18 +139,18 @@ class Backend:
         prior=request.get('prior','topology')
         fusion=request.get('fusion_layers',0)
         if prior not in ('topology','fk','none') or type(fusion) is not int or fusion<0:
-            raise ValueError('V2.1先验或融合层配置错误')
+            raise ValueError('V2_1先验或融合层配置错误')
         arm = 'memory_v1' if stage=='memory' else 'baseline'
         if request.get('arm',arm)!=arm:
             raise ValueError('arm与stage不一致')
-        plan=dict(request,version=VERSION,task=40,stage=stage,arm=arm,run_name=run,training_id=run,
-                  train_number=int(re.search(r'__run([0-9]{3})',run)[1]),method='memory' if stage=='memory' else 'baseline',
+        plan=dict(request,version=VERSION,**identity,task=40,stage=stage,arm=arm,run_name=run,training_id=run,
+                  method='memory' if stage=='memory' else 'baseline',
                   dataset=str(dataset),checkpoint=str(checkpoint),labels=str(labels),gpus=gpus,steps=budget,
                   preflight_only=preflight,enqueue=request.get('enqueue',False),share_existing=request.get('share_existing',False),
                   existing_pids=occupied,global_decisions=64,train_episodes=180,validation_episodes=20,
                   validation_enabled=True,asynchronous_validation=False,validation_gpu=None,
                   checkpoint_interval=1000,category='engineering_preflight' if preflight else 'formal_training',
-                  naming_schema='v2.1-test-experiment-run-step',**fixed)
+                  naming_schema=NAMING_SCHEMA,**fixed)
         for key in ('split','calibration_reference','accept_preflight'):
             if request.get(key) is not None:
                 value=path(key)
@@ -249,7 +257,7 @@ class Backend:
         result=[]
         for file in sorted(self.training.glob('*/config/web_launch.json'),reverse=True):
             launch=read(file,{})
-            if launch.get('version')!=VERSION:continue
+            if canonical_version(launch.get('version')) != VERSION:continue
             root=file.parents[1];arm=launch['arm']
             if (root/'config'/('dashboard_deleted_'+arm+'.json')).exists():continue
             state=read(root/arm/'status.json',{})
@@ -285,7 +293,7 @@ class Backend:
              loss_series=[[r['step'],r.get('fm',0)+launch['state_weight']*r.get('state',0),1] for r in metrics if 'step' in r],
              metrics=metrics[-100:],preflight=read(root/'run/preflight.json'),
              log_tail=self.r['tail'](root/'logs/controller.log'),epochs=[],validation=[],
-             initial_weights=dict(checkpoint=launch['checkpoint'],label='V2.1 原始起点',mode='fresh'),
+             initial_weights=dict(checkpoint=launch['checkpoint'],label='V2_1 原始起点',mode='fresh'),
              training_parameters=dict(values=launch,sources=[str(root/'config/web_launch.json')]),
              resume=self.resume_info(root,launch,read(root/launch['arm']/'status.json',{})))
 
@@ -298,7 +306,7 @@ class Backend:
         if request.get('next_checkpoint'):target=min((current//1000+1)*1000,launch['steps'])
         if type(target) is not int or not current<target<=launch['steps']:
             raise ValueError('停止点须为未来optimizer步且不超过预算')
-        control=dict(stop_after_step=target,reason='Workbench V2.1 checkpoint-boundary pause',requested_at=now())
+        control=dict(stop_after_step=target,reason='Workbench V2_1 checkpoint-boundary pause',requested_at=now())
         write(root/'run/stop.json',control)
         return control
 
@@ -311,7 +319,7 @@ class Backend:
             if not info['available']:raise ValueError(info['reason'])
             if self.live_processes(root):raise ValueError('原作业仍有活跃进程')
             if request.get('steps',launch['steps'])!=launch['steps'] or request.get('gpus',launch['gpus'])!=launch['gpus']:
-                raise ValueError('V2.1续训保留原预算与四rank')
+                raise ValueError('V2_1续训保留原预算与四rank')
             occupied=self.r['compute_pids'](launch['gpus'])
             enqueue=request.get('enqueue',launch['enqueue'])
             if type(enqueue) is not bool:raise ValueError('enqueue须为开关')

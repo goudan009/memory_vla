@@ -26,7 +26,7 @@ def main():
     if args.action=='detail':
         shown={k:result.get(k) for k in ('run','state','checkpoints','preflight','resume','log_tail')}
     elif args.action=='snapshot':
-        shown={'jobs':[{k:j.get(k) for k in ('run','status','step','max_steps','gpus')} for j in result.get('jobs',[]) if j.get('version')=='v2.1']}
+        shown={'jobs':[{k:j.get(k) for k in ('run','status','step','max_steps','gpus')} for j in result.get('jobs',[]) if j.get('version') in ('V_2_1','V2_1','v2_1','v2.1')]}
     print(json.dumps(shown,ensure_ascii=False))
 
 

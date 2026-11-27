@@ -71,7 +71,7 @@ class TrainingManager:
                        device_label=self.label, single_gpu=self.device.get('single_gpu', False))
         if resume_controller is not None:
             request['resume_controller']=resume_controller
-        # Ship the lightweight V2.1 backend with this RPC, including the first
+        # Ship the lightweight V2_1 backend with this RPC, including the first
         # preview before the new source tree has been synchronized remotely.
         backend_path = self.root/'train/v21_workbench.py'
         if not backend_path.is_file():

@@ -7,6 +7,30 @@ import sys
 
 import pytest
 
+
+def test_legacy_baseline_uses_compatible_live_snapshot(tmp_path):
+    args = local_args(tmp_path, free_port())
+    checkpoint = tmp_path/'checkpoint'
+    (checkpoint/'v2_1_stage1.json').write_text('{}')
+    (checkpoint/'COMPLETE.json').write_text('{}')
+    old = tmp_path/'source/src/v2_1_groot_memoryvla/serve.py'
+    old.parent.mkdir(parents=True)
+    old.write_text("from .policy import Policy\n")
+    project = tmp_path/'project'
+    live = project/'deployments/web_live/src/v2_1_groot_memoryvla'
+    live.mkdir(parents=True)
+    (live/'serve.py').write_text('from .baseline_policy import BaselinePolicy\n')
+    (live/'baseline_policy.py').write_text('')
+    script = Path(args[1]).read_text().replace(
+        "PROJECT = Path('/nvme3/projects/memory_vla')", f'PROJECT = Path({str(project)!r})', 1)
+    result = subprocess.run(['bash', '-s', '--', *args[2:], '--check-only'],
+                            input=script, text=True, capture_output=True)
+    assert result.returncode == 0, result.stderr
+    info = json.loads(result.stdout)
+    assert info['source_dir'] == str(project/'deployments/web_live')
+    assert info['requested_source_dir'] == str(tmp_path/'source')
+    assert 'baseline' in info['source_compatibility']
+
 from test_groot_inference_launch import ROOT, free_port, local_args
 
 sys.path.insert(0, str(ROOT/'evaluation/scripts'))
@@ -26,7 +50,8 @@ def test_v21_canonical_launcher_routes_all_stages(tmp_path, stage):
         (checkpoint/'v2_1.pt').write_bytes(b'sidecar')
     serve = tmp_path/'source/src/v2_1_groot_memoryvla/serve.py'
     serve.parent.mkdir(parents=True)
-    serve.write_text('')
+    serve.write_text('from .baseline_policy import BaselinePolicy\n')
+    (serve.parent/'baseline_policy.py').write_text('')
     result = subprocess.run(args+['--check-only'], capture_output=True, text=True)
     assert result.returncode == 0, result.stderr
     info = json.loads(result.stdout)
@@ -54,6 +79,22 @@ def test_v21_catalog_preserves_canonical_identity(tmp_path, monkeypatch):
     assert info['version'] == 'V_2_1'
     assert info['training_id'] == run
     assert info['method'] == 'baseline'
+
+
+def test_v21_catalog_uses_v2_1_for_new_identity(tmp_path, monkeypatch):
+    run = 'v2_1__test02__exp03__run004'
+    root = tmp_path/run
+    config = root/'config'
+    config.mkdir(parents=True)
+    (config/'web_launch.json').write_text(json.dumps({
+        'version': 'v2_1', 'train_number': 4, 'method': 'baseline', 'seed': 42}))
+    checkpoint = root/'run/checkpoints'/f'{run}__step003000'
+    checkpoint.mkdir(parents=True)
+    monkeypatch.setattr(remote, 'TRAINING', tmp_path)
+    info = remote.checkpoint_info(checkpoint)
+    assert info['run'] == run
+    assert info['version'] == 'V_2_1'
+    assert info['training_id'] == run
 
 
 def test_v21_process_is_discovered_and_blocks_port(tmp_path):

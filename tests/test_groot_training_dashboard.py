@@ -39,16 +39,20 @@ def remote(tmp_path, monkeypatch):
     monkeypatch.setattr(m, 'gpu_info', lambda:[dict(index=i) for i in range(4)])
     monkeypatch.setattr(m, 'compute_pids', lambda gpus:[])
     monkeypatch.setattr(m, 'catalog', lambda:dict(datasets=[dict(task=0,dataset=str(dataset),split=str(split))]))
-    m.request = dict(task=0,task_name='turning_on_radio',dataset=str(dataset),split=str(split),checkpoint=str(checkpoint),
+    m.request = dict(version='V_1',run_id='v1__test01__exp01__run001', task=0,task_name='turning_on_radio',dataset=str(dataset),split=str(split),checkpoint=str(checkpoint),
         gpus=[0,2,3],validation_gpu=1,arm='baseline',steps=3000,global_windows_per_step=3,microbatch=4,
         seed=42,learning_rate=1e-5,share_existing=False)
     return m
 
 
 def test_preview_keeps_batch_freeze_and_busy_gpu_permission(remote, monkeypatch):
+    with pytest.raises(ValueError, match='训练标识'):
+        remote.prepare({key: value for key, value in remote.request.items() if key != 'run_id'})
+    with pytest.raises(ValueError, match='模型版本必须显式'):
+        remote.prepare({key: value for key, value in remote.request.items() if key != 'version'})
     plan = remote.prepare(remote.request)
-    assert plan['run_name']=='V_1_baseline_task0_trainNN'
-    assert remote.prepare(dict(remote.request,version='V_2',arm='memory_v1'))['run_name']=='V_2_memory_task0_trainNN'
+    assert plan['run_name']=='v1__test01__exp01__run001'
+    assert remote.prepare(dict(remote.request,version='V_2',run_id='v2__test01__exp01__run001',arm='memory_v1'))['run_name']=='v2__test01__exp01__run001'
     with pytest.raises(ValueError,match='版本'):
         remote.prepare(dict(remote.request,version='../V_2'))
     assert plan['global_decisions']==96 and plan['frozen_eagle'] and not plan['lora']
@@ -76,6 +80,7 @@ def test_exp12_preview_and_worker_keep_locked_batch(remote, monkeypatch):
                    validation_enabled=False, global_windows_per_step=8, memory_length=16,
                    memory_conditioning='openvla', memory_cognitive_qk_norm='none',
                    learning_rate=2e-5, weight_decay=0., fine_tuning_mode='full')
+    request['run_id'] = 'v1__test01__exp12__run001'
     plan = remote.prepare(request)
     assert plan['train_episodes'] == 200 and plan['global_decisions'] == 128
     assert plan['gradient_accumulation_steps'] == 8 and plan['checkpoint_interval'] == 2000
@@ -490,7 +495,7 @@ def test_start_uses_immutable_source_and_canonical_entry(remote, monkeypatch):
     launched=[]
     monkeypatch.setattr(remote.subprocess,'Popen',lambda argv,**kw:launched.append(argv) or SimpleNamespace(pid=12345))
     result=remote.start(remote.request)
-    assert result['run']=='V_1_baseline_task0_train01'
+    assert result['run']=='v1__test01__exp01__run001'
     output=Path(result['output'])
     source=Path(result['source'])
     assert launched[0][:2]==['bash',str(source/'train/run_groot_train.sh')]
@@ -504,8 +509,10 @@ def test_start_uses_immutable_source_and_canonical_entry(remote, monkeypatch):
     assert remote.read_json(output/'baseline/validation_queue/step-000000.json')['checkpoint']==remote.request['checkpoint']
     assert remote.jobs()['jobs'][0]['run']==result['run']
     assert remote.detail(dict(run=result['run'],arm='baseline'))['curve']==[]
-    repeated=remote.start(remote.request)
-    assert repeated['run']=='V_1_baseline_task0_train02'
+    with pytest.raises(ValueError, match='已存在'):
+        remote.start(remote.request)
+    repeated=remote.start(dict(remote.request, run_id='v1__test01__exp01__run002'))
+    assert repeated['run']=='v1__test01__exp01__run002'
     assert Path(repeated['source'])!=source
     assert (source/'train/run_groot_train.sh').read_text()=='version-one'
 
@@ -644,13 +651,14 @@ def test_resume_reuses_snapshot_optimizer_seed_batch_and_output(remote,monkeypat
 def test_resume_branch_previews_and_preserves_original_run(remote, monkeypatch):
     root = resumable_job(remote, monkeypatch)
     before = {p.relative_to(root): p.read_bytes() for p in root.rglob('*') if p.is_file()}
-    request = dict(run=root.name, arm='baseline', steps=3001, branch_version='V_11')
+    request = dict(run=root.name, arm='baseline', steps=3001, branch_version='V_2')
     preview = remote.resume(dict(request, preview=True), controller_source=None)
     assert preview['resume_step'] == 2000 and preview['gpus'] == [0, 2, 3]
-    assert not list(remote.TRAINING.glob('V_11*'))
+    assert not list(remote.TRAINING.glob('v2__test01__exp01__run*'))
     result = remote.resume(request, controller_source='controller code')
     output = Path(result['output'])
     assert output != root and output.name == result['run']
+    assert output.name == 'v2__test01__exp01__run001'
     assert remote.read_json(output/'config/web_launch.json')['parent_run'] == root.name
     assert remote.read_json(output/'baseline/checkpoints/latest.json')['path'] == preview['checkpoint']
     worker = remote.read_json(Path(result['attempt'])/'request.json')['worker_argv']
@@ -942,7 +950,7 @@ def test_delete_training_record_preserves_checkpoints_and_other_runs(remote):
 
 def test_delete_moves_output_to_trash_and_preserves_run_number(remote, monkeypatch):
     root = make_job(remote)
-    root = root.rename(root.with_name('V_1_baseline_task0_train04'))
+    root = root.rename(root.with_name('v1__test01__exp01__run004'))
     remote.atomic_json(root/'baseline/status.json', dict(status='completed'))
     source = remote.PROJECT/'deployments'/root.name
     remote.atomic_json(source/'manifest.json', {})
@@ -958,7 +966,8 @@ def test_delete_moves_output_to_trash_and_preserves_run_number(remote, monkeypat
     assert (trash/'baseline/checkpoints/step-001000/config.json').is_file()
     assert (source/'manifest.json').is_file()
     assert remote.jobs()['jobs'] == []
-    _, number = remote.reserve_training(remote.TRAINING, remote.PROJECT/'deployments', 'V_1', 0, 'baseline')
+    _, number = remote.reserve_training(remote.TRAINING, remote.PROJECT/'deployments', 'V_1',
+                                        test_id='test01', experiment_id='exp01')
     assert number == 5
 
 
@@ -1068,7 +1077,7 @@ def test_joint_submission_links_data_and_queues_without_starting_training(remote
     request=dict(remote.request,tasks=[0,34,40],enqueue=True,validation_enabled=False)
     job=remote.start(request)
     root=Path(job['output']);queue=remote.TRAINING/'queues'/job['run']
-    assert job['run']=='V_1_baseline_task0_34_40_train01' and job['status']=='queued'
+    assert job['run']=='v1__test01__exp01__run001' and job['status']=='queued'
     assert launched[0][2].endswith('/train/web_training_queue.py')
     assert (root/'dataset/data/chunk-0034').is_symlink()
     assert remote.read_json(root/'dataset/meta/info.json')['total_episodes']==600
@@ -1295,13 +1304,14 @@ global.document={getElementById(id) {return elements[id] ||= {
     assertions='''
 const el=id=>document.getElementById(id);
 el('train-dataset').selectedOptions=[{value:'0'},{value:'1'},{value:'2'}];
-for(const [key,value] of Object.entries({version:'V_1',checkpoint:'/base',arm:'baseline',steps:'3000',
+for(const [key,value] of Object.entries({version:'V_1','test-id':'2','experiment-id':'12','run-number':'3',checkpoint:'/base',arm:'baseline',steps:'3000',
     windows:'4',microbatch:'4',lr:'0.00001',seed:'42',method:'',
     'method-description':'','notes':'Task0/34/40 比较记忆容量','validation-gpu':'3','validation-percent':'20',
     'fine-tuning':'action_full','validation-interval':'3000'})) el('train-'+key).value=value;
 el('train-enqueue').checked=true;
 let request=window.trainingTest.parameters();window.trainingTest.datasetHint();
 assert.deepEqual(request.tasks,[0,34,40]);assert.equal(request.enqueue,true);
+assert.equal(request.run_id,'v1__test02__exp12__run003');
 assert.equal(request.notes,'Task0/34/40 比较记忆容量');
 assert.equal(request.fine_tuning_mode,'action_full');assert.equal(request.validation_interval,3000);
 assert.equal(request.disable_early_stopping,true);
@@ -1350,13 +1360,16 @@ def test_method_metadata_and_legacy_numbering_keep_retries_distinct(remote, monk
     remote.atomic_json(old/'config/web_launch.json',dict(version='V_2',arm='memory_v1',method='memory',task=0))
     remote.atomic_json(old/'config/data_split.json',dict(task=0))
     (old/'memory_v1').mkdir()
-    run,number=reserve_training(remote.TRAINING,remote.PROJECT/'deployments','V_2',0,'memory')
-    assert run=='V_2_memory_task0_train04' and number==4
+    run,number=reserve_training(remote.TRAINING,remote.PROJECT/'deployments','V_2',
+        test_id='test02',experiment_id='exp01')
+    assert run=='v2__test02__exp01__run001' and number==1
     assert old.is_dir()
-    assert reserve_training(remote.TRAINING,remote.PROJECT/'deployments','V_2',0,'memory')[0].endswith('train05')
-    assert reserve_training(remote.TRAINING,remote.PROJECT/'deployments','V_2',0,'baseline')[0].endswith('train01')
+    assert reserve_training(remote.TRAINING,remote.PROJECT/'deployments','V_2',
+        test_id='test02',experiment_id='exp01')[0]=='v2__test02__exp01__run002'
+    assert reserve_training(remote.TRAINING,remote.PROJECT/'deployments','V_2',
+        test_id='test02',experiment_id='exp01')[0]=='v2__test02__exp01__run003'
     plan=remote.prepare(dict(remote.request,arm='memory_v1',method='ablation_no_perception',method_description='Disabled in frozen code'))
-    assert plan['run_name']=='V_1_ablation_no_perception_task0_trainNN'
+    assert plan['run_name']=='v1__test01__exp01__run001'
     with pytest.raises(ValueError,match='说明'):
         remote.prepare(dict(remote.request,arm='memory_v1',method='ablation_no_perception'))
     with pytest.raises(ValueError,match='不一致'):

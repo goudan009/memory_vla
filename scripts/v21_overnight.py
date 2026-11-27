@@ -290,7 +290,16 @@ class Chain:
             self.block(f'{run}: missing next-update resume proof')
 
     def tick(self):
-        if self.state.get('status') in ('blocked','completed'): return
+        # A failed memory preflight blocks only the memory branch.  The user
+        # explicitly authorized the independent continued baseline to proceed;
+        # preserve the failure record while allowing that branch to advance.
+        if self.state.get('status') == 'blocked':
+            reason = str(self.state.get('reason',''))
+            memory_only = reason.startswith(RUNS['memory'] + '__preflight001')
+            continued_pending = 'continued' not in self.state.get('checkpoints', {})
+            if not (memory_only and continued_pending): return
+            self.state['status'] = 'running'
+        if self.state.get('status') == 'completed': return
         jobs = {j['run']:j for j in self.w.api('GET','/api/training/jobs?device=a100')['jobs']}
         first = self.detail(RUNS['stage1'], 'baseline')
         if self.state.get('status')=='blocked': return
@@ -301,10 +310,26 @@ class Chain:
             if status not in ACTIVE:
                 self.block(f'Stage1 {status}; respecting pause/failure, later stages held')
             return
-        for stage in ('memory','continued'):
+        # Training takes priority over evaluation after Stage1 is ready.  A
+        # Stage1 serving/evaluation job may already be running from an earlier
+        # timer tick; it is left intact and will be reconciled by the eval
+        # chain after the independent continued baseline has been submitted.
+        order = ('continued','memory') if self.state.get('stages',{}).get('memory',{}).get('blocked') else ('memory','continued')
+        for stage in order:
             if stage not in self.state.get('checkpoints', {}):
                 self.training(stage, jobs)
                 return
+        # Once the requested training branches have produced their checkpoints,
+        # run the fixed-protocol Stage1 subset before the full three-model eval.
+        source = self.state.get('serving_source')
+        if source and not self.state.setdefault('eval', {}).get('models', {}).get('stage1', {}).get('complete'):
+            from v21_eval_chain import tick as eval_tick
+            self.state.update(phase='stage1_eval', status='running')
+            eval_tick(self.w.api, self.state['eval'], self.save,
+                      [dict(self.state['checkpoints']['stage1'],
+                            training_source=self.state['checkpoints']['stage1']['source'],
+                            source=source)], allow_subset=True)
+            return
         from v21_eval_chain import tick
         source = self.state.get('serving_source')
         if not source:

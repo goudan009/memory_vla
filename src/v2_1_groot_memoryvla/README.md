@@ -1,6 +1,6 @@
-# V2.1 实现与真实环境验收
+# V2_1 实现与真实环境验收
 
-状态：开发分支 / Draft PR，尚未完成真实 GPU 训练、工作台注册和 B1K 闭环评估。不要把 CPU 单测通过当成真实权重验收。
+状态：V2_1 命名迁移正在主线工作区进行；训练、推理和评估保持暂停。不要把 CPU 单测通过当成真实权重验收。
 
 ## 代码入口
 - model/embodiment.py：实际 R1Pro 82 维本体、23 个动作通道、拓扑和基座系 FK。
@@ -15,7 +15,6 @@
 
 在已安装 V1 完整依赖且能读取 Task40 parquet/video 与实际 GR00T 权重的本地环境中：
 ```bash
-git switch dev/v2.1-implementation
 export PYTHONPATH="$PWD/src"
 python -m compileall -q src/v2_1_groot_memoryvla
 OMP_NUM_THREADS=2 python -m pytest -q src/v2_1_groot_memoryvla/tests
@@ -31,7 +30,7 @@ python -m v2_1_groot_memoryvla.train --stage stage1 \
 ```
 上述命令只打印配置。实际运行经工作台四卡 torchrun 并加 --execute；输出目录必须不存在。预检权重只用于工程认证。核对 preflight.json 的 passed 和身份字段，证据独立归档后清理专属权重。用户已确认预检通过后直接正式 Stage1，使用同一配置并指定 --accept-preflight，输出独立目录；默认 6000 步。
 
-Stage1 完成且基线有效后，将 S1 指向其 checkpoints/v2.1__test01__exp14__run001__step006000（必须有 COMPLETE.json）。同样先 preview，再进行：
+Stage1 完成且基线有效后，将 S1 指向工作台所选的 `v2_1__testNN__expNN__runNNN__step006000`（必须有 COMPLETE.json）。不要复用旧 `test01/exp14` 身份创建新作业。完成新实验身份确认前，不启动训练或评估。
 ```bash
 python -m v2_1_groot_memoryvla.train --stage memory --prior topology \
   --dataset "$DATASET" --checkpoint "$S1" --labels "$LABELS" \
@@ -45,8 +44,8 @@ python -m v2_1_groot_memoryvla.train --stage memory --prior topology \
 1. 本地复跑 CPU 回归、核对全部 200 条数据和 label episode/帧对齐、训练集统计、真实 processor 维度，执行 Stage1 预检。
 2. Stage1 有效完成后，A/B/C（D 可选）真实短测：零残差/empty/gamma0 一致；冻结权重不变；确认有效标签、梯度、参数变化和峰值显存。
 3. 真实 checkpoint 保存、完整进程重载、断点重跑对照；多环境 reset 和 episode key 不串库；真实仿真接口单回合 smoke。
-4. 工作台 backend 注册、代码同步与 preview 检查，确保显式选 V2.1 才路由新入口，不破坏 V1；现有 shell 入口支持 --source-version v2.1。
-5. 用户于2026-11-27已确认通用GR00T、180/20和原V2.1配方：A100四卡真实预检通过后直接正式训练，执行记录见 Output/test_01/experiment_14。闭环评估沿用已确认协议与工作台。
+4. 工作台 backend 注册、代码同步与 preview 检查，确保显式选 V2_1 才路由新入口，不破坏 V1；现有 shell 入口支持 --source-version v2_1。
+5. 用户已确认通用GR00T、180/20和原V2_1研究配方；当前运行仍暂停，GPU执行须遵循工作台与后续确认的实验身份。已有 `Output/test_01/experiment_14` 记录仅作历史证据。
 
 离线 diagnose.py 保留为故障定位工具；本次不新增离线Probe或错历史实验。效果交付使用仿真闭环。状态真值只用于监督和验证，绝不输入推理模型。gamma=0 不计算原始 residual，相关诊断记 null。
 

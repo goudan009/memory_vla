@@ -10,7 +10,7 @@ import sys
 
 if '__file__' in globals():
     sys.path.insert(0, str(Path(__file__).resolve().parents[2]/'train'))
-from run_identity import EXPERIMENT_12_RUN, training_identity, training_base
+from run_identity import CANONICAL_RUN, V21_RUN, training_identity, training_base
 
 PROJECT = Path('/nvme3/projects/memory_vla')
 TRAINING = Path('/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training')
@@ -40,9 +40,17 @@ def checkpoint_info(checkpoint):
         return dict(version='unversioned', run=root.name, label=root.name+' / '+path.name, source_dir=None)
     identity=training_identity(root,arm)
     run = root.name
-    if not EXPERIMENT_12_RUN.fullmatch(run) and identity['version'] != 'V_2_1':
-        run = training_base(identity['version'],identity['task_id'],identity['method'])+'_train%02d'%identity['train_number']
-    return dict(identity,run=run,label=run+' / '+path.name)
+    if not CANONICAL_RUN.fullmatch(run) and not V21_RUN.fullmatch(run):
+        run = identity.get('display_name') or training_base(identity['version'],identity['task_id'],identity['method'],legacy=True)+'_train%02d'%identity['train_number']
+    info = dict(identity,run=run,label=run+' / '+path.name)
+    if identity.get('version') == 'V_2_1' and not (path/'v2_1.json').is_file():
+        source = Path(identity.get('source_dir') or PROJECT/'deployments/web_live')
+        entry = source/'src/v2_1_groot_memoryvla/serve.py'
+        live = PROJECT/'deployments/web_live'
+        live_entry = live/'src/v2_1_groot_memoryvla/serve.py'
+        if (not entry.is_file() or 'BaselinePolicy' not in entry.read_text()) and live_entry.is_file() and 'BaselinePolicy' in live_entry.read_text():
+            info.update(inference_source_dir=str(live), source_compatibility='旧训练快照缺少 baseline 推理入口，使用兼容推理源码；训练快照保留。')
+    return info
 
 
 def catalog():

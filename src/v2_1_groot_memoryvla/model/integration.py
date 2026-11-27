@@ -1,4 +1,4 @@
-"""Load the unchanged no-memory GR00T backbone; store V2.1 as a strict sidecar."""
+"""Load the unchanged no-memory GR00T backbone; store V2_1 as a strict sidecar."""
 import json
 from pathlib import Path
 import hashlib
@@ -15,7 +15,7 @@ class Integrated(nn.Module):
     def __init__(self,base,cfg,lo,hi):
         super().__init__()
         if base.memory is not None or base.action_head.openvla_memory or base.action_head.memory_fusion_mode!="legacy":
-            raise ValueError("V2.1 requires an unmodified no-memory base")
+            raise ValueError("V2_1 requires an unmodified no-memory base")
         if (base.action_head.action_horizon,base.action_head.action_dim)!=(50,128):
             raise ValueError("base checkpoint incompatible")
         self.base=base;self.cfg=cfg

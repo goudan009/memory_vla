@@ -26,7 +26,7 @@ def backend(tmp_path):
                 gpu_info=lambda:[{'index':g} for g in range(4)],compute_pids=lambda g:[],
                 live_run_processes=lambda r:[],process_start=lambda p:None,tail=lambda p:'')
     b=Backend(remote)
-    b.request=dict(version='v2.1',task=40,run_id='v2.1__test01__exp14__run001__preflight001',
+    b.request=dict(version='v2_1',task=40,run_id='v2_1__test01__exp14__run001__preflight001',
                    stage='stage1',dataset=str(dataset),labels=str(labels),checkpoint=str(base),
                    preflight_only=True,gpus=[0,1,2,3])
     return b
@@ -34,7 +34,7 @@ def backend(tmp_path):
 
 def fixture_job(b, status='stopped', preflight=False):
     request=dict(b.request,preflight_only=preflight,
-                 run_id='v2.1__test01__exp14__run001'+('__preflight001' if preflight else ''))
+                 run_id='v2_1__test01__exp14__run001'+('__preflight001' if preflight else ''))
     if not preflight:
         gate=b.training.parent/'evidence.json';write(gate,{'passed':True})
         request['accept_preflight']=str(gate)
@@ -54,6 +54,7 @@ def test_preview_is_readonly_and_preserves_global_recipe(backend):
     assert plan['steps']==6000 and plan['learning_rate']==1e-5
     argv=b.command(plan,b.live,b.training/plan['run_name'])
     assert '--nproc-per-node=4' in argv and argv[argv.index('--output')+1].endswith('/run')
+    assert argv[argv.index('--checkpoint-prefix')+1]==plan['run_name']
     assert '--preflight-only' in argv
     for change in ({'gpus':[0,1]},{'global_windows_per_step':8},{'learning_rate':2e-5},{'steps':3}):
         with pytest.raises(ValueError):b.prepare(dict(b.request,**change))
@@ -66,7 +67,7 @@ def test_generic_source_and_formal_preflight_required(backend):
     with pytest.raises(ValueError,match='通用'):
         b.prepare(dict(b.request,checkpoint=str(alternate)))
     with pytest.raises(ValueError,match='preflight.json'):
-        b.prepare(dict(b.request,run_id='v2.1__test01__exp14__run001',preflight_only=False))
+        b.prepare(dict(b.request,run_id='v2_1__test01__exp14__run001',preflight_only=False))
 
 
 def test_queue_accepts_busy_resource_without_stopping_anything(backend):
@@ -81,7 +82,7 @@ def test_pause_and_resume_preserve_budget_and_source(backend):
     control=b.stop({'run':root.name,'step':4})
     assert control['stop_after_step']==4 and read(root/'run/stop.json')==control
     write(root/'baseline/status.json',{'status':'stopped','step':4})
-    checkpoint=root/'run/checkpoints/v2.1__test01__exp14__run001__step000004'
+    checkpoint=root/'run/checkpoints/v2_1__test01__exp14__run001__step000004'
     write(checkpoint/'COMPLETE.json',{'step':4});(checkpoint/'training_state.pt').touch()
     request=dict(run=root.name,preview=True)
     preview=b.resume(request)
@@ -128,9 +129,34 @@ def test_rpc_dispatch_coexists_with_legacy_dashboard(backend,monkeypatch):
     remote=importlib.util.module_from_spec(spec);spec.loader.exec_module(remote)
     monkeypatch.setattr(remote,'v21_backend',lambda:backend)
     plan=remote.prepare(backend.request)
-    assert plan['version']=='v2.1'
+    assert plan['version']=='V_2_1'
     root,_=fixture_job(backend,preflight=True)
     assert remote.detail({'run':root.name})['config']['category']=='engineering_preflight'
+    assert remote.display_name(root,'baseline',40)==root.name
+
+
+def test_legacy_run_remains_readable_but_new_requests_use_v2_1(backend):
+    b=backend
+    legacy='v2.1__test01__exp14__run007'
+    root=b.training/legacy
+    write(root/'config/web_launch.json',dict(version='v2.1',arm='baseline',method='baseline'))
+    write(root/'baseline/status.json',dict(status='stopped',step=0))
+    assert b.root({'run':legacy})[0]==root
+    with pytest.raises(ValueError,match='新训练标识'):
+        b.prepare(dict(b.request,run_id=legacy))
+
+
+@pytest.mark.parametrize('version',['V_2_1','V2_1','v2_1','v2.1'])
+def test_version_aliases_use_one_canonical_workbench_group(backend,version):
+    plan=backend.prepare(dict(backend.request,version=version))
+    assert plan['version']=='V_2_1'
+    root,launch=fixture_job(backend)
+    write(root/'config/web_launch.json',dict(launch,version=version))
+    assert backend.owns({'run':root.name})
+    assert backend.root({'run':root.name})[0]==root
+    job=backend.jobs()[0]
+    assert job['version']==job['model_version']=='V_2_1'
+    assert job['run']==root.name
 
 
 def test_start_uses_snapshot_existing_queue_and_no_launch_on_preview(backend,monkeypatch):

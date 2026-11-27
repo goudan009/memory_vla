@@ -8,6 +8,7 @@ import re
 import shlex
 import signal
 import subprocess
+import sys
 import threading
 import time
 import uuid
@@ -15,6 +16,8 @@ from urllib.parse import urlencode
 
 from groot_tasks import TASK_NAMES
 from groot_eval_control import EvaluationControl
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]/'train'))
+from run_identity import canonical_version
 
 
 TASK40_EXPERIMENT_KINDS = ('task40_collect', 'task40_forward')
@@ -115,7 +118,7 @@ class LaunchManager:
             return self._task40_forward(request)
         scalars = {"version", "group", "model_name", "mode", "gpu_index", "task", "preset",
                    "seed", "seed_mode", "policy_host", "policy_port", "run_tag",
-                   "episodes_per_gpu", "debug_max_steps", "video_steps_per_render", "policy_checkpoint", "training_id"}
+                   "episodes_per_gpu", "repetitions", "debug_max_steps", "video_steps_per_render", "policy_checkpoint", "training_id"}
         booleans = {"record_video", "wait_for_gpu", "diagnostics"}
         arrays = {"instances_gpu0", "instances_gpu1"}
         unknown = set(request) - scalars - booleans - arrays - {"resume_from"}
@@ -138,6 +141,8 @@ class LaunchManager:
                 raise ValueError("续跑沿用原配置，只允许显式覆盖推理地址和端口")
         for key in sorted(scalars):
             value = request.get(key)
+            if key == 'version':
+                value = canonical_version(value)
             if value is None or value == "":
                 continue
             if isinstance(value, (list, dict, bool)) or len(str(value)) > 256:
@@ -259,8 +264,11 @@ class LaunchManager:
                 if not request.get('resume_from'):
                     if not group and identity.get('method'):
                         argv += ['--group',identity['method']]
-                    if not request.get('version') and re.fullmatch(r'V_[0-9]+',identity.get('version') or ''):
-                        argv += ['--version',identity['version']]
+                    identity_version = canonical_version(identity.get('version')) or ''
+                    if (not request.get('version') and
+                            (re.fullmatch(r'V_[0-9]+(?:_[0-9]+)?', identity_version) or
+                             re.fullmatch(r'V[0-9]+_[0-9]+', identity_version))):
+                        argv += ['--version',identity_version]
                 argv += ['--policy-identity',json.dumps(identity,ensure_ascii=False)]
         result = subprocess.run(argv + ["--dry-run"], cwd=self.root, stdin=subprocess.DEVNULL,
                                 capture_output=True, text=True, timeout=20)

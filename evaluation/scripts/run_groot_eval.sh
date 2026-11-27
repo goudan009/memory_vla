@@ -31,6 +31,7 @@ parser.add_argument('--gpu-index', type=int, choices=[0, 1], help='single modes 
 parser.add_argument('--task', type=int, choices=sorted(TASK_NAMES), default=21, help='B1K-2025 task ID 0-49')
 parser.add_argument('--list-tasks', action='store_true', help='list all 50 tasks and local instance availability; do not start evaluation')
 parser.add_argument('--episodes-per-gpu', type=int, help='official default: 10 on one GPU, 5 per GPU in dual modes; debug: one window per env')
+parser.add_argument('--repetitions', type=int, default=1, help='repeat the per-GPU episode budget; default 1 round')
 parser.add_argument('--instances-gpu0', type=int, nargs='+')
 parser.add_argument('--instances-gpu1', type=int, nargs='+')
 parser.add_argument('--seed', default='0', help='integer base seed or random (record the resolved seed)')
@@ -89,6 +90,8 @@ except ValueError:
     parser.error('--seed must be an integer or random')
 if not 0 <= args.seed < 2**32:
     parser.error('--seed must be in [0, 2**32)')
+if args.repetitions < 1:
+    parser.error('--repetitions must be positive')
 dual = args.mode.startswith('dual')
 n_envs = int(args.mode[-1])
 if dual and args.gpu_index is not None:
@@ -109,6 +112,8 @@ resume = None
 resume_offsets = {}
 resume_original_seed = None
 resume_original_assignments = None
+episode_layout = {}
+child_layout = {}
 if args.resume_from:
     output = args.resume_from.expanduser().resolve()
     result_path = output / 'results.json'
@@ -153,7 +158,9 @@ if args.resume_from:
     resume_original_seed = int(config['base_seed'])
     args.seed = resume_original_seed
     args.seed_mode = config.get('seed_mode', 'sequence')
-    if args.seed_mode == 'random':
+    episode_layout = config.get('episode_layout', {})
+    args.repetitions = int(config.get('repetitions', 1))
+    if args.seed_mode == 'random' and not episode_layout:
         parser.error('resume currently supports seed-mode sequence/fixed only; random runs need explicit per-episode seed mapping')
     args.policy_host, port = config.get('policy_server', '172.28.62.17:5556').rsplit(':', 1)
     args.policy_port = int(port)
@@ -178,31 +185,35 @@ if args.resume_from:
     slots = [stored_instances[i * (len(stored_instances) // n_envs): (i + 1) * (len(stored_instances) // n_envs)]
              if i < n_envs - 1 else stored_instances[i * (len(stored_instances) // n_envs):]
              for i in range(n_envs)]
+    saved_layout = episode_layout.get(str(args.gpu_index))
+    if saved_layout:
+        slots = [slot['instances'] for slot in saved_layout]
+    quotas = [slot['quota'] for slot in saved_layout] if saved_layout else [len(slot) for slot in slots]
     done_ids = {i: [] for i in range(n_envs)}
     for record in all_records:
         if int(record.get('gpu_index', args.gpu_index)) != args.gpu_index:
             parser.error('resume source contains records from a different GPU; use an original dual-mode resume workflow')
         env_idx = int(record['env_idx'])
-        if env_idx not in done_ids or len(done_ids[env_idx]) >= len(slots[env_idx]):
+        if env_idx not in done_ids or len(done_ids[env_idx]) >= quotas[env_idx]:
             parser.error('resume journal env_idx does not match its saved environment layout')
-        expected = slots[env_idx][len(done_ids[env_idx])]
+        expected = slots[env_idx][len(done_ids[env_idx]) % len(slots[env_idx])]
         if int(record['instance_id']) != expected:
             parser.error(f"resume records are not a completed prefix for env{env_idx}: expected instance {expected}, got {record['instance_id']}")
         done_ids[env_idx].append(expected)
     counts = {len(values) for values in done_ids.values()}
-    if len(counts) != 1:
+    if len(counts) != 1 and not saved_layout:
         parser.error('resume requires every environment to have completed the same number of Episodes')
     resume_offsets = {str(index): count for index, count in ((i, len(v)) for i, v in done_ids.items())}
     completed_per_env = next(iter(counts))
     # The child receives only the remaining prefix. Shift sequence-mode seeds
     # so its episode number 0 matches the first not-yet-recorded episode.
-    if args.seed_mode == 'sequence':
+    if args.seed_mode == 'sequence' and not saved_layout:
         args.seed += completed_per_env
     remaining_slots = {i: slots[i][len(done_ids[i]):] for i in range(n_envs)}
-    if any(not values for values in remaining_slots.values()):
+    if any(not values for values in remaining_slots.values()) and not saved_layout:
         parser.error('resume would leave an empty environment slot; this layout cannot be represented safely')
     remaining = [instance for i in range(n_envs) for instance in remaining_slots[i]]
-    if not remaining:
+    if not remaining and not saved_layout:
         parser.error('there are no remaining Episodes to resume')
     if resume.get('recorded_episodes', 0) >= resume.get('requested_episodes', 0):
         parser.error('all requested Episodes are already recorded')
@@ -211,6 +222,11 @@ if args.resume_from:
     resume_count = int(config.get('resume_count', 0)) + 1
     assignments = {args.gpu_index: remaining}
     episodes = len(remaining)
+    if saved_layout:
+        assignments = {args.gpu_index: stored_instances}
+        child_layout[args.gpu_index] = [dict(slot, offset=len(done_ids[i]), quota=slot['quota']-len(done_ids[i]))
+                                       for i, slot in enumerate(saved_layout)]
+        episodes = sum(slot['quota'] for slot in child_layout[args.gpu_index])
     dual = False
     n_envs = int(config['n_envs_per_gpu'])
     gpus = [args.gpu_index]
@@ -221,6 +237,8 @@ else:
     gpus = [0, 1] if dual else [1 if args.gpu_index is None else args.gpu_index]
     official = args.preset == 'official-eval'
     episodes = args.episodes_per_gpu if args.episodes_per_gpu is not None else ((5 if dual else 10) if official else n_envs)
+    episodes_per_round = episodes
+    episodes *= args.repetitions
     assignments = {}
     resume_count = 0
 if not args.resume_from:
@@ -238,9 +256,26 @@ for gpu in gpus:
             ids = list(range(offset, offset + count))
     if len(ids) != len(set(ids)) or any(i not in range(10) for i in ids):
         parser.error('each instance list must have unique IDs in 0-9')
-    if not n_envs <= episodes <= len(ids):
-        parser.error('n_envs <= episodes-per-gpu <= number of assigned instances is required')
+    if len(ids) < n_envs or episodes < n_envs:
+        parser.error('at least one assigned instance per environment and n_envs <= episodes-per-gpu is required')
     assignments[gpu] = ids
+    if not args.resume_from and (args.repetitions > 1 or episodes > len(ids)):
+        per_slot = len(ids) // n_envs
+        cycles, remainder = divmod(episodes_per_round, len(ids))
+        layout = []
+        for index in range(n_envs):
+            start = index * per_slot
+            slot_ids = ids[start:(index+1)*per_slot] if index < n_envs-1 else ids[start:]
+            extra = remainder // n_envs + (remainder % n_envs if index == n_envs-1 else 0)
+            quota = (cycles*len(slot_ids) + extra) * args.repetitions
+            layout.append(dict(instances=slot_ids, quota=quota, offset=0))
+        episode_layout[str(gpu)] = layout
+        child_layout[gpu] = layout
+    layout = child_layout.get(gpu)
+    max_episode = (max(slot['quota'] + slot['offset'] - 1 + index for index, slot in enumerate(layout))
+                   if layout else episodes//n_envs + episodes % n_envs + n_envs-2)
+    if args.seed_mode == 'sequence' and args.seed + max_episode >= 2**32:
+        parser.error('incremented episode seeds exceed the 32-bit range')
     cache = getattr(args, f'appdata_gpu{gpu}')
     # Runtime caches must survive removal of old evaluation results. Do not
     # silently reuse a diagnostic run's cache under evaluation/.
@@ -296,6 +331,8 @@ for gpu in gpus:
                '--output-root', str(gpu_output), '--public-output-dir', str(output)]
     command += ['--record-video' if args.record_video else '--no-record-video',
                 '--video-steps-per-render', str(args.video_steps_per_render)]
+    if gpu in child_layout:
+        command += ['--episode-layout', json.dumps(child_layout[gpu], separators=(',', ':'))]
     if args.resume_from or args.wait_for_gpu:
         # A resume must not fail merely because another job is still using the
         # selected GPU. The child queue waits and can be cancelled safely.
@@ -315,6 +352,9 @@ plan = {'mode': args.mode, 'preset': args.preset, 'model_name': args.model_name,
         'instances': resume_original_assignments if resume else assignments,
         'base_seed': args.seed, 'seed_source': seed_source,
         'seed_mode': args.seed_mode, 'episodes_per_gpu': episodes, 'commands': commands,
+        'repetitions': args.repetitions,
+        'episodes_per_round': saved_config.get('episodes_per_round', episodes) if resume else episodes_per_round,
+        'episode_layout': episode_layout,
         'output': str(output), 'task_outputs': task_outputs, 'synchronized_start': False,
         'policy_server': f'{args.policy_host}:{args.policy_port}', 'action_chunk': 8,
         'record_video': args.record_video, 'video_steps_per_render': args.video_steps_per_render,

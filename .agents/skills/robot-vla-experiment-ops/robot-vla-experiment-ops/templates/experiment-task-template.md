@@ -5,7 +5,8 @@
 > 训练、推理、评估、GPU调度、原工作台、checkpoint暂停续训、Agent巡检、结果归档和复现，均强制遵循 `robot-vla-experiment-ops` Skill。以下只写**本实验独有**的配置，具体细节未指定时以已锁定仓库/官方方法为准。
 
 ## 目标与界限
-- **模型版本、实际实验路径**：`vN`，`Output/test_NN/experiment_NN/`
+- **模型方法版本、实际实验路径**：如 `V_2_1`，`Output/test_02/experiment_01/`
+- **独立训练 ID / 类别**：如 `v2_1__test02__exp01__run001` / `formal_training`
 - **模型/代码版本**：
 - **对照组与唯一允许变化**：
 - **本实验不允许的变更**：

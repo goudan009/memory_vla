@@ -88,7 +88,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
   const detailTabs = ['curve','controls','info','logs'];
   const deviceLabel = () => trainingDevice === 'a100' ? 'A100' : 'RTX 6000 Ada';
   const versionOpen = new Map(), taskOpen = new Map();
-  const jobVersion = job => job?.version || (job?.name || job?.run || '').match(/^(V_\d+)(?:_|$)/)?.[1] || '未标版本';
+  const jobVersion = job => job?.model_version || job?.version || (job?.name || job?.run || '').match(/^(V_\d+(?:_\d+)*)(?:_|$)/)?.[1] || '未标版本';
   const jobTask = job => job?.task ?? job?.task_id ?? (job?.run || '').match(/(?:^|_)task(\d+)(?:_|$)/)?.[1] ?? '未知';
   const jobTasks = job => (Array.isArray(job?.tasks) ? job.tasks : String(jobTask(job)).split('_')).map(String);
   const taskLabel = job => jobTasks(job).length > 1 ? '联合训练 · ' + jobTasks(job).length + ' 个任务' : 'Task ' + jobTask(job);
@@ -284,6 +284,13 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
   async function loadOptions() {
     const selected = selectedGPUs(), hadOptions = !!options, previous = new Set(selectedDatasets().map(d=>d.task)), validation = el('train-validation-gpu').value;
     options = await api('options'); lastOptionsAt = Date.now();
+    if (options.model_versions) {
+      const previousVersion = el('train-version').value;
+      el('train-version').innerHTML = Object.entries(options.model_versions)
+        .filter(([,entry]) => entry.backend === 'v1')
+        .map(([version,entry]) => '<option value="' + esc(version) + '">' + esc(version + ' · ' + entry.description) + '</option>').join('');
+      if ([...el('train-version').options].some(option => option.value === previousVersion)) el('train-version').value = previousVersion;
+    }
     el('train-device-label').textContent=deviceLabel();
     el('train-validation-enabled').disabled=!!options.single_gpu;
     if(options.single_gpu) el('train-validation-enabled').checked=false;
@@ -306,6 +313,13 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
     renderTaskChoices(); datasetHint(); updateBatch(); syncStatus(options.sync);
   }
   function parameters() {
+    const version = el('train-version').value.trim();
+    const test = Number(el('train-test-id').value), experiment = Number(el('train-experiment-id').value);
+    const run = Number(el('train-run-number').value);
+    if (![test, experiment, run].every(Number.isSafeInteger) || test < 1 || test > 99 || experiment < 1 || experiment > 99 || run < 1)
+      throw Error('请分别填写测试编号、实验编号和独立训练次数；暂停续训请使用原作业');
+    const prefix = options?.model_versions?.[version]?.prefix || version.replace(/^V_/, 'v');
+    const runId = prefix + '__test' + String(test).padStart(2,'0') + '__exp' + String(experiment).padStart(2,'0') + '__run' + String(run).padStart(3,'0');
     const data=selectedDatasets();
     if (!data.length) throw Error('请至少选择一个任务');
     if (data.some(d=>!d.ready)) throw Error('请先准备全部所选任务数据，完成后刷新再启动训练');
@@ -318,7 +332,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
       const value = el('train-freeze-' + name.replaceAll('_','-'))?.value || 'auto';
       if (value !== 'auto') tuning['freeze_' + name] = value === 'true';
     }
-    return {version:el('train-version').value.trim(), notes:el('train-notes').value.trim(), tasks:data.map(d=>d.task),
+    return {version, run_id:runId, notes:el('train-notes').value.trim(), tasks:data.map(d=>d.task),
       checkpoint:el('train-checkpoint').value.trim(), gpus:selectedGPUs(), validation_enabled:enabled,
       ...(enabled?{validation_gpu:Number(el('train-validation-gpu').value),validation_percent:Number(el('train-validation-percent').value)}:{}),
       enqueue:el('train-enqueue').checked,

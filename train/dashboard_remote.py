@@ -19,7 +19,8 @@ import time
 if '__file__' in globals():
     sys.path.insert(0, str(Path(__file__).resolve().parent))
 from run_identity import NAMING_SCHEMA, method_name, training_base, training_identity, reserve_training
-from run_identity import EXPERIMENT_12_RUN, EXPERIMENT_13_RUN, CANONICAL_RUN, checkpoint_step
+from run_identity import EXPERIMENT_12_RUN, EXPERIMENT_13_RUN, CANONICAL_RUN, V21_RUN, checkpoint_step
+from run_identity import canonical_version, registered_version, validate_run_identity, run_fields, MODEL_VERSIONS
 
 OPENVLA_PROTOCOL = 'memoryvla_openvla_b1k_v1'
 EXP13_PROTOCOL = 'memoryvla_openvla_b1k_group16_raw_v2'
@@ -58,15 +59,23 @@ WAITING_QUEUE_STATES = {'waiting_for_four_runs', 'waiting_for_gpus', 'queued'}
 TERMINAL_TRAINING_STATES = {'complete', 'completed', 'stopped', 'failed', 'cancelled'}
 
 
-def run_name(version, task, arm):
-    return training_base(version, task, method_name(arm))
+def run_name(version, test_id, experiment_id, run_number):
+    version = registered_version(version)
+    if not re.fullmatch(r'test[0-9]{2}', test_id or '') or not re.fullmatch(r'exp[0-9]{2}', experiment_id or ''):
+        raise ValueError('生成训练标识必须显式提供test_id和experiment_id')
+    if type(run_number) is not int or run_number < 1:
+        raise ValueError('run_number须为正整数')
+    prefix = MODEL_VERSIONS[version]['prefix']
+    return f'{prefix}__{test_id}__{experiment_id}__run{run_number:03d}'
 
 
 def display_name(root, arm, task):
-    if CANONICAL_RUN.fullmatch(root.name):
+    if CANONICAL_RUN.fullmatch(root.name) or V21_RUN.fullmatch(root.name):
         return root.name
     identity = training_identity(root, arm, task)
-    return training_base(identity['version'],identity['task_id'],identity['method'])+'_train%02d'%identity['train_number'] if identity['task_id'] is not None else root.name
+    if identity.get('display_name'):
+        return identity['display_name']
+    return training_base(identity['version'],identity['task_id'],identity['method'],legacy=True)+'_train%02d'%identity['train_number'] if identity['task_id'] is not None else root.name
 
 
 def read_json(path, default=None):
@@ -163,7 +172,7 @@ def catalog():
         if root.is_symlink() or step is None:
             continue
         arm=file.parents[2].name
-        if CANONICAL_RUN.fullmatch(root.name):
+        if CANONICAL_RUN.fullmatch(root.name) and not V21_RUN.fullmatch(root.name):
             latest = read_json(root/arm/'checkpoints/latest.json',{}).get('step',0)
             if step > latest:
                 continue
@@ -172,7 +181,8 @@ def catalog():
             training_profile=checkpoint_training_profile(file.parent)))
     for source in datasets.values():
         source['training_profile'] = dataset_training_profile(source)
-    return dict(datasets=[datasets[key] for key in sorted(datasets)], checkpoints=checkpoints, gpus=gpu_info(),
+    return dict(model_versions=MODEL_VERSIONS, naming_schema=NAMING_SCHEMA,
+                datasets=[datasets[key] for key in sorted(datasets)], checkpoints=checkpoints, gpus=gpu_info(),
                 python_path=str(PYTHON), live_source=str(LIVE))
 
 
@@ -195,9 +205,20 @@ def fusion_contract():
     return module
 
 
+def is_v2_1_version(value):
+    return canonical_version(value) == 'V_2_1'
+
+
 def prepare(request):
-    if request.get('version') == 'v2.1':
+    if not isinstance(request, dict):
+        raise ValueError('训练参数必须为JSON对象')
+    if 'version' not in request:
+        raise ValueError('模型版本必须显式提供；不得使用默认版本')
+    version = registered_version(request['version'])
+    if is_v2_1_version(request.get('version')):
         return v21_backend().prepare(request)
+    registered_version(version, backend='v1')
+    identity = validate_run_identity(request.get('run_id'), version)
     allowed = {'task', 'tasks', 'task_name', 'dataset', 'split', 'checkpoint', 'gpus', 'validation_gpu',
                'arm', 'steps', 'global_windows_per_step', 'microbatch', 'seed', 'learning_rate', 'share_existing', 'version',
                'method', 'method_description', 'validation_enabled', 'validation_percent', 'enqueue',
@@ -274,7 +295,6 @@ def prepare(request):
     task_label=tasks[0] if len(tasks)==1 else '_'.join(map(str,tasks))
     if request.get('arm') not in ['baseline', 'memory_v1']:
         raise ValueError('请选择Baseline或MemoryVLA v1')
-    version=request.get('version','V_1')
     method=method_name(request['arm'],request.get('method'))
     if (request['arm']=='baseline' and method!='baseline') or (request['arm']=='memory_v1' and method not in ('memory',) and not method.startswith('ablation_')):
         raise ValueError('方法名称与实际模型类型不一致')
@@ -286,17 +306,14 @@ def prepare(request):
         raise ValueError('方法说明格式不正确')
     if method.startswith('ablation_') and not description.strip():
         raise ValueError('消融需要填写实际代码或配置改动说明；名称不会自动关闭模块')
-    name_base=training_base(version,task_label,method)
     run_id = request.get('run_id')
-    if 'run_id' in request:
+    if openvla:
         pattern = EXPERIMENT_13_RUN if exp13 else EXPERIMENT_12_RUN
-        if (not openvla or version != 'V_1' or method != 'memory' or (not exp13 and task_label != 40)
+        if (version != 'V_1' or method != 'memory' or (not exp13 and task_label != 40)
                 or not isinstance(run_id, str) or not pattern.fullmatch(run_id)):
             raise ValueError('训练标识须使用 v1__test01__exp13__run001（新随机分组）或exp12对应格式')
-        if (TRAINING/run_id).exists() or (TRAINING/'.trash'/run_id).exists() or (PROJECT/'deployments'/run_id).exists():
-            raise ValueError('该训练标识已存在，请从原作业续跑')
-    elif exp13:
-        raise ValueError('Exp13须显式指定规范run_id训练标识')
+    if (TRAINING/run_id).exists() or (TRAINING/'.trash'/run_id).exists() or (PROJECT/'deployments'/run_id).exists():
+        raise ValueError('该训练标识已存在，请从原作业续跑')
     if not fusion and not openvla and (request['steps'] < 1000 or request['steps'] % 1000):
         raise ValueError('当前保存周期为1000，请填写1000的整数倍步数')
     if not 1 <= request['global_windows_per_step'] <= 180 or request['global_windows_per_step'] % len(gpus):
@@ -456,9 +473,9 @@ def prepare(request):
     existing = compute_pids(selected)
     if existing and not request.get('share_existing') and not request.get('enqueue'):
         raise ValueError('所选GPU有现有进程，请换卡，或显式勾选共卡；不会停止现有进程')
-    return dict(version=version, method=method, method_description=description, notes=notes.strip(), naming_schema=NAMING_SCHEMA,
+    return dict(version=version, **identity, method=method, method_description=description, notes=notes.strip(), naming_schema=NAMING_SCHEMA,
         device_id=_device.get('device_id','a100'), device_label=DEVICE_LABEL,
-        run_name=run_id or name_base+'_trainNN', task=task_label, tasks=tasks, task_name=name, arm=request['arm'],
+        run_name=run_id, task=task_label, tasks=tasks, task_name=name, arm=request['arm'],
         **({'run_id': run_id} if run_id else {}),
         datasets=sources,dataset=sources[0]['dataset'] if len(tasks)==1 else None,
         checkpoint=str(checkpoint), split=sources[0]['split'] if len(tasks)==1 else None, split_value=split, gpus=gpus,
@@ -561,7 +578,7 @@ def materialize_dataset(plan, output):
 
 
 def start(request):
-    if request.get('version') == 'v2.1':
+    if is_v2_1_version(request.get('version')):
         return v21_backend().start(request, request_digest)
     plan = prepare(request)
     if plan.get('experiment') and not plan['fusion_training']['ready']:
@@ -573,15 +590,13 @@ def start(request):
     manifest = read_json(LIVE/'web_source_manifest.json')
     if not manifest or manifest['digest'] != request_digest:
         raise ValueError('同步源码版本不匹配，请重新同步')
-    if 'run_id' in plan:
-        run_id = plan['run_id']
-        try:
-            (TRAINING/run_id).mkdir(parents=True)
-        except FileExistsError as error:
-            raise ValueError('该训练标识已存在，请从原作业续跑') from error
-        number = int(run_id[-3:])
-    else:
-        run_id, number = reserve_training(TRAINING, PROJECT/'deployments',plan['version'],plan['task'],plan['method'])
+    # prepare() requires a user-selected, validated version/test/experiment/run ID.
+    run_id = plan['run_id']
+    try:
+        (TRAINING/run_id).mkdir(parents=True)
+    except FileExistsError as error:
+        raise ValueError('该训练标识已存在，请从原作业续跑或明确选择新的run_id') from error
+    number = run_fields(run_id)['train_number']
     plan.update(training_id=run_id,train_number=number,run_name=run_id)
     output = TRAINING/run_id
     source = PROJECT/'deployments'/run_id
@@ -883,8 +898,11 @@ print(json.dumps(dict(from_world=old_world, to_world=world, virtual_slots=owners
 def fork_resume(root, arm, info, version, gpus):
     """Keep the source run read-only and copy the mutable training state."""
     identity = training_identity(root, arm)
+    test_id, experiment_id = identity.get('test_id'), identity.get('experiment_id')
+    if not test_id or not experiment_id:
+        raise ValueError('旧训练记录缺少test_id或experiment_id；不能猜测分支run身份，请先登记历史映射')
     name, number = reserve_training(TRAINING, PROJECT/'deployments', version,
-                                   identity['task_id'], identity['method'])
+                                    test_id=test_id, experiment_id=experiment_id)
     branch = TRAINING/name
     for relative in ['config', 'logs', f'{arm}/config', f'{arm}/checkpoints']:
         (branch/relative).mkdir(parents=True)
@@ -949,8 +967,7 @@ def resume(request, controller_source):
                 or type(steps) is not int or steps % 2000):
             raise ValueError('Exp13续训保留同一run和四卡，累计目标步数须为2000的整数倍')
         if branch_version is not None:
-            if not isinstance(branch_version, str) or not re.fullmatch(r'V_[0-9]+', branch_version):
-                raise ValueError('独立分支版本请使用 V_1、V_2 等格式')
+            branch_version = registered_version(branch_version, backend='v1')
             if info['validation_enabled']:
                 raise ValueError('独立分支目前仅支持原训练关闭验证的作业')
             original_steps=read_json(root/arm/'config/ddp.json')['steps']
@@ -1191,7 +1208,7 @@ def jobs():
     for root in sorted(roots, key=lambda p:p.name, reverse=True):
         if root.is_symlink():
             continue
-        if read_json(root/'config/web_launch.json',{}).get('version') == 'v2.1':
+        if is_v2_1_version(read_json(root/'config/web_launch.json',{}).get('version')):
             continue
         plan = recorded_plan(root)
         split = read_json(root/'config/data_split.json',{})

@@ -257,6 +257,22 @@ def test_checkpoint_version_and_source_match_saved_training_metadata(tmp_path, m
         'V_1', run, run, '/snapshot/exp12')
 
 
+@pytest.mark.parametrize('run',[
+    'v1__test01__exp13__run001',
+    'v2_1__test02__exp01__run001',
+    'v2.1__test01__exp14__run001',
+])
+def test_checkpoint_catalog_preserves_run_id_and_canonical_version(tmp_path,monkeypatch,run):
+    monkeypatch.setattr(remote_control,'TRAINING',tmp_path)
+    root=tmp_path/run
+    checkpoint=root/('memory_v1' if run.startswith('v1__') else 'run')/'checkpoints'/f'{run}__step002000'
+    checkpoint.mkdir(parents=True)
+    info=remote_control.checkpoint_info(str(checkpoint))
+    assert info['run']==info['training_id']==run
+    assert info['version']==('V_1' if run.startswith('v1__') else 'V_2_1')
+    assert info['label']==run+' / '+checkpoint.name
+
+
 def test_discovered_policy_stop_checks_identity_and_only_signals_selected_process(tmp_path):
     def stop_process(request):
         # Production SSH uses the A100 system Python. The simulation env's

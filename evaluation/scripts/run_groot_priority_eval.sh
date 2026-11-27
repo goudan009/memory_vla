@@ -88,6 +88,7 @@ parser.add_argument("--instance-ids", "--instance-id", dest="instance_ids", type
 parser.add_argument("--seed", type=int, default=0, help="base seed reused for matched task instances and environment slots")
 parser.add_argument("--seed-mode", choices=["sequence", "fixed", "random"], default="sequence", help="sequence: base+env_idx+episode; fixed: identical seed; random: per-episode seeds derived from base")
 parser.add_argument("--limit-env-episodes", action="store_true", help="stop each vector slot at its assigned valid episode quota; leave finished slots idle")
+parser.add_argument("--episode-layout", help=argparse.SUPPRESS)
 parser.add_argument("--record-video", action=argparse.BooleanOptionalAction, default=None, help="record video (enabled by default; disabled by default for --profile-cycles)")
 parser.add_argument("--disable-viewer", action="store_true", help="pause only the viewer's render products after camera initialization/reset; keep robot cameras and graph creation order")
 parser.add_argument("--audit-semantics", action="store_true", help="record render-product ownership, policy observations, actions and window validity")
@@ -144,10 +145,24 @@ if args.instance_ids is not None:
         parser.error("--instance-ids must not contain duplicates")
     if any(instance_id not in range(10) for instance_id in args.instance_ids):
         parser.error("BEHAVIOR test instance IDs must be between 0 and 9")
-    if args.episodes > len(args.instance_ids):
-        parser.error("--episodes cannot exceed the explicit --instance-ids count")
     if len(args.instance_ids) < args.n_envs:
         parser.error("--instance-ids must provide at least one instance per environment")
+episode_layout = None
+if args.episode_layout:
+    try:
+        episode_layout = json.loads(args.episode_layout)
+        ids = args.instance_ids if args.instance_ids is not None else list(range(10))
+        width = len(ids) // args.n_envs
+        assert isinstance(episode_layout, list) and len(episode_layout) == args.n_envs
+        for i, slot in enumerate(episode_layout):
+            expected = ids[i*width:(i+1)*width] if i < args.n_envs-1 else ids[i*width:]
+            assert slot['instances'] == expected
+            assert type(slot['quota']) is int and slot['quota'] >= 0
+            assert type(slot['offset']) is int and slot['offset'] >= 0
+        assert sum(slot['quota'] for slot in episode_layout) == args.episodes
+        assert args.limit_env_episodes
+    except (ValueError, AssertionError, KeyError, TypeError):
+        parser.error('--episode-layout must match native instance partitions and the requested episode budget')
 
 # 把从 Bash 导入的路径转换为 pathlib.Path，便于用 / 拼接目录、检查文件是否存在。
 project_root = pathlib.Path(os.environ["PROJECT_ROOT"])
@@ -472,6 +487,7 @@ for (task_id, task), outdir in zip(selected, outputs):
         "seed": args.seed,
         "seed_mode": args.seed_mode,
         "limit_env_episodes": args.limit_env_episodes,
+        "episode_layout": episode_layout,
         "instance_ids": args.instance_ids if args.instance_ids is not None else list(range(10)),
         "n_envs": args.n_envs,
         "n_action_steps": args.action_steps,

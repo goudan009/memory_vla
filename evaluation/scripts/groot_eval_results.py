@@ -130,6 +130,12 @@ class EpisodeWriter:
         with lock_path.open("a") as lock_handle:
             fcntl.flock(lock_handle.fileno(), fcntl.LOCK_EX)
             self.records = self.load_records()
+            layout = self.metadata.get('episode_layout')
+            if layout:
+                slot = layout[self.env_idx]
+                number = slot['offset'] + sum(row['env_idx'] == self.env_idx for row in self.records)
+                record['episode_in_slot'] = number + 1
+                record['instance_cycle'] = number // len(slot['instances']) + 1
             record["episode_index"] = len(self.records) + 1
             if self.metadata.get("public_output_dir"):
                 from groot_eval_output import update_results
@@ -297,8 +303,12 @@ def record_episode_env(factory, outdir, env_idx):
     writer = EpisodeWriter(outdir, env_idx=env_idx, initialize_files=False)
     fixed_seed = writer.metadata.get("seed_mode", "sequence") == "fixed"
     base_seed = int(writer.metadata.get("seed", 0)) + (0 if fixed_seed else env_idx)
+    layout = writer.metadata.get('episode_layout')
+    slot = layout[env_idx] if layout else None
+    episode_offset = slot['offset'] if slot else 0
 
     def episode_seed(number):
+        number += episode_offset
         if writer.metadata.get("seed_mode") == "random":
             return int(np.random.SeedSequence([
                 int(writer.metadata.get("seed", 0)), env_idx, number,
@@ -312,6 +322,8 @@ def record_episode_env(factory, outdir, env_idx):
         quota = int(writer.metadata["episodes"]) // n_envs
         if env_idx == n_envs - 1:
             quota += int(writer.metadata["episodes"]) % n_envs
+        if slot:
+            quota = slot['quota']
 
     def seed_rng(seed):
         import random
@@ -356,9 +368,20 @@ def record_episode_env(factory, outdir, env_idx):
 
         def reset(self, **kwargs):
             if quota is not None and getattr(self, "valid_completed", 0) >= quota:
+                if not hasattr(self, 'idle_observation'):
+                    self.idle_observation = self.env.reset(**kwargs)[0]
+                    self.idle_progress = 0.0
                 return self.idle_observation, {}
             self.episode_seed = episode_seed(getattr(self, "episode_count", 0))
             seed_rng(self.episode_seed)
+            if slot:
+                current = self.env
+                while current is not None:
+                    state = vars(current)
+                    if '_instance_indices_this_env' in state:
+                        current._instance_idx_pointer = (episode_offset + getattr(self, 'episode_count', 0)) % len(slot['instances'])
+                        break
+                    current = state.get('env')
             previous_native = vars(self).get('native_env')
             if (os.environ.get('GROOT_TASK40_TRACE') == '1' and previous_native is not None
                     and writer.metadata['task_id'] == 40):
@@ -408,6 +431,10 @@ def record_episode_env(factory, outdir, env_idx):
                     self.native_env.task._termination_config if self.native_env is not None else None
                 ),
             }
+            if slot:
+                self.runtime_identity.update(
+                    episode_in_slot=episode_offset+self.episode_count,
+                    instance_cycle=(episode_offset+self.episode_count-1)//len(slot['instances'])+1)
             write_json(writer.outdir / f"runtime_env{env_idx}.json", self.runtime_identity)
             if (os.environ.get('GROOT_TASK40_TRACE') == '1' and self.native_env is not None
                     and writer.metadata['task_id'] == 40):

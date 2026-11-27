@@ -29,7 +29,7 @@ class FakeBase(torch.nn.Module):
 
 
 def policy_constructor():
-    """Run the actual V2.1 constructor; fake only the external dependencies."""
+    """Run the actual V2_1 constructor; fake only the external dependencies."""
     path = Path(__file__).resolve().parents[1] / 'policy.py'
     tree = ast.parse(path.read_text())
     cls = next(n for n in tree.body if isinstance(n, ast.ClassDef) and n.name == 'Policy')

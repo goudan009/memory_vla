@@ -1,4 +1,4 @@
-"""V2.1 policy using the existing V1 RPC and processor contract."""
+"""V2_1 policy using the existing V1 RPC and processor contract."""
 from pathlib import Path
 from typing import Any
 import numpy as np
@@ -16,9 +16,9 @@ from .data.windows import raw_from_states
 class Policy(Gr00tPolicy):
     def __init__(self,embodiment_tag,model_path,*,device,strict=True,history_mode='normal',residual_scale=1.):
         if not (Path(model_path)/'v2_1.json').is_file():
-            raise ValueError('Expected V2.1 sidecar; refusing a baseline fallback')
+            raise ValueError('Expected V2_1 sidecar; refusing a baseline fallback')
         if embodiment_tag.value!='behavior_r1_pro':
-            raise ValueError('V2.1 currently supports the audited R1Pro mapping')
+            raise ValueError('V2_1 currently supports the audited R1Pro mapping')
         BasePolicy.__init__(self,strict=strict)
         base=load_base(model_path,"memory",device=device)
         self.model=Integrated.load_sidecar(base,model_path,device)
@@ -77,7 +77,7 @@ class Policy(Gr00tPolicy):
             context['history_mode'] = getattr(self, 'history_mode', 'normal')
             context['memory_diagnostics'] = (options or {}).get('memory_diagnostics') is True
             if (options or {}).get('memory_action_controls'):
-                raise ValueError('Use V2.1 offline diagnostic, not the V1 controls')
+                raise ValueError('Use V2_1 offline diagnostic, not the V1 controls')
             if context['history_mode'] in ('wrong','other_episode'):
                 context['donor_keys'] = (options or {}).get('donor_keys')
             collated_inputs["inputs"]["memory_context"] = context

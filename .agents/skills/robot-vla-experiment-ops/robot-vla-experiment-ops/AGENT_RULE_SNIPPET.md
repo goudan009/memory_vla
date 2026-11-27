@@ -1,9 +1,7 @@
-# 放入仓库根目录 AGENTS.md（Codex）或 CLAUDE.md（Claude Code）的最小引用规则
+# Agent 路由规则
 
-当任务涉及本仓库的机器人训练、推理、评估、GPU资源、工作台、checkpoint暂停续训、实验巡检或实验报告时，**必须先读取并执行** `robot-vla-experiment-ops` Skill（项目内 `.agents/skills/robot-vla-experiment-ops/SKILL.md` 或 `.claude/skills/robot-vla-experiment-ops/SKILL.md`）。
+涉及本项目训练、推理、仿真评估、工作台、checkpoint 或实验验收时，先读取并遵循仓库根 `AGENTS.md` 指定的 `robot-vla-experiment-ops` Skill；新建或接续实验同时遵守 `docs/workbench/agent.md`。
 
-实验任务书只定义该实验特有的模型方法、数据、训练配置、比较方案和验收指标；通用执行与资源规范由 Skill 负责。用户当前明确指令和该实验专有配置优先于 Skill 中的默认值。启动任何正式实验前，先展示**配置锁定摘要及现有工作台作业预览**；必须通过现有工作台启动、监控、暂停与恢复，不得产生工作台不可见的长期作业。
+启动前必须对齐已登记方法版本、`test_id`、`experiment_id`、`run_id`、预算和工作台 preview。实验编号不能充当模型版本。未确认/未登记的小版本、缺失或冲突身份、重复 run ID 都必须停止修正，不能猜测或绕过工作台校验。
 
-若缺少必要权限、工作台能力或原始数据，不得假称已执行；按 `BLOCKED` 记录并说明可恢复步骤。
-
-**强制Checkpoint身份：**采用`v1__test01__exp12__run001__step002000`式五段ID；实验编号不等于版本号，禁止自动生成`V12/V13`等伪版本。允许安全资源共存下的持续训练/严格续训，不以GPU全部空闲为条件；A100有有效负载时显存目标≥80%，不可为凑数虚占显存。
+Skill 包的通用安装方式见 [README_INSTALL.md](README_INSTALL.md)。

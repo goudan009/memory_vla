@@ -38,11 +38,27 @@ if args.gpu_index < 0 or not 1 <= args.port <= 65535:
     parser.error('gpu-index必须非负，port必须在1至65535之间')
 checkpoint = args.checkpoint.expanduser().resolve()
 source = args.source_dir.expanduser().resolve()
+requested_source = source
 python = args.python_path.expanduser().absolute()
 is_v21 = any((checkpoint/name).is_file() for name in ('v2_1.json','v2_1_stage1.json','v2_1_run.json'))
 module = 'v2_1_groot_memoryvla.serve' if is_v21 else 'v1_groot_memoryvla.serve'
+source_compatibility = None
+if is_v21 and not (checkpoint/'v2_1.json').is_file():
+    def supports_baseline(directory):
+        entry = directory/'src/v2_1_groot_memoryvla/serve.py'
+        return (entry.is_file() and 'BaselinePolicy' in entry.read_text()
+                and (directory/'src/v2_1_groot_memoryvla/baseline_policy.py').is_file())
+    # Old Stage1 snapshots always instantiate the memory policy. Keep those
+    # training snapshots intact and use the maintained, frozen serving source.
+    if not supports_baseline(source):
+        live = PROJECT/'deployments/web_live'
+        if supports_baseline(live):
+            source = live
+            source_compatibility = 'V_2_1 baseline: legacy training snapshot lacks baseline serving support'
+        else:
+            parser.error('V_2_1 baseline 的旧源码仅支持记忆模型；请先同步源码并选择支持 baseline 的推理源码')
 if is_v21 and (args.history_mode != 'normal' or args.task40_diagnostics):
-    parser.error('V2.1正式服务使用normal历史模式和原生RPC，不使用旧Task40诊断入口')
+    parser.error('V2_1正式服务使用normal历史模式和原生RPC，不使用旧Task40诊断入口')
 if checkpoint.parent.name == 'checkpoints':
     default_logs = checkpoint.parents[2] / 'logs'
     checkpoint_label = f'{checkpoint.parents[2].name}_{checkpoint.name}'
@@ -96,6 +112,7 @@ if args.task40_diagnostics:
                    '--host', args.host, '--port', str(args.port), '--remote-policy']
 result = dict(gpu_index=args.gpu_index, host=args.host, port=args.port, checkpoint=str(checkpoint),
               serving_module=module,
+              requested_source_dir=str(requested_source), source_compatibility=source_compatibility,
               source_dir=str(source), python_path=str(python), seed=args.seed, history_mode=args.history_mode,
               log=str(log), command=shlex.join(command), task40_diagnostics=args.task40_diagnostics,
               task40_trace=args.task40_diagnostics and not official_restore)
@@ -132,9 +149,9 @@ if not weights or any(not path.is_file() or path.stat().st_size == 0 for path in
     parser.error(f'权重尚未保存完整：{checkpoint}；等待训练保存完成后再启动推理')
 if is_v21:
     if not (checkpoint/'COMPLETE.json').is_file():
-        parser.error(f'V2.1权重缺少完成标记：{checkpoint}')
+        parser.error(f'V2_1权重缺少完成标记：{checkpoint}')
     if (checkpoint/'v2_1.json').is_file() and not (checkpoint/'v2_1.pt').is_file():
-        parser.error(f'V2.1记忆权重缺失：{checkpoint}')
+        parser.error(f'V2_1记忆权重缺失：{checkpoint}')
 # A loading policy has not bound its port yet. Reject another launch for that
 # port too, rather than letting two models race through loading on the GPU.
 for proc in Path('/proc').iterdir():

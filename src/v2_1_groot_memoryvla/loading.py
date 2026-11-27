@@ -1,4 +1,4 @@
-"""Shared V2.1 checkpoint precision contract for training and serving."""
+"""Shared V2_1 checkpoint precision contract for training and serving."""
 import json
 from pathlib import Path
 
@@ -9,7 +9,7 @@ def load_base(path, stage, device="cuda"):
     from v1_groot_memoryvla.model.gr00t_n1d6.gr00t_n1d6 import Gr00tN1d6
 
     if stage not in ("stage1", "continued", "memory"):
-        raise ValueError("invalid V2.1 stage")
+        raise ValueError("invalid V2_1 stage")
     saved = json.loads((Path(path) / "config.json").read_text())
     if saved.get("memory_enabled") or saved.get("finetuning_lora"):
         raise ValueError("expected original no-memory full checkpoint")

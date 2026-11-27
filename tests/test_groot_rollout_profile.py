@@ -230,3 +230,40 @@ assert records[0]['failure_reason']['code'] == 'invalid_episode'
     result = subprocess.run([str(SIM_PYTHON), '-c', code, str(tmp_path)], env=environment,
                             cwd=GROOT_REPO, capture_output=True, text=True, timeout=60)
     assert result.returncode == 0, result.stdout + result.stderr
+
+
+@pytest.mark.skipif(not SIM_PYTHON.exists() or not GROOT_REPO.is_dir(), reason='requires simulator Python and GR00T')
+@pytest.mark.parametrize('offsets,quotas', [([0, 0], [10, 15]), ([3, 5], [7, 10]), ([10, 12], [0, 3])])
+@pytest.mark.parametrize('seed_mode', ['sequence', 'random'])
+def test_repeated_instances_and_resume_keep_quota_instance_seed(tmp_path, offsets, quotas, seed_mode):
+    environment = {**os.environ, 'GROOT_TEST_INSTANCE_COUNT': '5',
+        'PYTHONPATH': os.pathsep.join((str(PROJECT_ROOT/'scripts'), str(PROJECT_ROOT/'tests'), str(GROOT_REPO)))}
+    code = r'''
+import json, sys
+from pathlib import Path
+import numpy as np
+from groot_eval_results import install_episode_recording
+from gr00t.eval import rollout_policy as r
+from groot_rollout_fixture import Policy, create_uneven_env
+out = Path(sys.argv[1]); offsets=json.loads(sys.argv[2]); quotas=json.loads(sys.argv[3]); mode=sys.argv[4]
+layout=[dict(instances=ids, quota=quota, offset=offset) for ids, quota, offset in zip([[0,1],[2,3,4]], quotas, offsets)]
+(out/'run_meta.json').write_text(json.dumps(dict(task_id=21, task_name='tiny', episodes=sum(quotas),
+    n_envs=2, seed=42, seed_mode=mode, limit_env_episodes=True, episode_layout=layout)))
+install_episode_recording(out)
+r.create_eval_env=create_uneven_env
+r.run_rollout_gymnasium_policy('sim_behavior_r1_pro/tiny', Policy(), r.WrapperConfigs(), n_episodes=sum(quotas), n_envs=2)
+records=[json.loads(line) for line in (out/'episodes.jsonl').read_text().splitlines()]
+assert len(records)==sum(quotas)
+for idx, slot in enumerate(layout):
+    group=[row for row in records if row['env_idx']==idx]
+    assert len(group)==slot['quota']
+    numbers=list(range(slot['offset'],slot['offset']+slot['quota']))
+    assert [row['instance_id'] for row in group]==[slot['instances'][n%len(slot['instances'])] for n in numbers]
+    seeds=[42+idx+n if mode=='sequence' else int(np.random.SeedSequence([42,idx,n]).generate_state(1)[0]) for n in numbers]
+    assert [row['seed'] for row in group]==seeds
+    assert len({(row['instance_id'],row['seed']) for row in group})==len(group)
+'''
+    import json
+    result = subprocess.run([str(SIM_PYTHON), '-c', code, str(tmp_path), json.dumps(offsets), json.dumps(quotas), seed_mode],
+                            env=environment, cwd=GROOT_REPO, capture_output=True, text=True, timeout=90)
+    assert result.returncode == 0, result.stdout + result.stderr

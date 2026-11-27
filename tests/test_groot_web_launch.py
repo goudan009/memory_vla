@@ -87,6 +87,16 @@ def test_task40_plan_records_read_only_stage_trace(monkeypatch):
     assert launcher().prepare(dict(task=40))['plan']['task40_stage_trace'] is False
 
 
+def test_standard_evaluation_accepts_five_rounds_in_one_result_bundle():
+    result = launcher().prepare(dict(task=40, mode='dual2', repetitions=5))
+    plan = result['plan']
+    assert plan['episodes_per_gpu'] == 25
+    assert plan['repetitions'] == 5
+    assert len(plan['commands']) == 2
+    assert sum(slot['quota'] for slots in plan['episode_layout'].values() for slot in slots) == 50
+    assert not Path(plan['output']).exists()
+
+
 @pytest.mark.parametrize("payload", [
     {"version": "../../bad"}, {"group": "baseline; touch bad"},
     {"task": 50}, {"policy_port": 0}, {"preset": "official-eval", "debug_max_steps": 256},
@@ -408,6 +418,18 @@ def test_web_plan_binds_observed_policy_to_training_without_changing_protocol():
     assert plan['base_seed']==0
     with pytest.raises(ValueError,match='实际方法'):
         manager.prepare(dict(version='V_2',group='baseline',task=22,policy_port=5560))
+
+
+def test_v2_1_policy_identity_is_forwarded_to_new_results_namespace():
+    manager=launcher()
+    identity=dict(version='V2_1',method='baseline',training_id='v2_1__test02__exp03__run004',
+        checkpoint='/weights/checkpoints/v2_1__test02__exp03__run004__step003000',
+        source_digest='frozen-code',policy_seed='42',binding='observed_process')
+    manager.policy_resolver=lambda host,port:identity
+    result=manager.prepare(dict(group='baseline',task=40,policy_port=5560))
+    assert result['plan']['version']=='V_2_1'
+    assert result['argv'][result['argv'].index('--version')+1]=='V_2_1'
+    assert 'V_2_1' in Path(result['plan']['output']).parts
 
 
 def test_debug_dual_uses_disjoint_instances_and_ignores_single_gpu_field():

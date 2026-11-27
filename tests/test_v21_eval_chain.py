@@ -110,6 +110,14 @@ def test_missing_real_dependencies_rejected(checkpoints):
         chain.tick(None, {}, lambda: None, checkpoints[:1])
 
 
+def test_ready_subset_is_allowed_only_when_explicit(checkpoints, monkeypatch):
+    monkeypatch.setattr(chain, 'discover_outputs', lambda _: [])
+    state, api = {}, API(checkpoints[0])
+    assert not chain.tick(api, state, lambda: None, checkpoints[:1], allow_subset=True)
+    with pytest.raises(ValueError, match='all three'):
+        chain.tick(api, {}, lambda: None, checkpoints[:1])
+
+
 def write_result(output, checkpoint):
     output.mkdir(parents=True)
     (output / 'results.json').write_text(json.dumps(dict(status='complete', configuration=plan(checkpoint))))

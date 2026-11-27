@@ -81,11 +81,21 @@ references/upstream/
 /evaluation/.trash/
 /evaluation/V_0/
 /evaluation/V_1/
+/evaluation/V_2_1/
 /evaluation/logs/
 /evaluation/results/
 
+# Local preflight transfer bundles and checksums.
+/v2_1_preflight*.tar.gz
+/v2_1_preflight*.tar.gz.sha256
+
 # Development and CI artifacts
 /.agents/
+!/.agents/
+/.agents/*
+!/.agents/skills/
+/.agents/skills/*
+!/.agents/skills/robot-vla-experiment-ops/
 /.codex/
 /.claude/
 /related_work/
