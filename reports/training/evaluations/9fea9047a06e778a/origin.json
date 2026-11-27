@@ -1,0 +1,9 @@
+{
+  "checkpoint": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp12__run005/memory_v1/checkpoints/v1__test01__exp12__run005__step006000",
+  "episodes_sha256": "9516c8276644b4816c99db3c333b98c3024b165308f054babd9b71b1a814bae9",
+  "path": "evaluation/V_1/memory_office/task40_eval01/results.json",
+  "results_sha256": "fe359fb0627f9a3062ea2d375d54777ae7c5d470a1e66c709802b9ed856b16ba",
+  "training_id": "v1__test01__exp12__run005",
+  "workbench_job_id": "b5e45aa5f040",
+  "workbench_state": "complete"
+}

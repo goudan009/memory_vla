@@ -1,0 +1,265 @@
+{
+  "evaluation_mode": "official-eval",
+  "task_id": 21,
+  "task_name": "collecting_childrens_toys",
+  "model_name": "groot",
+  "status": "interrupted",
+  "ok": false,
+  "version": "V_1",
+  "group": "baseline",
+  "protocol": {
+    "id": "b1k-groot-v1",
+    "sha256": "48969b510e4ef93486749c43303339e12bc22d113fa86728cc60fed68d94aa19"
+  },
+  "requested_episodes": 10,
+  "configuration": {
+    "mode": "single2",
+    "preset": "official-eval",
+    "model_name": "groot",
+    "version": "V_1",
+    "group": "baseline",
+    "protocol": {
+      "id": "b1k-groot-v1",
+      "sha256": "48969b510e4ef93486749c43303339e12bc22d113fa86728cc60fed68d94aa19"
+    },
+    "run_tag": null,
+    "task_id": 21,
+    "n_envs_per_gpu": 2,
+    "instances": {
+      "0": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ]
+    },
+    "base_seed": 0,
+    "seed_source": "0",
+    "seed_mode": "sequence",
+    "episodes_per_gpu": 10,
+    "synchronized_start": false,
+    "policy_server": "172.28.62.17:5560",
+    "action_chunk": 8,
+    "record_video": true,
+    "video_steps_per_render": 96,
+    "video_fps": 20,
+    "video_speedup": 64.0,
+    "viewer_enabled": true,
+    "runner_max_episode_steps": 999999999,
+    "diagnostics": false,
+    "wait_for_gpu": false,
+    "gpu_wait_interval": 30.0,
+    "appdata": {
+      "0": "/nvme3/tmp/memory_vla/groot_runtime_gpu0/appdata"
+    },
+    "invocation": [
+      "evaluation/scripts/run_groot_eval.sh",
+      "--version",
+      "V_1",
+      "--group",
+      "baseline",
+      "--mode",
+      "single2",
+      "--gpu-index",
+      "0",
+      "--task",
+      "21",
+      "--seed",
+      "0",
+      "--policy-port",
+      "5560"
+    ]
+  },
+  "started_at": "2026-11-10T12:06:56+0800",
+  "logs": {
+    "0": "gpu0.log"
+  },
+  "recorded_episodes": 4,
+  "completed_episodes": 4,
+  "invalid_episodes": 0,
+  "successful_episodes": 0,
+  "official_episodes": 4,
+  "success_rate": 0.0,
+  "mean_task_progress": 17.857142857142854,
+  "mean_q_score": 0.0,
+  "q_score_episodes": 4,
+  "missing_q_score_episodes": 0,
+  "total_action_steps": 153492,
+  "episodes": "episodes.jsonl",
+  "per_gpu": {
+    "0": {
+      "summary": {
+        "evaluation_mode": "official-eval",
+        "official_episodes": 4,
+        "task_id": 21,
+        "task_name": "collecting_childrens_toys",
+        "requested_episodes": 10,
+        "recorded_episodes": 4,
+        "completed_episodes": 4,
+        "invalid_episodes": 0,
+        "successful_episodes": 0,
+        "successes": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "success_rate": 0.0,
+        "task_progress": [
+          23.809523809523807,
+          14.285714285714285,
+          9.523809523809524,
+          23.809523809523807
+        ],
+        "mean_task_progress": 17.857142857142854,
+        "mean_q_score": 0.0,
+        "q_score_episodes": 4,
+        "missing_q_score_episodes": 0,
+        "status": "interrupted",
+        "runner_exit_code": 1,
+        "saved_video_count": 6
+      },
+      "configuration": {
+        "task_id": 21,
+        "gpu_index": 0,
+        "task_name": "collecting_childrens_toys",
+        "preset": "official-eval",
+        "env_name": "sim_behavior_r1_pro/collecting_childrens_toys",
+        "baseline": "NVIDIA Isaac-GR00T N1.6 BEHAVIOR1k checkpoint",
+        "runner_source": "/nvme3/projects/GR00T/Isaac-GR00T-n1d6-9b37aa1/gr00t/eval/rollout_policy.py",
+        "runtime": "/nvme3/envs/b1k2025-sim/bin/python",
+        "assets_version": "3.7.2rc1",
+        "policy_server": "172.28.62.17:5560",
+        "sim_host_gpu": "4090 GPU0",
+        "omnigibson_appdata_path": "/nvme3/tmp/memory_vla/groot_runtime_gpu0/appdata",
+        "profile_cycles": null,
+        "profile_detail": false,
+        "profile_simulator": false,
+        "camera_graph_counters": false,
+        "episodes": 10,
+        "seed": 0,
+        "seed_mode": "sequence",
+        "limit_env_episodes": true,
+        "instance_ids": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "n_envs": 2,
+        "n_action_steps": 8,
+        "record_video": true,
+        "viewer_enabled": true,
+        "audit_semantics": false,
+        "diagnostic_only": false,
+        "video_steps_per_render": 96,
+        "runner_max_episode_steps": 999999999,
+        "horizon_semantics": "native BEHAVIOR task timeout (2x human-demo length); no practical runner cap",
+        "task_timeout_hint_steps": 38372,
+        "launcher": "/nvme3/projects/memory_vla/evaluation/scripts/run_groot_priority_eval.sh",
+        "started_at": "2026-11-10T12:06:57+0800"
+      },
+      "performance": {
+        "evaluation_mode": "official-eval",
+        "environment_initialization": {
+          "count": 0,
+          "mean_s": null,
+          "p95_s": null
+        },
+        "reset": {
+          "count": 4,
+          "mean_s": 24.175179675687104,
+          "p95_s": 26.895489121158608
+        },
+        "policy_get_action": {
+          "count": 0,
+          "mean_s": null,
+          "p95_s": null
+        },
+        "env_step": {
+          "count": 9594,
+          "mean_s": 1.1749575033435466,
+          "p95_s": 1.268439685017802
+        },
+        "environment_step_chunk": {
+          "count": 9594,
+          "mean_s": 1.1749575033435466,
+          "p95_s": 1.268439685017802
+        },
+        "video_encoding": {
+          "count": 798,
+          "mean_s": 0.016148606753490287,
+          "p95_s": 0.02871739611728117
+        },
+        "episode_total": {
+          "count": 4,
+          "mean_s": 6495.335090944252,
+          "p95_s": 6552.405739933683
+        },
+        "valid_episodes": 4,
+        "elapsed_s": 13447.142155166017,
+        "valid_episodes_per_hour": 1.070859505598959
+      },
+      "environments": {
+        "runtime_env0": {
+          "instance_id": 2,
+          "env_idx": 0,
+          "seed": 2,
+          "episode_number": 3,
+          "native_termination_config": {
+            "max_steps": 38372
+          },
+          "action_steps": 12000,
+          "outer_steps": 1500,
+          "elapsed_s": 2022.1559428151231,
+          "success": false,
+          "task_progress": 9.523809523809524,
+          "terminated": false,
+          "truncated": false
+        },
+        "runtime_env1": {
+          "instance_id": 7,
+          "env_idx": 1,
+          "seed": 3,
+          "episode_number": 3,
+          "native_termination_config": {
+            "max_steps": 38372
+          },
+          "action_steps": 12000,
+          "outer_steps": 1500,
+          "elapsed_s": 2023.5927282639313,
+          "success": false,
+          "task_progress": 28.57142857142857,
+          "terminated": false,
+          "truncated": false
+        }
+      }
+    }
+  },
+  "exit_codes": {
+    "0": 143
+  },
+  "elapsed_wall_s": 15999.597798229894,
+  "finished_at": "2026-11-10T16:33:36+0800",
+  "videos": [
+    "videos/gpu0/1508efae-5d56-4c00-86cb-980c838c33df_s0.mp4",
+    "videos/gpu0/196e71f2-d311-48da-b063-99ce22cc0eae_s0.mp4",
+    "videos/gpu0/3712ec9f-cf8b-4b7e-a0cc-84736a9effb5_s0.mp4",
+    "videos/gpu0/5a7c18f4-566e-4a9e-b08c-bac083899780_s0.mp4",
+    "videos/gpu0/acebb896-75d1-40e8-aeeb-44a9de122842.mp4",
+    "videos/gpu0/e11364cb-b7ee-4123-a109-9a0634df13d2.mp4"
+  ],
+  "saved_video_count": 6
+}

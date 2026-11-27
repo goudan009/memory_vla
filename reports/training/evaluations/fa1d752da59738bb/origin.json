@@ -1,0 +1,9 @@
+{
+  "checkpoint": null,
+  "episodes_sha256": "7419c5736a981360bd61e5f827e94700260db250f09b0420c001e8914c291078",
+  "path": "evaluation/V_0/baseline/groot_task22_1/results.json",
+  "results_sha256": "ed59d010e0582c3c6a59fd691821d0ee2ebf0f909f6ececf09c6a5f29c3413f0",
+  "training_id": null,
+  "workbench_job_id": null,
+  "workbench_state": null
+}

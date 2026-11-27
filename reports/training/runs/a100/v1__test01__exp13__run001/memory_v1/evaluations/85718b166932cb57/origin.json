@@ -3,6 +3,7 @@
   "episodes_sha256": "7153a10f6b42db8766ddccc1f676f7c1b29edb8bd470ce4c39459ff688dc99df",
   "path": "evaluation/V_1/memory/task40_eval15/results.json",
   "results_sha256": "a2d3071f466d2109dc52a3e810c76cac985cd2f4f0fc862f832665cbf1e9c467",
+  "training_id": "v1__test01__exp13__run001",
   "workbench_job_id": "6f32f5b13ab3",
   "workbench_state": "complete"
 }

@@ -1,0 +1,9 @@
+{
+  "checkpoint": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/V_1_ablation_eps12_task40_train01/memory_v1/checkpoints/step-002000",
+  "episodes_sha256": "aa6fb9835d96470bc06ad708f2d9da02498687504a4e70ea993fee583eaee488",
+  "path": "evaluation/V_1/ablation_eps12/a6000_task40_eval02/results.json",
+  "results_sha256": "0baa1c77df52884fecf3ea10be1d497f72e870e9d4d001c71531f277932fade9",
+  "training_id": "V_1_ablation_eps12_task40_train01",
+  "workbench_job_id": null,
+  "workbench_state": null
+}

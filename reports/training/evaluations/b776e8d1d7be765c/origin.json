@@ -1,0 +1,9 @@
+{
+  "checkpoint": "/nvme3/huggingface/train_model/GR00T/GR00T-N1.6-BEHAVIOR1k",
+  "episodes_sha256": "d58743ad08ae81c73f2eff1892c937ad527b1dd5fe69a7378d701ef66213b98d",
+  "path": "evaluation/V_1/official/task40_eval03/results.json",
+  "results_sha256": "b98b5e113cd688935f5164f0b9b3a63d33a918238742d6be274dd32796495006",
+  "training_id": null,
+  "workbench_job_id": "376356328af7",
+  "workbench_state": "complete"
+}

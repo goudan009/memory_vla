@@ -1,0 +1,9 @@
+{
+  "checkpoint": "/nvme3/projects/memory_vla/checkpoints/groot_n1d6_behavior1k",
+  "episodes_sha256": "c817ed5e01863c3397df6e2e365165b1f45f463b6297c177c349785240cee55a",
+  "path": "evaluation/V_1/official_initial/task0_eval01/results.json",
+  "results_sha256": "db41476698063ba55181cbfc9ed5fc70a3b41bfacb62ab9b10d77721193762fd",
+  "training_id": null,
+  "workbench_job_id": null,
+  "workbench_state": null
+}

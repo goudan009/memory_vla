@@ -1,0 +1,159 @@
+{
+  "evaluation_mode": "official-eval",
+  "task_id": 22,
+  "task_name": "putting_shoes_on_rack",
+  "model_name": "groot",
+  "status": "complete",
+  "ok": true,
+  "requested_episodes": 10,
+  "configuration": {
+    "mode": "single2",
+    "preset": "official-eval",
+    "model_name": "groot",
+    "run_tag": null,
+    "task_id": 22,
+    "n_envs_per_gpu": 2,
+    "instances": {
+      "0": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ]
+    },
+    "base_seed": 0,
+    "seed_source": "0",
+    "seed_mode": "sequence",
+    "episodes_per_gpu": 6,
+    "synchronized_start": false,
+    "policy_server": "172.28.62.17:5556",
+    "action_chunk": 8,
+    "record_video": false,
+    "viewer_enabled": true,
+    "runner_max_episode_steps": 999999999,
+    "diagnostics": false,
+    "remaining_instances": {
+      "0": [
+        2,
+        3,
+        4,
+        7,
+        8,
+        9
+      ]
+    },
+    "resume_child_base_seed": 2,
+    "resume_count": 3,
+    "appdata": {
+      "0": "/nvme3/tmp/memory_vla/groot_runtime_gpu0/appdata"
+    },
+    "invocation": [
+      "scripts/run_groot_eval.sh",
+      "--resume-from",
+      "evaluation/groot_task22_1"
+    ],
+    "resume_from": "/nvme3/projects/memory_vla/evaluation/groot_task22_1",
+    "resume_completed_episodes": 4,
+    "resume_original_base_seed": 0
+  },
+  "started_at": "2026-11-08T23:44:04+0800",
+  "logs": {
+    "0": "gpu0.log"
+  },
+  "recorded_episodes": 10,
+  "completed_episodes": 10,
+  "invalid_episodes": 0,
+  "successful_episodes": 0,
+  "official_episodes": 10,
+  "success_rate": 0.0,
+  "mean_task_progress": 20.666666666666664,
+  "total_action_steps": 153850,
+  "episodes": "episodes.jsonl",
+  "per_gpu": {
+    "0": {
+      "summary": {
+        "status": "complete",
+        "requested_episodes": 6,
+        "recorded_episodes": 6,
+        "completed_episodes": 6,
+        "invalid_episodes": 0,
+        "successful_episodes": 0,
+        "successes": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "success_rate": 0.0,
+        "task_progress": [
+          33.33333333333333,
+          26.666666666666668,
+          6.666666666666667,
+          26.666666666666668,
+          13.333333333333334,
+          13.333333333333334
+        ],
+        "mean_task_progress": 20.0,
+        "total_action_steps": 92310,
+        "runner_exit_code": 0,
+        "saved_video_count": 0
+      },
+      "performance": {
+        "evaluation_mode": "official-eval",
+        "environment_initialization": {
+          "count": 1,
+          "mean_s": 428.6586443448905,
+          "p95_s": 428.6586443448905
+        },
+        "reset": {
+          "count": 6,
+          "mean_s": 7.715831453135858,
+          "p95_s": 9.664914794731885
+        },
+        "policy_get_action": {
+          "count": 5772,
+          "mean_s": 0.21777889007585166,
+          "p95_s": 0.2314791578799486
+        },
+        "env_step": {
+          "count": 5772,
+          "mean_s": 0.8084691122736736,
+          "p95_s": 0.9254681207356044
+        },
+        "environment_step_chunk": {
+          "count": 11544,
+          "mean_s": 0.7858194707067642,
+          "p95_s": 0.8999931552098133
+        },
+        "video_encoding": {
+          "count": 0,
+          "mean_s": null,
+          "p95_s": null
+        },
+        "episode_total": {
+          "count": 6,
+          "mean_s": 1974.7319759457216,
+          "p95_s": 2089.305207999074
+        },
+        "valid_episodes": 6,
+        "elapsed_s": 6379.217883578036,
+        "valid_episodes_per_hour": 3.3859950223058988
+      },
+      "environments": {},
+      "summary_recovered_from_public_log_and_episode_journal": true
+    }
+  },
+  "exit_codes": {
+    "0": 0
+  },
+  "elapsed_wall_s": 6741.9798553669825,
+  "finished_at": "2026-11-09T01:36:25+0800"
+}

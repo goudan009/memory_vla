@@ -1,0 +1,339 @@
+{
+  "evaluation_mode": "official-eval",
+  "task_id": 0,
+  "task_name": "turning_on_radio",
+  "model_name": "groot",
+  "status": "complete",
+  "ok": true,
+  "version": "V_1",
+  "group": "baseline_ex1",
+  "protocol": {
+    "id": "b1k-groot-v1",
+    "sha256": "620ecd00b89129120d3a8c9ffdaa4c7c44aa560991a9da3190e29b0bee940508"
+  },
+  "naming_schema": "groot-runs-v2",
+  "evaluation_id": "task0_eval03",
+  "method": "baseline",
+  "policy_identity": {
+    "version": "V_1",
+    "method": "baseline",
+    "training_id": "V_1_baseline_task0_34_40_train02",
+    "train_number": 2,
+    "checkpoint": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/V_1_baseline_task0_34_40_train02/baseline/checkpoints/step-020000",
+    "checkpoint_step": "step-020000",
+    "source_dir": "/nvme3/projects/memory_vla/deployments/V_1_baseline_task0_34_40_train02",
+    "source_digest": "a8e963f4fce5120001d78d82173b687c3a05b670147fd61fce07b1e82c53ad0e",
+    "training_seed": 42,
+    "policy_seed": "42",
+    "task_id": "0_34_40",
+    "pid": 117072,
+    "start_ticks": 1287700566,
+    "host": "172.28.62.17",
+    "port": 5557,
+    "naming_schema": "groot-runs-v2",
+    "binding": "observed_process"
+  },
+  "requested_episodes": 10,
+  "configuration": {
+    "mode": "single2",
+    "preset": "official-eval",
+    "model_name": "groot",
+    "device": "local",
+    "naming_schema": "groot-runs-v2",
+    "evaluation_id": "task0_eval03",
+    "policy_identity": {
+      "version": "V_1",
+      "method": "baseline",
+      "training_id": "V_1_baseline_task0_34_40_train02",
+      "train_number": 2,
+      "checkpoint": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/V_1_baseline_task0_34_40_train02/baseline/checkpoints/step-020000",
+      "checkpoint_step": "step-020000",
+      "source_dir": "/nvme3/projects/memory_vla/deployments/V_1_baseline_task0_34_40_train02",
+      "source_digest": "a8e963f4fce5120001d78d82173b687c3a05b670147fd61fce07b1e82c53ad0e",
+      "training_seed": 42,
+      "policy_seed": "42",
+      "task_id": "0_34_40",
+      "pid": 117072,
+      "start_ticks": 1287700566,
+      "host": "172.28.62.17",
+      "port": 5557,
+      "naming_schema": "groot-runs-v2",
+      "binding": "observed_process"
+    },
+    "method": "baseline",
+    "version": "V_1",
+    "group": "baseline_ex1",
+    "protocol": {
+      "id": "b1k-groot-v1",
+      "sha256": "620ecd00b89129120d3a8c9ffdaa4c7c44aa560991a9da3190e29b0bee940508"
+    },
+    "run_tag": null,
+    "task_id": 0,
+    "n_envs_per_gpu": 2,
+    "instances": {
+      "0": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ]
+    },
+    "base_seed": 0,
+    "seed_source": "0",
+    "seed_mode": "sequence",
+    "episodes_per_gpu": 10,
+    "synchronized_start": false,
+    "policy_server": "172.28.62.17:5557",
+    "action_chunk": 8,
+    "record_video": true,
+    "video_steps_per_render": 24,
+    "video_fps": 20,
+    "video_speedup": 16.0,
+    "viewer_enabled": true,
+    "runner_max_episode_steps": 999999999,
+    "diagnostics": false,
+    "wait_for_gpu": false,
+    "gpu_wait_interval": 30.0,
+    "appdata": {
+      "0": "/nvme3/tmp/memory_vla/groot_runtime_gpu0/appdata"
+    },
+    "invocation": [
+      "evaluation/scripts/run_groot_eval.sh",
+      "--gpu-index",
+      "0",
+      "--group",
+      "baseline_ex1",
+      "--mode",
+      "single2",
+      "--model-name",
+      "groot",
+      "--policy-host",
+      "172.28.62.17",
+      "--policy-port",
+      "5557",
+      "--preset",
+      "official-eval",
+      "--seed",
+      "0",
+      "--seed-mode",
+      "sequence",
+      "--task",
+      "0",
+      "--version",
+      "V_1",
+      "--video-steps-per-render",
+      "24",
+      "--record-video",
+      "--policy-identity",
+      "{\"version\": \"V_1\", \"method\": \"baseline\", \"training_id\": \"V_1_baseline_task0_34_40_train02\", \"train_number\": 2, \"checkpoint\": \"/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/V_1_baseline_task0_34_40_train02/baseline/checkpoints/step-020000\", \"checkpoint_step\": \"step-020000\", \"source_dir\": \"/nvme3/projects/memory_vla/deployments/V_1_baseline_task0_34_40_train02\", \"source_digest\": \"a8e963f4fce5120001d78d82173b687c3a05b670147fd61fce07b1e82c53ad0e\", \"training_seed\": 42, \"policy_seed\": \"42\", \"task_id\": \"0_34_40\", \"pid\": 117072, \"start_ticks\": 1287700566, \"host\": \"172.28.62.17\", \"port\": 5557, \"naming_schema\": \"groot-runs-v2\", \"binding\": \"observed_process\"}"
+    ]
+  },
+  "started_at": "2026-11-13T13:21:04+0800",
+  "logs": {
+    "0": "gpu0.log"
+  },
+  "recorded_episodes": 10,
+  "completed_episodes": 10,
+  "invalid_episodes": 0,
+  "successful_episodes": 0,
+  "official_episodes": 10,
+  "success_rate": 0.0,
+  "mean_task_progress": 43.33333333333333,
+  "mean_q_score": 0.0,
+  "q_score_episodes": 10,
+  "missing_q_score_episodes": 0,
+  "total_action_steps": 43000,
+  "episodes": "episodes.jsonl",
+  "per_gpu": {
+    "0": {
+      "summary": {
+        "evaluation_mode": "official-eval",
+        "official_episodes": 10,
+        "task_id": 0,
+        "task_name": "turning_on_radio",
+        "requested_episodes": 10,
+        "recorded_episodes": 10,
+        "completed_episodes": 10,
+        "invalid_episodes": 0,
+        "successful_episodes": 0,
+        "successes": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "success_rate": 0.0,
+        "task_progress": [
+          33.33333333333333,
+          66.66666666666666,
+          66.66666666666666,
+          33.33333333333333,
+          33.33333333333333,
+          33.33333333333333,
+          66.66666666666666,
+          33.33333333333333,
+          0.0,
+          66.66666666666666
+        ],
+        "mean_task_progress": 43.33333333333333,
+        "mean_q_score": 0.0,
+        "q_score_episodes": 10,
+        "missing_q_score_episodes": 0,
+        "status": "complete",
+        "runner_exit_code": 0,
+        "saved_video_count": 10
+      },
+      "configuration": {
+        "task_id": 0,
+        "gpu_index": 0,
+        "task_name": "turning_on_radio",
+        "preset": "official-eval",
+        "env_name": "sim_behavior_r1_pro/turning_on_radio",
+        "baseline": "NVIDIA Isaac-GR00T N1.6 BEHAVIOR1k checkpoint",
+        "runner_source": "/nvme3/projects/GR00T/Isaac-GR00T-n1d6-9b37aa1/gr00t/eval/rollout_policy.py",
+        "runtime": "/nvme3/envs/b1k2025-sim/bin/python",
+        "assets_version": "3.7.2rc1",
+        "policy_server": "172.28.62.17:5557",
+        "sim_host_gpu": "4090 GPU0",
+        "omnigibson_appdata_path": "/nvme3/tmp/memory_vla/groot_runtime_gpu0/appdata",
+        "profile_cycles": null,
+        "profile_detail": false,
+        "profile_simulator": false,
+        "camera_graph_counters": false,
+        "episodes": 10,
+        "seed": 0,
+        "seed_mode": "sequence",
+        "limit_env_episodes": true,
+        "instance_ids": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "n_envs": 2,
+        "n_action_steps": 8,
+        "record_video": true,
+        "viewer_enabled": true,
+        "audit_semantics": false,
+        "diagnostic_only": false,
+        "video_steps_per_render": 24,
+        "runner_max_episode_steps": 999999999,
+        "horizon_semantics": "native BEHAVIOR task timeout (2x human-demo length); no practical runner cap",
+        "task_timeout_hint_steps": null,
+        "launcher": "/nvme3/projects/memory_vla/evaluation/scripts/run_groot_priority_eval.sh",
+        "started_at": "2026-11-13T13:21:05+0800"
+      },
+      "performance": {
+        "evaluation_mode": "official-eval",
+        "environment_initialization": {
+          "count": 1,
+          "mean_s": 438.9575363600161,
+          "p95_s": 438.9575363600161
+        },
+        "reset": {
+          "count": 10,
+          "mean_s": 8.753757263021544,
+          "p95_s": 9.978301911987364
+        },
+        "policy_get_action": {
+          "count": 2690,
+          "mean_s": 0.26895807050090614,
+          "p95_s": 0.37469500324223176
+        },
+        "env_step": {
+          "count": 2690,
+          "mean_s": 0.9283550150157558,
+          "p95_s": 1.0981873684679155
+        },
+        "environment_step_chunk": {
+          "count": 5380,
+          "mean_s": 0.8974955119380855,
+          "p95_s": 1.0641929105855525
+        },
+        "video_encoding": {
+          "count": 1790,
+          "mean_s": 0.02032411109965669,
+          "p95_s": 0.040588669921271504
+        },
+        "episode_total": {
+          "count": 10,
+          "mean_s": 643.4264819524717,
+          "p95_s": 691.7505910620209
+        },
+        "valid_episodes": 10,
+        "elapsed_s": 3707.3031757019926,
+        "valid_episodes_per_hour": 9.710562717381013
+      },
+      "environments": {
+        "runtime_env0": {
+          "instance_id": 4,
+          "env_idx": 0,
+          "seed": 4,
+          "episode_number": 5,
+          "native_termination_config": {
+            "max_steps": 4299
+          },
+          "action_steps": 4300,
+          "outer_steps": 538,
+          "elapsed_s": 592.3170273499563,
+          "success": false,
+          "task_progress": 66.66666666666666,
+          "terminated": false,
+          "truncated": true
+        },
+        "runtime_env1": {
+          "instance_id": 9,
+          "env_idx": 1,
+          "seed": 5,
+          "episode_number": 5,
+          "native_termination_config": {
+            "max_steps": 4299
+          },
+          "action_steps": 4300,
+          "outer_steps": 538,
+          "elapsed_s": 592.1418285998516,
+          "success": false,
+          "task_progress": 0.0,
+          "terminated": false,
+          "truncated": true
+        }
+      }
+    }
+  },
+  "exit_codes": {
+    "0": 0
+  },
+  "elapsed_wall_s": 3709.4463160298765,
+  "finished_at": "2026-11-13T14:22:54+0800",
+  "videos": [
+    "videos/gpu0/episode_001_instance0_seed0_gpu0_env0_s0.mp4",
+    "videos/gpu0/episode_002_instance5_seed1_gpu0_env1_s0.mp4",
+    "videos/gpu0/episode_003_instance1_seed1_gpu0_env0_s0.mp4",
+    "videos/gpu0/episode_004_instance6_seed2_gpu0_env1_s0.mp4",
+    "videos/gpu0/episode_005_instance7_seed3_gpu0_env1_s0.mp4",
+    "videos/gpu0/episode_006_instance2_seed2_gpu0_env0_s0.mp4",
+    "videos/gpu0/episode_007_instance3_seed3_gpu0_env0_s0.mp4",
+    "videos/gpu0/episode_008_instance8_seed4_gpu0_env1_s0.mp4",
+    "videos/gpu0/episode_009_instance9_seed5_gpu0_env1_s0.mp4",
+    "videos/gpu0/episode_010_instance4_seed4_gpu0_env0_s0.mp4"
+  ],
+  "saved_video_count": 10
+}

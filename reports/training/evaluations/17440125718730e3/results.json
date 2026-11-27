@@ -1,0 +1,350 @@
+{
+  "evaluation_mode": "official-eval",
+  "task_id": 40,
+  "task_name": "make_microwave_popcorn",
+  "model_name": "groot",
+  "status": "complete",
+  "ok": true,
+  "version": "V_1",
+  "group": "official",
+  "protocol": {
+    "id": "b1k-groot-v1",
+    "sha256": "620ecd00b89129120d3a8c9ffdaa4c7c44aa560991a9da3190e29b0bee940508"
+  },
+  "naming_schema": "groot-runs-v2",
+  "evaluation_id": "task40_eval01",
+  "method": "official",
+  "policy_identity": {
+    "version": "official",
+    "method": "official",
+    "training_id": null,
+    "train_number": null,
+    "checkpoint": "/nvme3/huggingface/train_model/GR00T/GR00T-N1.6-BEHAVIOR1k",
+    "checkpoint_step": "GR00T-N1.6-BEHAVIOR1k",
+    "source_dir": "/nvme3/projects/memory_vla/deployments/V_2_memory_task40_train01",
+    "source_digest": "577a2c2d1955dc1a2551b7aecb81b3d0b49c9315dace99d830aed1c5cc430b23",
+    "training_seed": null,
+    "policy_seed": "42",
+    "task_id": null,
+    "pid": 1027019,
+    "start_ticks": 1298041647,
+    "host": "172.28.62.17",
+    "port": 5570,
+    "naming_schema": null,
+    "binding": "observed_process"
+  },
+  "requested_episodes": 10,
+  "configuration": {
+    "mode": "single2",
+    "preset": "official-eval",
+    "model_name": "groot",
+    "device": "local",
+    "naming_schema": "groot-runs-v2",
+    "evaluation_id": "task40_eval01",
+    "policy_identity": {
+      "version": "official",
+      "method": "official",
+      "training_id": null,
+      "train_number": null,
+      "checkpoint": "/nvme3/huggingface/train_model/GR00T/GR00T-N1.6-BEHAVIOR1k",
+      "checkpoint_step": "GR00T-N1.6-BEHAVIOR1k",
+      "source_dir": "/nvme3/projects/memory_vla/deployments/V_2_memory_task40_train01",
+      "source_digest": "577a2c2d1955dc1a2551b7aecb81b3d0b49c9315dace99d830aed1c5cc430b23",
+      "training_seed": null,
+      "policy_seed": "42",
+      "task_id": null,
+      "pid": 1027019,
+      "start_ticks": 1298041647,
+      "host": "172.28.62.17",
+      "port": 5570,
+      "naming_schema": null,
+      "binding": "observed_process"
+    },
+    "method": "official",
+    "version": "V_1",
+    "group": "official",
+    "protocol": {
+      "id": "b1k-groot-v1",
+      "sha256": "620ecd00b89129120d3a8c9ffdaa4c7c44aa560991a9da3190e29b0bee940508"
+    },
+    "run_tag": null,
+    "task_id": 40,
+    "n_envs_per_gpu": 2,
+    "instances": {
+      "0": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ]
+    },
+    "base_seed": 18000,
+    "seed_source": "0",
+    "seed_mode": "sequence",
+    "episodes_per_gpu": 6,
+    "synchronized_start": false,
+    "policy_server": "172.28.62.17:5570",
+    "action_chunk": 8,
+    "record_video": true,
+    "video_steps_per_render": 24,
+    "video_fps": 20,
+    "video_speedup": 16.0,
+    "viewer_enabled": true,
+    "task40_stage_trace": true,
+    "runner_max_episode_steps": 999999999,
+    "diagnostics": false,
+    "wait_for_gpu": true,
+    "gpu_wait_interval": 30.0,
+    "remaining_instances": {
+      "0": [
+        2,
+        3,
+        4,
+        7,
+        8,
+        9
+      ]
+    },
+    "resume_child_base_seed": 18002,
+    "resume_count": 1,
+    "appdata": {
+      "0": "/nvme3/tmp/memory_vla/groot_runtime_gpu0/appdata"
+    },
+    "invocation": [
+      "evaluation/scripts/run_groot_eval.sh",
+      "--resume-from",
+      "/nvme3/projects/memory_vla/evaluation/V_1/official/task40_eval01",
+      "--policy-identity",
+      "{\"version\": \"official\", \"method\": \"official\", \"training_id\": null, \"train_number\": null, \"checkpoint\": \"/nvme3/huggingface/train_model/GR00T/GR00T-N1.6-BEHAVIOR1k\", \"checkpoint_step\": \"GR00T-N1.6-BEHAVIOR1k\", \"source_dir\": \"/nvme3/projects/memory_vla/deployments/V_2_memory_task40_train01\", \"source_digest\": \"577a2c2d1955dc1a2551b7aecb81b3d0b49c9315dace99d830aed1c5cc430b23\", \"training_seed\": null, \"policy_seed\": \"42\", \"history_mode\": \"normal\", \"task_id\": null, \"pid\": 1027019, \"start_ticks\": 1298041647, \"host\": \"172.28.62.17\", \"port\": 5570, \"naming_schema\": null, \"binding\": \"observed_process\"}"
+    ],
+    "resume_from": "/nvme3/projects/memory_vla/evaluation/V_1/official/task40_eval01",
+    "resume_completed_episodes": 4,
+    "resume_original_base_seed": 18000
+  },
+  "started_at": "2026-11-14T23:01:29+0800",
+  "logs": {
+    "0": "gpu0.log"
+  },
+  "recorded_episodes": 10,
+  "completed_episodes": 10,
+  "invalid_episodes": 0,
+  "successful_episodes": 0,
+  "official_episodes": 10,
+  "success_rate": 0.0,
+  "mean_task_progress": 37.5,
+  "mean_q_score": 0.0,
+  "q_score_episodes": 10,
+  "missing_q_score_episodes": 0,
+  "b1k_metrics": {
+    "mean_q_score": 0.0,
+    "mean_q_score_percent": 0.0,
+    "full_success_rate": 0.0,
+    "successful_episodes": 0,
+    "q_score_episodes": 10,
+    "success_episodes": 10,
+    "missing_q_score_episodes": 0,
+    "missing_success_episodes": 0,
+    "valid_episodes": 10,
+    "requested_episodes": 10,
+    "metric_coverage_complete": true,
+    "scope": "valid_completed_episodes",
+    "evaluation_mode": "official-eval"
+  },
+  "total_action_steps": 64760,
+  "episodes": "episodes.jsonl",
+  "per_gpu": {
+    "0": {
+      "summary": {
+        "evaluation_mode": "official-eval",
+        "official_episodes": 6,
+        "task_id": 40,
+        "task_name": "make_microwave_popcorn",
+        "requested_episodes": 6,
+        "recorded_episodes": 6,
+        "completed_episodes": 6,
+        "invalid_episodes": 0,
+        "successful_episodes": 0,
+        "successes": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "success_rate": 0.0,
+        "task_progress": [
+          37.5,
+          25.0,
+          37.5,
+          25.0,
+          37.5,
+          62.5
+        ],
+        "mean_task_progress": 37.5,
+        "mean_q_score": 0.0,
+        "q_score_episodes": 6,
+        "missing_q_score_episodes": 0,
+        "b1k_metrics": {
+          "mean_q_score": 0.0,
+          "mean_q_score_percent": 0.0,
+          "full_success_rate": 0.0,
+          "successful_episodes": 0,
+          "q_score_episodes": 6,
+          "success_episodes": 6,
+          "missing_q_score_episodes": 0,
+          "missing_success_episodes": 0,
+          "valid_episodes": 6,
+          "requested_episodes": 6,
+          "metric_coverage_complete": true,
+          "scope": "valid_completed_episodes",
+          "evaluation_mode": "official-eval"
+        },
+        "status": "complete",
+        "runner_exit_code": 0,
+        "saved_video_count": 6
+      },
+      "configuration": {
+        "task_id": 40,
+        "gpu_index": 0,
+        "task_name": "make_microwave_popcorn",
+        "preset": "official-eval",
+        "env_name": "sim_behavior_r1_pro/make_microwave_popcorn",
+        "baseline": "NVIDIA Isaac-GR00T N1.6 BEHAVIOR1k checkpoint",
+        "runner_source": "/nvme3/projects/GR00T/Isaac-GR00T-n1d6-9b37aa1/gr00t/eval/rollout_policy.py",
+        "runtime": "/nvme3/envs/b1k2025-sim/bin/python",
+        "assets_version": "3.7.2rc1",
+        "policy_server": "172.28.62.17:5570",
+        "sim_host_gpu": "4090 GPU0",
+        "omnigibson_appdata_path": "/nvme3/tmp/memory_vla/groot_runtime_gpu0/appdata",
+        "profile_cycles": null,
+        "profile_detail": false,
+        "profile_simulator": false,
+        "camera_graph_counters": false,
+        "episodes": 6,
+        "seed": 18002,
+        "seed_mode": "sequence",
+        "limit_env_episodes": true,
+        "instance_ids": [
+          2,
+          3,
+          4,
+          7,
+          8,
+          9
+        ],
+        "n_envs": 2,
+        "n_action_steps": 8,
+        "record_video": true,
+        "viewer_enabled": true,
+        "audit_semantics": false,
+        "diagnostic_only": false,
+        "video_steps_per_render": 24,
+        "runner_max_episode_steps": 999999999,
+        "horizon_semantics": "native BEHAVIOR task timeout (2x human-demo length); no practical runner cap",
+        "task_timeout_hint_steps": null,
+        "launcher": "/nvme3/projects/memory_vla/evaluation/scripts/run_groot_priority_eval.sh",
+        "started_at": "2026-11-14T23:01:30+0800"
+      },
+      "performance": {
+        "evaluation_mode": "official-eval",
+        "environment_initialization": {
+          "count": 1,
+          "mean_s": 449.7058812340256,
+          "p95_s": 449.7058812340256
+        },
+        "reset": {
+          "count": 6,
+          "mean_s": 12.73433581731903,
+          "p95_s": 14.787379147019237
+        },
+        "policy_get_action": {
+          "count": 2430,
+          "mean_s": 0.2587189665594073,
+          "p95_s": 0.32362074421253056
+        },
+        "env_step": {
+          "count": 2430,
+          "mean_s": 1.563382235888982,
+          "p95_s": 2.0837458006106315
+        },
+        "environment_step_chunk": {
+          "count": 4860,
+          "mean_s": 1.4353036523910159,
+          "p95_s": 2.00805580430897
+        },
+        "video_encoding": {
+          "count": 1614,
+          "mean_s": 0.023353196409054314,
+          "p95_s": 0.04130906475475058
+        },
+        "episode_total": {
+          "count": 6,
+          "mean_s": 1475.2655260216754,
+          "p95_s": 1656.1074432570604
+        },
+        "valid_episodes": 6,
+        "elapsed_s": 4919.6849582190625,
+        "valid_episodes_per_hour": 4.390525040412191
+      },
+      "environments": {
+        "runtime_env0": {
+          "instance_id": 4,
+          "env_idx": 0,
+          "seed": 18004,
+          "episode_number": 3,
+          "native_termination_config": {
+            "max_steps": 6475
+          },
+          "action_steps": 6476,
+          "outer_steps": 810,
+          "elapsed_s": 1656.2331204181537,
+          "success": false,
+          "task_progress": 62.5,
+          "terminated": false,
+          "truncated": true
+        },
+        "runtime_env1": {
+          "instance_id": 9,
+          "env_idx": 1,
+          "seed": 18005,
+          "episode_number": 3,
+          "native_termination_config": {
+            "max_steps": 6475
+          },
+          "action_steps": 6476,
+          "outer_steps": 810,
+          "elapsed_s": 1655.7288618008606,
+          "success": false,
+          "task_progress": 37.5,
+          "terminated": false,
+          "truncated": true
+        }
+      }
+    }
+  },
+  "exit_codes": {
+    "0": 0
+  },
+  "elapsed_wall_s": 4921.716715894872,
+  "finished_at": "2026-11-15T00:23:31+0800",
+  "videos": [
+    "videos/gpu0/episode_001_instance0_seed18000_gpu0_env0_s0.mp4",
+    "videos/gpu0/episode_002_instance5_seed18001_gpu0_env1_s0.mp4",
+    "videos/gpu0/episode_003_instance1_seed18001_gpu0_env0_s0.mp4",
+    "videos/gpu0/episode_004_instance6_seed18002_gpu0_env1_s0.mp4",
+    "videos/gpu0_resume1/episode_005_instance2_seed18002_gpu0_env0_s0.mp4",
+    "videos/gpu0_resume1/episode_006_instance7_seed18003_gpu0_env1_s0.mp4",
+    "videos/gpu0_resume1/episode_007_instance8_seed18004_gpu0_env1_s0.mp4",
+    "videos/gpu0_resume1/episode_008_instance3_seed18003_gpu0_env0_s0.mp4",
+    "videos/gpu0_resume1/episode_009_instance9_seed18005_gpu0_env1_s0.mp4",
+    "videos/gpu0_resume1/episode_010_instance4_seed18004_gpu0_env0_s0.mp4"
+  ],
+  "saved_video_count": 10
+}

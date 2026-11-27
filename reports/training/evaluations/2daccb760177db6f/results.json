@@ -1,0 +1,282 @@
+{
+  "evaluation_mode": "official-eval",
+  "task_id": 0,
+  "task_name": "turning_on_radio",
+  "model_name": "groot",
+  "status": "complete",
+  "ok": true,
+  "version": "V_1",
+  "group": "official_initial",
+  "protocol": {
+    "id": "b1k-groot-v1",
+    "sha256": "620ecd00b89129120d3a8c9ffdaa4c7c44aa560991a9da3190e29b0bee940508"
+  },
+  "naming_schema": "groot-runs-v2",
+  "evaluation_id": "task0_eval01",
+  "method": null,
+  "policy_identity": {
+    "checkpoint": "/nvme3/projects/memory_vla/checkpoints/groot_n1d6_behavior1k",
+    "training_id": null,
+    "binding": "user_declared"
+  },
+  "requested_episodes": 1,
+  "configuration": {
+    "mode": "single1",
+    "preset": "official-eval",
+    "model_name": "groot",
+    "device": "local",
+    "naming_schema": "groot-runs-v2",
+    "evaluation_id": "task0_eval01",
+    "policy_identity": {
+      "checkpoint": "/nvme3/projects/memory_vla/checkpoints/groot_n1d6_behavior1k",
+      "training_id": null,
+      "binding": "user_declared"
+    },
+    "method": null,
+    "version": "V_1",
+    "group": "official_initial",
+    "protocol": {
+      "id": "b1k-groot-v1",
+      "sha256": "620ecd00b89129120d3a8c9ffdaa4c7c44aa560991a9da3190e29b0bee940508"
+    },
+    "run_tag": "initial_closed_loop_instance0",
+    "task_id": 0,
+    "n_envs_per_gpu": 1,
+    "instances": {
+      "0": [
+        0
+      ]
+    },
+    "base_seed": 0,
+    "seed_source": "0",
+    "seed_mode": "fixed",
+    "episodes_per_gpu": 1,
+    "synchronized_start": false,
+    "policy_server": "127.0.0.1:5559",
+    "action_chunk": 8,
+    "record_video": true,
+    "video_steps_per_render": 24,
+    "video_fps": 20,
+    "video_speedup": 16.0,
+    "viewer_enabled": true,
+    "runner_max_episode_steps": 999999999,
+    "diagnostics": false,
+    "wait_for_gpu": false,
+    "gpu_wait_interval": 30.0,
+    "appdata": {
+      "0": "/nvme3/tmp/memory_vla/groot_runtime_gpu0/appdata"
+    },
+    "invocation": [
+      "evaluation/scripts/run_groot_eval.sh",
+      "--version",
+      "V_1",
+      "--group",
+      "official_initial",
+      "--mode",
+      "single1",
+      "--gpu-index",
+      "0",
+      "--preset",
+      "official-eval",
+      "--task",
+      "0",
+      "--episodes-per-gpu",
+      "1",
+      "--instances-gpu0",
+      "0",
+      "--seed",
+      "0",
+      "--seed-mode",
+      "fixed",
+      "--policy-host",
+      "127.0.0.1",
+      "--policy-port",
+      "5559",
+      "--policy-checkpoint",
+      "/nvme3/projects/memory_vla/checkpoints/groot_n1d6_behavior1k",
+      "--run-tag",
+      "initial_closed_loop_instance0",
+      "--record-video"
+    ]
+  },
+  "started_at": "2026-11-13T21:46:30+0800",
+  "logs": {
+    "0": "gpu0.log"
+  },
+  "recorded_episodes": 1,
+  "completed_episodes": 1,
+  "invalid_episodes": 0,
+  "successful_episodes": 0,
+  "official_episodes": 1,
+  "success_rate": 0.0,
+  "mean_task_progress": 66.66666666666666,
+  "mean_q_score": 0.0,
+  "q_score_episodes": 1,
+  "missing_q_score_episodes": 0,
+  "b1k_metrics": {
+    "mean_q_score": 0.0,
+    "mean_q_score_percent": 0.0,
+    "full_success_rate": 0.0,
+    "successful_episodes": 0,
+    "q_score_episodes": 1,
+    "success_episodes": 1,
+    "missing_q_score_episodes": 0,
+    "missing_success_episodes": 0,
+    "valid_episodes": 1,
+    "requested_episodes": 1,
+    "metric_coverage_complete": true,
+    "scope": "valid_completed_episodes",
+    "evaluation_mode": "official-eval"
+  },
+  "total_action_steps": 4300,
+  "episodes": "episodes.jsonl",
+  "per_gpu": {
+    "0": {
+      "summary": {
+        "evaluation_mode": "official-eval",
+        "official_episodes": 1,
+        "task_id": 0,
+        "task_name": "turning_on_radio",
+        "requested_episodes": 1,
+        "recorded_episodes": 1,
+        "completed_episodes": 1,
+        "invalid_episodes": 0,
+        "successful_episodes": 0,
+        "successes": [
+          false
+        ],
+        "success_rate": 0.0,
+        "task_progress": [
+          66.66666666666666
+        ],
+        "mean_task_progress": 66.66666666666666,
+        "mean_q_score": 0.0,
+        "q_score_episodes": 1,
+        "missing_q_score_episodes": 0,
+        "b1k_metrics": {
+          "mean_q_score": 0.0,
+          "mean_q_score_percent": 0.0,
+          "full_success_rate": 0.0,
+          "successful_episodes": 0,
+          "q_score_episodes": 1,
+          "success_episodes": 1,
+          "missing_q_score_episodes": 0,
+          "missing_success_episodes": 0,
+          "valid_episodes": 1,
+          "requested_episodes": 1,
+          "metric_coverage_complete": true,
+          "scope": "valid_completed_episodes",
+          "evaluation_mode": "official-eval"
+        },
+        "status": "complete",
+        "runner_exit_code": 0,
+        "saved_video_count": 1
+      },
+      "configuration": {
+        "task_id": 0,
+        "gpu_index": 0,
+        "task_name": "turning_on_radio",
+        "preset": "official-eval",
+        "env_name": "sim_behavior_r1_pro/turning_on_radio",
+        "baseline": "NVIDIA Isaac-GR00T N1.6 BEHAVIOR1k checkpoint",
+        "runner_source": "/nvme3/projects/GR00T/Isaac-GR00T-n1d6-9b37aa1/gr00t/eval/rollout_policy.py",
+        "runtime": "/nvme3/envs/b1k2025-sim/bin/python",
+        "assets_version": "3.7.2rc1",
+        "policy_server": "127.0.0.1:5559",
+        "sim_host_gpu": "4090 GPU0",
+        "omnigibson_appdata_path": "/nvme3/tmp/memory_vla/groot_runtime_gpu0/appdata",
+        "profile_cycles": null,
+        "profile_detail": false,
+        "profile_simulator": false,
+        "camera_graph_counters": false,
+        "episodes": 1,
+        "seed": 0,
+        "seed_mode": "fixed",
+        "limit_env_episodes": true,
+        "instance_ids": [
+          0
+        ],
+        "n_envs": 1,
+        "n_action_steps": 8,
+        "record_video": true,
+        "viewer_enabled": true,
+        "audit_semantics": false,
+        "diagnostic_only": false,
+        "video_steps_per_render": 24,
+        "runner_max_episode_steps": 999999999,
+        "horizon_semantics": "native BEHAVIOR task timeout (2x human-demo length); no practical runner cap",
+        "task_timeout_hint_steps": null,
+        "launcher": "/nvme3/projects/memory_vla/evaluation/scripts/run_groot_priority_eval.sh",
+        "started_at": "2026-11-13T21:46:30+0800"
+      },
+      "performance": {
+        "evaluation_mode": "official-eval",
+        "environment_initialization": {
+          "count": 1,
+          "mean_s": 184.93533034203574,
+          "p95_s": 184.93533034203574
+        },
+        "reset": {
+          "count": 1,
+          "mean_s": 11.483282489003614,
+          "p95_s": 11.483282489003614
+        },
+        "policy_get_action": {
+          "count": 538,
+          "mean_s": 0.22275362651687822,
+          "p95_s": 0.23422777815721926
+        },
+        "env_step": {
+          "count": 538,
+          "mean_s": 0.7989734853998686,
+          "p95_s": 0.8572048344067298
+        },
+        "environment_step_chunk": {
+          "count": 538,
+          "mean_s": 0.7958323966909103,
+          "p95_s": 0.8543695047381333
+        },
+        "video_encoding": {
+          "count": 179,
+          "mean_s": 0.02174006626608277,
+          "p95_s": 0.04265510861296207
+        },
+        "episode_total": {
+          "count": 1,
+          "mean_s": 548.7071020179428,
+          "p95_s": 548.7071020179428
+        },
+        "valid_episodes": 1,
+        "elapsed_s": 746.5394208650105,
+        "valid_episodes_per_hour": 4.822250372028182
+      },
+      "environments": {
+        "runtime_env0": {
+          "instance_id": 0,
+          "env_idx": 0,
+          "seed": 0,
+          "episode_number": 1,
+          "native_termination_config": {
+            "max_steps": 4299
+          },
+          "action_steps": 4300,
+          "outer_steps": 538,
+          "elapsed_s": 548.7066002020147,
+          "success": false,
+          "task_progress": 66.66666666666666,
+          "terminated": false,
+          "truncated": true
+        }
+      }
+    }
+  },
+  "exit_codes": {
+    "0": 0
+  },
+  "elapsed_wall_s": 748.856945269974,
+  "finished_at": "2026-11-13T21:58:58+0800",
+  "videos": [
+    "videos/gpu0/episode_001_instance0_seed0_gpu0_env0_s0.mp4"
+  ],
+  "saved_video_count": 1
+}

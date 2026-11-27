@@ -1,9 +1,9 @@
-# 训练自动汇总
+# 训练与评估自动汇总
 
 由 `scripts/training_archive.py` 按固定规则生成，无 LLM 参与。原始数据及 SHA-256 清单见各事件链接。
 
 首次安装只补录指定历史 run；随后自动记录工作台新训练及已有训练的完成、暂停、失败、取消事件。
-这里是最近一次归档终态；训练恢复后，等下一个终态再更新。闭环结果在结束后补入。
+训练显示最近一次归档终态；训练恢复后，等下一个终态再更新。评估独立收录完成、中断、失败和取消的结果，不要求训练已归档。运行中的评估不计作终态。
 
 Loss 为训练记录中的 loss；V2.1 为 fm + 配方 state_weight × state。首尾均值各取最多100条记录，保留重复 step 并报告数量；缺失/非有限值不当作零。epoch 均值不代表完整 epoch。
 
@@ -11,6 +11,52 @@ Loss 为训练记录中的 loss；V2.1 为 fm + 配方 state_weight × state。�
 | --- | --- | --- | --- | --- | --- |
 | [a100/v1__test01__exp13__run001/memory_v1](runs/a100/v1__test01__exp13__run001/memory_v1/events/204b3706c90523df31cb-958f37778991/workbench.json) | completed | 16000 / 16000 | 0.018298337 | 0.010263368 | 16000 |
 | [a100/v2_1__test02__exp01__run001/baseline](runs/a100/v2_1__test02__exp01__run001/baseline/events/51d79243d755c7c37fb3-e2583a8073bf/workbench.json) | completed | 3000 / 3000 | 0.014303987 | 0.011696154 | 3000 |
+
+## 闭环评估总表
+
+覆盖本机 `evaluation/V_*/` 下的终态结果，包括历史训练和身份未完整记录的评估。未记录字段保留为空缺，不推断归属。中断作业的已完成回合与计划回合分别列出。
+
+| 评估 / 原始数据 | 训练 run | checkpoint | 结果状态 / 工作台状态 | job ID | 完成 / 计划回合 | 成功 / 有效回合 | 平均任务进度（原值） |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| [evaluation/V_1/memory/a6000_task40_eval10/results.json](evaluations/0195dd7c8deb64e9/results.json) | V_2_memory_task40_train01 | /nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/V_2_memory_task40_train01/memory_v1/checkpoints/step-004000 | complete / 未记录 | 未记录 | 10 / 10 | 0 / 10 | 42.5 |
+| [evaluation/V_1/memory/a6000_task40_eval07/results.json](evaluations/09401d5ed6c328e8/results.json) | V_2_memory_task40_train01 | /nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/V_2_memory_task40_train01/memory_v1/checkpoints/step-003000 | complete / 未记录 | 未记录 | 10 / 10 | 0 / 10 | 38.75 |
+| [evaluation/V_1/memory/a6000_task40_eval08/results.json](evaluations/0b127bf909578176/results.json) | V_2_memory_task40_train01 | /nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/V_2_memory_task40_train01/memory_v1/checkpoints/step-003000 | complete / 未记录 | 未记录 | 10 / 10 | 0 / 10 | 40 |
+| [evaluation/V_1/baseline/groot_task21_1/results.json](evaluations/1011d2a5f9c73a71/results.json) | 未记录 | 未记录 | interrupted / 未记录 | 未记录 | 4 / 10 | 0 / 4 | 17.857143 |
+| [evaluation/V_1/official/task40_eval01/results.json](evaluations/17440125718730e3/results.json) | 未记录 | /nvme3/huggingface/train_model/GR00T/GR00T-N1.6-BEHAVIOR1k | complete / complete | ef1df88156ef | 10 / 10 | 0 / 10 | 37.5 |
+| [evaluation/V_1/memory/a6000_task40_eval05/results.json](evaluations/2514585a5d70e5e3/results.json) | V_2_memory_task40_train01 | /nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/V_2_memory_task40_train01/memory_v1/checkpoints/step-002000 | complete / 未记录 | 未记录 | 10 / 10 | 0 / 10 | 38.75 |
+| [evaluation/V_1/baseline/groot_task0_1/results.json](evaluations/298ec0633169c701/results.json) | 未记录 | 未记录 | complete / 未记录 | 未记录 | 10 / 10 | 0 / 10 | 30 |
+| [evaluation/V_1/official_initial/task0_eval01/results.json](evaluations/2daccb760177db6f/results.json) | 未记录 | /nvme3/projects/memory_vla/checkpoints/groot_n1d6_behavior1k | complete / 未记录 | 未记录 | 1 / 1 | 0 / 1 | 66.666667 |
+| [evaluation/V_1/ablation_eps12/task40_eval01/results.json](evaluations/316635f3b98c1758/results.json) | V_1_ablation_eps12_task40_train01 | /nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/V_1_ablation_eps12_task40_train01/memory_v1/checkpoints/step-004000 | complete / 未记录 | 未记录 | 10 / 10 | 1 / 10 | 35 |
+| [evaluation/V_0/baseline/groot_task0_1/results.json](evaluations/411c6b8aa24d66ea/results.json) | 未记录 | 未记录 | complete / 未记录 | 未记录 | 10 / 10 | 0 / 10 | 36.666667 |
+| [evaluation/V_1/memory/a6000_task40_eval06/results.json](evaluations/4eb68454ba149939/results.json) | V_2_memory_task40_train01 | /nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/V_2_memory_task40_train01/memory_v1/checkpoints/step-002000 | complete / 未记录 | 未记录 | 10 / 10 | 0 / 10 | 42.5 |
+| [evaluation/V_1/ablation_eps12/a6000_task40_eval01/results.json](evaluations/51c0aaf448c20a69/results.json) | V_1_ablation_eps12_task40_train01 | /nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/V_1_ablation_eps12_task40_train01/memory_v1/checkpoints/step-000300 | complete / 未记录 | 未记录 | 10 / 10 | 0 / 10 | 47.5 |
+| [evaluation/V_1/official/a6000_task40_eval01/results.json](evaluations/537fde5b6d9917ec/results.json) | 未记录 | /nvme3/huggingface/train_model/GR00T/GR00T-N1.6-BEHAVIOR1k | complete / 未记录 | 未记录 | 10 / 10 | 0 / 10 | 45 |
+| [evaluation/V_1/memory_ex1/task34_eval01/results.json](evaluations/621b5f083bdac418/results.json) | V_1_memory_task0_34_40_train02 | /nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/V_1_memory_task0_34_40_train02/memory_v1/checkpoints/step-020000 | complete / complete | c854e29ff9ea | 10 / 10 | 0 / 10 | 7.5 |
+| [evaluation/V_1/ablation_eps12/a6000_task40_eval03/results.json](evaluations/63a7eab26b811c19/results.json) | V_1_ablation_eps12_task40_train01 | /nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/V_1_ablation_eps12_task40_train01/memory_v1/checkpoints/step-004000 | complete / 未记录 | 未记录 | 10 / 10 | 0 / 10 | 42.5 |
+| [evaluation/V_1/experment_1/groot_task21_1/results.json](evaluations/65c4d17e9c835d81/results.json) | 未记录 | 未记录 | interrupted / 未记录 | 未记录 | 4 / 10 | 0 / 4 | 17.857143 |
+| [evaluation/V_2_1/baseline/task40_eval01/results.json](evaluations/66f7c59167f59258/results.json) | v2.1__test01__exp14__run001 | /nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v2.1__test01__exp14__run001/run/checkpoints/v2.1__test01__exp14__run001__step006000 | interrupted / failed | a307b9229a19 | 10 / 50 | 0 / 10 | 45 |
+| [evaluation/V_1/memory/task34_eval02/results.json](evaluations/67df7e16ee2314f7/results.json) | V_1_mem_task34 | /nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/V_1_mem_task34/memory_v1/checkpoints/step-003000 | complete / 未记录 | 未记录 | 10 / 10 | 0 / 10 | 25 |
+| [evaluation/V_1/memory/a6000_task40_eval04/results.json](evaluations/681db8d33b7ef5e8/results.json) | V_2_memory_task40_train01 | /nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/V_2_memory_task40_train01/memory_v1/checkpoints/step-002000 | complete / 未记录 | 未记录 | 10 / 10 | 0 / 10 | 47.5 |
+| [evaluation/V_1/memory/task40_eval14/results.json](evaluations/6bcd6e21f4b9fdc5/results.json) | V_2_memory_task40_train01 | /nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/V_2_memory_task40_train01/memory_v1/checkpoints/step-004000 | complete / 未记录 | 未记录 | 10 / 10 | 0 / 10 | 46.25 |
+| [evaluation/V_1/memory/a6000_task40_eval03/results.json](evaluations/6f7640c6eceac805/results.json) | V_2_memory_task40_train01 | /nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/V_2_memory_task40_train01/memory_v1/checkpoints/step-001000 | complete / 未记录 | 未记录 | 10 / 10 | 0 / 10 | 42.5 |
+| [evaluation/V_1/memory/task40_eval15/results.json](evaluations/85718b166932cb57/results.json) | v1__test01__exp13__run001 | /nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step016000 | complete / complete | 6f32f5b13ab3 | 10 / 10 | 0 / 10 | 22.5 |
+| [evaluation/V_1/baseline/task34_eval01/results.json](evaluations/8cdc10c0698fa8be/results.json) | 未记录 | 未记录 | complete / 未记录 | 未记录 | 10 / 10 | 0 / 10 | 20 |
+| [evaluation/V_1/official/task40_eval02/results.json](evaluations/9796e273fe322fe7/results.json) | 未记录 | /nvme3/huggingface/train_model/GR00T/GR00T-N1.6-BEHAVIOR1k | complete / complete | f7880843345d | 10 / 10 | 0 / 10 | 42.5 |
+| [evaluation/V_1/memory_office/task40_eval01/results.json](evaluations/9fea9047a06e778a/results.json) | v1__test01__exp12__run005 | /nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp12__run005/memory_v1/checkpoints/v1__test01__exp12__run005__step006000 | complete / complete | b5e45aa5f040 | 10 / 10 | 0 / 10 | 32.5 |
+| [evaluation/V_1/baseline_ex1/task0_eval01/results.json](evaluations/adacd159015ff796/results.json) | V_1_baseline_task0_34_40_train02 | /nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/V_1_baseline_task0_34_40_train02/baseline/checkpoints/step-002000 | complete / complete | 2760c8694fc4 | 10 / 10 | 0 / 10 | 23.333333 |
+| [evaluation/V_1/memory/task40_eval13/results.json](evaluations/afe93758993e2bfa/results.json) | V_2_memory_task40_train01 | /nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/V_2_memory_task40_train01/memory_v1/checkpoints/step-004000 | complete / complete | 5ac05b9e1822 | 10 / 10 | 0 / 10 | 50 |
+| [evaluation/V_1/official/task40_eval03/results.json](evaluations/b776e8d1d7be765c/results.json) | 未记录 | /nvme3/huggingface/train_model/GR00T/GR00T-N1.6-BEHAVIOR1k | complete / complete | 376356328af7 | 10 / 10 | 0 / 10 | 35 |
+| [evaluation/V_1/memory/a6000_task40_eval01/results.json](evaluations/b89a3a1f1ddba136/results.json) | V_2_memory_task40_train01 | /nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/V_2_memory_task40_train01/memory_v1/checkpoints/step-000300 | complete / 未记录 | 未记录 | 10 / 10 | 0 / 10 | 38.75 |
+| [evaluation/V_0/baseline/groot_task21_1/results.json](evaluations/c4b95b34d4853c46/results.json) | 未记录 | 未记录 | complete / 未记录 | 未记录 | 10 / 10 | 0 / 10 | 34.761905 |
+| [evaluation/V_1/memory_ex1/task0_eval01/results.json](evaluations/c84432c641387f00/results.json) | V_1_memory_task0_34_40_train02 | /nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/V_1_memory_task0_34_40_train02/memory_v1/checkpoints/step-020000 | complete / 未记录 | 未记录 | 10 / 10 | 0 / 10 | 30 |
+| [evaluation/V_1/memory/a6000_task40_eval09/results.json](evaluations/ca164cec7c589794/results.json) | V_2_memory_task40_train01 | /nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/V_2_memory_task40_train01/memory_v1/checkpoints/step-003000 | complete / 未记录 | 未记录 | 10 / 10 | 0 / 10 | 46.25 |
+| [evaluation/V_1/baseline_ex1/task0_eval02/results.json](evaluations/cec3f39b9508a8d8/results.json) | V_1_baseline_task0_34_40_train02 | /nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/V_1_baseline_task0_34_40_train02/baseline/checkpoints/step-020000 | complete / 未记录 | 未记录 | 10 / 10 | 0 / 10 | 23.333333 |
+| [evaluation/V_1/memory/a6000_task40_eval02/results.json](evaluations/d9ac5b9d4db6a196/results.json) | V_2_memory_task40_train01 | /nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/V_2_memory_task40_train01/memory_v1/checkpoints/step-000300 | complete / 未记录 | 未记录 | 10 / 10 | 0 / 10 | 45 |
+| [evaluation/V_1/official/task0_eval01/results.json](evaluations/e20b7cfc9895b3f0/results.json) | official_baseline_task0_34_40_1000 | /nvme3/projects/memory_vla/outputs/official_baseline_task0_34_40_1000/checkpoint-1000 | complete / 未记录 | 未记录 | 1 / 1 | 0 / 1 | 33.333333 |
+| [evaluation/V_1/ablation_eps12/a6000_task40_eval02/results.json](evaluations/e2a6d9615a50dce5/results.json) | V_1_ablation_eps12_task40_train01 | /nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/V_1_ablation_eps12_task40_train01/memory_v1/checkpoints/step-002000 | complete / 未记录 | 未记录 | 10 / 10 | 0 / 10 | 43.75 |
+| [evaluation/V_1/baseline_ex1/task0_eval03/results.json](evaluations/eadd60eed01eead0/results.json) | V_1_baseline_task0_34_40_train02 | /nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/V_1_baseline_task0_34_40_train02/baseline/checkpoints/step-020000 | complete / 未记录 | 未记录 | 10 / 10 | 0 / 10 | 43.333333 |
+| [evaluation/V_0/baseline/groot_task22_1/results.json](evaluations/fa1d752da59738bb/results.json) | 未记录 | 未记录 | complete / 未记录 | 未记录 | 10 / 10 | 0 / 10 | 20.666667 |
+| [evaluation/V_0/baseline/groot_task34_1/results.json](evaluations/fa77092b6350fd5b/results.json) | 未记录 | 未记录 | complete / 未记录 | 未记录 | 10 / 10 | 0 / 10 | 30 |
 
 ## v1__test01__exp13__run001 / memory_v1 / a100
 

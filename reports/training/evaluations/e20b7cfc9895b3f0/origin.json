@@ -1,0 +1,9 @@
+{
+  "checkpoint": "/nvme3/projects/memory_vla/outputs/official_baseline_task0_34_40_1000/checkpoint-1000",
+  "episodes_sha256": "87cc4a51192f21dc888a4fab3056459fc8c7a0044c657c6e7fda5123a1a007a1",
+  "path": "evaluation/V_1/official/task0_eval01/results.json",
+  "results_sha256": "b06efb925481a0f78f232714ae4fdba83e2765785ea6b7e5fc748fec068af0ef",
+  "training_id": "official_baseline_task0_34_40_1000",
+  "workbench_job_id": null,
+  "workbench_state": null
+}
