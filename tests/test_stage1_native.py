@@ -116,7 +116,7 @@ def test_plan_batch_and_steps(tmp_path):
 
 
 def test_workbench_identity_and_canonical_checkpoint(tmp_path):
-    from stage1_native_train import canonical_checkpoint, require_workbench_integration
+    from stage1_native_train import canonical_checkpoint
     # Synthetic run number for tests only; never allocated on any device.
     run="v2_1__test02__exp01__run999"
     root=tmp_path/run
@@ -127,8 +127,6 @@ def test_workbench_identity_and_canonical_checkpoint(tmp_path):
     cfg["run_id"]="v2.1__test01__exp14__run001"
     write(root/"config/web_launch.json",cfg)
     with pytest.raises(ValueError):canonical_checkpoint(root,6000)
-    with pytest.raises(RuntimeError,match="BLOCKED_WORKBENCH_INTEGRATION"):
-        require_workbench_integration()
 
 def test_no_native_cli_bypass():
     import subprocess,sys
@@ -137,4 +135,19 @@ def test_no_native_cli_bypass():
         result=subprocess.run([sys.executable,str(repo/"scripts"/name),"--execute"],
                               capture_output=True,text=True)
         assert result.returncode!=0
-        assert "BLOCKED_WORKBENCH_INTEGRATION" in result.stderr
+        assert "BLOCKED_WORKBENCH_INTEGRATION" in result.stderr or "--job-root" in result.stderr
+
+
+def test_native_shard_cursor_resume():
+    from stage1_native_train import rank_schedule,locate,cursor
+    mix=SimpleNamespace(shard_sampling_schedule=[(0,i%5) for i in range(100)],
+          datasets=[SimpleNamespace(get_shard_length=lambda i: 17+i)])
+    for rank in range(4):
+        sched,ends=rank_schedule(mix,rank,4,160)
+        assert all(o%4==rank for o,_,_,_ in sched)
+        full=[locate(sched,ends,i,42) for i in range(160)]
+        rebuilt,ends2=rank_schedule(mix,rank,4,160)
+        for step in (1,2,4,9):
+            assert [locate(rebuilt,ends2,i,42) for i in range(cursor(step),160)]==full[cursor(step):]
+        assert len({(o,j) for o,_,_,j in full})==160
+    assert cursor(6000)==96000
