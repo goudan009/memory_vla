@@ -211,9 +211,65 @@ def test_current_stage1_retrain_cannot_fall_back_to_sequential_recipe(backend):
     req=dict(backend.request,run_id='v2_1__test02__exp01__run999__preflight001')
     with pytest.raises(ValueError,match='禁止回退旧顺序训练配方'):
         backend.prepare(req)
-    with pytest.raises(ValueError,match='BLOCKED_WORKBENCH_INTEGRATION'):
+    with pytest.raises(ValueError,match='不支持的原生Stage1参数'):
         backend.prepare(dict(req,recipe='native_random_v2'))
     assert not backend.training.exists()
     # Historical task remains available with its own unchanged recipe.
     assert backend.prepare(backend.request)['learning_rate']==1e-5
 
+
+
+def native_request(b):
+    base=Path(b.request['checkpoint']);data=Path(b.request['dataset'])
+    write(base/'processor_config.json',{})
+    for n in ('info','modality'):write(data/'meta'/f'{n}.json',{})
+    split=b.training.parent/'split.json';write(split,dict(task=40,seed=42,train=list(range(20,200)),validation=list(range(20))))
+    official=b.training.parent/'upstream'
+    for n in ('experiment','trainer'):
+        file=official/'gr00t/experiment'/f'{n}.py';file.parent.mkdir(parents=True,exist_ok=True);file.touch()
+    b.r['gpu_info']=lambda:[dict(index=i,name='NVIDIA A100') for i in range(4)]
+    req=dict(b.request)
+    req.pop('labels')
+    return dict(req,recipe='native_random_v2',run_id='v2_1__test02__exp01__run999__preflight001',
+                split=str(split),official_root=str(official))
+
+
+def test_native_preview_and_command_are_workbench_owned(backend):
+    b=backend;req=native_request(b)
+    plan=b.prepare(req)
+    assert not b.training.exists()
+    assert plan['learning_rate']==1e-4 and plan['steps']==6000
+    assert plan['accumulation']==8 and plan['global_decisions']==64
+    assert plan['preflight_steps']==4
+    root=b.training/req['run_id']
+    argv=b.command(plan,b.live,root)
+    assert argv[argv.index('--job-root')+1]==str(root)
+    assert 'stage1_native_train.py' in argv[-3]
+    assert plan['output']==str(root)
+    assert plan['checkpoint_root']==str(root/'run/checkpoints')
+    assert 'v2_1_groot_memoryvla.train' not in argv
+    with pytest.raises(ValueError,match='已锁定参数'):
+        b.prepare(dict(req,learning_rate=1e-5))
+    with pytest.raises(ValueError,match='四个不同'):
+        b.prepare(dict(req,gpus=[0,1]))
+    with pytest.raises(ValueError,match='accept_preflight'):
+        b.prepare(dict(req,run_id=req['run_id'].split('__preflight')[0],preflight_only=False))
+
+
+def test_native_pause_resume_preserves_identity(backend):
+    b=backend;plan=b.prepare(native_request(b))
+    root=b.training/plan['run_id']
+    plan.update(source=str(b.live),source_manifest={'digest':'source'})
+    write(root/'config/web_launch.json',plan);write(root/'baseline/status.json',{'status':'paused','step':2})
+    checkpoint=root/'run/checkpoints'/(root.name+'__step000002')
+    write(checkpoint/'COMPLETE.json',dict(step=2,run_id=root.name,recipe='native_random_v2',
+          per_rank_sample_cursor=32,files={'training_state.pt':'fixture'}))
+    (checkpoint/'training_state.pt').touch()
+    assert b.checkpoints(root)==[dict(step=2,path=str(checkpoint))]
+    preview=b.resume(dict(run=root.name,preview=True))
+    assert preview['resume_step']==2 and preview['steps']==6000
+    argv=b.command(plan,b.live,root,checkpoint)
+    assert argv[argv.index('--resume')+1]==str(checkpoint)
+    wrong=checkpoint.with_name('checkpoint-2')
+    checkpoint.rename(wrong)
+    assert not b.checkpoints(root)
