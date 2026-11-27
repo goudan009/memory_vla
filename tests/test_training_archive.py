@@ -132,6 +132,46 @@ class ArchiveTests(unittest.TestCase):
             self.assertEqual(state['status'], 'degraded')
             self.assertIn('SSH unavailable', state['errors']['a6000'])
 
+    def test_interrupted_evaluation_without_training_archive_is_reported(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            result = root/'evaluation/V_2_1/baseline/task40_eval01/results.json'
+            value = dict(status='interrupted', completed_episodes=10, requested_episodes=50,
+                         successful_episodes=0, official_episodes=10, mean_task_progress=45,
+                         policy_identity=dict(training_id='historical-stage1', checkpoint='/exact/step6000'))
+            archive.write(result, archive.encoded(value))
+            archive.write(result.parent/'episodes.jsonl', b'{"success":false}\n')
+            archive.evaluations(root)
+            copies = list((root/archive.REPORT/'evaluations').glob('*/results.json'))
+            self.assertEqual(len(copies),1)
+            self.assertEqual(copies[0].read_bytes(),result.read_bytes())
+            archive.render(root)
+            report = (root/archive.REPORT/'README.md').read_text()
+            self.assertIn('historical-stage1',report)
+            self.assertIn('interrupted',report)
+            self.assertIn('10 / 50',report)
+            first = {str(p):p.read_bytes() for p in (root/archive.REPORT).rglob('*') if p.is_file()}
+            archive.evaluations(root)
+            archive.render(root)
+            self.assertEqual(first,{str(p):p.read_bytes() for p in (root/archive.REPORT).rglob('*') if p.is_file()})
+            archive.verify(root)
+            copies[0].write_bytes(b'changed')
+            with self.assertRaisesRegex(ValueError,'Evaluation checksum'):
+                archive.verify(root)
+
+    def test_running_evaluation_waits_and_missing_training_identity_is_explicit(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            result = root/'evaluation/V_1/official/task40_eval01/results.json'
+            archive.write(result,archive.encoded(dict(status='interrupted')))
+            archive.evaluations(root,[dict(output=str(result.parent),state='running')])
+            self.assertFalse(list((root/archive.REPORT).rglob('results.json')))
+            archive.evaluations(root,[dict(output=str(result.parent),state='failed',id='eval-job')])
+            archive.render(root)
+            report = (root/archive.REPORT/'README.md').read_text()
+            self.assertIn('eval-job',report)
+            self.assertIn('未记录',report)
+
     def test_git_publishing_preserves_unrelated_staged_and_unstaged_edits(self):
         with tempfile.TemporaryDirectory() as temp, tempfile.TemporaryDirectory() as origin:
             root = Path(temp)

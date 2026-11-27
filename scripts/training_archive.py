@@ -24,6 +24,7 @@ ROOT = Path(__file__).resolve().parents[1]
 REPORT = Path('reports/training')
 STATE = Path('outputs/shared/training_archive/state.json')
 TERMINAL = {'complete', 'completed', 'stopped', 'failed', 'cancelled'}
+EVALUATION_TERMINAL = TERMINAL | {'finished', 'interrupted', 'aborted', 'canceled'}
 
 
 def sha(data):
@@ -198,31 +199,39 @@ def archive(root, device_id, device, job, detail):
 
 
 def evaluations(root, jobs=()):
-    """Import only native closed-loop results explicitly bound to a known run."""
+    """Archive terminal evaluations independently of training archive coverage."""
     known = defaultdict(list)
     for path in (root/REPORT/'runs').glob('*/*/*/latest.json'):
         known[load(path)['run']].append(path.parent)
     for path in sorted((root/'evaluation').glob('V_*/**/results.json')):
         if '.runtime' in path.parts:
             continue
-        value = load(path, {})
+        result_data = path.read_bytes()
+        value = json.loads(result_data)
         job = next((j for j in jobs if j.get('output') == str(path.parent)), {})
-        if value.get('status') not in TERMINAL | {'finished'} and job.get('state') not in TERMINAL | {'finished'}:
+        # A resumed evaluation may still have its previous interrupted summary.
+        # Defer a new snapshot when the live workbench says it is active.
+        if job.get('state') and job['state'] not in EVALUATION_TERMINAL:
+            continue
+        if value.get('status') not in EVALUATION_TERMINAL and job.get('state') not in EVALUATION_TERMINAL:
             continue
         identity = value.get('policy_identity') or value.get('configuration', {}).get('policy_identity') or {}
         checkpoint = identity.get('checkpoint')
-        if not checkpoint:
-            continue
-        for directory in known.get(identity.get('training_id'), []):
-            key = sha(str(path.relative_to(root)).encode())[:16]
-            dest = directory/'evaluations'/key
-            write(dest/'results.json', path.read_bytes())
-            episode = path.parent/'episodes.jsonl'
-            if episode.is_file():
-                write(dest/'episodes.jsonl', episode.read_bytes())
-            write(dest/'origin.json', encoded(dict(path=str(path.relative_to(root)), checkpoint=checkpoint,
-                workbench_state=job.get('state'), workbench_job_id=job.get('id'),
-                results_sha256=sha(path.read_bytes()), episodes_sha256=sha(episode.read_bytes()) if episode.is_file() else None)))
+        key = sha(str(path.relative_to(root)).encode())[:16]
+        episode = path.parent/'episodes.jsonl'
+        episode_data = episode.read_bytes() if episode.is_file() else None
+        origin = dict(path=str(path.relative_to(root)), checkpoint=checkpoint,
+            training_id=identity.get('training_id'),
+            workbench_state=job.get('state'), workbench_job_id=job.get('id'),
+            results_sha256=sha(result_data), episodes_sha256=sha(episode_data) if episode_data is not None else None)
+        # Keep existing per-run links, and always publish an independent entry.
+        destinations = [root/REPORT/'evaluations'/key] + [
+            directory/'evaluations'/key for directory in known.get(identity.get('training_id'), [])]
+        for dest in destinations:
+            write(dest/'results.json', result_data)
+            if episode_data is not None:
+                write(dest/'episodes.jsonl', episode_data)
+            write(dest/'origin.json', encoded(origin))
 
 
 def fmt(value):
@@ -236,10 +245,10 @@ def fmt(value):
 
 
 def render(root):
-    lines = ['# 训练自动汇总', '',
+    lines = ['# 训练与评估自动汇总', '',
         '由 `scripts/training_archive.py` 按固定规则生成，无 LLM 参与。原始数据及 SHA-256 清单见各事件链接。', '',
         '首次安装只补录指定历史 run；随后自动记录工作台新训练及已有训练的完成、暂停、失败、取消事件。',
-        '这里是最近一次归档终态；训练恢复后，等下一个终态再更新。闭环结果在结束后补入。', '',
+        '训练显示最近一次归档终态；训练恢复后，等下一个终态再更新。评估独立收录完成、中断、失败和取消的结果，不要求训练已归档。运行中的评估不计作终态。', '',
         'Loss 为训练记录中的 loss；V2.1 为 fm + 配方 state_weight × state。首尾均值各取最多100条记录，'
         '保留重复 step 并报告数量；缺失/非有限值不当作零。epoch 均值不代表完整 epoch。', '',
         '| 设备 / run / arm | 归档状态 | optimizer step / 当前停止目标 | 首100 Loss | 末100 Loss | 原始记录数 |',
@@ -249,6 +258,16 @@ def render(root):
         j,s = record['job'],record['statistics']
         rel = path.parent.relative_to(root/REPORT).as_posix()
         lines.append(f"| [{fmt(record['device']+'/'+record['run']+'/'+record['arm'])}]({rel}/events/{record['event']}/workbench.json) | {fmt(j.get('status'))} | {fmt(j.get('step'))} / {fmt(j.get('max_steps'))} | {fmt(s['loss_first100'])} | {fmt(s['loss_last100'])} | {s['records']} |")
+    lines += ['', '## 闭环评估总表', '',
+        '覆盖本机 `evaluation/V_*/` 下的终态结果，包括历史训练和身份未完整记录的评估。未记录字段保留为空缺，不推断归属。中断作业的已完成回合与计划回合分别列出。', '',
+        '| 评估 / 原始数据 | 训练 run | checkpoint | 结果状态 / 工作台状态 | job ID | 完成 / 计划回合 | 成功 / 有效回合 | 平均任务进度（原值） |',
+        '| --- | --- | --- | --- | --- | --- | --- | --- |']
+    for result in sorted((root/REPORT/'evaluations').glob('*/results.json')):
+        value = load(result)
+        origin = load(result.parent/'origin.json', {})
+        identity = value.get('policy_identity') or value.get('configuration', {}).get('policy_identity') or {}
+        link = result.relative_to(root/REPORT).as_posix()
+        lines.append(f"| [{fmt(origin.get('path'))}]({link}) | {fmt(identity.get('training_id'))} | {fmt(identity.get('checkpoint'))} | {fmt(value.get('status'))} / {fmt(origin.get('workbench_state'))} | {fmt(origin.get('workbench_job_id'))} | {fmt(value.get('completed_episodes'))} / {fmt(value.get('requested_episodes'))} | {fmt(value.get('successful_episodes'))} / {fmt(value.get('official_episodes'))} | {fmt(value.get('mean_task_progress'))} |")
     for path, record in records:
         j,s = record['job'],record['statistics']
         rel = path.parent.relative_to(root/REPORT).as_posix()
@@ -330,13 +349,15 @@ def verify(root):
             source = path.parent/'source'/name
             if source.is_file() and sha(source.read_bytes()) != expected:
                 raise ValueError('Recorded source digest mismatch: '+str(source))
-    for path in (root/REPORT).glob('runs/*/*/*/evaluations/*/origin.json'):
+    eval_origins = list((root/REPORT).glob('runs/*/*/*/evaluations/*/origin.json'))
+    eval_origins += list((root/REPORT/'evaluations').glob('*/origin.json'))
+    for path in eval_origins:
         expected = load(path)
         for name in ('results', 'episodes'):
             digest = expected.get(name+'_sha256')
             if digest and sha((path.parent/(name+('.json' if name == 'results' else '.jsonl'))).read_bytes()) != digest:
                 raise ValueError('Evaluation checksum mismatch: '+str(path))
-    print(json.dumps(dict(verified_payload_files=count)))
+    print(json.dumps(dict(verified_payload_files=count, verified_evaluations=len(eval_origins))))
 
 
 def scan(args):

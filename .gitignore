@@ -108,3 +108,19 @@ references/upstream/
 /configs/workbench_devices.json
 /configs/workbench_sources.json
 /evaluation/auto_eval_task34_40_state.json
+
+# Published automatic summaries and text evidence (including interrupted jobs).
+!/reports/
+!/reports/training/
+/reports/training/**
+!/reports/training/**/
+!/reports/training/**/*.md
+!/reports/training/**/*.json
+!/reports/training/**/*.jsonl
+!/reports/training/**/*.csv
+!/reports/training/**/*.log
+!/reports/training/**/*.py
+!/reports/training/**/*.sh
+!/reports/training/**/*.toml
+!/reports/training/**/*.yaml
+!/reports/training/**/*.yml

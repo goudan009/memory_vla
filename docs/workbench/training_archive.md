@@ -28,7 +28,7 @@
 
 安装时补录 Exp13 的 16,000 步记录，其他首次发现的历史终态只建立基线。之后 A100 / RTX 6000 Ada 工作台新作业、已有作业的新终态均自动归档；训练恢复后沿用 run，保留每个归档事件。初次离线的设备恢复连接时会补录其可见终态。无需逐个登记未来 run。
 
-触发范围为 `complete / completed / stopped / failed / cancelled`。GPU 作业仍由工作台控制；归档服务只读 GET 和 SSH，不调用训练、评估的 preview/start/stop，也不参与排队。定时器每五分钟扫描，工作台和训练设备需可达；删除作业或回收输出前应先确认已归档。
+训练触发范围为 `complete / completed / stopped / failed / cancelled`；评估另含 `finished / interrupted / aborted / canceled`。评估从本机结果目录独立扫描，包括安装前的历史训练，无需先补录训练。缺失的 run/checkpoint 字段明确显示未记录；不推测归属。GPU 作业仍由工作台控制；归档服务只读 GET 和 SSH，不调用训练、评估的 preview/start/stop，也不参与排队。定时器每五分钟扫描，工作台和训练设备需可达；删除作业或回收输出前应先确认已归档。
 
 ## 自动记录内容
 
@@ -36,7 +36,7 @@
 - 工作台终态、实际配方及字段来源、初始化权重、严格恢复记录、数据划分、保存间隔、checkpoint JSON 元数据。
 - 运行源码路径与 digest、冻结源码 manifest，以及 V1 / V2.1 的项目实现和训练入口。第三方依赖不做完整环境镜像。
 - 训练日志末尾256 KiB，明确记录来源文件大小及截取偏移；完整原始日志仍在训练设备。
-- 本机评估目录中已结束且明确绑定本 run / checkpoint 的闭环结果和逐回合记录。工作台判定失败但结果文件还标 running 时同时保留两个状态；运行中的评估暂不计入完成结果。
+- 本机 `evaluation/V_*/` 目录中已结束或中断的闭环结果和逐回合记录，统一保存到 `reports/training/evaluations/`。已归档训练下继续保留对应链接。工作台判定失败但结果文件还标 running 时同时保留两个状态；运行中的评估暂不计入完成结果，避免续跑时旧 interrupted 文件触发提前归档。
 
 每个事件的 `MANIFEST.json` 记录原始来源、大小和 SHA-256。汇总只做均值、覆盖率、缺步及重复计数，不自动生成“为什么没学好”的结论。未记录的梯度不当作0；Loss变化不作为闭环成功的证据。工作台当前停止目标与原始训练预算分别显示。
 
@@ -53,6 +53,8 @@ systemctl --user enable --now memory-vla-training-archive.timer
 ```
 
 服务执行 `python3 scripts/training_archive.py --once --publish`，更新文档及证据后，仅提交 `reports/training/`，再普通推送至 `origin/main`。其他已暂存或未暂存的修改会保留。它不会自动 pull/rebase、强制推送或解决冲突。`main` 是仓库现有主线，普通 push 也会发布主线上已有的本地提交；不要在此仓库保留尚不准备发布的本地提交。
+
+`.gitignore` 明确放行该自动报告目录中的 Markdown、JSON、JSONL、CSV、日志和源码文本；原始 `evaluation/V_*/` 运行目录继续忽略媒体等大文件。GitHub阅读入口使用归档副本，而不是被忽略的运行目录。
 
 网络失败或远端分支领先时，产物和本地提交保留，下轮重试 push，不重复提交相同文档。单设备离线不会阻断另一设备采集。状态及错误写在 `outputs/shared/training_archive/state.json`（不进入 Git），可用 journal 查看详细输出：
 
@@ -76,3 +78,4 @@ python3 scripts/training_archive.py --verify-only
 - 单元测试覆盖原始指标统计、V2.1目标组合、稀疏梯度、重复step、不完整尾行、采集范围、恢复事件、失败重试、终态去重及评估绑定。
 - 隔离 Git 仓库验证自动提交/推送和重复扫描；原有暂存内容及未暂存内容均保持。
 - Exp13真实16,000步完成首次自动采集；离线验证原始指标可逐字节重组、全部导出文件哈希及所采集源码与冻结manifest一致。
+- v2修复：11项测试通过，包括历史训练未归档、原生interrupted、工作台failed、续跑中的旧中断文件及无身份记录。真实扫描补收本机39项终态评估；Stage1 `task40_eval01` 保留已完成10/计划50、成功0/有效10、平均任务进度原值45及job `a307b9229a19`，结果和逐回合文件与原始字节一致。
