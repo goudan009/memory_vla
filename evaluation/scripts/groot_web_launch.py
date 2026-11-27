@@ -256,6 +256,8 @@ class LaunchManager:
             return self._task40_collect(request)
         if request.get('task40_forward') is True:
             return self._task40_forward(request)
+        if canonical_version(request.get('version')) == 'V_1_2':
+            raise ValueError('V_1_2 requires an explicit N1.7 benchmark protocol; legacy B1K2025 route not verified')
         argv = self.argv(request)
         identity=None
         if self.policy_resolver:
@@ -267,6 +269,8 @@ class LaunchManager:
                 host,port=request.get('policy_host',saved_host),request.get('policy_port',int(saved_port))
             identity=self.policy_resolver(host,int(port))
             if identity:
+                if canonical_version(identity.get('version'))=='V_1_2' or identity.get('protocol')=='b1k2026_websocket':
+                    raise ValueError('N1.7 websocket service cannot be evaluated by the legacy B1K2025 runner')
                 group=request.get('group')
                 if not request.get('resume_from') and group in ('baseline','memory','official') and identity.get('method') and group!=identity['method']:
                     raise ValueError('结果方法 '+group+' 与推理服务实际方法 '+identity['method']+' 不一致，请选择对应分组')

@@ -1,0 +1,28 @@
+name: V1.2 native baseline contract
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/v1_2_groot_baseline/**'
+      - 'train/run_identity.py'
+      - 'tests/test_v12_baseline_contract.py'
+      - '.github/workflows/v12-baseline-contract.yml'
+permissions:
+  contents: read
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            src/v1_2_groot_baseline
+            train/run_identity.py
+            tests/test_v12_baseline_contract.py
+          sparse-checkout-cone-mode: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+      - run: pip install pytest
+      - run: python -m compileall -q src/v1_2_groot_baseline
+      - run: python -m pytest -q tests/test_v12_baseline_contract.py
