@@ -3,7 +3,7 @@
   "task_id": 40,
   "task_name": "make_microwave_popcorn",
   "model_name": "groot",
-  "status": "interrupted",
+  "status": "cancelled",
   "ok": false,
   "version": "V_2_1",
   "group": "baseline",
@@ -434,5 +434,8 @@
     "videos/gpu1/episode_009_instance9_seed5_gpu1_env1_s0.mp4",
     "videos/gpu1/episode_010_instance4_seed4_gpu1_env0_s0.mp4"
   ],
-  "saved_video_count": 12
+  "saved_video_count": 12,
+  "resume_allowed": false,
+  "ended_by_user": true,
+  "ended_at": "2026-11-27T17:06:44+0800"
 }
