@@ -55,6 +55,40 @@ def test_uncertain_mutation_not_repeated(watch):
     watch.api.assert_not_called()
 
 
+def test_memory_preflight_gate_and_correct_arm(watch):
+    watch.RUN = 'v2_1__test02__exp01__run002'
+    watch.PREFLIGHT = watch.RUN+'__preflight001'
+    watch.ARM = 'memory_v1'
+    watch.STAGE = 'memory'
+    watch.detail = lambda run: watch.api('GET', 'detail?run='+run+'&arm='+watch.ARM)
+    watch.archive = lambda pre: '/permanent/memory-preflight.json'
+    calls = []
+
+    def api(method, route, body=None):
+        calls.append((route, body))
+        if route.startswith('jobs'):return {'jobs': [{'run': watch.PREFLIGHT, 'output': '/temporary/memory'}]}
+        if route.startswith('detail'):
+            assert 'arm=memory_v1' in route
+            return {'state': {'status': 'completed'}, 'preflight': {'passed': True, 'source_digest': 'certified'}}
+        if route == 'delete':assert body['arm'] == 'memory_v1'
+        if route == 'start':assert body['run_id'] == watch.RUN
+        return {'ok': True}
+    watch.api = api
+    state = {'status': 'running'}
+    watch.tick(state)
+    assert state['phase'] == 'memory_initializing'
+    assert [route for route, body in calls][-3:] == ['delete', 'preview', 'start']
+
+
+def test_failed_memory_calibration_never_starts_formal(watch):
+    watch.STAGE = 'memory'
+    watch.api = Mock(return_value={'jobs': []})
+    watch.detail = Mock(return_value={'state': {'status': 'failed'}, 'preflight': None})
+    with pytest.raises(RuntimeError, match='memory preflight failed'):
+        watch.tick({'status': 'running'})
+    assert watch.api.call_count == 1
+
+
 @pytest.mark.parametrize('user_stop', [True, False])
 def test_user_pause_and_resume_release_gate(watch, user_stop):
     watch.api = Mock(return_value={'jobs': [{'run': watch.RUN}]})

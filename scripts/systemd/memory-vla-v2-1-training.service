@@ -5,4 +5,5 @@ Description=V2_1 Test02 Exp01 training-only workbench supervision
 Type=oneshot
 WorkingDirectory=/nvme3/projects/memory_vla
 ExecStart=/usr/bin/python3 /nvme3/projects/memory_vla/scripts/v2_1_training_watch.py
+ExecStart=/usr/bin/python3 /nvme3/projects/memory_vla/scripts/v2_1_training_watch.py --memory
 TimeoutStartSec=180

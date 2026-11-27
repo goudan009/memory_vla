@@ -18,6 +18,9 @@ EXPERIMENT = ROOT/'Output/test_02/experiment_01'
 DIRECTORY = EXPERIMENT/'evidence/training_watch'
 RUN = 'v2_1__test02__exp01__run001'
 PREFLIGHT = RUN+'__preflight001'
+ARM = 'baseline'
+STAGE = 'continued'
+REQUEST_FILE = 'continued-preflight-request.json'
 REMOTE_EVIDENCE = '/nvme3/data_wyh/outputs/memory_vla/v2_1/test02/exp01/evidence'
 ACTIVE = {'queued','waiting_for_gpus','submitted','initializing','training','validating','running'}
 OPENER = build_opener(ProxyHandler({}))
@@ -54,7 +57,7 @@ def source_digest():
 
 
 def detail(run):
-    return api('GET','detail?'+urlencode(dict(device='a100',run=run,arm='baseline')))
+    return api('GET','detail?'+urlencode(dict(device='a100',run=run,arm=ARM)))
 
 
 def mutation(state, name, route, payload, preview=False):
@@ -116,11 +119,11 @@ def tick(state):
     if RUN not in jobs:
         if not state.get('gate'):
             pre=detail(PREFLIGHT)
-            state.update(phase='continued_preflight',observed=pre['state'])
+            state.update(phase=STAGE+'_preflight',observed=pre['state'])
             if pre['state']['status'] in ACTIVE:return
             write(DIRECTORY/'preflight-detail.json',pre)
             if pre['state']['status']!='completed' or not (pre.get('preflight') or {}).get('passed'):
-                raise RuntimeError('Real continued preflight failed; evidence retained')
+                raise RuntimeError('Real '+STAGE+' preflight failed; evidence retained')
             if pre['preflight']['source_digest']!=source_digest():
                 raise RuntimeError('Source changed after preflight; formal start held')
             state['gate']=archive(pre)
@@ -129,16 +132,16 @@ def tick(state):
             raise RuntimeError('Current source differs from certified preflight')
         if PREFLIGHT in jobs:
             pre=detail(PREFLIGHT)
-            mutation(state,'purge-preflight','delete',dict(device='a100',run=PREFLIGHT,arm='baseline',
+            mutation(state,'purge-preflight','delete',dict(device='a100',run=PREFLIGHT,arm=ARM,
                 delete_files=True,expected_output=jobs[PREFLIGHT]['output'],purge_preflight=True,evidence_path=state['gate']))
-        request=json.loads((EXPERIMENT/'continued-preflight-request.json').read_text())
+        request=json.loads((EXPERIMENT/REQUEST_FILE).read_text())
         request.update(run_id=RUN,preflight_only=False,accept_preflight=state['gate'],
-                       notes='User authorized V2_1 Test02/Exp01 continued baseline formal3000; exact real-preflight source; no evaluation dispatch')
+                       notes='User authorized V2_1 Test02/Exp01 '+STAGE+' formal3000; exact real-preflight source; no evaluation dispatch')
         mutation(state,'start-formal','start',request,preview=True)
-        state.update(phase='continued_initializing',status='running')
+        state.update(phase=STAGE+'_initializing',status='running')
         return
     current=detail(RUN)
-    state.update(observed=current['state'],phase='continued_training')
+    state.update(observed=current['state'],phase=STAGE+'_training')
     write(DIRECTORY/'latest-detail.json',current)
     resources=remote_inventory(current['config']);write(DIRECTORY/'resources.json',resources)
     status=current['state']['status'];step=current['state'].get('step',0)
@@ -147,7 +150,7 @@ def tick(state):
     rows=current.get('metrics',[])
     finite=all(math.isfinite(r[k]) for r in rows for k in ('fm','state','grad_norm') if isinstance(r.get(k),(float,int)))
     if not finite:
-        if status in ACTIVE:mutation(state,'nonfinite-stop','stop',dict(device='a100',run=RUN,arm='baseline'))
+        if status in ACTIVE:mutation(state,'nonfinite-stop','stop',dict(device='a100',run=RUN,arm=ARM))
         raise RuntimeError('Nonfinite metrics; stop requested through workbench')
     proof=state.setdefault('resume_proof',{})
     if status=='completed':
@@ -162,13 +165,13 @@ def tick(state):
         if status=='training' and step>=1:
             target=step+5
             proof.update(target=target,requested_at=now().isoformat())
-            mutation(state,'pause-proof','stop',dict(device='a100',run=RUN,arm='baseline',step=target))
+            mutation(state,'pause-proof','stop',dict(device='a100',run=RUN,arm=ARM,step=target))
     elif not proof.get('resumed'):
         if resources['stop'] and resources['stop'].get('stop_after_step')!=proof['target']:
             state['status']='user_paused';return
         if status in ('stopped','paused'):
             if resources['live_pids']:return
-            payload=dict(device='a100',run=RUN,arm='baseline',preview=True)
+            payload=dict(device='a100',run=RUN,arm=ARM,preview=True)
             preview=api('POST','resume',payload);write(DIRECTORY/'resume-preview.json',preview)
             if not preview.get('resume_step')==proof['target']:
                 raise RuntimeError('Unexpected pause checkpoint')
@@ -195,8 +198,20 @@ def main():
         write(file,state)
         with (DIRECTORY/'log.jsonl').open('a') as stream:stream.write(json.dumps(state,ensure_ascii=False)+'\n')
         print(json.dumps(state,ensure_ascii=False))
-        if state['next_check_at'] is None:
+        other=EXPERIMENT/'evidence'/('training_watch' if STAGE=='memory' else 'memory_training_watch')/'state.json'
+        other_state=json.loads(other.read_text()) if other.exists() else {}
+        if state['next_check_at'] is None and other_state.get('status') in ('blocked','completed','user_paused'):
             subprocess.run(['systemctl','--user','stop','memory-vla-v2-1-training.timer'],check=True,timeout=15)
 
 
-if __name__=='__main__':main()
+if __name__=='__main__':
+    if sys.argv[1:]==['--memory']:
+        RUN='v2_1__test02__exp01__run002'
+        PREFLIGHT=RUN+'__preflight001'
+        ARM='memory_v1'
+        STAGE='memory'
+        REQUEST_FILE='memory-preflight-request.json'
+        DIRECTORY=EXPERIMENT/'evidence/memory_training_watch'
+    elif sys.argv[1:]:
+        raise SystemExit('Only --memory or no arguments are supported')
+    main()
