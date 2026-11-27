@@ -1,0 +1,17 @@
+{
+  "created_at": "2026-11-27",
+  "author": "Codex /root",
+  "goal": "Resume authorized V2_1 training through the existing workbench, preserving the fixed research recipe",
+  "reason": "User requests training after the naming migration. New operational records use test02/exp01; historical test01/exp14 artifacts remain unchanged and Stage1 step6000 is reused explicitly.",
+  "research_contract": {"model_version":"V2_1","base":"generic GR00T-N1.6-3B via completed Stage1","train":180,"validation":20,"seed":42,"stage1_steps_completed":6000,"continued_steps":3000,"memory_steps":3000,"lr":0.00001,"windows_per_step":2,"window_decisions_max":32,"stride":8,"microbatch":2,"ranks":4,"prior":"topology","states":"unchanged eight core labels, weak_weight 0.5, initial state_weight 0.01 with original calibration gate"},
+  "mainline":["audit","continued_preflight","continued_train","archive"],
+  "nodes":[
+    {"id":"audit","title":"核对现有权重与资源","after":[],"parallel_branches":["continued_preflight","memory_debug"],"acceptance":"Workbench verifies completed Stage1 step6000, lineage, paths, four physical A100 GPUs, no duplicate active run"},
+    {"id":"continued_preflight","title":"无记忆对照真实预检","after":["audit"],"acceptance":"Current immutable source passes real four-rank optimization, full reload and next-update equality; archive evidence outside temporary output before workbench purge"},
+    {"id":"continued_train","title":"无记忆对照正式训练","after":["continued_preflight"],"acceptance":"Preview then start fixed3000 with identical preflight source digest; workbench pause-release-resume and next update; durable training-only monitoring"},
+    {"id":"memory_debug","title":"记忆校准故障定位","after":["audit"],"acceptance":"Capture original failure and real per-pass gradients. Only proven engineering fixes; no changed research parameters, no bypass of calibration"},
+    {"id":"memory_preflight","title":"拓扑记忆真实预检","after":["memory_debug","continued_train"],"acceptance":"Original calibration and real four-rank reload/gradient gates pass; otherwise record precise blocker without launching an invalid formal run"},
+    {"id":"memory_train","title":"拓扑记忆正式训练","after":["memory_preflight"],"acceptance":"Fixed3000 steps from same Stage1 with unchanged labels and topology; complete checkpoints and workbench strict resume"},
+    {"id":"archive","title":"训练记录与清理","after":["continued_train"],"acceptance":"Actual jobs, source/config hashes, checkpoints, watchdog schedule and failure evidence recorded; temporary preflight weights removed via workbench. Evaluation remains outside this restart."}
+  ]
+}
