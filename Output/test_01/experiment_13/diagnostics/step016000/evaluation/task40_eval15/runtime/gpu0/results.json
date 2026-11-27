@@ -1,0 +1,49 @@
+{
+  "evaluation_mode": "official-eval",
+  "official_episodes": 4,
+  "task_id": 40,
+  "task_name": "make_microwave_popcorn",
+  "requested_episodes": 10,
+  "recorded_episodes": 4,
+  "completed_episodes": 4,
+  "invalid_episodes": 0,
+  "successful_episodes": 0,
+  "successes": [
+    false,
+    false,
+    false,
+    false
+  ],
+  "success_rate": 0.0,
+  "task_progress": [
+    37.5,
+    12.5,
+    37.5,
+    12.5
+  ],
+  "mean_task_progress": 25.0,
+  "mean_q_score": 0.0,
+  "q_score_episodes": 4,
+  "missing_q_score_episodes": 0,
+  "b1k_metrics": {
+    "mean_q_score": 0.0,
+    "mean_q_score_percent": 0.0,
+    "full_success_rate": 0.0,
+    "successful_episodes": 0,
+    "q_score_episodes": 4,
+    "success_episodes": 4,
+    "missing_q_score_episodes": 0,
+    "missing_success_episodes": 0,
+    "valid_episodes": 4,
+    "requested_episodes": 10,
+    "metric_coverage_complete": true,
+    "scope": "valid_completed_episodes",
+    "evaluation_mode": "official-eval"
+  },
+  "status": "running",
+  "runner_exit_code": null,
+  "saved_video_count": 0,
+  "log": "run.log",
+  "manifest": "manifest.csv",
+  "episodes": "episodes.jsonl"
+}

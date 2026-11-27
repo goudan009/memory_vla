@@ -1,0 +1,14 @@
+[
+  {
+    "folder": "V_1/memory/task40_eval15",
+    "evaluation_id": "task40_eval15",
+    "status": "running",
+    "workbench_state": "running",
+    "requested": 10,
+    "completed": 4,
+    "valid": 4,
+    "successful": 0,
+    "checkpoint": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step016000",
+    "source_digest": "68b6d82b8ed2608046b86ab39c58442d22f122f5e46fc4e62c2dafc05324fc85"
+  }
+]

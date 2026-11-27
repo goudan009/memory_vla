@@ -1,0 +1,11 @@
+{
+  "resume_step": 46,
+  "fsdp_accumulation": "retain",
+  "sharding": "SHARD_GRAD_OP",
+  "gradient_checkpointing": false,
+  "gradient_accumulation_steps": 8,
+  "dataloader_workers": 4,
+  "optimizer_layout_verified": true,
+  "microbatch": 8,
+  "global_decisions_per_step": 256
+}

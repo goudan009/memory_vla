@@ -1,0 +1,210 @@
+[
+  {
+    "epoch_zero_based": 0,
+    "first_step": 1,
+    "last_step": 625,
+    "steps": 625,
+    "mean_loss": 0.015410646515847256,
+    "complete": true
+  },
+  {
+    "epoch_zero_based": 1,
+    "first_step": 626,
+    "last_step": 1250,
+    "steps": 625,
+    "mean_loss": 0.013825723599314346,
+    "complete": true
+  },
+  {
+    "epoch_zero_based": 2,
+    "first_step": 1251,
+    "last_step": 1875,
+    "steps": 625,
+    "mean_loss": 0.013435058860579184,
+    "complete": true
+  },
+  {
+    "epoch_zero_based": 3,
+    "first_step": 1876,
+    "last_step": 2500,
+    "steps": 625,
+    "mean_loss": 0.012984534145461898,
+    "complete": true
+  },
+  {
+    "epoch_zero_based": 4,
+    "first_step": 2501,
+    "last_step": 3125,
+    "steps": 625,
+    "mean_loss": 0.012610433568335978,
+    "complete": true
+  },
+  {
+    "epoch_zero_based": 5,
+    "first_step": 3126,
+    "last_step": 3750,
+    "steps": 625,
+    "mean_loss": 0.012453777737378888,
+    "complete": true
+  },
+  {
+    "epoch_zero_based": 6,
+    "first_step": 3751,
+    "last_step": 4375,
+    "steps": 625,
+    "mean_loss": 0.012078032400746183,
+    "complete": true
+  },
+  {
+    "epoch_zero_based": 7,
+    "first_step": 4376,
+    "last_step": 5000,
+    "steps": 625,
+    "mean_loss": 0.011897154534142631,
+    "complete": true
+  },
+  {
+    "epoch_zero_based": 8,
+    "first_step": 5001,
+    "last_step": 5625,
+    "steps": 625,
+    "mean_loss": 0.011890788078762477,
+    "complete": true
+  },
+  {
+    "epoch_zero_based": 9,
+    "first_step": 5626,
+    "last_step": 6250,
+    "steps": 625,
+    "mean_loss": 0.011642271248649335,
+    "complete": true
+  },
+  {
+    "epoch_zero_based": 10,
+    "first_step": 6251,
+    "last_step": 6875,
+    "steps": 625,
+    "mean_loss": 0.011463125678922131,
+    "complete": true
+  },
+  {
+    "epoch_zero_based": 11,
+    "first_step": 6876,
+    "last_step": 7500,
+    "steps": 625,
+    "mean_loss": 0.011407739050828817,
+    "complete": true
+  },
+  {
+    "epoch_zero_based": 12,
+    "first_step": 7501,
+    "last_step": 8125,
+    "steps": 625,
+    "mean_loss": 0.011343611339370384,
+    "complete": true
+  },
+  {
+    "epoch_zero_based": 13,
+    "first_step": 8126,
+    "last_step": 8750,
+    "steps": 625,
+    "mean_loss": 0.011404520027984156,
+    "complete": true
+  },
+  {
+    "epoch_zero_based": 14,
+    "first_step": 8751,
+    "last_step": 9375,
+    "steps": 625,
+    "mean_loss": 0.01121011897396822,
+    "complete": true
+  },
+  {
+    "epoch_zero_based": 15,
+    "first_step": 9376,
+    "last_step": 10000,
+    "steps": 625,
+    "mean_loss": 0.01122721454363818,
+    "complete": true
+  },
+  {
+    "epoch_zero_based": 16,
+    "first_step": 10001,
+    "last_step": 10625,
+    "steps": 625,
+    "mean_loss": 0.011015365044866486,
+    "complete": true
+  },
+  {
+    "epoch_zero_based": 17,
+    "first_step": 10626,
+    "last_step": 11250,
+    "steps": 625,
+    "mean_loss": 0.01090367173017447,
+    "complete": true
+  },
+  {
+    "epoch_zero_based": 18,
+    "first_step": 11251,
+    "last_step": 11875,
+    "steps": 625,
+    "mean_loss": 0.010841211801510093,
+    "complete": true
+  },
+  {
+    "epoch_zero_based": 19,
+    "first_step": 11876,
+    "last_step": 12500,
+    "steps": 625,
+    "mean_loss": 0.011204489272791354,
+    "complete": true
+  },
+  {
+    "epoch_zero_based": 20,
+    "first_step": 12501,
+    "last_step": 13125,
+    "steps": 625,
+    "mean_loss": 0.01103173844001577,
+    "complete": true
+  },
+  {
+    "epoch_zero_based": 21,
+    "first_step": 13126,
+    "last_step": 13750,
+    "steps": 625,
+    "mean_loss": 0.010884837869930766,
+    "complete": true
+  },
+  {
+    "epoch_zero_based": 22,
+    "first_step": 13751,
+    "last_step": 14375,
+    "steps": 625,
+    "mean_loss": 0.010837296954292665,
+    "complete": true
+  },
+  {
+    "epoch_zero_based": 23,
+    "first_step": 14376,
+    "last_step": 15000,
+    "steps": 625,
+    "mean_loss": 0.0107216749955506,
+    "complete": true
+  },
+  {
+    "epoch_zero_based": 24,
+    "first_step": 15001,
+    "last_step": 15625,
+    "steps": 625,
+    "mean_loss": 0.010597325653547773,
+    "complete": true
+  },
+  {
+    "epoch_zero_based": 25,
+    "first_step": 15626,
+    "last_step": 16000,
+    "steps": 375,
+    "mean_loss": 0.01058358586617442,
+    "complete": false
+  }
+]

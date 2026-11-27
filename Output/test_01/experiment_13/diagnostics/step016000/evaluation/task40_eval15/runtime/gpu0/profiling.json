@@ -1,0 +1,41 @@
+{
+  "evaluation_mode": "official-eval",
+  "environment_initialization": {
+    "count": 0,
+    "mean_s": null,
+    "p95_s": null
+  },
+  "reset": {
+    "count": 4,
+    "mean_s": 11.859656542539597,
+    "p95_s": 13.216498196148313
+  },
+  "policy_get_action": {
+    "count": 0,
+    "mean_s": null,
+    "p95_s": null
+  },
+  "env_step": {
+    "count": 1620,
+    "mean_s": 1.0847343332208923,
+    "p95_s": 1.3362171330722048
+  },
+  "environment_step_chunk": {
+    "count": 1620,
+    "mean_s": 1.0847343332208923,
+    "p95_s": 1.3362171330722048
+  },
+  "video_encoding": {
+    "count": 538,
+    "mean_s": 0.027795553095742616,
+    "p95_s": 0.04749889611266552
+  },
+  "episode_total": {
+    "count": 4,
+    "mean_s": 1124.0469679993112,
+    "p95_s": 1204.1980232943547
+  },
+  "valid_episodes": 4,
+  "elapsed_s": 2476.9804882812314,
+  "valid_episodes_per_hour": 5.813529847379667
+}

@@ -1,0 +1,10 @@
+{
+  "checkpoint": {
+    "step": 11000,
+    "path": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step011000"
+  },
+  "optimizer_restored": true,
+  "rank_memory_and_cursor_restored": true,
+  "total_steps": 20000,
+  "source": "/nvme3/projects/memory_vla/deployments/v1__test01__exp13__run001__resume002"
+}

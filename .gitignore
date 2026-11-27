@@ -59,6 +59,23 @@ references/upstream/
 /Output/test_[0-9][0-9]/experiment_[0-9][0-9]/workflow/*
 !/Output/test_[0-9][0-9]/experiment_[0-9][0-9]/workflow/plan-v[0-9][0-9][0-9].json
 
+# Reviewed text evidence for online diagnosis; keep weights/videos/runtime data ignored.
+!/Output/test_01/experiment_13/diagnostics/
+/Output/test_01/experiment_13/diagnostics/**
+!/Output/test_01/experiment_13/diagnostics/**/
+!/Output/test_01/experiment_13/diagnostics/**/*.md
+!/Output/test_01/experiment_13/diagnostics/**/*.json
+!/Output/test_01/experiment_13/diagnostics/**/*.jsonl
+!/Output/test_01/experiment_13/diagnostics/**/*.csv
+!/Output/test_01/experiment_13/diagnostics/**/*.log
+!/Output/test_01/experiment_13/diagnostics/**/*.py
+!/Output/test_01/experiment_13/diagnostics/**/*.sh
+!/Output/test_01/experiment_13/diagnostics/**/*.toml
+!/Output/test_01/experiment_13/diagnostics/**/*.lock
+!/Output/test_01/experiment_13/diagnostics/**/*.yaml
+!/Output/test_01/experiment_13/diagnostics/**/*.yml
+!/Output/test_01/experiment_13/diagnostics/**/LICENSE
+
 # Evaluation artifacts and temporary data
 /agent_runs/
 /evaluation/.trash/

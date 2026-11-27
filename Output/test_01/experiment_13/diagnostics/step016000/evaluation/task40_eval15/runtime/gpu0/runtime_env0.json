@@ -1,0 +1,16 @@
+{
+  "instance_id": 2,
+  "env_idx": 0,
+  "seed": 2,
+  "episode_number": 3,
+  "native_termination_config": {
+    "max_steps": 6475
+  },
+  "action_steps": 3200,
+  "outer_steps": 400,
+  "elapsed_s": 612.4330288940109,
+  "success": false,
+  "task_progress": 12.5,
+  "terminated": false,
+  "truncated": false
+}
