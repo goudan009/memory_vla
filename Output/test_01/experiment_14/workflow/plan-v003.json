@@ -1,0 +1,18 @@
+{
+  "created_at": "2026-11-27",
+  "author": "Codex /root",
+  "goal": "先推进独立训练和已就绪权重闭环，同时定位记忆预检故障",
+  "reason": "用户明确要求先训练、推理评估再排查；Stage1已6000步完成，记忆预检校准失败只阻塞记忆分支，不再阻塞独立continued和Stage1评估。研究条件不变。",
+  "research_contract": {"base":"GR00T-N1.6-3B","train":180,"validation":20,"seed":42,"stage1_steps":6000,"memory_steps":3000,"continued_steps":3000,"lr":0.00001,"prior":"topology","evaluation_instances":[0,1,2,3,4,5,6,7,8,9],"evaluation_seed":0,"evaluation_seed_mode":"sequence","evaluation_mode":"single1","action_chunk":8},
+  "mainline": ["ready","continued_train","continued_eval","archive"],
+  "nodes": [
+    {"id":"ready","title":"Stage1完整权重就绪","after":[],"parallel_branches":["continued_train","stage1_eval","memory_debug"],"acceptance":"run001累计6000、COMPLETE及训练完成，核对工作台资源"},
+    {"id":"continued_train","title":"同预算无记忆继续训练","after":["ready"],"acceptance":"相同Stage1的run003真实预检通过、归档清理专属临时产物后3000步；同工作台暂停释放恢复及下一更新通过"},
+    {"id":"stage1_eval","title":"Stage1官方闭环评估","after":["ready"],"acceptance":"固定Stage1权重，实例0–9/seed0 sequence/single1/action chunk8/原生终止，10个有效回合和视频；推理优先独立Ada，部署不具备时核查A100共存容量"},
+    {"id":"memory_debug","title":"记忆校准故障定位","after":["ready"],"acceptance":"保留原错误与梯度证据；仅修复证实的工程错误，不绕过校准、不改研究参数"},
+    {"id":"memory_train","title":"拓扑记忆正式训练","after":["memory_debug","continued_train"],"acceptance":"四A100重新真实预检通过并归档清理后run002固定3000步及严格续跑验收"},
+    {"id":"continued_eval","title":"continued官方闭环评估","after":["continued_train","stage1_eval"],"acceptance":"相同锁定协议10个有效回合，独立checkpoint及会话"},
+    {"id":"memory_eval","title":"memory官方闭环评估","after":["memory_train","continued_eval"],"acceptance":"相同锁定协议10个有效回合，原生真值和视频"},
+    {"id":"archive","title":"结果与资源归档","after":["continued_eval","memory_eval"],"acceptance":"三权重实际30个有效回合后才完成，故障独立记录；清理自有且无依赖服务"}
+  ]
+}
