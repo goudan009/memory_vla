@@ -249,10 +249,10 @@ class Backend:
         if not pre:
             gate=path('accept_preflight')
             evidence=read(gate,{})
-            if not evidence.get('passed') or not evidence.get('strict_resume') or evidence.get('step')!=4:
+            if not evidence.get('passed') or not evidence.get('strict_resume') or evidence.get('step')!=4 or not all(evidence.get('restore_checks',{}).get(k) is True for k in ('model','optimizer','scheduler','rng')):
                 raise ValueError('正式训练需要真实四卡暂停恢复通过证据')
             # Evidence must belong to this exact new run lineage, not an unrelated job.
-            if not str(evidence.get('run_id','')).startswith(run+'__preflight'):
+            if not isinstance(evidence.get('run_id'),str) or not re.fullmatch(re.escape(run)+r'__preflight[0-9]{3}',evidence['run_id']):
                 raise ValueError('预检归属不匹配')
             gate_contract=evidence.get('contract',{})
             if (gate_contract.get('recipe')!='native_random_v2' or gate_contract.get('base')!=str(base.resolve())
@@ -302,6 +302,9 @@ class Backend:
             write(queue/'status.json',dict(status='queued',jobs=[dict(run=root.name,arm=plan['arm'])],created_at=now()))
             controller=[str(self.python),'-u',str(source/'train/web_training_queue.py'),'--config',str(queue/'config.json')]
         old_state=read(root/plan['arm']/'status.json',{}) if resumed else {}
+        if plan.get('recipe')=='native_random_v2':
+            write(root/'run/status.json',dict(status='queued' if plan['enqueue'] else 'submitted',
+                    step=old_state.get('step',0),total_steps=plan['steps']))
         write(root/plan['arm']/'status.json',dict(status='queued' if plan['enqueue'] else 'submitted',step=old_state.get('step',0),total_steps=plan['steps']))
         (root/'logs').mkdir(exist_ok=True)
         with (root/'logs/controller.log').open('ab') as log:
@@ -337,9 +340,16 @@ class Backend:
 
     def checkpoints(self, root):
         result=[]
+        launch=read(root/'config/web_launch.json',{})
         for marker in (root/'run/checkpoints').glob('*/COMPLETE.json'):
             complete=read(marker,{})
             if type(complete.get('step')) is int and (marker.parent/'training_state.pt').is_file():
+                if launch.get('recipe')=='native_random_v2':
+                    if (marker.parent.is_symlink() or marker.parent.name!=root.name+'__step%06d'%complete['step']
+                        or complete.get('run_id')!=root.name or complete.get('recipe')!='native_random_v2'
+                        or complete.get('per_rank_sample_cursor')!=16*complete['step']
+                        or not complete.get('files') or any(not (marker.parent/f).is_file() for f in complete['files'])):
+                        continue
                 result.append(dict(step=complete['step'],path=str(marker.parent)))
         return sorted(result,key=lambda x:x['step'],reverse=True)
 
@@ -514,7 +524,8 @@ def controller(config):
                 for line in reversed(handle.read().decode(errors='replace').splitlines()):
                     try:row=json.loads(line)
                     except ValueError:continue
-                    if 'step' in row:state.update(step=row['step'],last=row);break
+                    if 'step' in row:
+                        state.update(step=max(state.get('step',0),row['step']),last=row);break
         write(root/arm/'status.json',dict(state,checked_at=now()))
         code=child.poll()
         if code is not None:break
