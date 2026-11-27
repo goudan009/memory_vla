@@ -1,0 +1,95 @@
+{
+  "created_at": "2026-11-27",
+  "author": "ChatGPT 仓库协作会话",
+  "goal": "重新训练V2_1 Stage1无记忆基线，修复此前独立CLI违反工作台身份和输出约定的问题",
+  "reason": "接续plan-v004：完成原生训练器、随机分片可恢复游标、工作台专用recipe和规范checkpoint发布的源码接入。科学配置不变；真实GPU及本机工作台验收仍未执行。",
+  "identity": {
+    "model_version": "V_2_1",
+    "test_id": "test02",
+    "experiment_id": "exp01",
+    "run_id": null,
+    "run_assignment": "本地工作台查询已有作业、目录、部署和回收站，锁定唯一新run；远端会话不猜编号",
+    "historical_reference": "v2.1__test01__exp14__run001__step006000",
+    "category": "formal_training"
+  },
+  "research_contract": {
+    "stage": "stage1",
+    "recipe": "native_random_v2",
+    "base": "generic GR00T-N1.6-3B",
+    "split": "historical Stage1 exact 180/20",
+    "seed": 42,
+    "steps": 6000,
+    "world_size": 4,
+    "microbatch": 2,
+    "accumulation": 8,
+    "effective_batch": 64,
+    "lr": 0.0001,
+    "scheduler": "cosine",
+    "warmup_ratio": 0.05,
+    "weight_decay": 0.00001,
+    "normalization": "guarded relative-action bounds per training-only audit; otherwise minmax",
+    "freeze": "all Eagle; train original action head/projector/VLLN",
+    "horizon": 50,
+    "action_labels": 32,
+    "inference_steps": 4,
+    "execute_steps": 8,
+    "save_interval": 1000
+  },
+  "mainline": [
+    "identity",
+    "integration",
+    "preflight",
+    "train",
+    "evaluate",
+    "archive"
+  ],
+  "nodes": [
+    {
+      "id": "identity",
+      "title": "锁定实验身份与资源",
+      "after": [],
+      "acceptance": "读取Skill、实际services/options/jobs；在test02/exp01核对已用run及归档，显式新run ID、目标设备和输出由工作台核验；不猜路径或编号"
+    },
+    {
+      "id": "integration",
+      "title": "原生训练器工作台接入",
+      "after": [
+        "identity"
+      ],
+      "acceptance": "源码已实现原生Gr00tTrainer与官方shard schedule，显式rank/sample游标、确定性数据增强、现有Backend preview/start/queue/stop/resume、规范checkpoint原子发布和配置/源哈希；本地核对CPU测试与同步源码后方可进入预检。"
+    },
+    {
+      "id": "preflight",
+      "title": "四卡真实预检与暂停恢复",
+      "after": [
+        "integration"
+      ],
+      "acceptance": "使用正式6000步scheduler的临时4步真实预检：前2步暂停，工作台确认GPU进程释放并以同一预检run恢复到4；检查真实模型参数、optimizer/scheduler、各rank RNG及样本游标，归档preflight.json后清理专属临时产物。失败禁止正式训练。"
+    },
+    {
+      "id": "train",
+      "title": "Stage1正式6000步训练",
+      "after": [
+        "preflight"
+      ],
+      "acceptance": "使用同一recipe、源码/数据/初始权重hash和严格预检证据，由工作台preview/start独立从通用权重正式训练6000；1000步保存、内部heldout FM验证，不派发独立MAE或积分消融。"
+    },
+    {
+      "id": "evaluate",
+      "title": "Stage1统一闭环评估",
+      "after": [
+        "train"
+      ],
+      "acceptance": "按已确认协议与旧Stage1和官方B1K性能参考比较；Task40实例0–9共10个有效回合、seed0 sequence、积分4、执行8；真实视频/阶段与成功计数，不以离线MAE代替"
+    },
+    {
+      "id": "archive",
+      "title": "归档与基线验收",
+      "after": [
+        "evaluate"
+      ],
+      "acceptance": "关联真实工作台job、run/checkpoint、路径、hash、配置、视频和证据；未获闭环结果不称基线已改善；不自动重启旧Stage2或修改记忆架构"
+    }
+  ],
+  "implementation_status": "源码接入已提交；CPU新增测试和真实本地GPU预检待验证；未分配run_id、未启动GPU任务"
+}
