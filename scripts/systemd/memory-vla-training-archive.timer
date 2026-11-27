@@ -1,0 +1,11 @@
+[Unit]
+Description=Archive finished workbench training every five minutes
+
+[Timer]
+OnBootSec=90s
+OnUnitActiveSec=300s
+AccuracySec=5s
+Unit=memory-vla-training-archive.service
+
+[Install]
+WantedBy=timers.target

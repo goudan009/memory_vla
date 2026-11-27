@@ -1,0 +1,8 @@
+[Unit]
+Description=Read-only training evidence archive and GitHub report publishing
+
+[Service]
+Type=oneshot
+WorkingDirectory=/nvme3/projects/memory_vla
+ExecStart=/usr/bin/python3 /nvme3/projects/memory_vla/scripts/training_archive.py --once --publish
+TimeoutStartSec=1800
