@@ -1,7 +1,7 @@
 """Candidate N1.7 native training spec; no launch and no implicit scientific defaults."""
 from pathlib import Path
-from .contracts import absolute, inspect_upstream, inspect_checkpoint, B1K2025, VERSION
-from .data_contract import audit_2025
+from .contracts import absolute, inspect_upstream, inspect_checkpoint, checkpoint_digest, read, B1K2025, VERSION
+from .data_contract import audit_2025, modality_source
 
 
 def batch_accounting(world_size,microbatch,accumulation):
@@ -13,7 +13,8 @@ def batch_accounting(world_size,microbatch,accumulation):
 
 
 def native_train_candidate(*, python,upstream,base,dataset,modality,job_root,run_id,
-                           gpus,microbatch,accumulation,steps,save_steps,lr,wd,warmup_ratio):
+                           gpus,microbatch,accumulation,steps,save_steps,lr,wd,warmup_ratio,
+                           horizon, split_file, verified_generic_sha256):
     """Build a native command for review after scientific choices are locked.
 
     The existing workbench still has to implement the native controller,
@@ -28,6 +29,20 @@ def native_train_candidate(*, python,upstream,base,dataset,modality,job_root,run
     if not python.is_file() or not modality.is_file():
         raise ValueError("model environment and job-specific modality missing")
     inspect_upstream(upstream);inspect_checkpoint(base,role="generic");audit_2025(dataset)
+    if checkpoint_digest(base)!=verified_generic_sha256:
+        raise ValueError("verified generic N1.7 base identity mismatch")
+    if modality.read_text()!=modality_source(dataset,horizon=horizon):
+        raise ValueError("job-specific modality differs from approved horizon/contract")
+    split=read(absolute(split_file));split=split.get("split",split)
+    train,validation=split["train"],split["validation"]
+    episodes=[__import__("json").loads(line) for line in (dataset/"meta/episodes.jsonl").read_text().splitlines() if line.strip()]
+    ids=[e["episode_index"] for e in episodes]
+    if len(train)!=len(set(train)) or not train or not validation or set(train)&set(validation) or sorted(ids)!=sorted(train):
+        raise ValueError("native training dataset must be the exact train-only view")
+    # The native loader globs parquet files: metadata alone is not isolation.
+    physical=[int(p.stem.rsplit("_",1)[1]) for p in (dataset/"data").glob("*/*.parquet")]
+    if sorted(physical)!=sorted(train):
+        raise ValueError("physical dataset contains missing or held-out episodes")
     if not isinstance(gpus,list) or not gpus or len(set(gpus))!=len(gpus) or any(type(g) is not int or g<0 for g in gpus):
         raise ValueError("explicit allocated GPU list required")
     batch=batch_accounting(len(gpus),microbatch,accumulation)
@@ -46,7 +61,8 @@ def native_train_candidate(*, python,upstream,base,dataset,modality,job_root,run
           "--save-total-limit",str(steps+1),"--output-dir",str(native),"--experiment-name",run_id,
           "--decode-only-used-frames"]
     return dict(version=VERSION,protocol=B1K2025,run_id=run_id,argv=argv,
-                cwd=str(upstream),gpu_indices=gpus,**batch,
+                cwd=str(upstream),gpu_indices=gpus,horizon=horizon,base_sha256=verified_generic_sha256,
+                native_staging=str(native/run_id),**batch,
                 strict_resume_required=steps>2000,launch_ready=False,
                 blockers=["verified train-only split/statistics","native workbench controller",
                           "canonical checkpoint and strict resume preflight","approved training task"])
