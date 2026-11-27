@@ -229,6 +229,7 @@ def worker(args):
     from transformers import TrainerCallback
     from types import SimpleNamespace
 
+    if args.job_root.is_symlink():raise ValueError('workbench job root must not be symlink')
     job_root=args.job_root.resolve()
     output,run=workbench_layout(job_root)
     job=read(job_root/"config/web_launch.json")
@@ -261,6 +262,13 @@ def worker(args):
         if not prepared.exists():
             prepare(Path(job["dataset"]),Path(job["split"]),Path(job["checkpoint"]),prepared,"guarded")
         manifest=verify_prepared(prepared)
+        # Confirm the supplied split matches the original Stage1 seed42
+        # permutation rather than simply being another 180/20 split.
+        split=read(prepared/"data_split.json")
+        ids=sorted(split["train"]+split["validation"])
+        shuffled=np.random.default_rng(42).permutation(ids).tolist()
+        if sorted(shuffled[:20])!=sorted(split["validation"]) or sorted(shuffled[20:])!=sorted(split["train"]):
+            raise ValueError("split differs from original Stage1 seed42")
         upstream=source_identity(root)
         base=Path(job["checkpoint"])
         contract=dict(recipe="native_random_v2",source_digest=job["source_manifest"]["digest"],
@@ -289,7 +297,7 @@ def worker(args):
             atomic(output/"native_contract.json",contract)
         if not job["preflight_only"]:
             gate=read(Path(job["accept_preflight"]))
-            if not gate.get("passed") or not gate.get("strict_resume") or gate.get("contract")!=contract:
+            if not gate.get("passed") or not gate.get("strict_resume") or gate.get("contract")!=contract or not all(gate.get("restore_checks",{}).get(k) is True for k in ("model","optimizer","scheduler","rng")):
                 raise ValueError("formal run requires matching real strict-resume preflight")
         atomic(output/"data_split.json",contract["split"])
     dist.barrier()
@@ -370,7 +378,7 @@ def worker(args):
     t.dataloader_num_workers=args.workers
     t.logging_steps=1 if args.preflight else 10
     t.save_steps=1000
-    t.save_total_limit=None
+    t.save_total_limit=7  # upstream typed config; actual HF rotation disabled by CheckedTrainer
     t.eval_strategy="no"  # Native sharded DatasetFactory asserts this.
     t.use_wandb=False
     t.transformers_local_files_only=True
@@ -436,13 +444,13 @@ def worker(args):
                 self.trainer.part_latest=dict(zip(('base','torso','left_arm','left_gripper','right_arm','right_gripper'),
                     (totals[:6]/totals[6:].clamp_min(1)).tolist()))
                 self.trainer.part_sum.zero_();self.trainer.part_count.zero_()
-            control=read(output/"stop.json") if (output/"stop.json").exists() else {}
+            control=read(output/"stop.json") if rank==0 and (output/"stop.json").exists() else {}
             stop=step>=int(control.get("stop_after_step",STEPS))
             # Read only rank0 control, broadcast decision, all ranks save.
             flag=torch.tensor(int(stop or step>=cap),device=torch.device("cuda",local))
             dist.broadcast(flag,src=0)
             if flag.item():
-                c.should_save=True;c.should_training_stop=True
+                c.should_save=True;c.should_training_stop=True;c.should_log=True
             if rank==0:
                 atomic(output/"status.json",dict(status="training",step=step,total_steps=STEPS,
                     world_size=GPU,seen_samples=step*GPU*MICROBATCH*ACCUM))
