@@ -38,6 +38,10 @@ def audit_2025(dataset):
                 raise ValueError("2025 group offset mismatch: "+key)
     if set(modality["video"])!=set(CAMERAS) or "human.coarse_action" not in modality["annotation"]:
         raise ValueError("2025 camera/language key mismatch")
+    if any(modality["video"][key].get("original_key")!=key for key in CAMERAS):
+        raise ValueError("2025 camera source key mismatch")
+    if modality["annotation"]["human.coarse_action"].get("original_key")!=LANGUAGE:
+        raise ValueError("2025 language source column mismatch")
     return dict(state_dim=82,action_dim=23,fps=30,state_groups=list(expected),
                 action_groups=list(ACTION_GROUPS),video_keys=CAMERAS,language_key=LANGUAGE,
                 relative_state_keys=RELATIVE,format="lerobot_v2_1_b1k2025",
