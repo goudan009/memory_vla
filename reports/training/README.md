@@ -237,4 +237,4 @@ Loss 为训练记录中的 loss；V2.1 为 fm + 配方 state_weight × state。�
 
 ### 闭环评估
 
-尚未归档已结束且明确绑定本 run / checkpoint 的评估。
+- [原始结果](runs/a100/v1__test01__exp13__run001/memory_v1/evaluations/85718b166932cb57/results.json)：结果文件状态 complete，工作台状态 complete；完成 10/10；成功 0/10（分母为原始 official_episodes 字段）；checkpoint `/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step016000`。
