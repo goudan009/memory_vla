@@ -16,6 +16,7 @@ import math
 from pathlib import Path
 import re
 import subprocess
+from urllib.error import HTTPError
 from urllib.parse import urlencode
 from urllib.request import ProxyHandler, build_opener
 
@@ -56,8 +57,16 @@ def api(base, action, **query):
     url = base.rstrip('/')+'/api/'+action
     if query:
         url += '?'+urlencode(query)
-    with build_opener(ProxyHandler({})).open(url, timeout=90) as response:
-        value = json.load(response)
+    try:
+        with build_opener(ProxyHandler({})).open(url, timeout=90) as response:
+            value = json.load(response)
+    except HTTPError as error:
+        body = error.read().decode(errors='replace')
+        try:
+            body = json.loads(body).get('error', body)
+        except ValueError:
+            pass
+        raise RuntimeError(f'{action}: {body}') from error
     if value.get('error'):
         raise ValueError(value['error'])
     return value
@@ -338,13 +347,14 @@ def scan(args):
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
         state = load(state_path, dict(jobs={}, initialized=False))
         devices = load(root/'configs/workbench_devices.json', {})
-        errors, archived = {}, []
+        errors, archived, scanned_devices = {}, [], []
         for device_id in args.devices:
             try:
                 jobs = api(args.workbench, 'training/jobs', device=device_id)['jobs']
             except Exception as error:
                 errors[device_id] = str(error)
                 continue
+            scanned_devices.append(device_id)
             for job in jobs:
                 key = device_id+'/'+safe(job['run'])+'/'+safe(job['arm'])
                 previous = state['jobs'].get(key)
@@ -380,12 +390,16 @@ def scan(args):
             errors['report_or_publish'] = repr(error)
         now = datetime.now(timezone.utc)
         state.update(initialized=True, checked_at=now.isoformat(), errors=errors,
+                     status='degraded' if errors else 'ok', scanned_devices=scanned_devices,
                      next_check_at=(now+timedelta(seconds=300)).isoformat(),
                      next_check_reason='systemd 300s: training terminal events, finished evaluations, Git publishing retry',
                      archived_last_scan=archived, publish_enabled=args.publish)
         write(state_path, encoded(state))
         print(json.dumps(dict(archived=archived, errors=errors), ensure_ascii=False))
-        return 1 if errors else 0
+        # An unavailable secondary device is recorded as degraded; it must not
+        # mark a successful archive/push for the reachable device as failed.
+        critical = any(key not in args.devices for key in errors)
+        return 1 if critical or not scanned_devices else 0
 
 
 def main():

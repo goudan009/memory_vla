@@ -116,6 +116,22 @@ class ArchiveTests(unittest.TestCase):
             self.assertEqual(archive.load(copies[0].parent/'origin.json')['workbench_state'], 'failed')
             archive.verify(root)
 
+    def test_offline_secondary_device_does_not_fail_successful_scan(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            args = type('Args', (), dict(root=root, devices=['a100','a6000'], backfill=[], publish=True, workbench='unused'))()
+            def api(*_, **kw):
+                if kw.get('device') == 'a6000':
+                    raise RuntimeError('SSH unavailable')
+                return {'jobs':[]}
+            with patch.object(archive,'api',side_effect=api), patch.object(archive,'publish') as publish:
+                self.assertEqual(archive.scan(args),0)
+                publish.assert_called_once_with(root)
+            state = archive.load(root/archive.STATE)
+            self.assertEqual(state['scanned_devices'], ['a100'])
+            self.assertEqual(state['status'], 'degraded')
+            self.assertIn('SSH unavailable', state['errors']['a6000'])
+
     def test_git_publishing_preserves_unrelated_staged_and_unstaged_edits(self):
         with tempfile.TemporaryDirectory() as temp, tempfile.TemporaryDirectory() as origin:
             root = Path(temp)
