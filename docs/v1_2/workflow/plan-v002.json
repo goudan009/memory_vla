@@ -1,0 +1,27 @@
+{
+  "plan_id": "v1_2_n17_b1k2026_acceptance_v002",
+  "status": "in_progress",
+  "scope": "V1.2 official GR00T N1.7 + B1K-2026 environment, workbench route, and one-instance radio closed-loop acceptance; no formal training and no V2.2 development",
+  "source_plan": "docs/v1_2/n17-baseline.md",
+  "method_version": "V_1_2",
+  "protocol": "b1k2026_websocket",
+  "checkpoint": "/nvme3/checkpoints/memory_vla/official-n17-radio/turning_on_radio_GR00T-checkpoint-150000",
+  "checkpoint_sha256": "cd97a22ff74bd91838350e18fe94b48e1902d407f1256f5d48eb20befe277dc3",
+  "isaac_groot_revision": "ace36d935b376fbf25cd56371e23877b95407c40",
+  "behavior_1k_revision": "a8247a8cc1633fe1ca0cc66aa07243d46c64f155",
+  "experiment_identity": null,
+  "identity_note": "Infrastructure and official-weight evaluation acceptance only; no training identity is allocated or inferred.",
+  "notes": "V1.2 / N1.7 / B1K2026: official radio, RTC off",
+  "training_submissions": 0,
+  "mainline": [
+    {"id": "environment", "depends_on": [], "parallel": ["assets"], "acceptance": "isolated Python 3.10 N1.7 environment imports GR00T; B1K evaluator and Isaac Sim imports pass"},
+    {"id": "assets", "depends_on": [], "parallel": ["environment"], "acceptance": "required 2026 public-test robot, scene, and task-instance assets are unpacked to documented paths and hash/size recorded"},
+    {"id": "workbench_route", "depends_on": ["environment", "assets"], "parallel": [], "acceptance": "existing workbench supports explicit V_1_2 B1K2026 preview/start, checkpoint/source identity, concise note, native JSON/video and result metrics; legacy B1K2025 route still rejects V1.2"},
+    {"id": "preview", "depends_on": ["workbench_route"], "parallel": [], "acceptance": "same one-instance request previewed with correct GPU, instance, output, pinned source/checkpoint and note; no 2025 runner in argv"},
+    {"id": "closed_loop", "depends_on": ["preview"], "parallel": [], "acceptance": "one official public-test radio instance completes; actual workbench job ID, result JSON, video, success and q_score are archived"},
+    {"id": "task40_compatibility", "depends_on": ["environment"], "parallel": ["workbench_route"], "acceptance": "2025 Task40 historical schema incompatibility remains explicit; no conversion or B1K2025 adaptation; 2026 loader/processor compatibility evidence is bounded to checks actually run"},
+    {"id": "archive", "depends_on": ["closed_loop", "task40_compatibility"], "parallel": [], "acceptance": "progress and report distinguish DONE/PARTIAL/BLOCKED, record all hashes/IDs/artifacts, zero training jobs, and V2.1 unchanged"}
+  ],
+  "resource_policy": {"storage_root": "/nvme3", "preserve_v21": true, "formal_training": false, "develop_v22": false, "legacy_b1k2025_adaptation": false},
+  "created_at": "2026-11-28"
+}
