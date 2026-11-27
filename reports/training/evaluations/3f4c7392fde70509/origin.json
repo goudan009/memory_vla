@@ -1,0 +1,9 @@
+{
+  "checkpoint": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v2.1__test01__exp14__run001/run/checkpoints/v2.1__test01__exp14__run001__step006000",
+  "episodes_sha256": "c6f96ccda7efd77ef1c9f066cfccc018bf4886b39e93e8288b8b00e8bf4c83e2",
+  "path": "evaluation/V_2_1/ablation_action_fault/task40_eval02/results.json",
+  "results_sha256": "6de3b1e4b78f362b409de54177df610f6bf6befb5663cb511d081b7b9969bdf7",
+  "training_id": "v2.1__test01__exp14__run001",
+  "workbench_job_id": null,
+  "workbench_state": null
+}
