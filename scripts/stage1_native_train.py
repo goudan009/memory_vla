@@ -167,6 +167,9 @@ def worker(args):
             if (self.args.per_device_train_batch_size!=MICROBATCH or
                 self.args.gradient_accumulation_steps!=ACCUM):
                 raise RuntimeError("native trainer batch size mismatch")
+            # Upstream writes identical processor artifacts on each rank.
+            # Wait until every rank has finished before reading them.
+            if torch.distributed.is_initialized():torch.distributed.barrier()
             assert_processor(args.output/"native/processor",prepared)
             if int(os.environ["RANK"])==0:
                 write(args.output/"native_runtime.json",dict(
@@ -202,6 +205,7 @@ def validate(checkpoint, prepared, backend, episodes=None):
     mods=proc.modality_configs[TAG]
     loader=LeRobotEpisodeLoader(prepared/"validation",mods,video_backend=backend)
     tag=EmbodimentTag(TAG)
+    import math
     total=0.;count=0
     errors={k:0. for k in mods["action"].modality_keys}
     units={k:0 for k in errors}
@@ -227,7 +231,9 @@ def validate(checkpoint, prepared, backend, episodes=None):
                 torch.cuda.manual_seed_all(42+count)
                 with torch.autocast("cuda",dtype=torch.bfloat16):
                     result=model(inp)
-                    total+=float(result["loss"].float())
+                    value=float(result["loss"].float())
+                    if not math.isfinite(value):raise FloatingPointError("nonfinite held-out FM loss")
+                    total+=value
                     pred=model.get_action(inp)["action_pred"].float().cpu().numpy()
                 decoded=proc.decode_action(pred,tag,{k:v[None] for k,v in step.states.items()})
                 for k in errors:
@@ -265,7 +271,6 @@ def export_final(args, manifest):
 
 
 def launch(args):
-    import torch
     manifest=verify_prepared(args.prepared)
     ident=identity(args)
     steps=3 if args.preflight else STEPS
@@ -273,6 +278,7 @@ def launch(args):
                           normalization=manifest["accepted_cells"]),indent=2),flush=True)
     if not args.execute:
         return
+    import torch
     if torch.cuda.device_count()!=GPU:
         raise RuntimeError("explicitly expose exactly four allocated A100 GPUs")
     if not args.preflight:
@@ -327,6 +333,7 @@ def main():
     p.add_argument("--worker",action="store_true",help=argparse.SUPPRESS)
     a=p.parse_args()
     if a.workers<0:raise ValueError("workers must be nonnegative")
+    a.prepared=a.prepared.resolve();a.output=a.output.resolve();a.official_root=a.official_root.resolve()
     root=a.official_root.resolve()
     if not (root/"gr00t/experiment/experiment.py").is_file():raise FileNotFoundError(root)
     sys.path.insert(0,str(root))
