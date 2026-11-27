@@ -285,7 +285,8 @@ def save(args,base,model,processor,split,lo,hi,step,initial_hash,opt):
         # Keep the exact immutable Stage1 checkpoint files, no dtype conversion on save.
         import os,shutil
         for p in args.checkpoint.iterdir():
-            if not p.is_file() or p.name in ('v2_1_run.json','v2_1.json','v2_1.pt','training_state.pt','COMPLETE.json'):continue
+            if not p.is_file() or p.name in ('v2_1_run.json','v2_1.json','v2_1.pt','training_state.pt','COMPLETE.json',
+                    'optimizer.pt','scheduler.pt','scaler.pt','trainer_state.json','training_args.bin') or p.name.startswith('rng_state'):continue
             if p.suffix in ('.safetensors','.bin'):
                 try:os.link(p,dest/p.name)
                 except OSError:shutil.copy2(p,dest/p.name)
