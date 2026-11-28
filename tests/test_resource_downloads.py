@@ -34,4 +34,21 @@ class DownloadTests(unittest.TestCase):
             r=self.recipe(Path(d));self.assertEqual(m.operation(r,'status')['status'],'not_started')
             self.assertFalse((Path(d)/'.workbench-downloads').exists())
 
+    def test_start_rejects_stale_preview(self):
+        with tempfile.TemporaryDirectory() as d:
+            r=self.recipe(Path(d))
+            with self.assertRaisesRegex(ValueError,'预检'):
+                m.operation(r,'start',expected_job_id='different')
+            self.assertFalse((Path(d)/'.workbench-downloads').exists())
+
+    def test_existing_status(self):
+        with tempfile.TemporaryDirectory() as d:
+            r=self.recipe(Path(d));Path(r['target']).mkdir()
+            self.assertEqual(m.operation(r,'status')['status'],'existing')
+
+    def test_file_directory_collision(self):
+        with tempfile.TemporaryDirectory() as d:
+            r=self.recipe(Path(d));r['files'].append(dict(r['files'][0],path='model.bin/other'))
+            with self.assertRaisesRegex(ValueError,'冲突'):m.validate(r)
+
 if __name__=='__main__':unittest.main()

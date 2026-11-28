@@ -25,7 +25,9 @@ def clean_path(value):
 
 def checked_path(value, roots):
     path = Path(clean_path(value))
-    if not path.is_absolute() or '..' in path.parts or any(part in ('.workbench-trash','.workbench-downloads') for part in path.parts):
+    if '..' in path.parts:
+        raise ValueError('路径超出资源范围')
+    if not path.is_absolute() or any(part in ('.workbench-trash','.workbench-downloads') for part in path.parts):
         raise ValueError('请选择资源范围内的绝对路径')
     resolved = path.resolve()
     if any(part in ('.workbench-trash','.workbench-downloads') for part in resolved.parts):

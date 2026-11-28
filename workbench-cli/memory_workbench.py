@@ -139,7 +139,8 @@ def resource_request(args, base_url):
         if action in ("options","status"):
             return request_json(base_url,path+"?"+urlencode(payload),args.timeout)
         if action == "start":
-            request_json(base_url,path,args.timeout,{**payload,"action":"preview"})
+            checked=request_json(base_url,path,args.timeout,{**payload,"action":"preview"})
+            payload["expected_job_id"]=checked["job_id"]
         return request_json(base_url,path,args.timeout,payload)
     payload = {"action":args.action}
     for key in ("host","path","kind","name","token"):

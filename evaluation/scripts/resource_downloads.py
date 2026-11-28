@@ -76,7 +76,7 @@ def active(work):
             return True
         return False
 
-def operation(recipe,action,source=None):
+def operation(recipe,action,source=None,expected_job_id=None):
     total=validate(recipe)
     target,work,identity=paths(recipe)
     if target.parent.resolve()!=target.parent or work.resolve()!=work or target.is_symlink():
@@ -85,10 +85,14 @@ def operation(recipe,action,source=None):
     if state and state.get('job_id')!=identity:
         raise ValueError('此目标已绑定不同配方，不能覆盖')
     running=active(work)
+    if action=='start' and expected_job_id!=identity:
+        raise ValueError('配方发生变化或未预检，请重新检查')
     if action=='status':
         status='running' if running else state.get('status','not_started')
         if not running and (status in ('starting','running') or status=='complete' and not target.is_dir()):
             status='interrupted'
+        if not running and not state and target.exists():
+            status='existing'
         return {**state,'status':status,'job_id':identity,'target':str(target),'total_bytes':total}
     if action not in ('preview','start'):
         raise ValueError('未知下载操作')
@@ -215,7 +219,7 @@ class DownloadService:
             targets.add(target)
             result[key]=recipe
         return result
-    def request(self,action,recipe_id=None):
+    def request(self,action,recipe_id=None,expected_job_id=None):
         recipes=self.recipes()
         if action=='options':
             return {'recipes':[{**{k:v for k,v in r.items() if k!='files'},'total_bytes':sum(f['bytes'] for f in r['files'])} for r in recipes.values()]}
@@ -225,12 +229,12 @@ class DownloadService:
         source=Path(__file__).read_text()
         host=recipe['host']
         if host=='4090':
-            return operation(recipe,action,source)
+            return operation(recipe,action,source,expected_job_id)
         device=self.devices.get({'A100':'a100','A6000':'a6000'}.get(host,host))
         if not device or not device.get('host'):
             raise ValueError('设备尚未配置')
         reply=subprocess.run(['ssh','-o','BatchMode=yes','-o','ConnectTimeout=5',device['host'],
-            'python3 -c '+shlex.quote(source)],input=json.dumps(dict(recipe=recipe,action=action,source=source)),
+            'python3 -c '+shlex.quote(source)],input=json.dumps(dict(recipe=recipe,action=action,source=source,expected_job_id=expected_job_id)),
             text=True,capture_output=True,timeout=45)
         if reply.returncode:
             raise ValueError('目标设备不可达: '+reply.stderr[-500:])

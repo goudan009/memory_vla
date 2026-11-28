@@ -388,7 +388,7 @@ class Handler(BaseHTTPRequestHandler):
         payload = json.loads(self.rfile.read(length))
         if not isinstance(payload, dict) or payload.get('action') not in ('preview','start'):
             raise ValueError('请选择下载预检或启动')
-        return self._downloads().request(payload['action'], payload.get('recipe_id'))
+        return self._downloads().request(payload['action'], payload.get('recipe_id'), payload.get('expected_job_id'))
 
     def _registry_data(self, force=False):
         data = dict(experiment_registry.cached(force=force))
@@ -454,10 +454,12 @@ class Handler(BaseHTTPRequestHandler):
         if not isinstance(request.get('notes'), str) or not request['notes'].strip():
             raise ValueError('Agent 训练必须填写简短版本与目的备注')
         run = request.get('run_id', '')
-        match = re.fullmatch(r'v[0-9_]+__test(\d{2})__exp(\d{2})__run\d+(?:__preflight\d+)?', run)
+        match = re.fullmatch(r'v[0-9_]+__test(\d{2})__exp(\d{2})__run\d+(?:__preflight\d+)?', run) if isinstance(run,str) else None
         if not match or not isinstance(binding, dict) or set(binding) != {'version','node'}:
             raise ValueError('Agent 新训练必须绑定规范 run_id 和 agent_plan（version、node）')
         directory = self.agent_experiment_root / ('test_'+match[1]) / ('experiment_'+match[2])
+        if not directory.is_dir() or directory.resolve()!=directory.absolute():
+            raise ValueError('实验目录不存在或为软链接')
         plans = workflow_plans(directory)
         if not plans['versions'] or plans['errors']:
             raise ValueError('本实验缺少有效工作流计划，或计划存在错误')

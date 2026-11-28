@@ -4,8 +4,8 @@
   const refresh=$('resource-download-refresh'), preview=$('resource-download-preview');
   const status=$('resource-download-message'), detail=$('resource-download-detail'), progress=$('resource-download-progress');
   let recipes=[], previewed=null, busy=false, lastStatus=null;
-  async function api(action,id,write=false){
-    const payload={action,...(id?{recipe_id:id}:{})};
+  async function api(action,id,write=false,expected){
+    const payload={action,...(id?{recipe_id:id}:{}),...(expected?{expected_job_id:expected}:{})};
     const response=await fetch('/api/resources/downloads'+(write?'':'?'+new URLSearchParams(payload)),
       write?{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}:{cache:'no-store'});
     const data=await response.json();if(!response.ok||data.error)throw Error(data.error||'下载接口异常');return data;
@@ -45,8 +45,8 @@
   start.onclick=async()=>{
     if(busy||previewed?.id!==choice.value)return;
     if(!confirm('确认启动该下载？不会覆盖已有目标。'))return;
-    busy=true;const id=choice.value;previewed=null;controls();
-    try{show(await api('start',id,true));}catch(e){status.textContent=e.message+'；先查询状态再决定是否重试。';lastStatus='starting';}finally{busy=false;controls();}
+    busy=true;const id=choice.value,expected=previewed.job_id;previewed=null;controls();
+    try{show(await api('start',id,true,expected));}catch(e){status.textContent=e.message+'；先查询状态再决定是否重试。';lastStatus='starting';}finally{busy=false;controls();}
   };
   panel.addEventListener('toggle',()=>{if(panel.open)void load();});
   setInterval(()=>{if(panel.open&&panel.getClientRects().length&&!document.hidden&&!previewed&&!busy&&choice.value)void load();},15000);
