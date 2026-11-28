@@ -1,0 +1,51 @@
+{
+  "date": "2026-11-28",
+  "version": "V_1_2",
+  "protocol": "b1k2026_websocket",
+  "checkpoint_sha256": "cd97a22ff74bd91838350e18fe94b48e1902d407f1256f5d48eb20befe277dc3",
+  "groot_revision": "ace36d935b376fbf25cd56371e23877b95407c40",
+  "behavior_revision": "a8247a8cc1633fe1ca0cc66aa07243d46c64f155",
+  "workbench": "http://127.0.0.1:8765",
+  "training_submissions": 0,
+  "task_performance_accepted": false,
+  "native_runtime_accepted": true,
+  "runs": [
+    {
+      "job_id": "97f45ef78924",
+      "notes": "V1.2 / N1.7 / B1K2026: official radio, RTC off",
+      "language_mode": "official_default",
+      "text_prompt": "pick up the object and place it on the table",
+      "public_instance_index": 18,
+      "output": "evaluation/V_1_2/official/public_test_instance_18",
+      "returncode": 0,
+      "native_result": {"task": "turning_on_radio", "instance_id": 319, "rollout_id": 0, "steps": 3225, "success": false, "q_score": {"final": 0.0}},
+      "native_json_sha256": "980f8baf685b206a4a748a93d7e281d691bea29506b709b342eee26c5d806d80",
+      "video_sha256": "dbeb8cadfb5b61279087bc0fd2cd9c609ab1f41820d7b05fbb487aa30c10c424",
+      "video_bytes": 5710785,
+      "decoded_frames": 3225,
+      "duration_seconds": 107.5
+    },
+    {
+      "job_id": "3fc189e832d8",
+      "notes": "V1.2 / N1.7 / B1K2026: radio task prompt, RTC off",
+      "language_mode": "task_description",
+      "text_prompt": "Turn on the radio receiver that's on the table in the living room.",
+      "task_metadata_sha256": "8d8222310c3611316c6e5fe822a8dd3c6e552b32bcfddd10870c0672bfb8427c",
+      "public_instance_index": 18,
+      "attempt": 2,
+      "output": "evaluation/V_1_2/official/public_test_instance_18_attempt_02",
+      "returncode": 0,
+      "native_result": {"task": "turning_on_radio", "instance_id": 319, "rollout_id": 0, "steps": 3225, "success": false, "q_score": {"final": 0.0}},
+      "native_json_sha256": "e2a9498583a375c35ce84271c3cdca72049f7821fcc4f15be1c8e6317a68e3aa",
+      "video_sha256": "df9335fd392f214c13c92680738ca0efcb4a47f971b1401f2171e50745be796a",
+      "video_bytes": 5838507,
+      "decoded_frames": 3225,
+      "duration_seconds": 107.5
+    }
+  ],
+  "http_artifacts": "both runs' JSON and MP4 returned HTTP 200 after primary service reload",
+  "tests": {"relevant_passed": 75, "real_chromium": "not_run; executable missing"},
+  "legacy_timers": {"memory-vla-v2-1-training.timer": "inactive/disabled", "memory-vla-exp13-watchdog.timer": "inactive/disabled"},
+  "legacy_supervisors": {"MainPID": 0, "stop_result": "SIGTERM 15 at 2026-11-28 14:51:14"},
+  "retained": ["historical jobs/data/checkpoints/source/results", "shared Python package directories", "memory-vla-training-archive.timer", "8765", "unrelated 8766", "unknown/offline remote services"]
+}

@@ -1,6 +1,19 @@
 {
   "plan_id": "v1_2_n17_b1k2026_task_language_v027",
-  "status": "in_progress",
+  "status": "complete",
+  "outcome": {
+    "native_runtime_acceptance": "passed",
+    "task_language_input": "verified",
+    "corrected_job_id": "3fc189e832d8",
+    "returncode": 0,
+    "steps": 3225,
+    "success": false,
+    "q_score": 0.0,
+    "task_performance_acceptance": "not_passed",
+    "training_readiness": "not_accepted; launch remains disabled",
+    "legacy_auto_dispatch": "dedicated V2.1 and Exp13 timers disabled; service processes stopped",
+    "report": "docs/v1_2/acceptance-2026-11-28.md"
+  },
   "supersedes": "v1_2_n17_b1k2026_transition_gate_v026",
   "change_reason": "User asked to continue completing acceptance after the documented language mismatch. Add an explicit, recorded task-language adapter without editing pinned upstream; repeat the same public instance in a fresh attempt directory. The original official-default failure remains unchanged.",
   "scope": "One task-language corrected radio acceptance through the primary workbench, followed by native output verification and a migration decision. No formal training, V2.2, historical deletion or B1K-2025 adaptation.",

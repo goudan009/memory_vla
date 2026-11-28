@@ -24,6 +24,8 @@ Finish environment commissioning, native B1K-2026 workbench integration, and one
 
 ## Execution records
 
+2026-11-28 outcome: native environment / official checkpoint transport / primary workbench acceptance completed. Both the unchanged-default and corrected-task-language radio trials finished normally but failed the task (each 0/1, Q-score 0). Confirmed old V2.1/Exp13 automatic supervisors were disabled/stopped after native runtime acceptance; historical resources remain. Full task-performance and training readiness are not accepted; no formal training was submitted. See [acceptance report](acceptance-2026-11-28.md).
+
 - Latest plan: [plan-v027.json](workflow/plan-v027.json)
 - Prior Task40 audit: [local-preflight-2026-11-27.md](local-preflight-2026-11-27.md)
 - Progress: [progress.md](progress.md)

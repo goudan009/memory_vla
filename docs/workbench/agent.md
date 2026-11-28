@@ -64,6 +64,16 @@ V_2_1 训练指标在工作台查询时转换为共享展示字段：Loss 沿用
 
 两个 `collect` 函数位于 `evaluation/scripts/result_viewer.html`。设备选择型接口的 GET 请求通过查询参数指定 `device`，对应的启动 POST 将 `device` 放在 JSON 内。评估的 `GET /api/launch/jobs` 汇总本机和远程记录。
 
+### V1.2 / N1.7 / B1K-2026 原生 radio 验收
+
+当前本机 8765 的 `/api/launch/options?device=local` 提供 `model_versions.V_1_2`。该路由自行管理本机官方 N1.7 策略服务和独立 B1K-2026 evaluator，使用原生 WebSocket、单环境单回合、temporal ensemble、RTC off。任务与 checkpoint 限定为 `turning_on_radio`。先读 [最新迁移计划](../v1_2/n17-baseline.md) 和当前 workflow，不复用 2025 ZMQ 参数或训练候选。
+
+请求显式包含 `version=V_1_2`、`protocol=b1k2026_websocket`、`task=turning_on_radio`、`instance`（0–19）、`rollouts=1`、`gpu_index`、`policy_host=127.0.0.1`、空闲 `policy_port`、`record_video=true` 和简短 `notes`。`attempt` 默认为1，后续同实例的独立尝试显式填写2–99，保留原目录；不是续跑同一条已完成回合，也不自动推断新 seed。
+
+必须核对 `language_mode`：`task_description` 会验证本地 Task0 原文，并通过本仓库 adapter 显式交给官方 wrapper，preview/job/runner 保存文本与元数据 SHA256；`official_default`（API 兼容默认值）保留上游的 `pick up the object and place it on the table`，用于原样服务复现。工作台表单默认选择任务原文。两种输入配置分别报告，不混为一个成功率。固定上游不作修改。
+
+仍按同配置 preview → start → jobs 核对真实作业。工作台作业卡提供 `native_metrics`、`language`、`notes`、原生 JSON/MP4 和实际启动元数据；原生产物通过 `/api/launch/artifact` 的 GET 读取，不生成假的旧 `results.json`。正式训练能力仍关闭；本入口通过不代表所有任务、训练或模型成功率已验收。
+
 以训练请求为例，`REQUEST_JSON` 是按当前任务填写的 JSON 文件，包含 `device`。推理和评估使用表中的接口前缀。
 
 ```sh
