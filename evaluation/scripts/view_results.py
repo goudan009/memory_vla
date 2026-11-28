@@ -33,6 +33,7 @@ import human_review
 import episode_notes
 from agent_experiments import experiment_catalog, experiment_record, workflow_plans
 from checkpoint_notes import CheckpointNotes
+from workbench_annotations import AnnotationStore, episode_keys
 
 
 EVALUATION_ROOT = Path(__file__).resolve().parents[1]
@@ -41,6 +42,7 @@ REGISTRY_ANNOTATIONS_LOCK = threading.Lock()
 AGENT_BINDINGS_LOCK = threading.Lock()
 RESOURCE_START_LOCK = threading.RLock()
 CHECKPOINT_NOTES = CheckpointNotes(EVALUATION_ROOT.parent / 'outputs' / 'checkpoint_notes.json')
+WORKBENCH_ANNOTATIONS = AnnotationStore(EVALUATION_ROOT.parent / 'outputs' / 'workbench_annotations.json')
 TASK40_VIDEOS = Path("/nvme3/projects/memory_vla/outputs/overnight_memory_task40_20261114/verification/task40_vlm_blind_review/full_episodes")
 TASK40_ANNOTATIONS_FILE = EVALUATION_ROOT.parent / "outputs" / "task40_annotations.json"
 TASK40_ANNOTATIONS_LOCK = threading.Lock()
@@ -777,8 +779,30 @@ class Handler(BaseHTTPRequestHandler):
             ({item['id'] for item in stage.get('supplements', [])}
              | {item['id'] for category in causes for item in category.get('notes', [])}))
 
+    def _workbench_annotations(self, request, write=False):
+        benchmark, run = request.get('benchmark'), request.get('run')
+        keys = episode_keys(benchmark, run, self.launch_manager, self.benchmark_manager)
+        if write:
+            return WORKBENCH_ANNOTATIONS.save(benchmark, run, keys, request.get('episode'), request.get('value'))
+        return {'annotations': WORKBENCH_ANNOTATIONS.read(benchmark, run, keys)}
+
     def do_POST(self):
         route = urlparse(self.path).path
+        if route == '/api/workbench/annotations':
+            try:
+                origin = self.headers.get('Origin')
+                if origin and urlparse(origin).netloc != self.headers.get('Host'):
+                    raise ValueError('请从本工作台保存标注')
+                length = int(self.headers.get('Content-Length', '0'))
+                if not 0 < length <= 32768:
+                    raise ValueError('标注请求长度不正确')
+                request = json.loads(self.rfile.read(length))
+                if not isinstance(request, dict):
+                    raise ValueError('标注请求格式不正确')
+                self._json(self._workbench_annotations(request, write=True))
+            except (ValueError, OSError, TypeError, KeyError, AttributeError) as error:
+                self._json({'error': str(error)}, 400)
+            return
         if route == '/api/episode-notes':
             try:
                 origin = self.headers.get('Origin')
@@ -984,6 +1008,13 @@ class Handler(BaseHTTPRequestHandler):
                 remaining -= len(chunk)
 
     def do_GET(self):
+        if urlparse(self.path).path == '/api/workbench/annotations':
+            try:
+                request = {k: v[0] for k, v in parse_qs(urlparse(self.path).query).items()}
+                self._json(self._workbench_annotations(request))
+            except (ValueError, OSError, TypeError, KeyError, AttributeError) as error:
+                self._json({'error': str(error)}, 400)
+            return
         if urlparse(self.path).path == '/api/episode-notes':
             try:
                 query = parse_qs(urlparse(self.path).query)

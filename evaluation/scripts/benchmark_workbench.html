@@ -55,6 +55,15 @@ body[data-benchmark="b1k2026"] #eval-config .step-number {display:none!important
 body[data-benchmark="b1k2026"] #launch-create,
 body[data-benchmark="b1k2026"] #page-results .media-grid {grid-template-columns:minmax(0,1fr)}
 body[data-benchmark="b1k2026"] #eval-config {grid-column:1/-1}
+#workbench-annotation[hidden],#workbench-comparison[hidden],#workbench-export[hidden]{display:none!important}
+#workbench-annotation .bench-form{padding:8px 0}
+#workbench-comparison .bench-table-scroll{margin-top:8px}
+#workbench-annotation textarea{width:100%;min-width:0;box-sizing:border-box;resize:vertical}
+body[data-benchmark="libero"] .bench-layout{gap:16px;grid-template-columns:minmax(270px,29%) minmax(0,1fr)}
+body[data-benchmark="libero"] .bench-job{border:1px solid var(--line);border-radius:7px;margin:0 0 6px;padding:10px}
+body[data-benchmark="libero"] .bench-job[aria-selected=true]{background:var(--soft);border-color:#7399eb}
+body[data-benchmark="libero"] #bench-results .page-intro,body[data-benchmark="libero"] #bench-training .page-intro,body[data-benchmark="libero"] #bench-launch .page-intro{display:none}
+@media(max-width:850px){body[data-benchmark="libero"] .bench-layout{grid-template-columns:minmax(0,1fr)}}
 </style>
 <div id="benchmark-selector" class="benchmark-switch">
  <label for="benchmark-choice">Benchmark<select id="benchmark-choice" aria-label="Benchmark"><option value="b1k2026" selected>BEHAVIOR-1K 2026</option><option value="b1k">BEHAVIOR-1K 2025 · 历史</option><option value="libero">LIBERO</option><option value="mikasa">MIKASA-Robo · 待接入</option><option value="simpler">SimplerEnv · 待接入</option></select></label>
@@ -63,7 +72,7 @@ body[data-benchmark="b1k2026"] #eval-config {grid-column:1/-1}
 <div id="n17-workspace" hidden>
  <section id="n17-training" hidden>
   <div class="detail-heading"><h2>训练尚未开放</h2><span class="bench-status">尚未验收</span></div>
-  <div class="bench-body"><p>V1.2 / GR00T N1.7 的正式训练尚未开放。当前已完成官方权重的推理与仿真评估接入。</p><p class="bench-subtle">Task0 / Task40 数据已下载；训练数据划分、真实 batch 前后向、保存重载及严格恢复仍待验证。</p><button type="button" id="n17-to-results">查看已有评估与视频 →</button></div>
+  <div class="bench-body"><p>等待 N1.7 训练链路验收：数据划分、真实 batch、保存重载与断点恢复。</p><button type="button" id="n17-to-results">查看评估结果</button></div>
  </section>
 
 </div>
@@ -123,7 +132,7 @@ body[data-benchmark="b1k2026"] #eval-config {grid-column:1/-1}
   <div class="bench-layout">
    <section><div class="section-head"><h2>运行记录</h2><span id="bench-run-count" class="bench-subtle"></span></div><div class="bench-body"><input id="bench-search" class="bench-search" type="search" placeholder="搜索备注、检查类型…" aria-label="搜索 benchmark 记录"></div><div id="bench-job-list" class="bench-jobs"></div></section>
    <section><div class="detail-heading"><div><h2 id="bench-detail-title">选择一次运行</h2><div id="bench-detail-subtitle" class="bench-subtle"></div></div><span id="bench-detail-status" class="bench-status"></span></div>
-    <div class="bench-body"><div class="bench-actions"><span id="bench-progress-label" class="bench-subtle"></span><button id="bench-stop" type="button" hidden>停止本次运行</button></div><progress id="bench-progress" class="bench-progress" max="1" value="0"></progress><div id="bench-detail-message" class="bench-message" role="status"></div></div>
+    <div class="bench-body"><div class="bench-actions"><span id="bench-progress-label" class="bench-subtle"></span><button id="bench-export" type="button" disabled>导出 JSON</button><button id="bench-stop" type="button" hidden>停止本次运行</button></div><progress id="bench-progress" class="bench-progress" max="1" value="0"></progress><div id="bench-detail-message" class="bench-message" role="status"></div></div>
     <nav class="detail-tabs" aria-label="Benchmark 记录详情"><button type="button" data-bench-tab="metrics" aria-selected="true">指标与结论</button><button type="button" data-bench-tab="cameras" aria-selected="false">录像与相机</button><button type="button" data-bench-tab="logs" aria-selected="false">日志与配置</button></nav>
     <div id="bench-pane-metrics" class="bench-body"></div><div id="bench-pane-cameras" class="bench-body" hidden></div>
     <div id="bench-pane-logs" class="bench-body" hidden><pre id="bench-log" class="log"></pre><details><summary>运行配置与源码标识</summary><pre id="bench-config" class="bench-configuration"></pre></details><details><summary>原始指标报告</summary><pre id="bench-raw" class="bench-configuration"></pre></details></div>

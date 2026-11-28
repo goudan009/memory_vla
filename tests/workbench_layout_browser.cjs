@@ -32,6 +32,7 @@ async function routeAll(page){
   if(p==='/training.js')return script('window.__grootTrainingPageHTML='+JSON.stringify(training('dashboard.html'))+';\n'+training('dashboard.js'));
   if(['/checkpoint_notes.js','/agent_experiments.js','/registry_storage.js','/resource_downloads.js','/task40_diagnostics.js'].includes(p))return script(evaluation(p.slice(1)));
   if(p==='/api/checkpoint-notes')return json({notes:{},devices:{a100:{label:'A100',host:'172.28.62.17'},a6000:{label:'RTX 6000 Ada',host:'100.100.2.30'}}});
+  if(p==='/api/workbench/annotations')return json({annotations:{}});
   if(p==='/api/results')return json({runs:[run,liveEval],updated_at:'12:00'});
   if(p==='/api/services')return json({local:{ok:true,gpus:[gpu(0),gpu(1)],processes:[]},remote:{ok:true,gpus:[gpu(0),gpu(1),gpu(2),gpu(3)],processes:[]},a6000:{ok:true,gpus:[gpu(0)],processes:[]}});
   if(p==='/api/training/options')return json({datasets:[task,...[0,21,34].map(i=>({...task,task:i,task_name:'training_task_'+i}))],gpus:[0,1,2,3].map(gpu),checkpoints:[{path:checkpoint,label:'GR00T-N1.6-3B',training_profile:{kind:'base'}}],model_versions:{V_1:{backend:'v1',description:'Baseline',prefix:'v1'}},sync:{}});
@@ -39,7 +40,7 @@ async function routeAll(page){
   if(p==='/api/launch/options')return json({ready:true,tasks:[{id:40,name:'microwave_popcorn'}],gpus:[gpu(0),gpu(1)],versions:{V_1:['baseline'],V_2_1:['baseline']}});
   if(p==='/api/inference/options')return json({host:'172.28.62.17',gpus:[gpu(0),gpu(1)],sources:['/deployments/groot'],source_dir:'/deployments/groot',python_path:'/env/bin/python',checkpoints:[{path:checkpoint,label:'GR00T-N1.6-3B'}]});
   if(p==='/api/inference/jobs')return json({jobs:[inferenceJob(q.get('device'))]});
-  if(p==='/api/launch/jobs')return json({jobs:q.get('benchmark')==='b1k2026'?[{id:'native-radio',kind:'b1k2026_websocket',state:'complete',task_id:'turning_on_radio',folder:'V_1_2/official/native-radio',started_at:'2026-11-28 14:27:32',notes:'native fixture',native_metrics:[{instance_id:319,steps:3225,success:false,q_score:0}],artifacts:[{path:'videos/turning_on_radio_319_0.mp4',url:'/api/launch/artifact?run=native-radio&path=videos%2Fturning_on_radio_319_0.mp4'}]},{id:'native-failed',kind:'b1k2026_websocket',state:'failed',task_id:'turning_on_radio',notes:'failed fixture',native_metrics:[]}]:evalJobs,device_errors:{}});
+  if(p==='/api/launch/jobs')return json({jobs:q.get('benchmark')==='b1k2026'?[{id:'native-radio',kind:'b1k2026_websocket',state:'complete',task_id:'turning_on_radio',folder:'V_1_2/official/native-radio',started_at:'2026-11-28 14:27:32',notes:'native fixture',native_episode_keys:['json/turning_on_radio_319_0.json'],native_metrics:[{instance_id:319,steps:3225,success:false,q_score:0}],artifacts:[{path:'videos/turning_on_radio_319_0.mp4',url:'/api/launch/artifact?run=native-radio&path=videos%2Fturning_on_radio_319_0.mp4'}]},{id:'native-failed',kind:'b1k2026_websocket',state:'failed',task_id:'turning_on_radio',notes:'failed fixture',native_metrics:[]}]:evalJobs,device_errors:{}});
   if(p==='/api/benchmarks/jobs')return json({jobs:[]});
   if(p==='/api/agent-experiments')return json(agent);
   if(p==='/api/registry')return json({items:resources,hosts,experiments:[],generated_at:'2026-11-28 12:00'});
@@ -140,6 +141,8 @@ async function bounds(page,name,selector){
    assert.ok(await page.locator('#pane-media').isVisible());
    assert.match(await page.locator('#video-player').getAttribute('src'),/launch\/artifact/);
    assert.ok(await page.locator('#episode-note-panel').isHidden(),'legacy note endpoint unavailable');
+   assert.ok(await page.locator('#workbench-annotation').isVisible(),'native review and notes available');
+   await page.locator('#wb-annotation-save').waitFor({state:'visible'});
    await page.locator('#tab-info').click();
    assert.ok(await page.locator('#pane-info').isVisible());
    await page.fill('#run-search','failed fixture');

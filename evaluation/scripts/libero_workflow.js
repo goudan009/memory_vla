@@ -102,7 +102,7 @@
       if(d.type==='libero_train'){
         html+='<h3>LIBERO 训练</h3>'+table(['模型','套件 / 任务','已训练步数','最后 Loss'],[[d.arm,d.suite+' / '+d.tasks.join(', '),d.steps,benchmarkNumber(d.training.at(-1)?.loss)]])+'<p class="bench-subtle">Loss 是训练误差；任务表现请通过保存的权重做闭环评估。</p>';
         const points=d.training, max=Math.max(.001,...points.map(p=>p.loss)),minStep=points[0]?.step||0,maxStep=Math.max(minStep+1,points.at(-1)?.step||1);
-        html+='<svg class="bench-chart" viewBox="0 0 660 180" role="img" aria-label="LIBERO 训练 Loss"><text x="8" y="20" font-size="11">'+benchmarkNumber(max)+'</text><polyline fill="none" stroke="#087f68" stroke-width="2" points="'+points.map(p=>(45+595*(p.step-minStep)/(maxStep-minStep)).toFixed(1)+','+(150-130*p.loss/max).toFixed(1)).join(' ')+'"/><text x="540" y="175" font-size="11">'+d.steps+' steps</text></svg>';
+        html+='<svg class="bench-chart" viewBox="0 0 660 180" role="img" aria-label="LIBERO 训练 Loss"><text x="8" y="20" font-size="11">'+benchmarkNumber(max)+'</text><polyline fill="none" stroke="#285fc6" stroke-width="2" points="'+points.map(p=>(45+595*(p.step-minStep)/(maxStep-minStep)).toFixed(1)+','+(150-130*p.loss/max).toFixed(1)).join(' ')+'"/><text x="540" y="175" font-size="11">'+d.steps+' steps</text></svg>';
         html+='<p><button type="button" data-libero-evaluate="'+esc(d.checkpoint)+'">用此权重评估 →</button></p>';
       }
       if(d.type==='libero_eval'){
@@ -130,7 +130,8 @@
       const frames=Object.entries(row.frames||{}).flatMap(([when,cameras])=>Object.entries(cameras).map(([camera,file])=>({when,camera,file})));
       el('libero-media-content').innerHTML=(row.video?'<video controls preload="metadata" style="width:100%;max-height:480px;margin:16px 0;background:#17251e" src="'+url('video',row.video)+'"></video>':'')+'<div class="bench-camera-grid">'+frames.map(f=>'<figure><img loading="lazy" alt="'+esc(f.camera)+' '+esc(f.when)+'" src="'+url('image',f.file)+'"><figcaption>'+(f.when==='start'?'初始':'结束')+' · '+(f.camera==='agentview'?'外部相机':'腕部相机')+'</figcaption></figure>').join('')+'</div>';
     };
-    el('libero-media-episode').onchange=show;show();
+    const showWithAnnotation=()=>{show();work.liberoAnnotation(job,episodes[Number(el('libero-media-episode').value)],pane);};
+    el('libero-media-episode').onchange=showWithAnnotation;showWithAnnotation();
   }
   window.liberoWorkflow={options:updateOptions,buttons,metrics,detail,route:(benchmark)=>{
     el('libero-training-card').hidden=benchmark!=='libero';el('bench-training-unavailable').hidden=benchmark==='libero';

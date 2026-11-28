@@ -10,6 +10,7 @@ on:
       - 'tests/test_workbench_resource_safety.py'
       - 'tests/workbench_download_ui.cjs'
       - 'tests/workbench_layout_browser.cjs'
+      - 'tests/test_workbench_annotations.py'
       - '.github/workflows/workbench-cpu.yml'
   workflow_dispatch:
 permissions:
@@ -35,6 +36,8 @@ jobs:
       - run: pip install pytest
       - run: python -m compileall -q evaluation/scripts train workbench-cli
       - run: python -m pytest -q tests/test_resource_downloads.py tests/test_workbench_resource_safety.py tests/test_registry_storage.py -k 'not http_resource_operations'
+      - run: python -m pytest -q tests/test_workbench_annotations.py
+      - run: node --check evaluation/scripts/benchmark_workbench.js && node --check evaluation/scripts/libero_workflow.js
       - run: node tests/workbench_download_ui.cjs
       - run: |
           node --check evaluation/scripts/resource_downloads.js

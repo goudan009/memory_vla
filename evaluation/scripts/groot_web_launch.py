@@ -817,11 +817,13 @@ class LaunchManager:
             status['notes'] = plan.get('notes')
             status['language'] = plan.get('language')
             status['native_metrics'] = []
+            status['native_episode_keys'] = []
             for path in native_json:
                 try:
                     result = json.loads(path.read_text())
                 except (OSError, ValueError):
                     continue
+                status['native_episode_keys'].append(path.relative_to(output).as_posix())
                 status['native_metrics'].append({
                     'instance_id': result.get('instance_id'), 'steps': result.get('steps'),
                     'success': result.get('success'), 'q_score': result.get('q_score', {}).get('final'),

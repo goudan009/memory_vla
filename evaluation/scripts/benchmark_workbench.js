@@ -87,6 +87,69 @@ if(typeof module!=='undefined' && module.exports) module.exports={benchmarkMetri
   let page=new URL(location.href).searchParams.get('page')||'results', resultMode='policy', selectedId=null, detail=null;
   let nativeJobs=[], nativeSelected=null, nativeRefresh=null, nativeVideo='', nativeEpisode=0, nativeTab='episodes';
   const nativeGroupOpen=new Map();
+  const annotations=new Map();
+  let annotationTarget=null, annotationRequest=0, annotationSaving=false;
+  const annotationPanel=document.createElement('section');
+  annotationPanel.id='workbench-annotation';annotationPanel.className='review-box';annotationPanel.hidden=true;
+  annotationPanel.innerHTML='<div class="review-head"><h2>回合备注与失败标注</h2><span id="wb-annotation-identity" class="review-identity"></span></div><label class="bench-subtle" for="wb-annotation-notes">回合备注</label><textarea id="wb-annotation-notes" rows="3" maxlength="2000"></textarea><div class="bench-form"><label>失败阶段<input id="wb-annotation-stage" maxlength="120" placeholder="例如：接近目标"></label><label>主要根因<select id="wb-annotation-cause"><option value="">未标注</option><option>任务理解</option><option>阶段决策</option><option>导航定位</option><option>抓取与操作</option><option>控制执行</option><option>环境或接口异常</option><option>其他</option></select></label><label class="bench-wide">根因说明<input id="wb-annotation-reason" maxlength="500"></label></div><div class="review-actions"><button type="button" id="wb-annotation-save">保存</button><button type="button" id="wb-annotation-clear">清除</button><span id="wb-annotation-message" class="subtle" role="status"></span></div>';
+  const annotationFields=['notes','stage','cause','reason'];
+  function annotationValue(){return Object.fromEntries(annotationFields.map(k=>[k,el('wb-annotation-'+k).value]));}
+  function writeAnnotation(value){for(const k of annotationFields)el('wb-annotation-'+k).value=value?.[k]||'';}
+  function annotationEnabled(enabled){for(const k of annotationFields)el('wb-annotation-'+k).disabled=!enabled;el('wb-annotation-save').disabled=el('wb-annotation-clear').disabled=!enabled;}
+  function hideAnnotation(){annotationPanel.hidden=true;annotationTarget=null;annotationRequest++;}
+  async function annotationAPI(target,value){
+    const query=new URLSearchParams({benchmark:target.benchmark,run:target.run});
+    const response=await fetch('/api/workbench/annotations'+(value?'':'?'+query),value?{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({benchmark:target.benchmark,run:target.run,episode:target.episode,value})}:{cache:'no-store'});
+    const data=await response.json();if(!response.ok||data.error)throw Error(data.error||'标注接口不可用');return data;
+  }
+  function showAnnotation(kind,job,episode,parent){
+    if(!job||!episode){hideAnnotation();return;}
+    const key=JSON.stringify([kind,job.id,episode]), target={key,benchmark:kind,run:job.id,episode};
+    if(annotationPanel.parentElement!==parent)parent.append(annotationPanel);
+    annotationPanel.hidden=false;
+    if(annotationTarget?.key===key)return;
+    annotationTarget=target;const request=++annotationRequest;
+    el('wb-annotation-identity').textContent=episode;
+    writeAnnotation(annotations.get(key));annotationEnabled(false);
+    el('wb-annotation-message').textContent='读取中…';
+    annotationAPI(target).then(data=>{
+      if(request!==annotationRequest||annotationTarget?.key!==key)return;
+      const value=data.annotations?.[episode]||{};annotations.set(key,value);writeAnnotation(value);
+      annotationEnabled(true);el('wb-annotation-message').textContent=value.updated_at?'已载入标注':'';
+    }).catch(error=>{if(request===annotationRequest)el('wb-annotation-message').textContent='读取失败：'+error.message;});
+  }
+  async function saveAnnotation(clear=false){
+    if(!annotationTarget||annotationSaving)return;
+    const target=annotationTarget,value=clear?Object.fromEntries(annotationFields.map(k=>[k,''])):annotationValue();
+    annotationSaving=true;annotationEnabled(false);
+    try{const result=await annotationAPI(target,value);annotations.set(target.key,result);
+      if(annotationTarget?.key===target.key){writeAnnotation(result);el('wb-annotation-message').textContent=clear?'已清除':'已保存';}
+    }catch(error){if(annotationTarget?.key===target.key)el('wb-annotation-message').textContent='保存失败：'+error.message;}
+    finally{annotationSaving=false;if(annotationTarget?.key===target.key)annotationEnabled(true);}
+  }
+  annotationPanel.querySelector('#wb-annotation-save').onclick=()=>void saveAnnotation();
+  annotationPanel.querySelector('#wb-annotation-clear').onclick=()=>void saveAnnotation(true);
+  function liberoAnnotation(job,row,parent){
+    if(benchmark!=='libero'||page!=='results'||!row)return;
+    showAnnotation('libero',job,'task:'+row.task+':trial:'+row.trial+':initial:'+row.initial_state_index,parent);
+  }
+  const comparison=document.createElement('details');comparison.id='workbench-comparison';comparison.className='foldout';comparison.hidden=true;
+  const comparisonSummary=document.createElement('summary');comparisonSummary.textContent='同任务结果对比';comparison.append(comparisonSummary);
+  const comparisonBody=document.createElement('div');comparison.append(comparisonBody);
+  function showComparison(job){
+    if(!job){comparison.hidden=true;return;}
+    const task=job.task_id, matches=nativeJobs.filter(j=>j.task_id===task&&nativeMetrics(j).length);
+    if(comparison.parentElement!==el('pane-episodes'))el('pane-episodes').append(comparison);
+    comparison.hidden=false;
+    comparisonBody.innerHTML=benchmarkTable(['运行','已判定回合','成功率','平均 Q'],matches.map(j=>{
+      const ms=nativeMetrics(j),known=ms.filter(m=>typeof m.success==='boolean'),qs=ms.filter(m=>typeof m.q_score==='number'&&Number.isFinite(m.q_score));
+      return [(j.folder||j.id).split('/').pop(),known.length,known.length?(100*known.filter(m=>m.success).length/known.length).toFixed(1)+'%':'—',qs.length?(qs.reduce((sum,m)=>sum+m.q_score,0)/qs.length).toFixed(3):'—'];
+    }))+'<p class="subtle">仅显示同任务记录；跨权重结论需核对实例、指令及评估协议一致性。</p>';
+  }
+  function exportRecord(record,kind){
+    const blob=new Blob([JSON.stringify({schema:1,benchmark:kind,exported_at:new Date().toISOString(),record},null,2)],{type:'application/json;charset=utf-8'});
+    const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=String(record.job?.id||record.id||'analysis').replace(/[^A-Za-z0-9_.-]/g,'_')+'__analysis.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+  }
   let options=null, jobs=[], busy=false, refreshing=false, tab='metrics', optionsAt=0;
   const selection={};
   const running=s=>['starting','running','stopping'].includes(s);
@@ -98,6 +161,7 @@ if(typeof module!=='undefined' && module.exports) module.exports={benchmarkMetri
     const data=await response.json();if(!response.ok)throw Error(data.error || '请求失败');return data;
   }
   function route(nextPage){
+    if(page!==nextPage)hideAnnotation();
     page=nextPage;
     el('n17-workspace').hidden=benchmark!=='b1k2026'||page!=='training';
     el('n17-training').hidden=benchmark!=='b1k2026'||page!=='training';
@@ -149,6 +213,7 @@ if(typeof module!=='undefined' && module.exports) module.exports={benchmarkMetri
     const previousBenchmark=benchmark;
     benchmark=el('benchmark-choice').value;
     if(initial || previousBenchmark!==benchmark){
+      hideAnnotation();comparison.hidden=true;
       el('run-search').value='';el('status-filter').value='';el('evaluation-action-message').textContent='';
       if(previousBenchmark==='b1k2026'||benchmark==='b1k2026'){
         const player=el('video-player');stopPreview();player.pause();player.removeAttribute('src');player.load();
@@ -258,6 +323,9 @@ if(typeof module!=='undefined' && module.exports) module.exports={benchmarkMetri
     const facts=[['任务指令',job?.language?.text_prompt],['运行备注',job?.notes],['归档目录',job?.folder],['作业 ID',job?.id],['状态',job?nativeStatus(job):null]];
     el('configuration-details').innerHTML=job?'<div class="facts">'+facts.map(([k,v])=>'<div class="fact"><label>'+escape(k)+'</label><strong>'+escape(v??'—')+'</strong></div>').join('')+'</div><div class="launch-job-artifacts">'+artifacts.filter(a=>!a.path?.endsWith('.mp4')).map(a=>'<a target="_blank" rel="noopener" href="'+escape(nativeArtifact(a))+'">'+escape(a.label||a.path)+'</a>').join(' · ')+'</div>':'';
     el('log').textContent=job?.log_tail||'暂无内联日志；可在配置中打开原生记录与日志。';
+    const episodeKey=job?.native_episode_keys?.[nativeEpisode];
+    if(episodeKey)showAnnotation('b1k2026',job,episodeKey,el('pane-media'));else hideAnnotation();
+    showComparison(job);
     nativeSetTab(nativeTab);
   }
   async function refreshNative(){
@@ -325,6 +393,7 @@ if(typeof module!=='undefined' && module.exports) module.exports={benchmarkMetri
   function jobStatus(job){return job.kind.startsWith('libero_')?({complete:'已完成',failed:'运行失败'}[job.status]||status[job.status]||job.status):(status[job.status]||job.status);}
   function renderDetail(){
     if(!detail || detail.job.id!==selectedId){
+      hideAnnotation();el('bench-export').disabled=true;
       el('bench-detail-title').textContent='选择一次运行';el('bench-detail-subtitle').textContent='';el('bench-detail-status').textContent='';
       el('bench-pane-metrics').innerHTML='<div class="bench-empty">从左侧选择记录查看指标、截图与日志。</div>';
       delete el('bench-pane-metrics').dataset.signature;
@@ -342,11 +411,13 @@ if(typeof module!=='undefined' && module.exports) module.exports={benchmarkMetri
     if(el('bench-pane-metrics').dataset.signature!==signature){
       el('bench-pane-metrics').innerHTML=benchmarkMetrics(detail.reports);el('bench-pane-metrics').dataset.signature=signature;
       const frames=detail.reports.flatMap(r=>(r.data.tasks||[]).flatMap(t=>Object.entries(t.frames||{}).flatMap(([when,cameras])=>Object.entries(cameras).map(([camera,file])=>({task:t.task,when,camera,file})))));
+      hideAnnotation();
       el('bench-pane-cameras').querySelector('video')?.pause();
       el('bench-pane-cameras').innerHTML=frames.length?'<div class="bench-camera-grid">'+frames.map(f=>'<figure><img loading="lazy" alt="Task'+f.task+' '+escape(f.camera)+' '+escape(f.when)+'" src="/api/benchmarks/image?run='+encodeURIComponent(j.id)+'&file='+encodeURIComponent(f.file)+'"><figcaption>Task'+f.task+' · '+(f.when==='start'?'初始':'结束')+' · '+(f.camera==='agentview'?'外部相机':'腕部相机')+'</figcaption></figure>').join('')+'</div>':'<div class="bench-empty">本记录没有相机截图。网页新启动的 LIBERO 检查会保存起止画面。</div>';
       el('bench-raw').textContent=JSON.stringify(detail.reports,null,2);
       window.liberoWorkflow?.detail(j,detail.reports);
     }
+    el('bench-export').disabled=false;
     const log=el('bench-log'), atBottom=log.scrollHeight-log.scrollTop-log.clientHeight<35;
     if(log.textContent!==detail.log){log.textContent=detail.log;if(atBottom)log.scrollTop=log.scrollHeight;}
     el('bench-config').textContent=JSON.stringify(detail.plan||j.config,null,2);
@@ -387,8 +458,9 @@ if(typeof module!=='undefined' && module.exports) module.exports={benchmarkMetri
   el('bench-search').oninput=()=>{renderList();void refresh();};
   el('bench-job-list').onclick=e=>{const button=e.target.closest('[data-run]');if(button){selectedId=button.dataset.run;detail=null;renderList();renderDetail();void refresh();}};
   document.querySelectorAll('[data-bench-tab]').forEach(button=>button.onclick=()=>{tab=button.dataset.benchTab;if(tab!=='cameras')el('bench-pane-cameras').querySelector('video')?.pause();document.querySelectorAll('[data-bench-tab]').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.benchTab===tab)));for(const name of ['metrics','cameras','logs'])el('bench-pane-'+name).hidden=name!==tab;});
+  el('bench-export').onclick=()=>{if(detail&&detail.job.id===selectedId)exportRecord(detail,benchmark);};
   el('bench-stop').onclick=async()=>{if(!detail)return;el('bench-stop').disabled=true;try{await api('stop',{run:detail.job.id});await refresh();}catch(e){message('bench-detail-message',e.message,true);el('bench-stop').disabled=false;}};
-  window.benchmarkWorkbench={route,isNative,refresh,current:()=>benchmark,renderNativeResults,nativeSetTab,nativeResultJob,run,loadOptions,options:()=>options,updateButtons:setButtons,trainingReady:()=>{const sidebar=el('page-training').querySelector('.run-browser');if(sidebar)sidebar.append(checks);return route(page);}};
+  window.benchmarkWorkbench={route,isNative,refresh,current:()=>benchmark,renderNativeResults,nativeSetTab,nativeResultJob,liberoAnnotation,run,loadOptions,options:()=>options,updateButtons:setButtons,trainingReady:()=>{const sidebar=el('page-training').querySelector('.run-browser');if(sidebar)sidebar.append(checks);return route(page);}};
   el('benchmark-choice').value=benchmark;
   if(typeof agentBoardPage==='undefined'||!agentBoardPage)changeBenchmark(true);
   setInterval(()=>{if(!workspace.hidden||(!checks.hidden&&checks.open))void refresh();},4000);
