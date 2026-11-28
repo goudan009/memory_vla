@@ -1,0 +1,7 @@
+{
+  "status": "completed",
+  "step": 6000,
+  "total_steps": 6000,
+  "training_complete": true,
+  "world_size": 4
+}

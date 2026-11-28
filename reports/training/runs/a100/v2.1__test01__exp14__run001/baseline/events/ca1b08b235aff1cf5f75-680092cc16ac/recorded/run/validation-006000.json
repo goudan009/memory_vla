@@ -1,0 +1,54 @@
+{
+  "step": 6000,
+  "fm": 0.01436991763740924,
+  "states": {
+    "door_open": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "f1": 0.0
+    },
+    "door_ever_opened": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "f1": 0.0
+    },
+    "bag_grasped": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "f1": 0.0
+    },
+    "bag_inside": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "f1": 0.0
+    },
+    "bag_ever_grasped": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "f1": 0.0
+    },
+    "bag_ever_inside": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "f1": 0.0
+    },
+    "started": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "f1": 0.0
+    },
+    "cooked_popcorn_exists": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "f1": 0.0
+    }
+  }
+}

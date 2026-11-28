@@ -1,0 +1,14 @@
+{
+  "run": "v2_1__test02__exp01__run003",
+  "version": "V_2_1",
+  "arm": "baseline",
+  "pid": 1501955,
+  "pid_start": "1411899501",
+  "output": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v2_1__test02__exp01__run003",
+  "source": "/nvme3/projects/memory_vla/deployments/v2_1__test02__exp01__run003",
+  "source_digest": "53a2c0ab6c747c0264988ca0b6c53e12c433cbc7354d6c542bfb95158d818615",
+  "status": "submitted",
+  "resumed": false,
+  "category": "formal_training",
+  "created_at": "2026-11-27T19:39:39.579132"
+}

@@ -1,0 +1,76 @@
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/runpy.py", line 196, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/usr/lib/python3.10/runpy.py", line 86, in _run_code
+    exec(code, run_globals)
+  File "/nvme3/projects/memory_vla/deployments/v2.1__test01__exp14__run001/src/v2_1_groot_memoryvla/serve.py", line 25, in <module>
+    if __name__=="__main__":main()
+  File "/nvme3/projects/memory_vla/deployments/v2.1__test01__exp14__run001/src/v2_1_groot_memoryvla/serve.py", line 19, in main
+    policy=Policy(EmbodimentTag("behavior_r1_pro"),args.model_path,device=args.device,
+  File "/nvme3/projects/memory_vla/deployments/v2.1__test01__exp14__run001/src/v2_1_groot_memoryvla/policy.py", line 19, in __init__
+    raise ValueError('Expected V2.1 sidecar; refusing a baseline fallback')
+ValueError: Expected V2.1 sidecar; refusing a baseline fallback
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/runpy.py", line 196, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/usr/lib/python3.10/runpy.py", line 86, in _run_code
+    exec(code, run_globals)
+  File "/nvme3/projects/memory_vla/deployments/v2.1__test01__exp14__run001/src/v2_1_groot_memoryvla/serve.py", line 25, in <module>
+    if __name__=="__main__":main()
+  File "/nvme3/projects/memory_vla/deployments/v2.1__test01__exp14__run001/src/v2_1_groot_memoryvla/serve.py", line 19, in main
+    policy=Policy(EmbodimentTag("behavior_r1_pro"),args.model_path,device=args.device,
+  File "/nvme3/projects/memory_vla/deployments/v2.1__test01__exp14__run001/src/v2_1_groot_memoryvla/policy.py", line 19, in __init__
+    raise ValueError('Expected V2.1 sidecar; refusing a baseline fallback')
+ValueError: Expected V2.1 sidecar; refusing a baseline fallback
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/runpy.py", line 196, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/usr/lib/python3.10/runpy.py", line 86, in _run_code
+    exec(code, run_globals)
+  File "/nvme3/projects/memory_vla/deployments/v2.1__test01__exp14__run001/src/v2_1_groot_memoryvla/serve.py", line 25, in <module>
+    if __name__=="__main__":main()
+  File "/nvme3/projects/memory_vla/deployments/v2.1__test01__exp14__run001/src/v2_1_groot_memoryvla/serve.py", line 19, in main
+    policy=Policy(EmbodimentTag("behavior_r1_pro"),args.model_path,device=args.device,
+  File "/nvme3/projects/memory_vla/deployments/v2.1__test01__exp14__run001/src/v2_1_groot_memoryvla/policy.py", line 19, in __init__
+    raise ValueError('Expected V2.1 sidecar; refusing a baseline fallback')
+ValueError: Expected V2.1 sidecar; refusing a baseline fallback
+Tune backbone llm: False
+Tune backbone visual: False
+Warning: No backbone trainable parameters found.
+/nvme3/projects/memory_vla/deployments/inference_32ecf117c151aeb0ccf8ef5bb257c24729af85b5f33c8b31e8f2c01425fa8dd1/src/v1_groot_memoryvla/model/modules/dit.py:240: FutureWarning: Accessing config attribute `compute_dtype` directly via 'AlternateVLDiT' object attribute is deprecated. Please access 'compute_dtype' over 'AlternateVLDiT's config object instead, e.g. 'unet.config.compute_dtype'.
+  embedding_dim=self.inner_dim, compute_dtype=self.compute_dtype
+/nvme3/projects/memory_vla/deployments/inference_32ecf117c151aeb0ccf8ef5bb257c24729af85b5f33c8b31e8f2c01425fa8dd1/src/v1_groot_memoryvla/model/modules/dit.py:271: FutureWarning: Accessing config attribute `output_dim` directly via 'AlternateVLDiT' object attribute is deprecated. Please access 'output_dim' over 'AlternateVLDiT's config object instead, e.g. 'unet.config.output_dim'.
+  self.proj_out_2 = nn.Linear(self.inner_dim, self.output_dim)
+Total number of DiT parameters:  1091722240
+Using AlternateVLDiT for diffusion model
+Tune action head projector: True
+Tune action head diffusion model: True
+Tune action head vlln: True
+`use_fast` is set to `True` but the image processor class does not have a fast version.  Falling back to the slow version.
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00, 19.22it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00, 19.18it/s]
+Tune action head projector: False
+Tune action head diffusion model: False
+Tune action head vlln: False
+Warning: No action head trainable parameters found.
+{'model_path': '/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v2.1__test01__exp14__run001/run/checkpoints/v2.1__test01__exp14__run001__step006000', 'device': 'cuda', 'host': '172.28.62.17', 'port': 5558, 'embodiment_tag': 'BEHAVIOR_R1_PRO', 'use_sim_policy_wrapper': True, 'residual_scale': 1.0, 'history_mode': 'normal', 'seed': 42}
+Server is ready and listening on tcp://172.28.62.17:5558
+Tune backbone llm: False
+Tune backbone visual: False
+Warning: No backbone trainable parameters found.
+/nvme3/projects/memory_vla/deployments/inference_cfeabb58a50b5aaec34679524f8e441dbea508d775b7104b65916cd3aa67a21a/src/v1_groot_memoryvla/model/modules/dit.py:240: FutureWarning: Accessing config attribute `compute_dtype` directly via 'AlternateVLDiT' object attribute is deprecated. Please access 'compute_dtype' over 'AlternateVLDiT's config object instead, e.g. 'unet.config.compute_dtype'.
+  embedding_dim=self.inner_dim, compute_dtype=self.compute_dtype
+/nvme3/projects/memory_vla/deployments/inference_cfeabb58a50b5aaec34679524f8e441dbea508d775b7104b65916cd3aa67a21a/src/v1_groot_memoryvla/model/modules/dit.py:271: FutureWarning: Accessing config attribute `output_dim` directly via 'AlternateVLDiT' object attribute is deprecated. Please access 'output_dim' over 'AlternateVLDiT's config object instead, e.g. 'unet.config.output_dim'.
+  self.proj_out_2 = nn.Linear(self.inner_dim, self.output_dim)
+Total number of DiT parameters:  1091722240
+Using AlternateVLDiT for diffusion model
+Tune action head projector: True
+Tune action head diffusion model: True
+Tune action head vlln: True
+`use_fast` is set to `True` but the image processor class does not have a fast version.  Falling back to the slow version.
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00, 18.80it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00, 18.76it/s]
+Tune action head projector: False
+Tune action head diffusion model: False
+Tune action head vlln: False
+Warning: No action head trainable parameters found.
+{'model_path': '/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v2.1__test01__exp14__run001/run/checkpoints/v2.1__test01__exp14__run001__step006000', 'device': 'cuda', 'host': '172.28.62.17', 'port': 5558, 'embodiment_tag': 'BEHAVIOR_R1_PRO', 'use_sim_policy_wrapper': True, 'residual_scale': 1.0, 'history_mode': 'normal', 'seed': 42}
+Server is ready and listening on tcp://172.28.62.17:5558

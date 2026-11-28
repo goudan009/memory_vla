@@ -1,0 +1,28 @@
+{
+  "root": "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v2_1__test02__exp01__run003",
+  "arm": "baseline",
+  "argv": [
+    "/nvme3/projects/memory_vla/envs/n1d6-p0/bin/python",
+    "-m",
+    "torch.distributed.run",
+    "--standalone",
+    "--nproc-per-node=4",
+    "/nvme3/projects/memory_vla/deployments/v2_1__test02__exp01__run003/scripts/stage1_native_train.py",
+    "--job-root",
+    "/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v2_1__test02__exp01__run003"
+  ],
+  "env": {
+    "PYTHONPATH": "/nvme3/projects/memory_vla/deployments/v2_1__test02__exp01__run003/src",
+    "PYTHONNOUSERSITE": "1",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "HF_HUB_OFFLINE": "1",
+    "TRANSFORMERS_OFFLINE": "1",
+    "CUDA_VISIBLE_DEVICES": "0,1,2,3",
+    "OMP_NUM_THREADS": "4",
+    "TOKENIZERS_PARALLELISM": "false"
+  },
+  "source": "/nvme3/projects/memory_vla/deployments/v2_1__test02__exp01__run003",
+  "steps": 6000,
+  "preflight_only": false,
+  "recipe": "native_random_v2"
+}

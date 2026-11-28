@@ -1,0 +1,8 @@
+{
+  "trainable": 1418624000,
+  "total": 3286608832,
+  "batch": 2,
+  "accumulation": 8,
+  "scheduler": "SchedulerType.COSINE",
+  "optimizer": "OptimizerNames.ADAMW_TORCH_FUSED"
+}

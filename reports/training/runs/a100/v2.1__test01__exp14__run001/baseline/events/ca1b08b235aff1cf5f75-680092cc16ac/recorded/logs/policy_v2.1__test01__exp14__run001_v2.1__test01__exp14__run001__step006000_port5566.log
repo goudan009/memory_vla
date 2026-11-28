@@ -1,0 +1,20 @@
+Tune backbone llm: False
+Tune backbone visual: False
+Warning: No backbone trainable parameters found.
+/nvme3/projects/memory_vla/deployments/inference_13b51a8721ce3cdca2c4d57c616f0923586baf155e9e4e39cb91cf2b031d1395/src/v1_groot_memoryvla/model/modules/dit.py:240: FutureWarning: Accessing config attribute `compute_dtype` directly via 'AlternateVLDiT' object attribute is deprecated. Please access 'compute_dtype' over 'AlternateVLDiT's config object instead, e.g. 'unet.config.compute_dtype'.
+  embedding_dim=self.inner_dim, compute_dtype=self.compute_dtype
+/nvme3/projects/memory_vla/deployments/inference_13b51a8721ce3cdca2c4d57c616f0923586baf155e9e4e39cb91cf2b031d1395/src/v1_groot_memoryvla/model/modules/dit.py:271: FutureWarning: Accessing config attribute `output_dim` directly via 'AlternateVLDiT' object attribute is deprecated. Please access 'output_dim' over 'AlternateVLDiT's config object instead, e.g. 'unet.config.output_dim'.
+  self.proj_out_2 = nn.Linear(self.inner_dim, self.output_dim)
+Total number of DiT parameters:  1091722240
+Using AlternateVLDiT for diffusion model
+Tune action head projector: True
+Tune action head diffusion model: True
+Tune action head vlln: True
+`use_fast` is set to `True` but the image processor class does not have a fast version.  Falling back to the slow version.
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00, 18.93it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00, 18.89it/s]
+Tune action head projector: False
+Tune action head diffusion model: False
+Tune action head vlln: False
+Warning: No action head trainable parameters found.
+{'model_path': '/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v2.1__test01__exp14__run001/run/checkpoints/v2.1__test01__exp14__run001__step006000', 'device': 'cuda', 'host': '172.28.62.17', 'port': 5566, 'embodiment_tag': 'BEHAVIOR_R1_PRO', 'use_sim_policy_wrapper': True, 'residual_scale': 1.0, 'history_mode': 'normal', 'seed': 42, 'inference_steps': 16, 'action_diagnostics_dir': PosixPath('/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v2.1__test01__exp14__run001/logs/port5566/action_diagnostics')}
+Server is ready and listening on tcp://172.28.62.17:5566

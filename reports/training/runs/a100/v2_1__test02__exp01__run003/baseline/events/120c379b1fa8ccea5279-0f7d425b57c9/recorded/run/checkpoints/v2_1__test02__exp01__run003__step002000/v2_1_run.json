@@ -1,0 +1,8 @@
+{
+  "stage": "stage1",
+  "step": 2000,
+  "run_id": "v2_1__test02__exp01__run003",
+  "recipe": "native_random_v2",
+  "source_digest": "53a2c0ab6c747c0264988ca0b6c53e12c433cbc7354d6c542bfb95158d818615",
+  "seed": 42
+}

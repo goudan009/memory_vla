@@ -1,0 +1,83 @@
+{
+  "status": "completed",
+  "step": 6000,
+  "total_steps": 6000,
+  "started_at": "2026-11-27T00:54:50.251272",
+  "training_complete": true,
+  "world_size": 4,
+  "last": {
+    "input_hashes": [],
+    "feature_hashes": [],
+    "module_grads": {},
+    "fm": 0.017971681664675998,
+    "state": 0.0,
+    "grad_norm": 0.13397076725959778,
+    "state_counts": {
+      "door_open": [
+        0,
+        0,
+        0
+      ],
+      "door_ever_opened": [
+        0,
+        0,
+        0
+      ],
+      "bag_grasped": [
+        0,
+        0,
+        0
+      ],
+      "bag_inside": [
+        0,
+        0,
+        0
+      ],
+      "bag_ever_grasped": [
+        0,
+        0,
+        0
+      ],
+      "bag_ever_inside": [
+        0,
+        0,
+        0
+      ],
+      "started": [
+        0,
+        0,
+        0
+      ],
+      "cooked_popcorn_exists": [
+        0,
+        0,
+        0
+      ]
+    },
+    "fm_shared_grad": null,
+    "state_shared_grad": null,
+    "action_elements": 45448.0,
+    "state_elements": [
+      64,
+      64,
+      64,
+      63,
+      64,
+      63,
+      61,
+      64
+    ],
+    "step": 6000,
+    "epoch": 5,
+    "windows": [
+      1271,
+      216
+    ],
+    "seconds": 4.202775560319424,
+    "world_size": 4,
+    "decisions": 64,
+    "peak_allocated_gib": 30.06382179260254,
+    "lr": 1e-05
+  },
+  "finished_at": "2026-11-27T06:59:10.969377"
+}

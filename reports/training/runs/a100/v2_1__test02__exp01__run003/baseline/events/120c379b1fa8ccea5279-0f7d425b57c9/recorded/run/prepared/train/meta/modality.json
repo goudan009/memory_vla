@@ -1,0 +1,130 @@
+{
+  "state": {
+    "robot_pos": {
+      "start": 0,
+      "end": 3
+    },
+    "robot_ori_cos": {
+      "start": 3,
+      "end": 6
+    },
+    "robot_ori_sin": {
+      "start": 6,
+      "end": 9
+    },
+    "robot_2d_ori": {
+      "start": 9,
+      "end": 10
+    },
+    "robot_2d_ori_cos": {
+      "start": 10,
+      "end": 11
+    },
+    "robot_2d_ori_sin": {
+      "start": 11,
+      "end": 12
+    },
+    "robot_lin_vel": {
+      "start": 12,
+      "end": 15
+    },
+    "robot_ang_vel": {
+      "start": 15,
+      "end": 18
+    },
+    "arm_left_qpos": {
+      "start": 18,
+      "end": 25
+    },
+    "arm_left_qpos_sin": {
+      "start": 25,
+      "end": 32
+    },
+    "arm_left_qpos_cos": {
+      "start": 32,
+      "end": 39
+    },
+    "eef_left_pos": {
+      "start": 39,
+      "end": 42
+    },
+    "eef_left_quat": {
+      "start": 42,
+      "end": 46
+    },
+    "gripper_left_qpos": {
+      "start": 46,
+      "end": 48
+    },
+    "arm_right_qpos": {
+      "start": 48,
+      "end": 55
+    },
+    "arm_right_qpos_sin": {
+      "start": 55,
+      "end": 62
+    },
+    "arm_right_qpos_cos": {
+      "start": 62,
+      "end": 69
+    },
+    "eef_right_pos": {
+      "start": 69,
+      "end": 72
+    },
+    "eef_right_quat": {
+      "start": 72,
+      "end": 76
+    },
+    "gripper_right_qpos": {
+      "start": 76,
+      "end": 78
+    },
+    "trunk_qpos": {
+      "start": 78,
+      "end": 82
+    }
+  },
+  "action": {
+    "base": {
+      "start": 0,
+      "end": 3
+    },
+    "torso": {
+      "start": 3,
+      "end": 7
+    },
+    "left_arm": {
+      "start": 7,
+      "end": 14
+    },
+    "left_gripper": {
+      "start": 14,
+      "end": 15
+    },
+    "right_arm": {
+      "start": 15,
+      "end": 22
+    },
+    "right_gripper": {
+      "start": 22,
+      "end": 23
+    }
+  },
+  "video": {
+    "observation.images.rgb.head_256_256": {
+      "original_key": "observation.images.rgb.head_256_256"
+    },
+    "observation.images.rgb.left_wrist_256_256": {
+      "original_key": "observation.images.rgb.left_wrist_256_256"
+    },
+    "observation.images.rgb.right_wrist_256_256": {
+      "original_key": "observation.images.rgb.right_wrist_256_256"
+    }
+  },
+  "annotation": {
+    "human.coarse_action": {
+      "original_key": "annotation.human.coarse_action"
+    }
+  }
+}

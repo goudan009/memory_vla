@@ -1,0 +1,28 @@
+{
+  "status": "paused",
+  "step": 5000,
+  "total_steps": 6000,
+  "started_at": "2026-11-27T19:39:39.812609",
+  "world_size": 4,
+  "seen_samples": 320000,
+  "last": {
+    "step": 5000,
+    "fm": 0.0175,
+    "state": 0.0,
+    "grad_norm": 0.08617227524518967,
+    "lr": 7.418467316412158e-06,
+    "seen_samples": 320000,
+    "elapsed_seconds": 14063.811340728775,
+    "gpu_peak_allocated": 35036340736,
+    "part_loss": {
+      "base": 0.06172423025515551,
+      "torso": 0.007029031894990112,
+      "left_arm": 0.010271427215671532,
+      "left_gripper": 0.001069549693738736,
+      "right_arm": 0.013643959297145817,
+      "right_gripper": 0.021553802410699062
+    }
+  },
+  "training_complete": false,
+  "finished_at": "2026-11-27T23:36:02.583743"
+}

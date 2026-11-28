@@ -1,0 +1,7 @@
+{
+  "status": "paused",
+  "step": 5000,
+  "total_steps": 6000,
+  "world_size": 4,
+  "training_complete": false
+}

@@ -1,0 +1,19 @@
+{
+  "stage": "stage1",
+  "step": 2000,
+  "base_initial_hash": "f88bcb26df0ee008d1e0674c6b43ae3e286ffb91bf9b18f5792d35e78d4abc47",
+  "lambda_s": 0.01,
+  "label_sha256": "7c8bf5cb7db9fa2ba49579f4bb0f130dd242ac97548860b458bfeaf00ab10f80",
+  "prior": "topology",
+  "states": [
+    "door_open",
+    "door_ever_opened",
+    "bag_grasped",
+    "bag_inside",
+    "bag_ever_grasped",
+    "bag_ever_inside",
+    "started",
+    "cooked_popcorn_exists"
+  ],
+  "seed": 42
+}

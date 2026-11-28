@@ -9,9 +9,11 @@ Loss 为训练记录中的 loss；V2.1 为 fm + 配方 state_weight × state。�
 
 | 设备 / run / arm | 归档状态 | optimizer step / 当前停止目标 | 首100 Loss | 末100 Loss | 原始记录数 |
 | --- | --- | --- | --- | --- | --- |
-| [a100/v1__test01__exp13__run001/memory_v1](runs/a100/v1__test01__exp13__run001/memory_v1/events/204b3706c90523df31cb-958f37778991/workbench.json) | completed | 16000 / 16000 | 0.018298337 | 0.010263368 | 16000 |
-| [a100/v2_1__test02__exp01__run001/baseline](runs/a100/v2_1__test02__exp01__run001/baseline/events/51d79243d755c7c37fb3-e2583a8073bf/workbench.json) | completed | 3000 / 3000 | 0.014303987 | 0.011696154 | 3000 |
-| [a100/v2_1__test02__exp01__run003__preflight001/baseline](runs/a100/v2_1__test02__exp01__run003__preflight001/baseline/events/31e20d304097534b9bfb-79677fd3d4d3/workbench.json) | completed | 4 / 4 | 未记录 | 未记录 | 4 |
+| [a100/v1__test01__exp13__run001/memory_v1](runs/a100/v1__test01__exp13__run001/memory_v1/training_report.md) | completed | 16000 / 16000 | 0.018298337 | 0.010263368 | 16000 |
+| [a100/v2.1__test01__exp14__run001/baseline](runs/a100/v2.1__test01__exp14__run001/baseline/training_report.md) | completed | 6000 / 6000 | 0.080086173 | 0.014469525 | 6000 |
+| [a100/v2_1__test02__exp01__run001/baseline](runs/a100/v2_1__test02__exp01__run001/baseline/training_report.md) | completed | 3000 / 3000 | 0.014303987 | 0.011696154 | 3000 |
+| [a100/v2_1__test02__exp01__run003/baseline](runs/a100/v2_1__test02__exp01__run003/baseline/training_report.md) | paused | 5000 / 6000 | 0.037762 | 0.016921 | 500 |
+| [a100/v2_1__test02__exp01__run003__preflight001/baseline](runs/a100/v2_1__test02__exp01__run003__preflight001/baseline/training_report.md) | completed | 4 / 4 | 未记录 | 未记录 | 4 |
 
 ## 闭环评估总表
 
@@ -294,6 +296,100 @@ Loss 为训练记录中的 loss；V2.1 为 fm + 配方 state_weight × state。�
 
 - [原始结果](runs/a100/v1__test01__exp13__run001/memory_v1/evaluations/85718b166932cb57/results.json)：结果文件状态 complete，工作台状态 complete；完成 10/10；成功 0/10（分母为原始 official_episodes 字段）；checkpoint `/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v1__test01__exp13__run001/memory_v1/checkpoints/v1__test01__exp13__run001__step016000`。
 
+## v2.1__test01__exp14__run001 / baseline / a100
+
+证据：[清单](runs/a100/v2.1__test01__exp14__run001/baseline/events/ca1b08b235aff1cf5f75-680092cc16ac/MANIFEST.json)、[实际配方与统计](runs/a100/v2.1__test01__exp14__run001/baseline/events/ca1b08b235aff1cf5f75-680092cc16ac/workbench.json)、[最近终态](runs/a100/v2.1__test01__exp14__run001/baseline/latest.json)。
+
+原始输出：`/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v2.1__test01__exp14__run001`；源码：`/nvme3/projects/memory_vla/deployments/v2.1__test01__exp14__run001`；源码 digest：`d6123c2ed1f441fcbdaf7526b8eaf47855ff43ab60a85e02a4d8902778ea9439`。
+
+身份字段（直接沿用工作台，不补猜历史编号）：{"model_version": "V_2_1", "test_id": null, "experiment_id": null, "training_id": "v2.1__test01__exp14__run001", "run": "v2.1__test01__exp14__run001"}
+
+初始权重 / 恢复：{"checkpoint": "/nvme3/huggingface/train_model/GR00T/GR00T-N1.6-3B", "label": "V2_1 原始起点", "mode": "fresh", "optimizer_restored": false, "parent": null}
+
+原始指标：已归档；step 范围 1–6000；重复 step 0；非递增转换 0；范围内缺步 0；不完整尾行 0。
+
+预算记录：当前停止目标 6000；原始配置 steps 6000。终态 completed 只描述本次工作台目标。
+
+### 实际记录配方
+
+字段来源：["/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v2.1__test01__exp14__run001/config/web_launch.json"]
+
+| 参数 | 值 |
+| --- | --- |
+| accept_preflight | /nvme3/data_wyh/outputs/memory_vla/v2_1/experiment14/evidence/preflight-passed-003.json |
+| arm | baseline |
+| asynchronous_validation | False |
+| category | formal_training |
+| checkpoint | /nvme3/huggingface/train_model/GR00T/GR00T-N1.6-3B |
+| checkpoint_interval | 1000 |
+| created_at | 2026-11-27T00:48:27.609452 |
+| dataset | /nvme3/data_wyh/datasets/b1k2025_groot_task40_v1_200 |
+| enqueue | True |
+| existing_pids | [] |
+| global_decisions | 64 |
+| global_windows_per_step | 2 |
+| gpus | [0, 1, 2, 3] |
+| labels | /nvme3/data_wyh/datasets/v2_1_task40_labels/task40_labels.parquet |
+| learning_rate | 1e-05 |
+| method | baseline |
+| microbatch | 2 |
+| naming_schema | v2.1-test-experiment-run-step |
+| notes | Confirmed V2.1 Stage1: generic GR00T, 180/20, 6000 updates, original expert; deterministic CUDA and strict four-rank replay passed. |
+| preflight_only | False |
+| run_id | v2.1__test01__exp14__run001 |
+| run_name | v2.1__test01__exp14__run001 |
+| seed | 42 |
+| share_existing | False |
+| source | /nvme3/projects/memory_vla/deployments/v2.1__test01__exp14__run001 |
+| stage | stage1 |
+| state_weight | 0.01 |
+| steps | 6000 |
+| task | 40 |
+| train_episodes | 180 |
+| train_number | 1 |
+| training_id | v2.1__test01__exp14__run001 |
+| validation_enabled | True |
+| validation_episodes | 20 |
+| validation_gpu | 未记录 |
+| version | v2.1 |
+| weak_weight | 0.5 |
+
+### 指标覆盖
+
+| 字段 | 有限记录 | 零值记录 | 缺失或非有限 | 均值 | 最小 / 最大 |
+| --- | --- | --- | --- | --- | --- |
+| fm | 6000 | 0 | 0 | 0.016721486 | 0.0011126471 / 0.35997383 |
+| grad_norm | 6000 | 0 | 0 | 0.14294073 | 0.050562318 / 3.2791696 |
+| lr | 6000 | 0 | 0 | 1e-05 | 1e-05 / 1e-05 |
+| peak_allocated_gib | 6000 | 0 | 0 | 30.063813 | 30.060892 / 30.076723 |
+| seconds | 6000 | 0 | 0 | 3.5211406 | 0.75060764 / 7.4361713 |
+| state | 6000 | 6000 | 0 | 0 | 0 / 0 |
+
+### 按原始 epoch 字段汇总
+
+| epoch 原值 | 记录数 | 有限 Loss 均值 |
+| --- | --- | --- |
+| 0 | 1184 | 0.025385419 |
+| 1 | 1183 | 0.01565528 |
+| 2 | 1186 | 0.01479783 |
+| 3 | 1187 | 0.014117461 |
+| 4 | 1191 | 0.013735616 |
+| 5 | 69 | 0.015733506 |
+
+### 工作台列出的 checkpoint
+
+仅列元数据；权重与 optimizer tensor 留在训练设备。完整性标记见事件清单中的原始文件。
+
+| optimizer step | 原始路径 |
+| --- | --- |
+| 6000 | /nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v2.1__test01__exp14__run001/run/checkpoints/v2.1__test01__exp14__run001__step006000 |
+| 4000 | /nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v2.1__test01__exp14__run001/run/checkpoints/v2.1__test01__exp14__run001__step004000 |
+| 2000 | /nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v2.1__test01__exp14__run001/run/checkpoints/v2.1__test01__exp14__run001__step002000 |
+
+### 闭环评估
+
+- [原始结果](runs/a100/v2.1__test01__exp14__run001/baseline/evaluations/66f7c59167f59258/results.json)：结果文件状态 cancelled，工作台状态 cancelled；完成 10/50；成功 0/10（分母为原始 official_episodes 字段）；checkpoint `/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v2.1__test01__exp14__run001/run/checkpoints/v2.1__test01__exp14__run001__step006000`。
+
 ## v2_1__test02__exp01__run001 / baseline / a100
 
 证据：[清单](runs/a100/v2_1__test02__exp01__run001/baseline/events/51d79243d755c7c37fb3-e2583a8073bf/MANIFEST.json)、[实际配方与统计](runs/a100/v2_1__test02__exp01__run001/baseline/events/51d79243d755c7c37fb3-e2583a8073bf/workbench.json)、[最近终态](runs/a100/v2_1__test02__exp01__run001/baseline/latest.json)。
@@ -388,6 +484,114 @@ Loss 为训练记录中的 loss；V2.1 为 fm + 配方 state_weight × state。�
 ### 闭环评估
 
 尚未归档已结束且明确绑定本 run / checkpoint 的评估。
+
+## v2_1__test02__exp01__run003 / baseline / a100
+
+证据：[清单](runs/a100/v2_1__test02__exp01__run003/baseline/events/120c379b1fa8ccea5279-0f7d425b57c9/MANIFEST.json)、[实际配方与统计](runs/a100/v2_1__test02__exp01__run003/baseline/events/120c379b1fa8ccea5279-0f7d425b57c9/workbench.json)、[最近终态](runs/a100/v2_1__test02__exp01__run003/baseline/latest.json)。
+
+原始输出：`/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v2_1__test02__exp01__run003`；源码：`/nvme3/projects/memory_vla/deployments/v2_1__test02__exp01__run003`；源码 digest：`53a2c0ab6c747c0264988ca0b6c53e12c433cbc7354d6c542bfb95158d818615`。
+
+身份字段（直接沿用工作台，不补猜历史编号）：{"model_version": "V_2_1", "test_id": null, "experiment_id": null, "training_id": "v2_1__test02__exp01__run003", "run": "v2_1__test02__exp01__run003"}
+
+初始权重 / 恢复：{"checkpoint": "/nvme3/huggingface/train_model/GR00T/GR00T-N1.6-3B", "label": "V2_1 原始起点", "mode": "fresh", "optimizer_restored": false, "parent": null}
+
+原始指标：已归档；step 范围 10–5000；重复 step 0；非递增转换 0；范围内缺步 4491；不完整尾行 0。
+
+预算记录：当前停止目标 6000；原始配置 steps 6000。终态 completed 只描述本次工作台目标。
+
+### 实际记录配方
+
+字段来源：["/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v2_1__test02__exp01__run003/config/web_launch.json"]
+
+| 参数 | 值 |
+| --- | --- |
+| accept_preflight | /nvme3/data_wyh/outputs/memory_vla/v2_1/test02/exp01/evidence/v2_1__test02__exp01__run003__preflight001-preflight.json |
+| accumulation | 8 |
+| arm | baseline |
+| asynchronous_validation | False |
+| category | formal_training |
+| checkpoint | /nvme3/huggingface/train_model/GR00T/GR00T-N1.6-3B |
+| checkpoint_interval | 1000 |
+| checkpoint_root | /nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v2_1__test02__exp01__run003/run/checkpoints |
+| created_at | 2026-11-27T19:39:39.564648 |
+| dataset | /nvme3/data_wyh/datasets/b1k2025_groot_task40_v1_200 |
+| enqueue | True |
+| existing_pids | [3857420, 4127800] |
+| experiment_id | exp01 |
+| global_decisions | 64 |
+| gpus | [0, 1, 2, 3] |
+| learning_rate | 0.0001 |
+| method | baseline |
+| microbatch | 2 |
+| model_version | V_2_1 |
+| naming_schema | groot-runs-v3 |
+| normalization | guarded |
+| notes | User-authorized plan-v005 native_random_v2 Stage1 formal6000 after real four-A100 strict pause/resume gate; then exact step6000 A100 inference and dual4090 dual2 Task40 10 valid episodes; no Stage2 |
+| official_root | /nvme3/projects/GR00T/Isaac-GR00T-n1d6-9b37aa1 |
+| output | /nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v2_1__test02__exp01__run003 |
+| preflight_only | False |
+| preflight_steps | 未记录 |
+| recipe | native_random_v2 |
+| run_id | v2_1__test02__exp01__run003 |
+| run_name | v2_1__test02__exp01__run003 |
+| scheduler | cosine |
+| seed | 42 |
+| share_existing | True |
+| source | /nvme3/projects/memory_vla/deployments/v2_1__test02__exp01__run003 |
+| split | /nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v2.1__test01__exp14__run001/run/data_split.json |
+| stage | stage1 |
+| steps | 6000 |
+| task | 40 |
+| test_id | test02 |
+| train_episodes | 180 |
+| train_number | 3 |
+| training_id | v2_1__test02__exp01__run003 |
+| training_run | run003 |
+| validation_enabled | True |
+| validation_episodes | 20 |
+| validation_gpu | 未记录 |
+| version | V_2_1 |
+| video_backend | torchcodec |
+| warmup_ratio | 0.05 |
+| weight_decay | 1e-05 |
+| workers | 2 |
+
+### 指标覆盖
+
+| 字段 | 有限记录 | 零值记录 | 缺失或非有限 | 均值 | 最小 / 最大 |
+| --- | --- | --- | --- | --- | --- |
+| fm | 500 | 0 | 0 | 0.0234422 | 0.0141 / 0.2854 |
+| grad_norm | 500 | 0 | 0 | 0.12899624 | 0.047957107 / 1.9101104 |
+| lr | 500 | 0 | 0 | 5.9507257e-05 | 3e-06 / 9.9999385e-05 |
+| part_loss.base | 500 | 0 | 0 | 0.068813543 | 0.047738814 / 0.18976038 |
+| part_loss.left_arm | 500 | 0 | 0 | 0.015006013 | 0.006646777 / 0.1838051 |
+| part_loss.left_gripper | 500 | 0 | 0 | 0.0132778 | 0.00029728393 / 1.9039082 |
+| part_loss.right_arm | 500 | 0 | 0 | 0.017678443 | 0.0089684398 / 0.14224702 |
+| part_loss.right_gripper | 500 | 0 | 0 | 0.033325304 | 0.011681784 / 0.074015673 |
+| part_loss.torso | 500 | 0 | 0 | 0.014347502 | 0.0034836093 / 0.4383884 |
+| state | 500 | 500 | 0 | 0 | 0 / 0 |
+
+### 按原始 epoch 字段汇总
+
+| epoch 原值 | 记录数 | 有限 Loss 均值 |
+| --- | --- | --- |
+| unrecorded | 500 | 0.0234422 |
+
+### 工作台列出的 checkpoint
+
+仅列元数据；权重与 optimizer tensor 留在训练设备。完整性标记见事件清单中的原始文件。
+
+| optimizer step | 原始路径 |
+| --- | --- |
+| 5000 | /nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v2_1__test02__exp01__run003/run/checkpoints/v2_1__test02__exp01__run003__step005000 |
+| 4000 | /nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v2_1__test02__exp01__run003/run/checkpoints/v2_1__test02__exp01__run003__step004000 |
+| 3000 | /nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v2_1__test02__exp01__run003/run/checkpoints/v2_1__test02__exp01__run003__step003000 |
+| 2000 | /nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v2_1__test02__exp01__run003/run/checkpoints/v2_1__test02__exp01__run003__step002000 |
+| 1000 | /nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v2_1__test02__exp01__run003/run/checkpoints/v2_1__test02__exp01__run003__step001000 |
+
+### 闭环评估
+
+- [原始结果](runs/a100/v2_1__test02__exp01__run003/baseline/evaluations/bbed224e80001c9a/results.json)：结果文件状态 complete，工作台状态 complete；完成 10/10；成功 0/10（分母为原始 official_episodes 字段）；checkpoint `/nvme3/data_wyh/outputs/memory_vla/v1_groot_memoryvla/training/v2_1__test02__exp01__run003/run/checkpoints/v2_1__test02__exp01__run003__step005000`。
 
 ## v2_1__test02__exp01__run003__preflight001 / baseline / a100
 
