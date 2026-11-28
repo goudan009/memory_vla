@@ -469,7 +469,7 @@ if(typeof module!=='undefined' && module.exports) module.exports={benchmarkMetri
   el('bench-stop').onclick=async()=>{if(!detail)return;el('bench-stop').disabled=true;try{await api('stop',{run:detail.job.id});await refresh();}catch(e){message('bench-detail-message',e.message,true);el('bench-stop').disabled=false;}};
   window.benchmarkWorkbench={selectRun:async target=>{
     if(benchmark==='b1k2026'){await refreshNative();if(!nativeJobs.some(j=>j.id===target.run))throw Error('找不到原生评估记录');el('run-search').value='';el('status-filter').value='';nativeSelected=target.run;nativeEpisode=0;nativeTab='episodes';renderNativeResults();}
-    else if(benchmark==='libero'){await refresh();const value=await api('detail?run='+encodeURIComponent(target.run));selectedId=target.run;detail=value;renderList();renderDetail();}
+    else if(benchmark==='libero'){const catalog=await api('jobs');jobs=catalog.jobs;const value=await api('detail?run='+encodeURIComponent(target.run));if(!jobs.some(j=>j.id===target.run&&j.kind?.startsWith('libero')))throw Error('找不到 LIBERO 记录');selectedId=target.run;detail=value;renderList();renderDetail();}
     else throw Error('当前 Benchmark 尚未支持该记录');
   },route,isNative,refresh,current:()=>benchmark,renderNativeResults,nativeSetTab,nativeResultJob,liberoAnnotation,run,loadOptions,options:()=>options,updateButtons:setButtons,trainingReady:()=>{const sidebar=el('page-training').querySelector('.run-browser');if(sidebar)sidebar.append(checks);return route(page);}};
   el('benchmark-choice').value=benchmark;
