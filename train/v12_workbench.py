@@ -233,7 +233,7 @@ class V12TrainingManager:
         with zipfile.ZipFile(stream,'w',zipfile.ZIP_DEFLATED) as archive:
             for name in ('job.json','status.json','effective_config.yaml','trainable_parameters.json',
                          'metrics.jsonl','loss.jsonl','checkpoint_index.json','training_report.md','resume_events.jsonl',
-                         'runtime_environment.json'):
+                         'runtime_environment.json','retry_events.jsonl','resume_attempts.jsonl','train.log'):
                 if (job / name).is_file():
                     archive.write(job / name,name)
         return plan['run_id']+'-evidence.zip', stream.getvalue()
@@ -252,23 +252,41 @@ class V12TrainingManager:
             status = next(row for row in self.snapshot()['jobs'] if row['run'] == plan['run_id'])
             if request.get('retry_failed') is True:
                 return self._retry_failed(job, plan, status, request)
-            if status['state'] != 'paused' or status['worker_alive']:
-                raise ValueError('resume requires an optimizer-boundary paused checkpoint')
+            if status['state'] not in ('paused','failed') or status['worker_alive']:
+                raise ValueError('resume requires an exited worker and complete optimizer-boundary checkpoint')
             checkpoint = Path(json.loads((job / 'checkpoint_index.json').read_text())['checkpoint']).resolve(strict=True)
             identity = inspect_training_checkpoint(checkpoint)
+            steps = [json.loads(line)['step'] for line in (job / 'metrics.jsonl').read_text().splitlines()]
+            if not steps or max(steps) != identity['optimizer_step']:
+                raise ValueError('training updates beyond published checkpoint; retain failed job for review')
             if (identity['recipe_sha256'] != plan['recipe_sha256'] or identity['run_id'] != plan['run_id']
                     or identity['data_manifest_sha256'] != plan['data_manifest_sha256']):
                 raise ValueError('resume configuration changed')
-            if any(digest(self.root / name) != value for name,value in plan['adapter_source_sha256'].items()):
-                raise ValueError('resume adapter source changed; retain original job for review')
+            current = {name:digest(self.root / name) for name in ADAPTER_FILES}
+            changed = current != plan['adapter_source_sha256']
+            if changed or status['state'] == 'failed':
+                if (request.get('expected_adapter_source_sha256') != current
+                        or request.get('expected_checkpoint') != str(checkpoint)
+                        or not isinstance(request.get('reason'),str) or not request['reason'].strip()):
+                    raise ValueError('engineering recovery requires explicit checkpoint, source hashes and reason')
             gpu = next(g for g in gpu_info() if g['index'] == plan['request']['gpu_index'])
             if gpu['total_mb'] - gpu['used_mb'] < plan['request']['minimum_free_mib']:
                 raise ValueError('resume GPU capacity unavailable; retain paused job')
             if request.get('preview') is True:
                 return dict(state='preview',run=plan['run_id'],checkpoint=str(checkpoint),
-                            optimizer_step=identity['optimizer_step'],notes=plan['request']['notes'])
+                            optimizer_step=identity['optimizer_step'],notes=plan['request']['notes'],
+                            adapter_source_sha256=current,engineering_revision=changed)
             if request.get('preview', False) is not False:
                 raise ValueError('preview must be boolean')
+            with (job / 'resume_attempts.jsonl').open('a') as stream:
+                stream.write(json.dumps(dict(recorded_at=datetime.datetime.now().isoformat(),
+                    previous_state=status,checkpoint=str(checkpoint),optimizer_step=identity['optimizer_step'],
+                    training_state_sha256=identity['training_state_sha256'],
+                    reason=request.get('reason','strict checkpoint resume'),
+                    previous_adapter_source_sha256=plan['adapter_source_sha256'],adapter_source_sha256=current))+'\n')
+            if changed:
+                plan = dict(plan,adapter_source_sha256=current)
+                atomic(job / 'job.json',plan)
             if (job / 'pause.request').exists():
                 (job / 'pause.request').rename(job / f'pause-event-{datetime.datetime.now().strftime("%Y%m%d%H%M%S%f")}.json')
             return self._spawn(job, plan, checkpoint)

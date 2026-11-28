@@ -38,6 +38,11 @@ def single_gpu_unwrap():
         other.is_deepspeed_available = original
 
 
+def resume_target(native_flag, checkpoint):
+    """Keep upstream's typed flag boolean and bind the exact path at Trainer."""
+    return str(checkpoint) if checkpoint is not None else native_flag
+
+
 def native_config(job, plan, manifest, resume_checkpoint=None):
     """Build the pinned upstream configuration without loading model/GPU state."""
     upstream = Path(plan['upstream'])
@@ -74,7 +79,7 @@ def native_config(job, plan, manifest, resume_checkpoint=None):
     config.training.save_steps = ft.save_steps
     config.training.save_total_limit = ft.max_steps + 1
     config.training.save_only_model = False
-    config.training.resume_from_checkpoint = str(resume_checkpoint) if resume_checkpoint else False
+    config.training.resume_from_checkpoint = bool(resume_checkpoint)
     config.data.seed = request['seed']
     config.data.video_backend = 'opencv'
     config.data.decode_only_used_frames = True
@@ -200,6 +205,9 @@ def train(job, resume_checkpoint=None):
             holder['trainer'] = self
             self.add_callback(Observer())
 
+        def train(self, resume_from_checkpoint=None, **kwargs):
+            return super().train(resume_from_checkpoint=resume_target(resume_from_checkpoint,resume_checkpoint), **kwargs)
+
         def get_train_dataloader(self):
             # Exact cursor restore replaces the upstream reseed-on-resume path.
             self.args.ignore_data_skip = True
@@ -273,7 +281,9 @@ def main():
         train(args.job, args.resume_checkpoint)
     except Exception as error:
         traceback.print_exc()
-        write_json(args.job / 'status.json', dict(state='failed', error=str(error), pid=os.getpid()))
+        metrics = args.job / 'metrics.jsonl'
+        step = max((json.loads(line)['step'] for line in metrics.read_text().splitlines()),default=0) if metrics.is_file() else 0
+        write_json(args.job / 'status.json', dict(state='failed', step=step, error=str(error), pid=os.getpid()))
         return 1
     return 0
 

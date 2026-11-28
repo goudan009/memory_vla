@@ -86,6 +86,19 @@ class CursorTest(unittest.TestCase):
         config.validate()
         self.assertEqual(config.data.datasets[0].embodiment_tag,'new_embodiment')
         self.assertEqual(config.data.modality_configs['new_embodiment']['action'].delta_indices,list(range(16)))
+        with tempfile.TemporaryDirectory() as directory:
+            resumed,_=worker.native_config(Path(directory),plan,manifest,Path('/fixture/checkpoint-2'))
+            resumed.save(Path(directory)/'resumed.yaml')
+            from omegaconf import OmegaConf
+            OmegaConf.structured(resumed.training)
+            self.assertIs(resumed.training.resume_from_checkpoint,True)
+
+    def test_explicit_checkpoint_overrides_native_latest_selection(self):
+        import importlib.util
+        spec=importlib.util.spec_from_file_location('v12_worker',ROOT/'scripts/train_v12_b1k2026.py')
+        worker=importlib.util.module_from_spec(spec);spec.loader.exec_module(worker)
+        self.assertEqual(worker.resume_target(True,Path('/exact/checkpoint-2')),'/exact/checkpoint-2')
+        self.assertIs(worker.resume_target(False,None),False)
 
     def test_single_gpu_unwrap_does_not_import_unused_deepspeed(self):
         import importlib.util
@@ -183,6 +196,37 @@ class SplitTest(unittest.TestCase):
 
 
 class ManagerTest(unittest.TestCase):
+    def test_failed_resume_keeps_full_state_and_records_engineering_revision(self):
+        from v12_workbench import V12TrainingManager,atomic
+        with tempfile.TemporaryDirectory() as directory:
+            manager=V12TrainingManager(directory)
+            run='v0_0__test99__exp99__run999'
+            job=manager.training/run;checkpoint=job/'native/checkpoint-2'
+            checkpoint.mkdir(parents=True)
+            plan=dict(run_id=run,recipe_sha256='recipe',data_manifest_sha256='data',
+                adapter_source_sha256={'worker.py':'old'},request=dict(gpu_index=1,minimum_free_mib=30000,notes='V0_0 engineering'))
+            atomic(job/'job.json',plan)
+            atomic(job/'status.json',dict(state='failed',step=2,error='resume bool validation'))
+            atomic(job/'checkpoint_index.json',dict(checkpoint=str(checkpoint)))
+            (job/'metrics.jsonl').write_text('{"step":1}\n{"step":2}\n')
+            identity=dict(run_id=run,recipe_sha256='recipe',data_manifest_sha256='data',optimizer_step=2,
+                          training_state_sha256={'optimizer.pt':'unchanged-state'})
+            request=dict(run=run,preview=True,expected_adapter_source_sha256={},expected_checkpoint=str(checkpoint),reason='typed boolean resume fix')
+            with patch('v12_workbench.ADAPTER_FILES',()),patch('v12_workbench.inspect_training_checkpoint',return_value=identity),patch('v12_workbench.gpu_info',return_value=[dict(index=1,total_mb=49140,used_mb=6000)]),patch.object(manager,'_spawn',return_value=dict(run_id=run)) as spawn:
+                with self.assertRaisesRegex(ValueError,'engineering recovery'):
+                    manager.resume(dict(run=run,preview=True))
+                self.assertTrue(manager.resume(request)['engineering_revision'])
+                spawn.assert_not_called()
+                manager.resume(dict(request,preview=False))
+                self.assertEqual(spawn.call_args.args[2],checkpoint)
+                self.assertEqual(json.loads((job/'job.json').read_text())['recipe_sha256'],'recipe')
+                event=json.loads((job/'resume_attempts.jsonl').read_text())
+                self.assertEqual(event['previous_state']['error'],'resume bool validation')
+                self.assertEqual(event['training_state_sha256'],identity['training_state_sha256'])
+                (job/'metrics.jsonl').write_text('{"step":3}\n')
+                with self.assertRaisesRegex(ValueError,'beyond published checkpoint'):
+                    manager.resume(request)
+
     def test_initialization_retry_preserves_failed_evidence_and_refuses_training_state(self):
         from v12_workbench import V12TrainingManager, atomic
         with tempfile.TemporaryDirectory() as directory:
