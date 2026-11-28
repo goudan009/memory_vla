@@ -427,12 +427,19 @@ class Handler(BaseHTTPRequestHandler):
             raise ValueError('未核实的设备不能执行删除')
         managers=[]
         if device=='local':
-            managers.append(self.launch_manager)
+            managers.extend([self.launch_manager,self.benchmark_manager])
         else:
             managers.append((self.training_devices or {}).get(device))
             managers.append((self.inference_devices or {}).get(device))
             if device=='a6000':
                 managers.append((self.evaluation_devices or {}).get(device))
+        if self.service_monitor is None:
+            raise ValueError('设备实时服务状态不可查；保留资源')
+        observed=self.service_monitor.snapshot().get('remote' if device=='a100' else device,{})
+        if observed.get('ok') is not True or not isinstance(observed.get('processes'),list):
+            raise ValueError('设备实时进程状态不可查；保留资源')
+        if any(row.get('kind') in ('training','inference','evaluation') for row in observed['processes']):
+            raise ValueError('发现实际运行进程，通用删除暂时禁止')
         terminal={'stopped','failed','exited','complete','completed','cancelled','paused','interrupted','deleted'}
         for manager in managers:
             if manager is None or getattr(manager,'error',None):

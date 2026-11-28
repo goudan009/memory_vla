@@ -1004,7 +1004,7 @@
     const job=inferenceJobs.find(j=>j.host===host && Number(j.port)===Number(port));
     if(!job) return;
     if(job.method) $('launch-group').value=job.method;
-    if(/^V_[0-9]+$/.test(job.version||'')) $('launch-version').value=job.version;
+    if(/^V_[0-9]+(?:_[0-9]+)*$/.test(job.version||'')) $('launch-version').value=job.version;
     updateLaunchGroups();
   }
   async function launchAPI(path, payload) {
@@ -1377,7 +1377,7 @@
         '配置检查通过。尚未启动评估；最终目录编号由脚本自动分配。';
       $('launch-message').className='launch-message good';
       if(start){$('launch-history').open=true;await refreshLaunchJobs();await refresh();}
-    }catch(error){$('launch-message').textContent='未启动：'+error.message;$('launch-message').className='launch-message error';}
+    }catch(error){$('launch-message').textContent=(start?'提交未确认，请先核对评估作业列表，勿直接重试：':'配置检查失败：')+error.message;$('launch-message').className='launch-message error';}
     finally{launchBusy=false;$('launch-kind').disabled=false;updateLaunchForm();}
   }
   function renderTask40Job(job, logPanel) {

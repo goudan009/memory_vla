@@ -394,12 +394,12 @@
   }
 
   async function workflowTraining(record) {
-    if (!record?.path) return new Map();
+    if (!record) return new Map();
     const lines = (record.progress?.markdown || '').split('\n').map(line => line.trim());
     const tracked = progressStages(lines, quotedField(lines, '当前动作')).flatMap(row => row.training ? [row.training] : []);
-    const devices = new Set(['a100','a6000',...tracked.map(([device]) => device)]);
-    const match=record.path.match(/test_(\d+)\/experiment_(\d+)$/);
+    const match=(record.path||'').match(/test_(\d+)\/experiment_(\d+)$/);
     const pattern=match?'__test'+match[1]+'__exp'+match[2]+'__':null;
+    const devices = new Set([...(pattern?['a100','a6000']:[]),...tracked.map(([device]) => device)]);
     const entries = await Promise.allSettled([...devices].map(async device => {
       let cached=trainingCache.get(device);
       if(!cached || Date.now()-cached.at>15000){
