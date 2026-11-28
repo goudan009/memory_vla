@@ -138,7 +138,7 @@
 <body>
 <header>
   <div>
-    <h1>实验台账</h1>
+    <h1>资源管理</h1>
     <div class="sub" id="sub" role="status">正在读取实验记录…</div>
   </div>
   <div class="acts">
@@ -147,12 +147,12 @@
 </header>
 
 <nav class="tabs" id="nav" aria-label="实验台账视图">
-  <button data-v="exp" aria-selected="true" aria-controls="view-exp">实验记录</button>
-  <button data-v="res" aria-selected="false" aria-controls="view-res">数据权重</button>
+  <button data-v="res" aria-selected="true" aria-controls="view-res">数据与权重</button>
+  <button data-v="exp" aria-selected="false" aria-controls="view-exp">历史任务对比</button>
 </nav>
 
 <main>
-  <section id="view-exp">
+  <section id="view-exp" class="hidden">
     <div class="ledger-filter" aria-label="筛选实验记录">
       <input id="ledger-task" type="search" placeholder="搜索任务、运行名、标记或备注…" aria-label="搜索实验记录">
       <select id="ledger-version" aria-label="版本"><option value="all">全部版本</option></select>
@@ -168,9 +168,19 @@
     </div>
   </section>
 
-  <section id="view-res" class="hidden">
+  <section id="view-res">
     <div class="storage-toolbar"><div><strong>数据与权重文件</strong><p class="hint">从左侧选择资源，在右侧浏览文件夹与文件内容。</p></div><div class="acts"><label>存放设备<select id="res-host" aria-label="存放位置"><option value="all">所有存放位置</option><option value="4090" selected>4090</option></select></label><button id="storage-register" type="button" class="primary">＋ 添加已有目录</button></div></div>
     <details class="storage-capacity"><summary>磁盘用量 · <span id="storage-capacity-summary" role="status">正在查询…</span></summary><div class="acts" style="padding:0 12px 10px"><button id="storage-refresh-disks" type="button">刷新磁盘用量</button></div><div id="storage-disks" class="storage-disks" aria-label="磁盘容量" aria-live="polite"></div></details>
+    <details id="resource-download-panel" class="storage-capacity">
+      <summary>下载中心 · 固定版本、指定设备和环境</summary>
+      <div style="padding:12px">
+        <p class="hint">先查已有资源，再选择管理员登记的下载配方；预检通过后启动。已有目标不覆盖。</p>
+        <div class="acts"><select id="resource-download-choice" aria-label="下载配方"></select><button type="button" id="resource-download-refresh">查询</button><button type="button" id="resource-download-preview">检查下载</button><button type="button" id="resource-download-start" disabled>启动下载</button></div>
+        <p id="resource-download-message" class="hint" role="status"></p>
+        <pre id="resource-download-detail" style="white-space:pre-wrap;overflow-wrap:anywhere"></pre>
+        <progress id="resource-download-progress" max="1" value="0" hidden></progress>
+      </div>
+    </details>
     <div id="res-message" class="hint" role="status"></div>
     <div class="ledger-workspace">
       <nav class="ledger-list" aria-label="资源目录"><div class="ledger-list-head"><strong>资源目录</strong><span id="res-count"></span></div>
@@ -215,7 +225,7 @@
 </dialog>
 
 <script>
-let D = null, A = {}, VIEW = "exp", editingKey = null;
+let D = null, A = {}, VIEW = "res", editingKey = null;
 let selectedExperiment = null, selectedTask = null, experimentsByTask = new Map(), visibleExperiments = [];
 let resourceRows = [], selectedResource, resourceDetailStamp;
 const KIND_LABEL = {all:"全部", weights:"模型权重", dataset:"数据集"};
@@ -524,5 +534,6 @@ document.getElementById('res-rows').addEventListener('click',event=>{
 load(false);
 </script>
 <script src="/registry_storage.js"></script>
+<script src="/resource_downloads.js"></script>
 </body>
 </html>

@@ -24,7 +24,7 @@ def clean_path(value):
 
 def checked_path(value, roots):
     path = Path(clean_path(value))
-    if not path.is_absolute() or '.workbench-trash' in path.parts:
+    if not path.is_absolute() or any(part in ('.workbench-trash','.workbench-downloads') for part in path.parts):
         raise ValueError('请选择资源范围内的绝对路径')
     resolved = path.resolve()
     if not any(resolved.is_relative_to(root.resolve()) for root in roots):
@@ -88,6 +88,11 @@ def operate(request):
         target.mkdir()
         return entry(target)
     if action == 'trash':
+        if path.is_symlink():
+            raise ValueError('软链接请由管理员核对后处理')
+        # Managed training weights must pass the existing dependency checks.
+        if any(part.startswith(('checkpoint-', 'step-')) or part in ('checkpoints','training') for part in path.parts):
+            raise ValueError('训练权重请通过训练详情的受保护 checkpoint 删除入口')
         protected = [Path(p).resolve() for p in request.get('protected', [])]
         if path.resolve() in protected or len(path.resolve().parts) <= 3:
             raise ValueError('不能删除存储根目录，请选择其中的资源')
@@ -118,7 +123,7 @@ def operate(request):
     result['parent'] = str(parent) if any(parent.resolve().is_relative_to(root.resolve()) for root in roots) else None
     if path.is_dir():
         query = str(request.get('query', '')).casefold()
-        children = [child for child in path.iterdir() if child.name != '.workbench-trash' and query in child.name.casefold()]
+        children = [child for child in path.iterdir() if child.name not in ('.workbench-trash','.workbench-downloads') and query in child.name.casefold()]
         children.sort(key=lambda child: (not child.is_dir(), child.name.casefold()))
         offset, limit = max(0, int(request.get('offset', 0))), min(200, max(1, int(request.get('limit', 100))))
         rows = []

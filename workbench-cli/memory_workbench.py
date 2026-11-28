@@ -25,6 +25,27 @@ def parser_for_cli():
     status = commands.add_parser("status", help="查看设备和 GPU 状态")
     status.add_argument("--json", action="store_true", help="输出原始 JSON")
     commands.add_parser("results", help="查看评估结果")
+    resource = commands.add_parser("resource", help="统一资源管理：先查询，再预检，最后操作")
+    actions = resource.add_subparsers(dest="action", required=True)
+    for action in ("hosts","disks","browse","stat","size","register","mkdir","trash","restore"):
+        ap = actions.add_parser(action)
+        if action != "hosts":
+            ap.add_argument("--host", required=True)
+        if action not in ("hosts","disks"):
+            ap.add_argument("--path", required=True)
+        if action == "register":
+            ap.add_argument("--kind", choices=("dataset","weights"), required=True)
+            ap.add_argument("--name")
+        if action == "mkdir":
+            ap.add_argument("--name", required=True)
+        if action == "restore":
+            ap.add_argument("--token", required=True)
+        if action == "trash":
+            ap.add_argument("--confirm", action="store_true", required=True)
+    for action in ("download-options","download-status","download-preview","download-start"):
+        ap = actions.add_parser(action)
+        if action != "download-options":
+            ap.add_argument("recipe_id")
     serve = commands.add_parser("serve", help="从项目启动工作台服务")
     serve.add_argument("--repo", type=Path, default=Path.cwd(), help="MemoryVLA 仓库根目录")
     serve.add_argument("--host", default="127.0.0.1", help="监听地址")
@@ -95,6 +116,10 @@ def task_request(args, base_url):
     if device not in devices:
         raise ValueError(f"设备必须是 {' 或 '.join(devices)}")
     payload["device"] = device
+    if args.command == "train":
+        payload.setdefault("initiator","agent")
+        if payload["initiator"] == "agent" and not str(payload.get("notes") or "").strip():
+            raise ValueError("Agent training requires concise notes")
     preview = request_json(base_url, f"{path}/preview", args.timeout, payload)
     if args.action == "preview":
         return preview
@@ -102,6 +127,31 @@ def task_request(args, base_url):
         return request_json(base_url, f"{path}/start", args.timeout, payload)
     except (OSError, json.JSONDecodeError) as error:
         raise ValueError(f"提交响应中断，请先查询 {args.command} jobs 核对是否已创建作业。{error}") from error
+
+
+def resource_request(args, base_url):
+    if args.action.startswith("download-"):
+        action = args.action.removeprefix("download-")
+        path = "/api/resources/downloads"
+        payload = {"action":action}
+        if action != "options":
+            payload["recipe_id"] = args.recipe_id
+        if action in ("options","status"):
+            return request_json(base_url,path+"?"+urlencode(payload),args.timeout)
+        if action == "start":
+            request_json(base_url,path,args.timeout,{**payload,"action":"preview"})
+        return request_json(base_url,path,args.timeout,payload)
+    payload = {"action":args.action}
+    for key in ("host","path","kind","name","token"):
+        value = getattr(args,key,None)
+        if value is not None:
+            payload[key]=value
+    path = "/api/registry/storage"
+    if args.action in ("hosts","disks","browse","stat","size"):
+        return request_json(base_url,path+"?"+urlencode(payload),args.timeout)
+    if args.action == "trash":
+        request_json(base_url,path+"?"+urlencode({**payload,"action":"stat"}),args.timeout)
+    return request_json(base_url,path,args.timeout,payload)
 
 
 def main():
@@ -126,6 +176,8 @@ def main():
             if not args.json:
                 print_status(result)
                 return 0
+        elif args.command == "resource":
+            result = resource_request(args, base_url)
         elif args.command == "results":
             result = request_json(base_url, "/api/results", args.timeout)
         else:

@@ -429,12 +429,12 @@
   <header><div class="brand"><div class="brand-mark" aria-hidden="true">W</div><div><h1>4090 WYH工作台</h1><div id="caption" class="subtle" role="status">正在读取评估记录…</div></div></div><div class="header-actions"><span class="live-label">每 5 秒自动更新</span><button id="install-workbench" type="button" hidden>安装应用</button><button id="refresh" type="button" aria-label="手动刷新" title="手动刷新">↻</button></div></header>
   <nav class="page-nav" aria-label="训练评估工作台页面">
     <div class="page-tabs" role="tablist" aria-label="工作台">
-      <button type="button" id="page-tab-training" role="tab" aria-label="启动训练" aria-controls="page-training" aria-selected="false" onclick="selectPage('training')"><span class="nav-label-full">启动训练</span><span class="nav-label-short">训练</span></button>
+      <button type="button" id="page-tab-training" role="tab" aria-label="启动训练" aria-controls="page-training" aria-selected="false" onclick="selectPage('training')"><span class="nav-label-full">模型训练</span><span class="nav-label-short">训练</span></button>
       <button type="button" id="page-tab-launch" role="tab" aria-label="推理评估" aria-controls="page-launch" aria-selected="false" onclick="selectPage('launch')"><span class="nav-label-full">推理评估</span><span class="nav-label-short">推理</span></button>
-      <button type="button" id="page-tab-results" role="tab" aria-label="评估结果" aria-controls="page-results" aria-selected="true" onclick="selectPage('results')"><span class="nav-label-full">评估结果</span><span class="nav-label-short">结果</span></button>
-      <button type="button" id="page-tab-registry" role="tab" aria-label="实验台账" aria-controls="page-registry" aria-selected="false" onclick="selectPage('registry')"><span class="nav-label-full">实验台账</span><span class="nav-label-short">台账</span></button>
+      <button type="button" id="page-tab-results" role="tab" aria-label="评估结果" aria-controls="page-results" aria-selected="true" onclick="selectPage('results')"><span class="nav-label-full">结果分析</span><span class="nav-label-short">结果</span></button>
+      <button type="button" id="page-tab-registry" role="tab" aria-label="资源管理" aria-controls="page-registry" aria-selected="false" onclick="selectPage('registry')"><span class="nav-label-full">资源管理</span><span class="nav-label-short">资源</span></button>
     </div>
-    <a class="page-nav-link" id="page-tab-ai" href="/ai" aria-label="AI 工作流" title="AI 工作流"><span class="nav-label-full">AI 工作流</span><span class="nav-label-short">AI</span></a>
+    <a class="page-nav-link" id="page-tab-ai" href="/ai" aria-label="实验管理" title="实验管理"><span class="nav-label-full">实验管理</span><span class="nav-label-short">实验</span></a>
   </nav>
   <main>
     <details class="gpu-overview-panel" aria-label="各设备实时显存占用"><summary><span>设备资源</span><small id="gpu-summary-status">正在读取 A100、4090 与 RTX 6000 Ada 状态</small></summary><div id="gpu-overview" class="gpu-overview">
@@ -499,7 +499,7 @@
             <details id="inference-history" class="compact-fold" open hidden><summary>推理服务 · 管理与日志</summary><div id="inference-manage-message" class="policy-path" role="status"></div><div id="inference-jobs" class="launch-jobs-list"></div></details>
           </section>
           <section id="eval-config" aria-label="启动评估">
-            <div class="section-head"><h2><span class="step-number">2</span>启动评估</h2><select id="launch-kind" aria-label="运行模式"><option value="new">新建评估</option><option value="resume">续跑已有评估</option><option value="restore">Task40 检查点恢复</option><option value="collect">Task40 轨迹采集 · Exp09</option><option value="forward">Task40 冻结前向 · Exp09</option></select></div>
+            <div class="section-head"><h2><span class="step-number">2</span>启动评估</h2><select id="launch-kind" aria-label="运行模式"><option value="new">新建评估</option><option value="resume">续跑已有评估</option><optgroup label="历史开发工具（非正式评估）"><option value="restore">Task40 检查点恢复</option><option value="collect">Task40 轨迹采集 · Exp09</option><option value="forward">Task40 冻结前向 · Exp09</option></optgroup></select></div>
             <form id="launch-form">
               <div id="launch-device-field" class="launch-fields"><label class="wide">评估设备<select id="launch-device"><option value="local">4090 · 本机双卡</option><option value="a6000">RTX 6000 Ada · 单卡 48GB</option><option value="a100" disabled>A100 · 训练 / 推理设备</option></select><small id="launch-device-hint">先选设备，再选 GPU。</small></label></div>
               <fieldset id="launch-new">
@@ -668,7 +668,7 @@
     if($('registry-frame')) return;
     const frame=document.createElement('iframe');
     frame.id='registry-frame';
-    frame.title='实验台账';
+    frame.title='资源管理';
     frame.src='/registry';
     frame.addEventListener('load',()=>{
       const body=frame.contentDocument.body;
