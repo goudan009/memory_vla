@@ -1,5 +1,13 @@
 # V1.2 Progress
 
+## 2026-11-28 - official_rollout / semantic_review / legacy_shutdown_gate
+
+- Latest plan: [workflow/plan-v026.json](workflow/plan-v026.json). Job `97f45ef78924` is COMPLETE, returncode 0. Public index 18 / native instance 319 finished at 3225 steps: `success=false`, `q_score.final=0.0`. One complete official-default trial; preceding startup failures are excluded. This passes execution/output acceptance, not task-performance or full-transition acceptance.
+- Native MP4 is 672×448, 30 fps, 3225 decoded frames / 107.5 s, 5,710,785 bytes. SHA256: `dbeb8cadfb5b61279087bc0fd2cd9c609ab1f41820d7b05fbb487aa30c10c424`. Native JSON SHA256: `980f8baf685b206a4a748a93d7e281d691bea29506b709b342eee26c5d806d80`. Reviewed frames 0/900/1800/2700/3224 show the radio on the table and robot arm movement; they do not establish a specific cause of failure.
+- Serving audit: pinned `serve_b1k.py` does not supply `text_prompt`; `B1KPolicyWrapper` consequently sends `pick up the object and place it on the table` as `annotation.human.task_description`. The checkpoint config names `turning_on_radio_v3.0`; R1Pro maps its annotation to `task_index`, and the native loader resolves that through task metadata. Downloaded Task0 metadata says `Turn on the radio receiver that's on the table in the living room.` This is a verified language mismatch, not proof of the sole failure cause. Upstream sources and evaluation inputs were not changed.
+- Full-transition gate: NOT PASSED. Keep old V2.1/Exp13 automation, historical resources, shared library directories and unrelated 8766. Test policy/evaluator exited and port 8032 is released; GPU0 returned to 962 MiB at the post-run check. Training submissions remain 0.
+- `primary_workbench`: expose the completed native evidence on 8765 through its existing systemd unit after a fresh no-active-evaluation check. This control-plane reload is independent of retiring old automation; only preview unused instance 19, do not submit another rollout. Final evidence goes to `acceptance-2026-11-28.md`.
+
 ## 2026-11-28 - native_ui / primary_workbench
 
 - Latest plan: [workflow/plan-v025.json](workflow/plan-v025.json). Existing job `97f45ef78924` continues its fixed rollout; native video is growing and no new rollout is allocated.

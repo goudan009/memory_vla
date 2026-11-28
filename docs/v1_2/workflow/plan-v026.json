@@ -1,0 +1,25 @@
+{
+  "plan_id": "v1_2_n17_b1k2026_transition_gate_v026",
+  "status": "in_progress",
+  "supersedes": "v1_2_n17_b1k2026_transition_gate_v025",
+  "change_reason": "The official-default rollout completed normally with native JSON/video, but failed the radio task and exposed a concrete default-language mismatch. Separate proven infrastructure acceptance from the user's full-transition gate. Load the verified native route/results on 8765 without disabling legacy automation or changing scientific evaluation inputs.",
+  "scope": "Archive the completed official-default test, audit task-language wiring, expose native 2026 results on the primary workbench, and report the failed full-transition gate. No further rollout, prompt alteration, formal training, V2.2, resource deletion or legacy shutdown in this plan.",
+  "method_version": "V_1_2",
+  "protocol": "b1k2026_websocket",
+  "checkpoint_sha256": "cd97a22ff74bd91838350e18fe94b48e1902d407f1256f5d48eb20befe277dc3",
+  "experiment_identity": null,
+  "notes": "V1.2 / N1.7 / B1K2026: official radio, RTC off",
+  "budget": {"additional_training_steps": 0, "additional_rollouts": 0},
+  "completed_job": {"job_id": "97f45ef78924", "instance_index": 18, "native_instance_id": 319, "steps": 3225, "success": false, "q_score": 0.0, "returncode": 0},
+  "mainline": [
+    {"node": "official_rollout", "depends_on": [], "parallel_branches": ["native_ui"], "acceptance": "Verify actual terminal workbench status, native JSON, finite metrics, complete decodable video, and released test inference service."},
+    {"node": "semantic_review", "depends_on": ["official_rollout"], "parallel_branches": ["primary_workbench"], "acceptance": "Trace serving default, wrapper language input, training config and dataset task-index language lookup. Preserve the original evaluation protocol; report mismatch without attributing causality from one trial."},
+    {"node": "legacy_shutdown_gate", "depends_on": ["semantic_review"], "parallel_branches": ["primary_workbench"], "acceptance": "Record NOT PASSED when task semantics remain unresolved. Retain confirmed old automation and all historical/shared resources; do not stop unrelated services."},
+    {"node": "archive", "depends_on": ["legacy_shutdown_gate", "primary_workbench"], "parallel_branches": [], "acceptance": "Publish partial acceptance, exact evidence hashes, main-workbench availability, unresolved semantic/training limits and zero new training submissions to main."}
+  ],
+  "parallel_nodes": [
+    {"node": "native_ui", "depends_on": [], "parallel_branches": [], "acceptance": "Reuse committed native form, notes, metric/artifact cards and recovery checks from 88f1b1d; no unrelated UI work."},
+    {"node": "primary_workbench", "depends_on": ["official_rollout", "native_ui"], "parallel_branches": [], "acceptance": "Confirm no active 8765 evaluation; reload its existing systemd service. Verify native options, completed-job notes/metrics, JSON/video HTTP access and a preview only for unused instance 19. Preserve legacy timers, 8766 and CloudCLI."}
+  ],
+  "migration_gate": {"status": "not_passed", "reason": "Official-default radio trial failed and serving language differs from task metadata; training readiness has not been accepted.", "legacy_shutdown": false}
+}
