@@ -3,14 +3,14 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>MemoryVLA · 统一工作台</title>
-<link rel="stylesheet" href="/unified_workbench.css?ui=3">
+<link rel="stylesheet" href="/unified_workbench.css?ui=4">
 </head>
 <body>
 <header class="app-header">
   <div class="top">
     <a class="brand" href="/workbench"><b>M</b><span>MemoryVLA</span></a>
     <div class="top-controls">
-      <div class="scope-control"><span class="control-label">Benchmark</span><div id="benchmarks" class="benchmarks" aria-label="Benchmark 筛选"></div></div>
+      <div class="scope-control"><label class="control-label" for="benchmarks">Benchmark</label><select id="benchmarks" aria-label="Benchmark 筛选"></select></div>
       <div class="top-actions"><button id="reload" title="刷新运行记录">↻ 刷新</button><a class="old-link" href="/?benchmark=b1k" target="_blank" rel="noopener">旧版 ↗</a></div>
     </div>
   </div>
@@ -35,12 +35,8 @@
       <div id="content"></div>
       <iframe id="panel" title="运行详情与操作面板" hidden></iframe>
     </main>
-    <aside class="inspector">
-      <div class="side-head"><h2 id="inspector-title">节点详情</h2><span id="kind" class="muted"></span></div>
-      <div class="inspector-body"><div id="inspector"></div><div id="selection" class="selection"></div></div>
-    </aside>
   </div>
 </div>
-<script src="/unified_workbench.js?ui=3"></script>
+<script src="/unified_workbench.js?ui=4"></script>
 </body>
 </html>
