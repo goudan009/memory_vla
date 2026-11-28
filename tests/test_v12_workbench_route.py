@@ -133,6 +133,7 @@ def test_completed_native_run_survives_primary_workbench_reload(tmp_path):
     assert jobs[0]["state"] == "complete"
     assert jobs[0]["notes"] == plan["notes"]
     assert jobs[0]["native_metrics"] == [dict(instance_id=319, steps=120, success=False, q_score=0.5)]
+    assert jobs[0]["native_episode_keys"] == ['json/radio.json']
     assert any(item["path"] == "json/radio.json" for item in jobs[0]["artifacts"])
 
 

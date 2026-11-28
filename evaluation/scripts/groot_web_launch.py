@@ -19,6 +19,7 @@ from groot_tasks import TASK_NAMES
 from groot_eval_control import EvaluationControl
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]/'src'))
 from v1_2_groot_baseline import contracts as v12_contracts
+from v1_2_groot_baseline import b1k2026_capabilities
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]/'train'))
 from run_identity import canonical_version
 
@@ -128,9 +129,8 @@ class LaunchManager:
                                              if p.is_dir() and not p.name.startswith("."))
         return {"tasks": [{"id": task, "name": name} for task, name in TASK_NAMES.items()],
                 "versions": versions, "evaluation_root": str(evaluation),
-                "model_versions": {"V_1_2": {"protocol": v12_contracts.B1K2026,
-                                               "task": "turning_on_radio",
-                                               "launch_ready": self._v12_paths_ready()}},
+                "model_versions": {"V_1_2": b1k2026_capabilities.options(
+                    self.root, evaluation, self._v12_config(), self._v12_paths_ready())},
                 "task40_collect": {"sim_slots": {str(gpu): 2 for gpu in (0, 1)
                     if (self.task40_experiment / 'metrics' / f'dual_gpu{gpu}_validated.json').is_file()}}}
 
