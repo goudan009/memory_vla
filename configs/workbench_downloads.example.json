@@ -1,0 +1,14 @@
+{
+  "recipes": [
+    {
+      "id": "n17-model-example",
+      "host": "A100",
+      "kind": "weights",
+      "manifest": "docs/v1_2/downloads/manifest.json",
+      "resource": "n17",
+      "root": "/nvme3/models",
+      "target": "/nvme3/models/GR00T-N1.7-3B-workbench",
+      "python": "/replace/with/verified/download/env/bin/python"
+    }
+  ]
+}

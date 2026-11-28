@@ -24,6 +24,7 @@ from groot_inference_launch import InferenceManager
 import vlm_diagnosis
 import experiment_registry
 from registry_storage import StorageService, clean_path
+from resource_downloads import DownloadService
 import b1k_metrics
 import task_stage_diagnostics
 import vlm_stage_diagnosis
@@ -371,6 +372,22 @@ class Handler(BaseHTTPRequestHandler):
             type(self).storage_service = StorageService(project, load_workbench_devices(project), experiment_registry.cached)
         return type(self).storage_service
 
+    def _downloads(self):
+        project = EVALUATION_ROOT.parent
+        return DownloadService(project, load_workbench_devices(project))
+
+    def _download_request(self):
+        origin = self.headers.get('Origin')
+        if origin and urlparse(origin).netloc != self.headers.get('Host'):
+            raise ValueError('请从本工作台提交下载')
+        length = int(self.headers.get('Content-Length', '0'))
+        if not 0 < length <= 4096:
+            raise ValueError('下载请求长度不正确')
+        payload = json.loads(self.rfile.read(length))
+        if not isinstance(payload, dict) or payload.get('action') not in ('preview','start'):
+            raise ValueError('请选择下载预检或启动')
+        return self._downloads().request(payload['action'], payload.get('recipe_id'))
+
     def _registry_data(self, force=False):
         data = dict(experiment_registry.cached(force=force))
         registered = {(item['host'],clean_path(item['path'])):item for item in self._storage().registered()}
@@ -708,6 +725,12 @@ class Handler(BaseHTTPRequestHandler):
         if route in ('/api/vlm/stages/review', '/api/vlm/stages/batch', '/api/vlm/stages/diagnose'):
             self._stage_review()
             return
+        if route == '/api/resources/downloads':
+            try:
+                self._json(self._download_request())
+            except (ValueError, OSError, subprocess.SubprocessError, KeyError) as error:
+                self._json({'error':str(error)},400)
+            return
         if route == '/api/registry/storage':
             try:
                 self._json(self._storage_write())
@@ -1034,6 +1057,25 @@ class Handler(BaseHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(body)
             return
+        if route == '/resource_downloads.js':
+            body = Path(__file__).with_name('resource_downloads.js').read_bytes()
+            self.send_response(200)
+            self.send_header('Content-Type','application/javascript; charset=utf-8')
+            self.send_header('Content-Length',str(len(body)))
+            self.send_header('Cache-Control','no-store')
+            self.end_headers()
+            self.wfile.write(body)
+            return
+        if route == '/api/resources/downloads':
+            query = {k:v[0] for k,v in parse_qs(urlparse(self.path).query).items()}
+            try:
+                action = query.get('action','options')
+                if action not in ('options','status'):
+                    raise ValueError('GET 仅支持查询')
+                self._json(self._downloads().request(action,query.get('recipe_id')))
+            except (ValueError,OSError,subprocess.SubprocessError,KeyError) as error:
+                self._json({'error':str(error)},400)
+            return
         if route == '/registry_storage.js':
             body = Path(__file__).with_name('registry_storage.js').read_bytes()
             self.send_response(200)
@@ -1049,7 +1091,7 @@ class Handler(BaseHTTPRequestHandler):
                 action = query.get('action','browse')
                 if action == 'hosts':
                     self._json({'hosts':self._storage().hosts()})
-                elif action in ('browse','disks','size'):
+                elif action in ('browse','disks','size','stat'):
                     self._json(self._storage().request(query.pop('host','4090'), query))
                 else:
                     raise ValueError('未知的资源查询')
