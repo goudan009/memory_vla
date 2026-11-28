@@ -28,11 +28,15 @@ const dir=path.join(__dirname,'../evaluation/scripts'),read=name=>fs.readFileSyn
  assert.equal(await page.locator('#search,.tree .folder,.tree .file,iframe').count(),0);
  await page.locator('#open-device-dialog').click();await page.locator('#device-content').filter({hasText:'10.0 / 80.0 GiB'}).waitFor();await page.locator('#close-device-dialog').click();
  await page.locator('.lineage-node').filter({hasText:'Train 01'}).click();
- assert.match(await page.locator('#inspector').innerText(),/查看训练详情/);
+ assert.match(await page.locator('#node-actions').innerText(),/查看训练详情/);
+ assert.match(await page.locator('#node-actions').innerText(),/最新已发布权重评估/);
+ assert.equal(await page.locator('#inspector [data-action]').count(),0);
  assert.equal(await page.locator('#inspector-kind').innerText(),'训练');
  await page.locator('.lineage-node').filter({hasText:'Step 3000'}).waitFor();
  await page.locator('.lineage-node').filter({hasText:'Step 6000'}).click();
  assert.equal(await page.locator('#inspector-kind').innerText(),'权重');
+ assert.ok(await page.locator('#node-actions [data-action="evaluate"]').isVisible());
+ assert.equal(await page.locator('#tree .pick[data-kind="checkpoint"]').first().locator('.tree-type').innerText(),'权重');
  assert.match(await page.locator('#inspector').innerText(),/所属训练/);
  await page.locator('.lineage-node').filter({hasText:'Train 01'}).click();
  async function checkEdges(){
@@ -40,7 +44,10 @@ const dir=path.join(__dirname,'../evaluation/scripts'),read=name=>fs.readFileSyn
   const check=await page.evaluate(()=>{
    const graph=document.querySelector('#lineage-graph'),bounds=graph.getBoundingClientRect();
    const buttons=new Map([...graph.querySelectorAll('.lineage-node')].map(el=>[el.dataset.node,el]));
-   return [...graph.querySelectorAll('.graph-edge')].map(edge=>{
+   const expected=[...buttons.keys()].filter(id=>[...graph.querySelectorAll('.graph-edge')].some(e=>e.dataset.child===id));
+    const edges=[...graph.querySelectorAll('.graph-edge')];
+    if(edges.length!==buttons.size-1||expected.length!==edges.length)return [false];
+   return edges.map(edge=>{
     const parent=buttons.get(edge.dataset.parent),child=buttons.get(edge.dataset.child),a=parent.getBoundingClientRect(),b=child.getBoundingClientRect();
     const start=edge.getPointAtLength(0),end=edge.getPointAtLength(edge.getTotalLength()),c=JSON.parse(edge.dataset.child),p=JSON.parse(edge.dataset.parent);
     const correctParent=c[0]!=='checkpoint'||c[1]===edge.dataset.parent;
@@ -52,13 +59,13 @@ const dir=path.join(__dirname,'../evaluation/scripts'),read=name=>fs.readFileSyn
  await checkEdges();
  await page.setViewportSize({width:1180,height:900});await page.waitForTimeout(120);await checkEdges();
  await page.setViewportSize({width:1440,height:900});
- await page.locator('#inspector [data-action="training"]').click();await page.waitForURL(u=>u.pathname==='/');
+ await page.locator('#node-actions [data-action="training"]').click();await page.waitForURL(u=>u.pathname==='/');
  let q=new URL(page.url()).searchParams;assert.equal(q.get('page'),'training');assert.equal(JSON.parse(q.get('lineage_target')).run,'run1');
  await page.goto(base);await page.locator('#tree .pick').filter({hasText:'Step 6000'}).waitFor();await page.locator('#tree .pick').filter({hasText:'Step 6000'}).click();
- await page.locator('#inspector [data-action="evaluate"]').click();await page.waitForURL(u=>u.pathname==='/');
+ await page.locator('#node-actions [data-action="evaluate"]').click();await page.waitForURL(u=>u.pathname==='/');
  q=new URL(page.url()).searchParams;assert.equal(JSON.parse(q.get('lineage_target')).path,checkpoint);
  await page.goto(base+'?benchmark=b1k2026');await page.locator('#tree .pick').filter({hasText:'官方 Radio 权重'}).waitFor();await page.locator('#tree .pick').filter({hasText:'官方 Radio 权重'}).click();
- await page.locator('.lineage-node').filter({hasText:'Radio ·'}).click();await page.locator('#inspector [data-action="result"]').click();await page.waitForURL(u=>u.pathname==='/');
+ await page.locator('.lineage-node').filter({hasText:'Radio ·'}).click();await page.locator('#node-actions [data-action="result"]').click();await page.waitForURL(u=>u.pathname==='/');
  q=new URL(page.url()).searchParams;assert.equal(q.get('benchmark'),'b1k2026');assert.equal(JSON.parse(q.get('lineage_target')).run,'radio');
  await page.goto(base);await page.locator('.lineage-node').first().waitFor();
  fs.mkdirSync('workbench-screenshots',{recursive:true});

@@ -82,8 +82,11 @@ function nav(){
 function treeHTML(ids){
  return '<ul>'+ids.filter(matchesBranch).map(id=>{
   const n=nodes.get(id),children=n.children.filter(matchesBranch),open=expanded.has(id),expandable=children.length>0||n.kind==='train';
-  const type=n.kind==='version'||n.kind==='group'?'':nodeTypes[n.kind];
-  return '<li><div class="tree-row kind-'+n.kind+'"><button class="toggle" data-expand="'+esc(id)+'" aria-label="'+(open?'收起':'展开')+'" aria-expanded="'+open+'" '+(!expandable?'disabled':'')+'>'+(expandable?(open?'▾':'▸'):'')+'</button><button class="pick '+(selected===id?'active':'')+'" data-node="'+esc(id)+'" data-kind="'+n.kind+'" aria-current="'+(selected===id?'true':'false')+'" title="'+esc(nodeTypes[n.kind]+' · '+n.title)+'">'+(type?'<small class="tree-type">'+esc(type)+'</small>':'')+'<span class="tree-name">'+esc(n.title)+'</span>'+(children.length?'<small class="count">'+children.length+'</small>':'')+'</button></div>'+(open&&children.length?treeHTML(children):'')+'</li>';
+  const type=n.kind==='checkpoint'?'权重':n.kind==='eval'?'评估':n.kind==='document'?'文档':'';
+  const title=n.kind==='train'&&n.raw?.train_number!=null?'Train '+String(n.raw.train_number).padStart(2,'0')+' · '+(n.raw.method||n.arm||'训练'):n.title;
+  const hint=n.kind==='train'&&n.raw?.task!=null?'T'+n.raw.task:'';
+
+  return '<li><div class="tree-row kind-'+n.kind+'"><button class="toggle" data-expand="'+esc(id)+'" aria-label="'+(open?'收起':'展开')+'" aria-expanded="'+open+'" '+(!expandable?'disabled':'')+'>'+(expandable?(open?'▾':'▸'):'')+'</button><button class="pick '+(selected===id?'active':'')+'" data-node="'+esc(id)+'" data-kind="'+n.kind+'" aria-current="'+(selected===id?'true':'false')+'" title="'+esc(nodeTypes[n.kind]+' · '+n.title)+'">'+(type?'<small class="tree-type">'+esc(type)+'</small>':'')+'<span class="tree-name">'+esc(title)+'</span>'+(hint?'<small class="tree-hint">'+esc(hint)+'</small>':'')+'</button></div>'+(open&&children.length?treeHTML(children):'')+'</li>';
  }).join('')+'</ul>';
 }
 function drawTree(){const el=$('tree'),scroll=el.scrollTop;el.innerHTML=treeHTML(roots)||'<div class="empty">暂无记录</div>';el.scrollTop=scroll;}
@@ -119,7 +122,7 @@ function drawWires(){
  const graph=$('lineage-graph');if(!graph)return;
  const svg=graph.querySelector('.graph-wires'),bounds=graph.getBoundingClientRect();
  if(!svg||!bounds.width||!bounds.height)return;
- svg.setAttribute('viewBox','0 0 '+bounds.width+' '+bounds.height);
+ svg.setAttribute('viewBox','0 0 '+bounds.width+' '+bounds.height);svg.setAttribute('preserveAspectRatio','none');
  const rendered=new Map([...graph.querySelectorAll('.lineage-node')].map(el=>[el.dataset.node,el]));
  const branch=new Set(ancestors(nodes.get(selected)).map(n=>n.id));
  const ns='http://www.w3.org/2000/svg',fragment=document.createDocumentFragment();
@@ -127,11 +130,11 @@ function drawWires(){
    const parentId=nodes.get(id)?.parent,parent=rendered.get(parentId);
    if(!parent)continue;
    const a=parent.getBoundingClientRect(),b=child.getBoundingClientRect();
-   const x1=a.left+a.width/2-bounds.left,y1=a.bottom-bounds.top,x2=b.left+b.width/2-bounds.left,y2=b.top-bounds.top;
+   const x1=a.left+a.width/2-bounds.left,y1=a.bottom-bounds.top-0.75,x2=b.left+b.width/2-bounds.left,y2=b.top-bounds.top+0.75;
    if(y2<=y1)continue;
    const mid=(y1+y2)/2,edge=document.createElementNS(ns,'path');
    edge.setAttribute('d','M '+x1+' '+y1+' V '+mid+' H '+x2+' V '+y2);
-   edge.setAttribute('class','graph-edge'+(branch.has(id)&&branch.has(parentId)?' selected-edge':''));
+   edge.setAttribute('class','graph-edge'+(branch.has(id)&&branch.has(parentId)?' selected-edge':''));edge.setAttribute('stroke-linecap','round');
    edge.dataset.parent=parentId;edge.dataset.child=id;fragment.append(edge);
  }
  svg.replaceChildren(fragment);
@@ -151,14 +154,16 @@ function saveSelection(){const u=new URL(location.href);u.searchParams.set('benc
 function navigate(p,target,n){const b=target?.benchmark||(benchmark!=='all'?benchmark:currentBenchmark(n||nodes.get(selected)));const q=new URLSearchParams({page:p,benchmark:b});if(target)q.set('lineage_target',JSON.stringify(target));if(selected)q.set('lineage_node',selected);location.assign('/?'+q);}
 function details(n){
  $('inspector-kind').textContent=n?nodeTypes[n.kind]:'';
- if(!n){$('inspector').innerHTML='<div class="empty">选择节点后查看详情</div>';return;}
+ if(!n){$('inspector').innerHTML='<div class="empty">选择节点后查看详情</div>';$('node-actions').hidden=true;$('node-actions').innerHTML='';return;}
  const r=n.raw||{},p=r.parameter_summary||{},s=n.kind==='eval'?summary(n):null,tr=getTrain(n),w=getWeight(n),owner=nodes.get(n.parent);
  let rows=[],actions=[];
  if(n.kind==='version'){
    rows=[['代码版本',n.version],['训练记录',descendants(n,'train').length],['已索引权重',descendants(n,'checkpoint').length],['评估记录',descendants(n,'eval').length]];
+   if(descendants(n,'train').some(t=>t.benchmark==='b1k'&&/^V_\d/.test(t.raw?.version||'')))actions.push(['new-training','新建训练 →',true]);
  }else if(n.kind==='train'){
    rows=[['代码版本',n.version],['任务',r.task],['方法',r.method||n.arm],['状态',stateLabel(r.status)],['设备',n.device],['微调',p.fine_tuning_mode],['学习率',p.learning_rate],['Batch',p.global_decisions??p.global_decisions_max],['步数',r.last?.step??r.step],['Loss',r.last?.loss],['训练 ID',r.training_id||n.run],['备注',r.notes]];
    actions.push(['training','查看训练详情 →',true]);
+   if(n.benchmark==='b1k')actions.push(['latest','最新已发布权重评估 →',false]);
  }else if(n.kind==='checkpoint'){
    rows=[['代码版本',n.version],['来源',n.official?'官方权重':tr?'训练产物':'未记录'],['所属训练',tr?.title],['保存步数',r.step],['设备',n.device],['关联评估',descendants(n,'eval').length],['权重路径',n.path],['SHA256',r.sha]];
    if(tr&&n.benchmark==='b1k')actions.push(['evaluate','使用此权重评估 →',true],['training','查看所属训练 →',false]);
@@ -170,7 +175,8 @@ function details(n){
  else rows.push(['关联记录',n.children.filter(scope).length]);
  const children=n.children.map(id=>nodes.get(id)).filter(x=>scope(x.id));
  const links=children.length?'<div class="group-title">直接关联 · '+children.length+'</div><div class="related-list">'+children.slice(0,6).map(x=>'<button data-node="'+esc(x.id)+'" title="'+esc(x.title)+'"><small>'+esc(nodeTypes[x.kind])+'</small><span>'+esc(x.title)+'</span><span aria-hidden="true">›</span></button>').join('')+(children.length>6?'<small class="muted">其余记录可在左侧目录查看</small>':'')+'</div>':'';
- $('inspector').innerHTML='<div class="identity"><h3>'+esc(n.title)+'</h3>'+(n.benchmark?'<small>'+esc(benchmarks[n.benchmark])+'</small>':'')+'</div><div class="node-actions">'+actions.map(([a,t,primary])=>'<button data-action="'+a+'" class="'+(primary?'primary':'')+'">'+t+'</button>').join('')+'</div>'+section('记录信息',rows)+links;
+ $('inspector').innerHTML='<div class="identity"><h3>'+esc(n.title)+'</h3>'+(n.benchmark?'<small>'+esc(benchmarks[n.benchmark])+'</small>':'')+'</div>'+section('记录信息',rows)+links;
+ const footer=$('node-actions');footer.innerHTML=actions.map(([a,t,primary])=>'<button data-action="'+a+'" class="'+(primary?'primary':'')+'">'+t+'</button>').join('');footer.hidden=!actions.length;
 }
 function render(){nav();drawTree();const n=nodes.get(selected);$('crumb').textContent=n?ancestors(n).map(x=>x.title).join(' / '):'';$('content').innerHTML=lineage(n);observeGraph();details(n);}
 function choose(id){const n=nodes.get(id);if(!n||!scope(id))return;selected=id;ancestors(n).forEach(x=>expanded.add(x.id));const old=nodes.get(graphFocus);if(!old||!ancestors(old).some(x=>x.id===id))graphFocus=id;saveSelection();status('');render();if(n.kind==='train')void loadCheckpoints(n);}
@@ -191,14 +197,16 @@ $('tree').onclick=e=>{const exp=e.target.closest('[data-expand]');if(exp){const 
 $('content').onclick=e=>{const b=e.target.closest('[data-node]');if(b)choose(b.dataset.node);};
 $('engineering').onchange=e=>{includeEngineering=e.target.checked;if(selected&&!scope(selected)){selected=null;graphFocus=null;rebuild();}render();};
 $('collapse').onclick=()=>{expanded.clear();drawTree();};$('reload').onclick=()=>void refresh();
-$('inspector').onclick=e=>{const pick=e.target.closest('[data-node]');if(pick){choose(pick.dataset.node);return;}const a=e.target.closest('[data-action]')?.dataset.action,n=nodes.get(selected);if(!a||!n)return;const tr=getTrain(n),w=getWeight(n);
+$('inspector').onclick=e=>{const pick=e.target.closest('[data-node]');if(pick)choose(pick.dataset.node);};
+$('node-actions').onclick=async e=>{const a=e.target.closest('[data-action]')?.dataset.action,n=nodes.get(selected);if(!a||!n)return;const tr=getTrain(n),w=getWeight(n);
  if(a==='document'){location.assign('/ai?'+new URLSearchParams({experiment:n.experiment,benchmark:currentBenchmark(n)}));return;}
  if(a==='training'&&tr)navigate('training',{type:'train',benchmark:tr.benchmark,device:tr.device,run:tr.run,arm:tr.arm},tr);
  if(a==='evaluate'&&tr&&w)navigate('training',{type:'checkpoint',benchmark:'b1k',device:tr.device,run:tr.run,arm:tr.arm,path:w.path},tr);
  if(a==='result')navigate('results',{type:'eval',benchmark:n.benchmark,run:n.run,folder:n.folder},n);
  if(a==='launch')navigate('launch',null,n);
  if(a==='weights')navigate('registry',null,n);
- if(a==='new-training')navigate('training',{type:'new',page:'training',benchmark:currentBenchmark(n)},n);
+ if(a==='new-training'){const example=descendants(n,'train').find(t=>t.benchmark==='b1k'&&/^V_\d/.test(t.raw?.version||''));if(example)navigate('training',{type:'new',page:'training',benchmark:'b1k',version:example.raw.version},example);}
+ if(a==='latest'&&tr){const original=selected;status('正在读取已发布权重…');await loadCheckpoints(tr);if(selected!==original)return;const points=(checkpointByTraining.get(tr.id)||[]).filter(c=>c.path&&Number.isFinite(Number(c.step))&&c.step!=null).sort((a,b)=>Number(b.step)-Number(a.step));if(!points.length){status('没有可确认步数的已发布权重，请在训练详情中选择。',true);return;}const point=points[0];navigate('training',{type:'checkpoint',benchmark:'b1k',device:tr.device,run:tr.run,arm:tr.arm,path:point.path},tr);}
 };
 render();void refresh();setInterval(refresh,45000);
 })();

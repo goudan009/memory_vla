@@ -2733,7 +2733,7 @@
         $('train-saved-checkpoint').value=target.path;
         await $('train-use-checkpoint').onclick();
       }else if(target.type==='new'){
-        if(target.page==='training'){selectPage('training');if(window.benchmarkWorkbench.current()==='b1k'){await window.trainingDashboard.open();$('train-new').click();}}
+        if(target.page==='training'){selectPage('training');if(window.benchmarkWorkbench.current()==='b1k'){await window.trainingDashboard.open();$('train-new').click();if(target.version){const select=$('train-version');if(![...select.options].some(o=>o.value===target.version)){select.selectedIndex=-1;select.dispatchEvent(new Event('change',{bubbles:true}));throw Error('当前设备不支持该版本训练，请检查模型及环境');}select.value=target.version;select.dispatchEvent(new Event('change',{bubbles:true}));}}}
         else if(target.page==='launch'){selectPage('launch');$('launch-new-tab').click();}
       }
     }
