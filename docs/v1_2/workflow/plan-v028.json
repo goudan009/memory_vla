@@ -1,0 +1,17 @@
+{
+  "plan_id": "v1_2_n17_b1k2026_adapter_v028",
+  "status": "in_progress",
+  "supersedes": "v1_2_n17_b1k2026_task_language_v027",
+  "change_reason": "Continue the local backend adapter task defined in docs/workbench/b1k2026_adapter_task.md; preserve the accepted radio evidence and verify the remaining data/loader prerequisites before any training.",
+  "scope": "B1K-2026 backend and native data audit only. No frontend, other benchmark changes, resource download, formal training, extra rollout or V2.2.",
+  "method_version": "V_1_2",
+  "protocol": "b1k2026_websocket",
+  "experiment_identity": null,
+  "budget": {"training_steps": 0, "additional_rollouts": 0, "cpu_data_audit": "Task0/40 physical files; sample RGB decoding and native loader"},
+  "mainline": [
+    {"node": "existing_evidence", "depends_on": [], "parallel_branches": [], "acceptance": "Read current native jobs and original artifacts; retain both complete radio attempts and all active jobs."},
+    {"node": "data_loader", "depends_on": ["existing_evidence"], "parallel_branches": [], "acceptance": "Audit actual Task0/40 episode rows, tensors, indexes, RGB references, annotations and task-language maps. Exercise pinned native loader on a resource-allocated derived view without modifying the source download."},
+    {"node": "capability_contract", "depends_on": ["data_loader"], "parallel_branches": [], "acceptance": "Expose explicit task/checkpoint whitelist and reasons for unsupported capabilities through the existing launch options; verify native metric/key correspondence. Keep unverified training and self-trained model evaluation unavailable."},
+    {"node": "archive", "depends_on": ["capability_contract"], "parallel_branches": [], "acceptance": "Record reproducible CPU commands, real files, versions, metrics and remaining training blockers. Commit targeted adapter changes to main, preserving unrelated work."}
+  ]
+}
