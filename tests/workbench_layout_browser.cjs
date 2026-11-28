@@ -25,9 +25,11 @@ async function routeAll(page){
   assert.equal(u.origin,base);
   const json=data=>r.fulfill({json:data});
   const script=body=>r.fulfill({contentType:'application/javascript',body});
+  if(r.request().method()==='POST'&&p==='/api/launch/preview'){const request=r.request().postDataJSON();return json({command:'fixture preview only',plan:{kind:'b1k2026_websocket',instance:request.instance,attempt:request.attempt,language:{text_prompt:'fixture'},checkpoint_sha256:'fixture',output:'/fixture'}});}
   if(r.request().method()!=='GET')return r.fulfill({status:400,json:{error:'Fixture: writes disabled'}});
   if(p==='/'||p==='/ai')return r.fulfill({contentType:'text/html',body:evaluation('result_viewer.html')});
   if(p==='/registry')return r.fulfill({contentType:'text/html',body:evaluation('registry_view.html')});
+  if(p==='/workbench_embed.css')return r.fulfill({contentType:'text/css',body:evaluation('workbench_embed.css')});
   if(p==='/benchmarks.js')return script('window.__benchmarkHTML='+JSON.stringify(evaluation('benchmark_workbench.html'))+';\n'+evaluation('benchmark_workbench.js')+'\n'+evaluation('libero_workflow.js'));
   if(p==='/training.js')return script('window.__grootTrainingPageHTML='+JSON.stringify(training('dashboard.html'))+';\n'+training('dashboard.js'));
   if(['/checkpoint_notes.js','/agent_experiments.js','/registry_storage.js','/resource_downloads.js','/task40_diagnostics.js'].includes(p))return script(evaluation(p.slice(1)));
@@ -37,7 +39,7 @@ async function routeAll(page){
   if(p==='/api/services')return json({local:{ok:true,gpus:[gpu(0),gpu(1)],processes:[]},remote:{ok:true,gpus:[gpu(0),gpu(1),gpu(2),gpu(3)],processes:[]},a6000:{ok:true,gpus:[gpu(0)],processes:[]}});
   if(p==='/api/training/options')return json({datasets:[task,...[0,21,34].map(i=>({...task,task:i,task_name:'training_task_'+i}))],gpus:[0,1,2,3].map(gpu),checkpoints:[{path:checkpoint,label:'GR00T-N1.6-3B',training_profile:{kind:'base'}}],model_versions:{V_1:{backend:'v1',description:'Baseline',prefix:'v1'}},sync:{}});
   if(p==='/api/training/jobs')return json({jobs:q.get('device')==='a6000'?[trainJob('a6000','training','v2_1__test02__exp01__run004',2000)]:[trainJob('a100','training','v2_1__test02__exp01__run003',3000),trainJob('a100','waiting_for_gpus','v2_1__test02__exp01__run005',0),trainJob('a100','complete','v2_1__test02__exp01__run002',6000)],sync:{}});
-  if(p==='/api/launch/options')return json({ready:true,tasks:[{id:40,name:'microwave_popcorn'}],gpus:[gpu(0),gpu(1)],versions:{V_1:['baseline'],V_2_1:['baseline']}});
+  if(p==='/api/launch/options')return json({ready:true,tasks:[{id:40,name:'microwave_popcorn'}],gpus:[gpu(0),gpu(1)],versions:{V_1:['baseline'],V_2_1:['baseline']},model_versions:{V_1_2:{launch_ready:true}}});
   if(p==='/api/inference/options')return json({host:'172.28.62.17',gpus:[gpu(0),gpu(1)],sources:['/deployments/groot'],source_dir:'/deployments/groot',python_path:'/env/bin/python',checkpoints:[{path:checkpoint,label:'GR00T-N1.6-3B'}]});
   if(p==='/api/inference/jobs')return json({jobs:[inferenceJob(q.get('device'))]});
   if(p==='/api/launch/jobs')return json({jobs:q.get('benchmark')==='b1k2026'?[{id:'native-radio',kind:'b1k2026_websocket',state:'complete',task_id:'turning_on_radio',folder:'V_1_2/official/native-radio',started_at:'2026-11-28 14:27:32',notes:'native fixture',native_episode_keys:['json/turning_on_radio_319_0.json'],native_metrics:[{instance_id:319,steps:3225,success:false,q_score:0}],artifacts:[{path:'videos/turning_on_radio_319_0.mp4',url:'/api/launch/artifact?run=native-radio&path=videos%2Fturning_on_radio_319_0.mp4'}]},{id:'native-failed',kind:'b1k2026_websocket',state:'failed',task_id:'turning_on_radio',notes:'failed fixture',native_metrics:[]}]:evalJobs,device_errors:{}});
@@ -178,6 +180,20 @@ async function bounds(page,name,selector){
    await page.locator('.workflow-node').first().waitFor({state:'visible'});
    await bounds(page,'experiments','#agent-board');
    if([1440,390].includes(width))await page.screenshot({path:output+'/experiments-'+width+'.png',fullPage:true});
+   if(width===1440){
+     await page.goto(base+'/?page=launch&benchmark=b1k2026&embedded=1');
+     await page.waitForFunction(()=>typeof window.unifiedWorkbenchPanel?.select==='function');
+     await page.evaluate(()=>window.unifiedWorkbenchPanel.select({type:'new',page:'launch'}));
+     await page.locator('#n17-gpu option[value="0"]').waitFor({state:'attached'});
+     await page.waitForFunction(()=>!document.getElementById('launch-check').disabled);
+     assert.ok(await page.locator('#launch-submit').isDisabled(),'preflight required');
+     await page.locator('#launch-check').click();
+     await page.waitForFunction(()=>!document.getElementById('launch-submit').disabled);
+     await page.fill('#n17-instance','1');
+     assert.ok(await page.locator('#launch-submit').isDisabled(),'editing invalidates preflight');
+     assert.ok(await page.locator('#model-config').isHidden(),'native strategy is self-contained');
+     assert.ok(await page.locator('.launch-sidebar').isHidden(),'one navigation');
+   }
    assert.deepEqual(errors,[],'JavaScript errors at '+width);
    console.log('Responsive workspace checks passed at '+width+'px');
    await page.close();

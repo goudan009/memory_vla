@@ -1245,7 +1245,7 @@
     const queued=active.filter(j=>['queued','waiting_for_gpus'].includes(j.state));
     const external=native?[]:runs.filter(r=>r.status==='running'&&!active.some(j=>j.folder===r._folder));
     const partial=Object.keys(launchDeviceErrors).length||Object.keys(allInferenceErrors).length;
-    $('launch-overview-counts').innerHTML=[['评估运行',active.length-queued.length+external.length],['排队',queued.length],['推理服务',ready.length],['历史作业',launchJobSnapshot.length-active.length]].map(([k,v])=>'<div><small>'+k+'</small><strong>' +v+'</strong></div>').join('');
+    $('launch-overview-counts').innerHTML=[['评估运行',active.length-queued.length+external.length],['排队',queued.length],...(native?[]:[['推理服务',ready.length]]),['历史作业',launchJobSnapshot.length-active.length]].map(([k,v])=>'<div><small>'+k+'</small><strong>' +v+'</strong></div>').join('');
     $('launch-active-count').textContent=String(active.length+external.length);
     $('launch-history-count').textContent=String(launchJobSnapshot.length-active.length);
     const names={local:'4090',a100:'A100',a6000:'RTX 6000 Ada',all:'全部设备'};
@@ -2622,10 +2622,10 @@
   $('launch-check').onclick=()=>void submitLaunch(false);
   $('launch-form').onsubmit=event=>{event.preventDefault();void submitLaunch(true);};
   $('launch-form').oninput=()=>{
-    updateLaunchAvailability();$('launch-plan').hidden=true;
+    embeddedPreviewKey=null;updateLaunchAvailability();$('launch-plan').hidden=true;
     if(!launchBusy){$('launch-message').textContent='';$('launch-message').className='launch-message';}
   };
-  $('launch-form').onchange=updateLaunchAvailability;
+  $('launch-form').onchange=()=>{embeddedPreviewKey=null;$('launch-plan').hidden=true;updateLaunchAvailability();};
   for(const id of ['launch-host','launch-port']) $(id).oninput=()=>{
     pendingInference=null;launchServiceChoice='';$('launch-service').value='';
     $('launch-plan').hidden=true;updatePolicySummary();updateLaunchAvailability();

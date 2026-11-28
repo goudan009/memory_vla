@@ -226,7 +226,7 @@ function leaveForm(){
 function route(p){
  if(p===page)return;
  if(!leaveForm())return;
- closeFrame();status('');page=p;tab=defaultTab(page,nodes.get(selected));saveRoute();render();
+ closeFrame();status('');page=p;if(page==='launch'&&benchmark==='all')benchmark=currentBenchmark(nodes.get(selected));tab=defaultTab(page,nodes.get(selected));saveRoute();render();
 }
 function choose(id,fromGraph=false){
  const n=nodes.get(id);if(!n||!scope(id))return;
@@ -244,7 +244,7 @@ function choose(id,fromGraph=false){
 }
 function startForm(type,n,target=null,owner=null){
  if(!leaveForm())return;
- closeFrame();status('');page=type==='new-training'?'training':'launch';tab=type;
+ closeFrame();status('');page=type==='new-training'?'training':'launch';if(page==='launch'&&benchmark==='all')benchmark=currentBenchmark(owner||target||n);tab=type;
  form={type,node:n,target,owner};saveRoute();render();
 }
 async function loadCheckpoints(n){if(detailRequests.has(n.id))return detailRequests.get(n.id);const promise=(async()=>{try{const d=await api('/api/training/detail?'+new URLSearchParams({device:n.device,run:n.run,arm:n.arm}));detailCache.set(n.id,d);checkpointByTraining.set(n.id,Array.isArray(d.checkpoints)?d.checkpoints.filter(c=>c&&typeof c.path==='string'):[]);rebuild();drawTree();if(selected===n.id&&tab!=='detail'&&tab!=='compare')renderCenter();}catch(e){status('权重读取失败：'+e.message,true);}})();detailRequests.set(n.id,promise);try{await promise;}finally{detailRequests.delete(n.id);}}
@@ -257,7 +257,7 @@ $('nav').onclick=e=>{const b=e.target.closest('[data-page]');if(b)route(b.datase
 $('benchmarks').onchange=e=>{
  const value=e.target.value;if(value===benchmark)return;
  if(!leaveForm()){e.target.value=benchmark;return;}
- benchmark=value;if(selected&&!scope(selected))selected=roots.find(matchesBranch)||null;
+ benchmark=value;if(page==='launch'&&benchmark==='all')benchmark=currentBenchmark(nodes.get(selected));if(selected&&!scope(selected))selected=roots.find(matchesBranch)||null;
  if(selected)ancestors(nodes.get(selected)).forEach(x=>expanded.add(x.id));
  if(page!=='registry'){closeFrame();status('');tab=defaultTab(page,nodes.get(selected));}
  saveRoute();render();
