@@ -1,0 +1,55 @@
+{
+  "plan": "v030",
+  "code_commit": "526b36d",
+  "workbench": "http://127.0.0.1:8765",
+  "benchmark": "b1k2026",
+  "method_family": "V0",
+  "version": "V_0_0",
+  "display_version": "V0_0",
+  "run_prefix": "v0_0",
+  "identity_http_acceptance": "passed",
+  "training_options": {
+    "registered_model_versions": ["V_0_0"],
+    "formal_training_available": false,
+    "engineering_training_verified": false,
+    "actual_training_jobs": 0
+  },
+  "launch_options": {
+    "launch_ready": true,
+    "input_aliases": {"V_1_2": "V_0_0"},
+    "protocol": "b1k2026_websocket"
+  },
+  "preview_only": {
+    "task": "turning_on_radio",
+    "instance": 19,
+    "attempt": 99,
+    "output": "evaluation/b1k2026/V_0_0/official/b1k2026__v0_0__official__instance19__attempt99",
+    "policy_version": "V_0_0",
+    "evaluator_version": "V_0_0",
+    "notes": "V0_0 / N1.7：2026身份预检，未启动回合",
+    "wrong_benchmark_http_status": 400,
+    "wrong_benchmark_error": "V0_0 belongs exclusively to benchmark b1k2026",
+    "job_submitted": false
+  },
+  "preserved_historical_jobs": [
+    {
+      "id": "3fc189e832d8",
+      "version": "V_1_2",
+      "state": "complete",
+      "json_http_sha256": "e2a9498583a375c35ce84271c3cdca72049f7821fcc4f15be1c8e6317a68e3aa",
+      "mp4_http_sha256": "df9335fd392f214c13c92680738ca0efcb4a47f971b1401f2171e50745be796a",
+      "mp4_bytes": 5838507
+    },
+    {
+      "id": "97f45ef78924",
+      "version": "V_1_2",
+      "state": "complete",
+      "json_http_sha256": "980f8baf685b206a4a748a93d7e281d691bea29506b709b342eee26c5d806d80",
+      "mp4_http_sha256": "dbeb8cadfb5b61279087bc0fd2cd9c609ab1f41820d7b05fbb487aa30c10c424",
+      "mp4_bytes": 5710785
+    }
+  ],
+  "new_training_submissions": 0,
+  "new_evaluation_submissions": 0,
+  "training_chain_acceptance": "pending recipe and training identity confirmation, then real GPU validation"
+}
