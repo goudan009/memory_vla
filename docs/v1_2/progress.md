@@ -1,5 +1,11 @@
 # V1.2 Progress
 
+## 2026-11-28 - importer_boundary / Kit FastFinder
+
+- Status: `PARTIAL`; latest plan [workflow/plan-v023.json](workflow/plan-v023.json). Job `b5e70b6988c4` failed at its first control step: Numba 0.66 loaded a 0.59 runtime submodule through Isaac FastFinder, causing llvmlite's `unknown attr 'nocapture'` error. Native episodes=0, videos=0; INVALID. The simulator shutdown returned zero despite the exception; the runner correctly rejected absent native output.
+- Local Isaac source confirms FastFinder is inserted before normal Python import resolution and ignores the loaded parent package path for cached module names. This is an importer boundary issue, beyond ordinary sys.path precedence. Use SimulationApp's existing `extra_args` to disable only this optional importer in the isolated 2026 process; pinned upstream and shared Isaac files remain untouched. Editing the staged kit is ineffective because OmniGibson recopies it on launch.
+- Next: reproduce the actual finder behavior, verify the startup adapter, then preview/start instance 17 / GPU0 / port 8031 with unchanged official identity, one rollout/video and note. Legacy retirement remains gated on valid native output; formal training submissions=0.
+
 ## 2026-11-28 - dependency_import / CFFI ABI boundary
 
 - Status: `PARTIAL`; latest plan [workflow/plan-v022.json](workflow/plan-v022.json). Job `758c76aa0780` passed WebSocket policy load and connected to the official N1.7 server, then failed at the first control step with evaluator return code 1. Native episodes=0, videos=0; INVALID, excluded from success denominator.

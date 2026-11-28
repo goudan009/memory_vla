@@ -1,0 +1,25 @@
+{
+  "plan_id": "v1_2_n17_b1k2026_transition_gate_v023",
+  "status": "in_progress",
+  "supersedes": "v1_2_n17_b1k2026_transition_gate_v022",
+  "change_reason": "Job b5e70b6988c4 reached first control but mixed Numba 0.66 with Isaac Numba 0.59 runtime through Kit FastFinder, which bypasses parent package paths. Disable the optional fast importer through SimulationApp's supported extra_args setting. OmniGibson recopies its kit on every launch, so editing the staged kit would be ineffective. Keep pinned upstream source, physics, model and evaluation settings unchanged.",
+  "scope": "Accept one native GR00T N1.7/B1K-2026 official radio rollout, then conditionally retire verified legacy runtime; retain historical assets and shared libraries. No formal training or V2.2.",
+  "method_version": "V_1_2",
+  "protocol": "b1k2026_websocket",
+  "checkpoint": "/nvme3/checkpoints/memory_vla/official-n17-radio/turning_on_radio_GR00T-checkpoint-150000",
+  "checkpoint_sha256": "cd97a22ff74bd91838350e18fe94b48e1902d407f1256f5d48eb20befe277dc3",
+  "source_revisions": {"groot": "ace36d935b376fbf25cd56371e23877b95407c40", "behavior_1k": "a8247a8cc1633fe1ca0cc66aa07243d46c64f155"},
+  "experiment_identity": null,
+  "notes": "V1.2 / N1.7 / B1K2026: official radio, RTC off",
+  "budget": {"training_steps": 0, "environments": 1, "rollouts": 1},
+  "next_attempt": {"instance": 17, "gpu": 0, "policy_port": 8031, "workbench": "http://127.0.0.1:8767"},
+  "mainline": [
+    {"node": "importer_boundary", "depends_on": [], "parallel_branches": [], "acceptance": "Reproduce real FastFinder selecting an incompatible submodule; pass the supported fastImporter/enabled=false setting at the SimulationApp boundary and verify effective settings and Numba module paths during the real launch."},
+    {"node": "preview_instance_17", "depends_on": ["importer_boundary"], "parallel_branches": [], "acceptance": "8767 preview confirms fixed identity, one rollout/video and note; verify live GPU capacity and free port."},
+    {"node": "official_rollout", "depends_on": ["preview_instance_17"], "parallel_branches": [], "acceptance": "Normal evaluator exit, native JSON, positive steps, boolean success, finite final Q-score and decodable video; task success reported separately from infrastructure acceptance."},
+    {"node": "legacy_shutdown_gate", "depends_on": ["official_rollout"], "parallel_branches": [], "acceptance": "Stop only confirmed legacy runtime and dedicated supervisors after checking active dependent jobs. Preserve history, shared libraries, archive service and unrelated 8766."},
+    {"node": "archive", "depends_on": ["legacy_shutdown_gate"], "parallel_branches": [], "acceptance": "Publish job/results/video, zero formal training, remaining training-readiness limits and exact service decisions to main."}
+  ],
+  "latest_failed_attempt": {"job_id": "b5e70b6988c4", "instance": 16, "native_episodes": 0, "videos": 0, "reason": "Isaac FastFinder mixed Numba runtime versions; nocapture attribute error at first control step, evaluator shutdown returned zero without native output and runner rejected it."},
+  "migration_gate": {"on_fail": "Keep legacy services, preserve evidence and diagnose.", "on_pass": "Retire only verified legacy runtime without active dependencies; preserve historical assets and shared Python directories."}
+}

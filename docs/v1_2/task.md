@@ -24,6 +24,6 @@ Finish environment commissioning, native B1K-2026 workbench integration, and one
 
 ## Execution records
 
-- Latest plan: [plan-v022.json](workflow/plan-v022.json)
+- Latest plan: [plan-v023.json](workflow/plan-v023.json)
 - Prior Task40 audit: [local-preflight-2026-11-27.md](local-preflight-2026-11-27.md)
 - Progress: [progress.md](progress.md)
