@@ -74,7 +74,7 @@ if(typeof module!=='undefined' && module.exports) module.exports={benchmarkMetri
   holder.innerHTML=window.__benchmarkHTML;
   delete window.__benchmarkHTML;
   const style=holder.querySelector('style');document.head.appendChild(style);
-  document.querySelector('.page-nav').before(holder.querySelector('#benchmark-selector'));
+  document.querySelector('.page-nav').append(holder.querySelector('#benchmark-selector'));
   const workspace=holder.querySelector('#bench-workspace'), resultSwitch=holder.querySelector('#bench-result-switch'), checks=holder.querySelector('#bench-code-checks');
   document.getElementById('page-results').before(resultSwitch,workspace);
   document.getElementById('page-training').before(checks);
@@ -120,6 +120,7 @@ if(typeof module!=='undefined' && module.exports) module.exports={benchmarkMetri
     selectedId=selection[currentKind()]||null;detail=null;
     const available=benchmark==='b1k'?'训练、策略推理与闭环评估已接入':benchmark==='libero'?'示教准备、训练与策略评估已接入 · 本机单卡':'环境、训练与策略接口待接入';
     el('benchmark-capability').textContent=available;
+    el('benchmark-choice').title=available;
     document.querySelector('.page-foot').textContent=benchmark==='b1k'?'GR00T N1.6 · B1K-2025 · 调试记录与正式评估分别标记':titles[benchmark]+' · '+available;
     el('benchmark-description').textContent=benchmark==='b1k'?'沿用现有数据、权重与评估记录；训练页提供开发快测。':benchmark==='libero'?'Franka 末端控制 · 固定初态 · 双相机；结果与 B1K 独立。':'保留相同三步流程，接入后在当前 benchmark 下操作。';
     for(const name of ['training','launch','results']) el('bench-'+name+'-title').textContent=titles[benchmark]+' · '+{training:'训练',launch:'推理评估',results:'评估结果'}[name];

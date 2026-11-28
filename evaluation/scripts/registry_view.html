@@ -136,6 +136,68 @@
   #storage-dialog-error{color:var(--bad);overflow-wrap:anywhere}
   @media(max-width:540px){.storage-entry{gap:6px;padding:8px}.storage-entry .storage-size{font-size:10px}}
   #storage-disk-panel[hidden],#resource-download-panel[hidden],#storage-register[hidden],#resource-download-register[hidden]{display:none!important}#storage-disk-panel>summary,#resource-download-panel>summary{display:none}#storage-disk-panel{padding-top:12px}#resource-download-register{margin-top:10px}.download-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.download-controls select{flex:1 1 200px;min-width:0;max-width:100%}.download-summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:8px;margin:10px 0}.download-summary>div{min-width:0;padding:9px;border:1px solid var(--line,#ddd);border-radius:6px}.download-summary strong,.download-summary small{display:block;overflow-wrap:anywhere}.download-summary small{color:#65736e;margin-bottom:4px}.download-raw{margin-top:10px}.download-raw pre{white-space:pre-wrap;overflow-wrap:anywhere;max-height:240px;overflow:auto}.download-raw summary{cursor:pointer}#resource-download-progress{width:100%}.download-summary[hidden],.download-raw[hidden]{display:none!important}
+
+  :root{--card:#fff;--line:#dfe5eb;--ink:#202c37;--muted:#64717e;--green:#176e68;--soft:#e8f3f1;--accent:#176e68;--accent-soft:#e8f3f1;--warn:#91621e;--bad:#ac4147}
+  body{font:14px/1.55 system-ui,-apple-system,"Segoe UI","Microsoft YaHei","Noto Sans CJK SC",sans-serif}
+  header{border:0;border-radius:0;background:transparent;padding:0 0 10px;min-height:42px;gap:8px}
+  h1{font-size:19px;letter-spacing:0}
+  .sub{font-size:11px;margin-top:2px}
+  #rescan{border-color:var(--line);border-radius:6px;padding:7px 11px;color:var(--ink)}
+  nav.tabs{margin:0 0 14px;padding:0;gap:5px;background:white;border:1px solid var(--line);border-radius:8px;overflow-x:auto;min-height:44px;align-items:center}
+  nav.tabs button{padding:9px 14px;border:0;border-bottom:2px solid transparent;border-radius:0;line-height:1.5}
+  nav.tabs button[aria-selected=true]{background:transparent;border-color:var(--accent);color:var(--accent)}
+  nav.tabs button[data-v=exp]{margin-right:8px}
+  .storage-toolbar{margin:0 0 12px;min-height:38px}
+  .storage-toolbar>div:first-child{font-size:14px}
+  .storage-toolbar label{gap:8px}
+  .storage-toolbar select{min-width:120px}
+  button,select,input{min-height:34px;border-radius:6px;padding:6px 10px}
+  .ledger-workspace{grid-template-columns:clamp(240px,26%,340px) minmax(0,1fr);gap:16px}
+  .ledger-list,.ledger-detail{border-radius:10px}
+  .ledger-list-head{padding:14px 15px;min-height:48px}
+  .ledger-picker{padding:8px;max-height:600px}
+  .ledger-picker summary{background:#f0f3f6;border-radius:5px;padding:8px 9px}
+  .ledger-picker .tree-children{margin-left:5px;padding-left:7px}
+  .ledger-picker button{padding:9px 8px;border-radius:5px;font-size:12px}
+  .ledger-picker button[aria-current=true]{border-color:#c1dcd7;box-shadow:inset 2px 0 var(--accent)}
+  .record-context{font-size:11px}
+  .storage-filters{padding:10px 12px;gap:6px}
+  .ledger-detail{padding:18px}
+  .ledger-detail h3{font-size:17px}
+  .detail-kicker{color:var(--muted);font-weight:500}
+  .storage-browser{margin-top:16px;border-top:1px solid var(--line);padding-top:12px}
+  .storage-actions,.storage-breadcrumbs{margin:8px 0;gap:6px}
+  .storage-actions button,.storage-breadcrumbs button{font-size:12px;min-height:31px}
+  .storage-breadcrumbs button{background:#f0f4f6}
+  .storage-path{padding:7px 9px;background:#f3f6f8;border-radius:5px;font-size:11px}
+  .storage-search{height:36px;font-size:13px}
+  .storage-entries{border-radius:7px;max-height:520px}
+  .storage-entry{padding:10px 12px;gap:12px}
+  .storage-entry>button:first-child{min-height:32px;font-size:13px;color:var(--ink)}
+  .storage-entry small{font-size:11px;color:var(--muted)}
+  .storage-entry .storage-size{font-variant-numeric:tabular-nums}
+  .storage-entry:nth-child(even){background:#fafbfc}
+  .storage-entry:hover{background:#f0f5f4}
+  .storage-menu>summary{background:white}
+  .storage-capacity{background:white;border-radius:10px}
+  #resource-download-panel>div{padding:20px!important}
+  .download-controls{padding-bottom:12px;border-bottom:1px solid var(--line)}
+  .download-controls select{height:38px;background:white;max-width:100%;flex:1 1 250px}
+  .download-controls button{height:38px;min-width:68px}
+  .download-summary{grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:10px;margin:14px 0}
+  .download-summary>div{background:#f5f7fa;padding:12px 14px;border:0;border-radius:7px}
+  .download-summary strong{font-size:18px;font-variant-numeric:tabular-nums;line-height:1.4}
+  .download-summary small{font-size:12px}
+  .download-raw{border-top:1px solid var(--line);padding-top:10px}
+  .storage-disks{gap:12px;grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr))}
+  .storage-disk{padding:16px;border-radius:8px}
+  .storage-disk strong{font-size:14px}
+  .storage-disk progress{height:9px;margin:12px 0 8px}
+  .ledger-filter{margin-top:0}
+  .task-comparison .ledger-table th{background:#f2f5f8}
+  @media(max-width:850px){.ledger-workspace{grid-template-columns:220px minmax(0,1fr)}}
+  @media(max-width:700px){.ledger-workspace{grid-template-columns:1fr;gap:12px}.ledger-picker{max-height:240px}.ledger-detail{padding:14px}.storage-toolbar{gap:8px}.storage-toolbar select{min-width:0}nav.tabs button{padding-inline:10px;font-size:12px}.storage-toolbar label{font-size:11px}.storage-toolbar .acts{gap:6px}.download-summary{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  @media(max-width:540px){h1{font-size:17px}.storage-entry{padding:9px 8px;gap:6px}.storage-entry>button:first-child{font-size:12px}.storage-entry small{font-size:10px}.download-controls select{flex-basis:100%}.download-controls button{flex:1;min-width:0}.download-summary>div{padding:10px}.download-summary strong{font-size:16px}#resource-download-panel>div{padding:14px!important}.storage-toolbar .acts{width:100%;justify-content:space-between}}
 </style>
 </head>
 <body>

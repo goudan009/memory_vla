@@ -3,11 +3,11 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#123e34">
+  <meta name="theme-color" content="#243e4a">
   <link rel="manifest" href="/workbench.webmanifest">
   <link rel="icon" href="/workbench-icon-192.png" type="image/png" sizes="192x192">
   <link rel="apple-touch-icon" href="/workbench-icon-192.png">
-  <title>4090 WYH工作台</title>
+  <title>MemoryVLA 工作台</title>
   <style>
     :root { color-scheme:light; --ink:#20312e; --muted:#75827e; --line:#e5ebe8; --green:#087f68; --red:#b54747; --amber:#aa7424; --paper:#f3f6f4; --white:#fff; --soft:#eef7f3; --panel-pad:20px; }
     * { box-sizing:border-box }
@@ -436,6 +436,106 @@
     #result-note-panel { margin:0 20px 14px; overflow-wrap:anywhere }
     #result-note-panel > summary { cursor:pointer; font-size:13px; line-height:1.6 }
     #result-note-preview { color:#5e7268; white-space:pre-wrap }
+
+    /* Shared visual system: one surface per workspace, consistent control sizes. */
+    :root{--ink:#202c37;--muted:#64717e;--line:#dfe5eb;--green:#176e68;--red:#ac4147;--amber:#91621e;--paper:#f2f5f8;--white:#fff;--soft:#e8f3f1;--panel-pad:20px;--radius:10px}
+    body{font:14px/1.55 system-ui,-apple-system,"Segoe UI","Microsoft YaHei","Noto Sans CJK SC",sans-serif}
+    body>header{min-height:62px;padding-block:11px;gap:12px}
+    .brand-mark{width:34px;height:34px;border-radius:8px;background:#243e4a;font-size:16px}
+    .brand h1{font-size:17px;letter-spacing:0}
+    #caption{font-size:11px;line-height:1.4;margin-top:2px}
+    .header-actions{gap:10px}
+    #refresh{width:36px;height:36px;padding:0;font-size:19px;line-height:1}
+    .page-nav{padding-block:5px;gap:4px;min-height:50px;overflow:visible;flex-wrap:wrap;align-items:center}
+    .page-tabs{gap:4px}
+    .page-nav-link{order:-1}
+    .page-nav button,.page-nav-link{font-size:13px;padding:9px 14px;border-radius:6px;line-height:1.5;font-weight:550}
+    .page-nav button[aria-selected=true],.page-nav-link[aria-current=page]{background:var(--soft);border-color:transparent;color:var(--green);box-shadow:inset 0 -2px var(--green)}
+    #benchmark-selector{margin-left:auto;background:transparent;border:0;padding:0;gap:0;min-width:0}
+    #benchmark-selector label{gap:8px;font-size:11px}
+    #benchmark-selector select{min-width:150px;max-width:220px;height:34px;padding:4px 8px;border-color:var(--line);border-radius:6px;font-size:12px}
+    #benchmark-selector>div{display:none}
+    body:has(#page-registry:not([hidden])) #benchmark-selector{display:none}
+    main{padding-top:18px;padding-bottom:28px}
+    .layout{grid-template-columns:clamp(250px,23%,320px) minmax(0,1fr);gap:16px}
+    section{border-radius:var(--radius);box-shadow:none}
+    .section-head{min-height:51px;padding-block:13px;gap:8px}
+    .section-head h2,.detail-heading h2{font-weight:650;letter-spacing:0}
+    .section-head h2{font-size:14px}
+    .detail-heading{padding-block:16px;gap:10px}
+    .detail-heading h2{font-size:19px;line-height:1.35;margin:2px 0}
+    .detail-heading .eyebrow{letter-spacing:0;font-size:11px;font-weight:500}
+    .run-browser{top:16px}
+    .filters{padding:12px;gap:6px}
+    .filters input,.filters select{background:#fff;height:36px;padding:6px 9px;font-size:12px}
+    .run-list{gap:5px;padding:0 8px 8px;max-height:max(200px,calc(100vh - 210px))}
+    .version-group{border:0;border-radius:6px;background:white}
+    .version-group>summary{padding:9px 10px;background:#edf1f5;border-radius:6px;font-size:12px}
+    .version-runs{padding:5px 0 5px 9px;border-left:1px solid var(--line);margin-left:6px;gap:4px}
+    .result-task-group,#page-training .train-task-group{border:0;border-radius:6px}
+    .result-task-group>summary,#page-training .train-task-group>summary{padding:8px 6px}
+    .result-task-runs,#page-training .train-task-runs{padding:0 0 4px 6px;gap:3px}
+    .result-method-runs{padding:0 0 3px}
+    .run-card{border:1px solid transparent;background:white;padding:10px 9px;border-radius:6px}
+    .run-card:not(.selected):hover{background:#f2f5f8;border-color:var(--line)}
+    .run-card.selected{background:var(--soft);border-color:#c1dcd7;box-shadow:inset 2px 0 var(--green)}
+    .summary{padding:18px var(--panel-pad);gap:12px 0;background:#fff}
+    .metric{padding:0 16px}
+    .metric:first-child{padding-left:0}
+    .metric strong{font-size:26px;line-height:1.25;margin-top:4px}
+    .metric small{font-size:11px;line-height:1.45}
+    .detail-tabs{padding:0 var(--panel-pad);gap:16px;flex-wrap:wrap}
+    .detail-tabs button{background:transparent;border:0;border-radius:0;padding:12px 1px;font-size:13px;color:var(--muted);border-bottom:2px solid transparent}
+    .detail-tabs button[aria-selected=true]{background:transparent;border-color:var(--green);color:var(--green);font-weight:650}
+    .gpu-overview-panel,#service-overview{margin-bottom:10px;background:#fff;border-radius:8px}
+    .gpu-overview-panel>summary,#service-overview>summary{min-height:36px;padding:8px 12px;font-size:12px}
+    .gpu-overview-panel>summary small{font-size:12px}
+    .gpu-machine{border-radius:8px}
+    .page-intro{margin:0 0 12px;min-height:38px}
+    .page-intro h2{font-size:19px;letter-spacing:0}
+    button{border-radius:6px;min-height:32px;padding:7px 11px}
+    button:disabled{cursor:not-allowed}
+    .primary-button,#inference-submit{background:var(--green);border-color:var(--green);color:white;font-weight:600}
+    .launch-fields{padding-block:14px;gap:14px 16px}
+    .launch-fields label{font-size:12px;color:var(--muted);gap:6px}
+    .launch-fields :is(input:not([type=checkbox]),select){height:38px;background:white;border-radius:6px;font-size:13px;padding:7px 10px}
+    .launch-fields .switch{min-height:32px}
+    .compact-fold>summary{padding:11px var(--panel-pad);font-size:12px;font-weight:550;color:var(--ink)}
+    .compact-fold[open]>summary{border-bottom:1px solid var(--line);background:#f7f9fb}
+    .start-config{grid-template-columns:minmax(300px,31%) minmax(0,1fr);gap:16px}
+    #model-config{position:static}
+    #model-config .launch-fields{grid-template-columns:repeat(2,minmax(0,1fr));padding:12px 16px;gap:12px}
+    #model-config .new-policy>summary{padding:15px 16px}
+    #model-config .new-policy>summary small{margin-left:0;font-size:11px}
+    #model-config .new-policy>summary small::after{margin-left:7px}
+    #model-config .inline-heading{padding:10px 16px 0}
+    #model-config .inline-actions{padding:12px 16px}
+    .launch-actions{position:static;box-shadow:none;min-height:55px;padding-block:12px}
+    .save-fields{background:white}
+    #launch-mode-hint{background:#f0f4f7;border-radius:6px;padding:8px 10px;font-size:12px;color:#455563}
+    #page-registry{border:0;background:transparent;border-radius:0;overflow:visible}
+    #result-compare-panel{background:white;border:1px solid var(--line);border-radius:8px}
+    #result-compare-panel>summary{padding:10px 14px;min-height:40px;color:var(--green)}
+    #result-compare-content{padding:12px;border-top:1px solid var(--line)}
+    #bench-result-switch{margin:0 0 10px;gap:4px}
+    #bench-result-switch button{font-size:12px;padding:5px 10px}
+    .evaluation-actions{padding-block:10px}
+    #result-note-panel{margin:8px var(--panel-pad) 4px}
+    .agent-document{padding-block:18px}
+    .workflow-summary{background:#f1f5f8;border-color:var(--line);border-radius:8px}
+    .workflow-graph{background:#f7f9fb;border-radius:8px;gap:22px;padding:14px 18px}
+    .workflow-node{max-width:260px;border-radius:7px;min-height:54px;padding:9px 12px}
+    .workflow-node strong{font-size:13px}
+    .workflow-node-detail{background:white;border:1px solid var(--line);border-left:3px solid #88aaa7;border-radius:6px;padding:12px 14px}
+    .agent-now,.agent-next{background:#f5f7fa;border:1px solid var(--line);border-left:3px solid #638599;border-radius:7px}
+    .agent-next{border-left-color:#b38b46;background:#fbf9f5}
+    #agent-live-training>details,#agent-progress-record>details{border:1px solid var(--line);border-radius:7px;padding:10px 12px}
+    #agent-live-training summary,#agent-progress-record>details>summary{color:var(--ink);font-weight:550}
+    .page-foot{margin-top:14px}
+    @media(max-width:1050px){.layout{grid-template-columns:250px minmax(0,1fr)}.start-config{grid-template-columns:300px minmax(0,1fr)}.metric{padding:0 10px}.metric strong{font-size:23px}.page-nav button,.page-nav-link{padding-inline:10px}}
+    @media(max-width:850px){.page-nav{overflow-x:auto;flex-wrap:nowrap}.page-tabs{flex:none}#benchmark-selector{margin-left:auto;flex:none}.page-nav button,.page-nav-link{padding-inline:9px}.start-config{grid-template-columns:1fr}#eval-config{grid-column:auto}#model-config .launch-fields{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(max-width:780px){:root{--panel-pad:14px}main{padding:12px 12px 20px}.layout{grid-template-columns:1fr;gap:12px}.run-browser{position:static}.run-list{max-height:240px}.summary{padding:14px var(--panel-pad);gap:14px 0}.metric:nth-child(odd){padding-left:0}.detail-tabs{gap:14px}.detail-tabs button{font-size:12px}.metric strong{font-size:23px}}
+    @media(max-width:540px){.page-nav{padding:4px 10px;gap:2px}.page-tabs{gap:2px}.page-nav button,.page-nav-link{padding:8px 9px;font-size:12px}.brand h1{font-size:15px}#benchmark-selector label{font-size:0;gap:0}#benchmark-selector select{min-width:120px;max-width:145px;font-size:11px}.detail-heading h2{font-size:17px}.section-head{min-height:46px}.launch-fields,#model-config .launch-fields{grid-template-columns:1fr;padding:12px 14px}.workflow-level{gap:6px}.workflow-node{padding:7px 6px}.workflow-node strong{font-size:12px}.workflow-graph{padding:12px 8px;gap:20px}.summary .metric strong{font-size:21px}.detail-tabs{gap:10px}.detail-tabs button{padding:10px 0}.gpu-overview-panel>summary{flex-wrap:wrap;gap:3px 8px}.gpu-overview-panel>summary small{font-size:11px}.page-intro h2{font-size:17px}#result-compare-content{padding:8px}}
   </style>
 </head>
 <body>
@@ -482,7 +582,7 @@
     </div>
     <div id="page-training" role="tabpanel" aria-labelledby="page-tab-training" hidden></div>
     <div id="page-launch" role="tabpanel" aria-labelledby="page-tab-launch" hidden>
-      
+      <div class="page-intro"><h2>推理评估</h2></div>
         <div class="start-config">
           <section id="model-config" aria-label="启动推理">
             <details id="inference-panel" class="new-policy"><summary><span><span class="step-number">1</span>启动推理</span><small>已有服务可跳过</small></summary>
@@ -506,7 +606,7 @@
                   <small id="inference-task40-hint" class="wide" hidden>请选择包含 Task40 诊断入口的部署源码。采集作业管理每条轨迹的记忆与种子。</small>
                 </div></details>
                 <div class="launch-preview"><div id="inference-message" class="launch-message" role="status"></div><div id="inference-plan" hidden></div></div>
-                <div class="inline-actions"><span class="subtle">就绪后自动关联</span><button type="button" id="inference-check">检查配置</button><button type="submit" id="inference-submit">启动推理</button></div>
+                <div class="inline-actions"><span class="subtle">就绪后自动关联</span><button type="button" id="inference-check">检查配置</button><button type="submit" id="inference-submit" class="primary-button">启动推理</button></div>
               </form>
             </details>
             <details id="inference-history" class="compact-fold" open hidden><summary>推理服务</summary><div id="inference-manage-message" class="policy-path" role="status"></div><div id="inference-jobs" class="launch-jobs-list"></div></details>
@@ -1712,7 +1812,7 @@
   function renderSummary(r) {
     const done=r?.completed_episodes??r?.recorded_episodes??0, asked=r?.requested_episodes??0;
     const vals=[["有效回合",r?`${done} / ${asked}`:"—",['cancelled','paused','interrupted'].includes(r?.status)?`暂停中 · ${Math.max(0,asked-(r.recorded_episodes??done+(r.invalid_episodes??0)))} 回合尚未执行`:r?`${r.invalid_episodes??0} 个无效回合`:"尚未选择评估"],["平均 Q",qmean(r),r?.evaluation_mode==="fast-debug"?"调试 · 不计正式成绩":`0–1 · ${r?.q_score_episodes??0}/${done} 回合已记录`],["任务成功率",pct(r?.success_rate),r?`${r.successful_episodes??0} 个完整成功回合`:"完整任务成功比例"],["平均任务进度",r?.mean_task_progress==null?"—":`${num(r.mean_task_progress)}%`,"与 Q 分数分别统计"]];
-    $("summary").innerHTML=vals.map(([l,v,h],i)=>`<div class="metric ${i===1?"primary":""}"><label>${l}</label><strong>${esc(v)}</strong><small>${esc(h)}</small></div>`).join("");
+    $("summary").innerHTML=vals.map(([l,v,h],i)=>`<div class="metric ${i===2?"primary":""}"><label>${l}</label><strong>${esc(v)}</strong><small>${esc(h)}</small></div>`).join("");
   }
   function renderDetails(r) {
     const checkpointIdentity=r?.policy_identity||r?.configuration?.policy_identity||{};
