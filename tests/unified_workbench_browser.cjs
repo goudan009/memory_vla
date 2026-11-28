@@ -26,7 +26,7 @@ const dir=path.join(__dirname,'../evaluation/scripts'),read=name=>fs.readFileSyn
  await page.goto(base);
  await page.locator('#tree .pick').filter({hasText:'Train 01'}).waitFor();
  const palette=await page.evaluate(()=>({body:getComputedStyle(document.body).backgroundColor,active:getComputedStyle(document.querySelector('#nav button.active')).backgroundColor,selected:getComputedStyle(document.querySelector('.lineage-node.active')).backgroundColor,normal:getComputedStyle(document.querySelector('.lineage-node.kind-train:not(.active)')).backgroundColor}));
- assert.deepEqual(palette,{body:'rgb(242, 245, 249)',active:'rgb(234, 241, 255)',selected:'rgb(234, 241, 255)',normal:'rgb(255, 255, 255)'},'shared neutral palette');
+ assert.deepEqual(palette,{body:'rgb(242, 245, 249)',active:'rgb(237, 242, 247)',selected:'rgb(237, 242, 247)',normal:'rgb(255, 255, 255)'},'shared neutral palette');
  assert.equal(await page.locator('#search,.tree .folder,.tree .file,iframe').count(),0);
  await page.locator('#open-device-dialog').click();await page.locator('#device-content').filter({hasText:'10.0 / 80.0 GiB'}).waitFor();await page.locator('#close-device-dialog').click();
  await page.locator('.lineage-node').filter({hasText:'Train 01'}).click();
@@ -38,6 +38,12 @@ const dir=path.join(__dirname,'../evaluation/scripts'),read=name=>fs.readFileSyn
  await page.locator('.lineage-node').filter({hasText:'Step 6000'}).click();
  assert.equal(await page.locator('#inspector-kind').innerText(),'权重');
  assert.ok(await page.locator('#node-actions [data-action="evaluate"]').isVisible());
+ const action=page.locator('#node-actions [data-action="evaluate"]');
+ assert.equal(await action.evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(255, 255, 255)','default action is neutral');
+ await action.hover();await page.mouse.down();
+ assert.equal(await action.evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(40, 95, 198)','blue only while pressing');
+ await page.mouse.move(1,1);await page.mouse.up();
+
  assert.equal(await page.locator('#tree .pick[data-kind="checkpoint"]').first().locator('.tree-type').innerText(),'权重');
  assert.match(await page.locator('#inspector').innerText(),/所属训练/);
  await page.locator('.lineage-node').filter({hasText:'Train 01'}).click();
