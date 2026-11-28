@@ -21,7 +21,7 @@ Task 40 的采集和检查点恢复还需要实验存储中的仿真检查点、
 
 ## 调用工作台接口
 
-Agent 新建训练填写 `notes`（简短版本与关键改动），新建2025评估填写 `run_tag`（英文数字及 `._-`，如 `v1_2-n17-baseline-task40`）；通过已有 checkpoint 备注及回合备注接口补充精炼中文说明。续跑保留原备注。备注规则见 Skill「简短作业备注」，不改原身份和输出路径。
+Agent 新建训练填写 `notes`（简短版本与关键改动），新建2025评估填写 `run_tag`（英文数字及 `._-`，如 `v2_1-n16-baseline-task40`）；通过已有 checkpoint 备注及回合备注接口补充精炼中文说明。续跑保留原备注。备注规则见 Skill「简短作业备注」，不改原身份和输出路径。
 
 训练身份分为方法版本、测试号、实验号和独立训练号。规范 run ID 为 `v2_1__test02__exp01__run001`，checkpoint 再追加累计 optimizer step，如 `__step003000`；对应目录为 `Output/test_02/experiment_01/`。`V_1` / `V_2_1` 是展示名，`v1` / `v2_1` 是 ID 前缀。源码模块名 `v2_1_groot_memoryvla` 和 CLI 的 `--source-version v2_1` 只是代码入口，不是模型版本登记。
 
