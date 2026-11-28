@@ -1,0 +1,35 @@
+{
+  "plan_id": "v1_2_n17_b1k2026_acceptance_v013",
+  "status": "in_progress",
+  "supersedes": "v1_2_n17_b1k2026_acceptance_v012",
+  "change_reason": "Source tracing showed OMNIGIBSON_NO_OMNI_LOGS=False selects suppress_omni_log, which dereferences lazy.omni.log before SimulationApp starts. True selects the upstream SuppressLogsUntilError context and does not change simulator parameters. Record the sixth failed job omitted from v012, then retry on a fresh instance.",
+  "scope": "Complete one official GR00T N1.7 + B1K-2026 turning_on_radio closed-loop acceptance; no training, V2.2, B1K-2025 adaptation, or changes to 8765/8766.",
+  "method_version": "V_1_2",
+  "protocol": "b1k2026_websocket",
+  "checkpoint": "/nvme3/checkpoints/memory_vla/official-n17-radio/turning_on_radio_GR00T-checkpoint-150000",
+  "checkpoint_sha256": "cd97a22ff74bd91838350e18fe94b48e1902d407f1256f5d48eb20befe277dc3",
+  "backbone": {"repo_id": "nvidia/Cosmos-Reason2-2B", "revision": "9ce19a195e423419c349abfc86fd07178b230561", "path": "/nvme3/models/Cosmos-Reason2-2B", "bytes": 4877470304, "sha256": "fa5a6e6ef4fce40216b185cc48a3b24d31637ac3e2ba69c107ed1f389c1e6ede"},
+  "source_revisions": {"groot": "ace36d935b376fbf25cd56371e23877b95407c40", "behavior_1k": "a8247a8cc1633fe1ca0cc66aa07243d46c64f155"},
+  "experiment_identity": null,
+  "notes": "V1.2 / N1.7 / B1K2026: official radio, RTC off",
+  "training_submissions": 0,
+  "evaluation_submissions": 7,
+  "successful_rollouts": 0,
+  "mainline": [
+    {"node": "isolate_evaluator_env", "depends_on": [], "parallel_branches": [], "acceptance": "Pinned 2026 assets, writable staged Isaac app, and evaluator-only logging environment are bound; legacy services unchanged."},
+    {"node": "preview_instance_8", "depends_on": ["isolate_evaluator_env"], "parallel_branches": [], "acceptance": "8767 preview confirms fresh instance 8, GPU0, port 8022, official identities and concise run note."},
+    {"node": "official_rollout", "depends_on": ["preview_instance_8"], "parallel_branches": [], "acceptance": "Native evaluator completes with official JSON/video and verified success and Q-score."},
+    {"node": "archive", "depends_on": ["official_rollout"], "parallel_branches": [], "acceptance": "Record actual job, metrics and artifacts; no training; 8765/V2.1 and 8766 unchanged."}
+  ],
+  "attempts": [
+    {"job_id": "3eb3db3a057d", "instance": 2, "port": 8000, "state": "failed", "reason": "External SSH listener occupied policy port."},
+    {"job_id": "1054c41b53d3", "instance": 3, "port": 8017, "state": "failed", "reason": "Inherited 2025 asset root."},
+    {"job_id": "5d3925b5a4aa", "instance": 4, "port": 8018, "state": "failed", "reason": "Isaac apps directory read-only."},
+    {"job_id": "1c5d7940bae5", "instance": 5, "port": 8019, "state": "failed", "reason": "Staging helper logo path incorrect."},
+    {"job_id": "2163b1ab48db", "instance": 6, "port": 8020, "state": "failed", "reason": "NO_OMNI_LOGS=True was inherited and triggered pre-app lazy omni.log access."},
+    {"job_id": "c1bcc1e50a39", "instance": 7, "port": 8021, "state": "failed", "reason": "NO_OMNI_LOGS=False selected suppress_omni_log and triggered pre-app lazy omni.log access."},
+    {"job_id": null, "instance": 8, "port": 8022, "state": "pending", "reason": "Retry with upstream SuppressLogsUntilError logging context."}
+  ],
+  "isolation": {"workbench": "http://127.0.0.1:8767", "legacy_workbench": "http://127.0.0.1:8765", "unrelated_workbench": "8766 / BodyVLA; not managed", "env": "/nvme3/envs/b1k2026-sim", "isaac": "/opt/isaac-sim-5.1", "isolated_apps": "/nvme3/projects/memory_vla/evaluation/V_1_2/runtime/isaac/apps", "assets": "/nvme3/datasets/b1k2026-assets/data"},
+  "acceptance": {"preview": "One official instance via 8767 preview/start, GPU0, port 8022, exact identities and run note.", "closed_loop": "One native JSON/video rollout with success and Q-score verified.", "preservation": "No formal training, V2.2, 2025 adaptation, or changes/restarts to 8765/8766."}
+}

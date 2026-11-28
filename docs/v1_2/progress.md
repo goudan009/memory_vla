@@ -1,5 +1,52 @@
 # V1.2 Progress
 
+## 2026-11-28 - dependency_import / policy transport precedence
+
+- Status: `PARTIAL`; latest plan [workflow/plan-v021.json](workflow/plan-v021.json). Job `16a3f83f97c8` failed with return code 245 after loading public instance 315 (index 14), scene 0 and R1Pro. Warp 1.12.0 initialized correctly. Native episodes=0, videos=0; this attempt is INVALID and excluded from any success denominator.
+- Root cause: Isaac Kit adds its pip archive to the front of `sys.path`, selecting bundled `websockets==12.0`; pinned B1K-2026 requires `websockets>=15.0.1` and imports `websockets.asyncio.server`. A CPU reproduction fails with the Kit path first and passes when existing compatible `websockets==16.1` is preloaded before that path mutation. No download or package installation is required for this fix.
+- Stage `dependency_import`: implement a V1.2-only evaluator bootstrap that preloads the required WebSocket modules before OmniGibson initializes Kit. Then preview/start one fresh instance 15, GPU0, port 8029, original official checkpoint/protocol/budget and short note.
+- Legacy shutdown gate remains pending. No legacy service stopped, no historical artifact deleted, no formal training submitted, and unrelated BodyVLA/8766 is outside scope.
+
+## 2026-11-28 - B1K-2026 transition gate authorized
+
+- The user authorized testing a full transition to B1K-2026. Legacy B1K-2025/V2.1 services may be stopped only after a passing B1K-2026 official rollout; historical outputs, checkpoints, and source files remain preserved.
+- New plan [workflow/plan-v020.json](workflow/plan-v020.json) supersedes v019. First action is a fresh 8767 preview/start for public instance 14 with the exact V1.2 identities and short note. No formal training or V2.2 work is authorized.
+- At the gate start, 8767 has no active V1.2 job; latest job `7869458f47c9` failed at Warp shadowing. 8765 and its legacy V2.1 runtime are retained until the gate result is evidenced.
+
+## 2026-11-28 - Warp dependency alignment and fresh-instance retry
+
+- Status: `PARTIAL / RUNNING`; latest plan [workflow/plan-v019.json](workflow/plan-v019.json) supersedes v018.
+- Job `7869458f47c9` used instance 13 / port 8027. The official N1.7 server loaded both checkpoint shards and Cosmos-Reason2-2B from the verified local cache, and Isaac Sim 5.1 initialized; evaluator then failed compiling B1K-2026 `adjacency.py` because Isaac's bundled Warp 1.8.2 does not provide `wp.mesh_query_ray_anyhit`.
+- The pinned BEHAVIOR-1K source `a8247a8cc1633fe1ca0cc66aa07243d46c64f155` declares `warp-lang==1.12.0`. Installed that exact dependency only into `/nvme3/envs/b1k2026-sim`; `run_v12_b1k2026.py` now prioritizes the isolated Python 3.11 site-packages before Isaac's Warp extension while retaining Isaac `omni.*` extension paths. `py_compile` passed. Instance 13 logs and metadata are retained; it produced no native JSON/video and is not counted as a rollout.
+- Cosmos snapshot details confirmed by user: revision `9ce19a195e423419c349abfc86fd07178b230561`, 15 files / 4,877,470,304 bytes, and full SHA256 `fa5a6e6ef4fce40216b185cc48a3b24d31637ac3e2ba69c107ed1f389c1e6ede`, matching Hub LFS. Token values were not read or logged. No further Cosmos download is needed.
+- Next: preview a fresh public instance and free policy port via 8767, then submit only if the exact V1.2 identities and short note are preserved. Training submissions remain 0; 8765/V2.1 and 8766 remain untouched.
+
+## 2026-11-28 - Cosmos cache registration and port-conflict retry
+
+- Status: `PARTIAL / RUNNING`; the verified `/nvme3/models/Cosmos-Reason2-2B` snapshot is registered at `/nvme3/models/.hf-cache/hub` under revision `9ce19a195e423419c349abfc86fd07178b230561`. With the pinned N1.7 source local-first hooks enabled, repo-ID `AutoConfig` and `AutoProcessor` load offline successfully.
+- Runner now sets `HF_HUB_CACHE`, `GROOT_HF_LOCAL_FIRST=1`, and `GROOT_PATCH_MISTRAL=1` only for isolated V1.2 jobs. No 8765 process or source was restarted.
+- Preview for a fresh instance 2 passed; job `3eb3db3a057d` started through 8767 and loaded both official checkpoint shards, then failed before simulation because an unrelated SSH listener owned `127.0.0.1:8000`. No evaluator JSON/video was produced; output and logs are retained at `evaluation/V_1_2/official/public_test_instance_02`.
+- Latest plan: [workflow/plan-v008.json](workflow/plan-v008.json), superseding v007. One retry is authorized on fresh instance 3 and free policy port 8017; no formal training, V2.2, B1K-2025 adaptation, or 8765 change.
+
+## 2026-11-28 - Isolated B1K-2026 asset root correction
+
+- Status: `PARTIAL / RUNNING`; plan [workflow/plan-v009.json](workflow/plan-v009.json) supersedes v008 after instance 3 reached the evaluator and exposed the next environment dependency.
+- Job `1054c41b53d3` loaded both official N1.7 checkpoint shards and the pinned Cosmos cache successfully. It failed before creating a rollout because the evaluator inherited `OMNIGIBSON_DATA_PATH` from the legacy 2025 workbench process; 2026 OmniGibson consequently resolved robot asset version as `None`.
+- The isolated 2026 data root also lacked `behavior-1k-assets` and `omnigibson-robot-assets`; both verified archives already existed under `/nvme3/datasets/b1k2026-assets/archives`. Their recorded SHA256 values are `09e9fce600f841dc611aa96c0b1b9f9074f56f0e67898b37b39bd00c38a0095e` and `3d813b2181e0581cf2300a40892de70f8475fe59346ceeea4fb9bf7ff21ce126` respectively; zip integrity checks passed. Materializing them under the dedicated 2026 data root is in progress; the 2025 dataset and 8765 process are not targets.
+- Runner now explicitly binds the evaluator to `/nvme3/datasets/b1k2026-assets/data`, rather than inheriting an external process-wide value. Next: validate extracted asset versions and the public `turning_on_radio` instance with the pinned evaluator environment, then preview and submit instance 4 on port 8018. No V2.1/8765/8766 change and no training submission.
+
+## 2026-11-28 - Isolated Isaac Sim app directory
+
+- Status: `PARTIAL / RUNNING`; plan [workflow/plan-v010.json](workflow/plan-v010.json) supersedes v009 after job `5d3925b5a4aa` loaded Cosmos and both N1.7 checkpoint shards and resolved public instance 305, but OmniGibson failed copying its `.kit` and icon into the root-owned `/opt/isaac-sim-5.1/apps`.
+- The latest failure is a filesystem ownership boundary, not model, dataset, or protocol incompatibility. `run_v12_b1k2026.py` now stages the pinned OmniGibson app files under `evaluation/V_1_2/runtime/isaac/apps`, links the Isaac extension folders read-only, and explicitly sets evaluator `ISAAC_PATH` / `EXP_PATH`; no `/opt` files are modified.
+- Python syntax check passed. 8767 preview passed for a fresh instance 5, GPU0, policy port 8019, one rollout, video enabled, and note `V1.2 / N1.7 / B1K2026: official radio, RTC off`. Next start that exact preview and inspect simulator initialization and rollout outputs. Training submissions remain 0; 8765/V2.1 and 8766 remain untouched.
+- Job `1c5d7940bae5` failed before model/evaluator startup because the pinned post2 repository stores `docs/assets/OmniGibson_logo.png` at the behavior repository root, not under `OmniGibson/docs`. Updated plan [workflow/plan-v011.json](workflow/plan-v011.json) and corrected the verified source path; instance 5 output and logs are preserved.
+- Job `2163b1ab48db` staged the kit/icon and reached OmniGibson startup, then failed in `suppress_omni_log` because the inherited `OMNIGIBSON_NO_OMNI_LOGS` switch was enabled while post2 lazy bindings had no `omni.log`. Plan [workflow/plan-v012.json](workflow/plan-v012.json) binds this evaluator-only switch to `False`; instance 6 output and logs are preserved.
+- Job `c1bcc1e50a39` used instance 7 and the same fresh port 8021. Its full traceback confirms `OMNIGIBSON_NO_OMNI_LOGS=False` selects `suppress_omni_log`, which dereferences `lazy.omni.log` before `SimulationApp` initializes it. The upstream `True` path selects `SuppressLogsUntilError`, buffering startup output without changing physics or task configuration. Plan [workflow/plan-v013.json](workflow/plan-v013.json) corrects the prior attempt count (7 submissions total), sets the evaluator-only switch to `True`, and reserves fresh instance 8 / port 8022. The Cosmos snapshot is verified at revision `9ce19a195e423419c349abfc86fd07178b230561`, 4,877,470,304 bytes, SHA256 `fa5a6e6ef4fce40216b185cc48a3b24d31637ac3e2ba69c107ed1f389c1e6ede`; no additional model download is needed for this rollout.
+- Job `10461f299e9a` used instance 8 / port 8022 and passed the pre-app logging gate, then failed at `lazy.isaacsim.SimulationApp` because the evaluator Python lacked Isaac Sim's official `setup_python_env.sh` environment. Plan [workflow/plan-v014.json](workflow/plan-v014.json) injects that setup into the isolated V1.2 evaluator subprocess (including `PYTHONPATH`, `LD_LIBRARY_PATH`, `CARB_APP_PATH`, and `LD_PRELOAD`) while retaining the B1K-2026 interpreter and task configuration. Fresh instance 9 / port 8023 is next; all prior outputs remain preserved.
+- Job `801a69d59a76` loaded the official checkpoint and Cosmos cache, but `Popen` rejected the evaluator environment with `ValueError: embedded null byte`: the parser split `env -0` on a literal backslash sequence, not the NUL byte separator. Fixed the delimiter in `run_v12_b1k2026.py`; plan [workflow/plan-v015.json](workflow/plan-v015.json) records the engineering retry on fresh instance 10 / port 8024. No evaluator rollout started and no official result/video exists for instance 9; its logs remain preserved.
+- Job `19e0d22d8e31` initialized Isaac Sim, Warp and OmniGibson successfully, then failed while decrypting the public instance because `/nvme3/datasets/b1k2026-assets/data/omnigibson.key` was absent. Existing authorized key copies under `/nvme3/shared/b1k2025/datasets/omnigibson.key` and the recovery staging area match SHA256 `8935c43d31f5a919d43232167ca55f6289638b556c032ce08b2b3b8e7950b2a0`. Plan [workflow/plan-v016.json](workflow/plan-v016.json) records a read-only symlink into the isolated 2026 root and a fresh instance 11 / port 8025 retry; 2025 data and services remain untouched.
+
 ## 2026-11-28 - A100 backbone and route probe
 
 - Status: `PARTIAL / BLOCKED`; the requested A100 check was read-only and did not create or alter a job/service.

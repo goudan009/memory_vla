@@ -1,0 +1,45 @@
+{
+  "plan_id": "v1_2_n17_b1k2026_acceptance_v008",
+  "status": "in_progress",
+  "supersedes": "v1_2_n17_b1k2026_acceptance_v007",
+  "change_reason": "The verified Cosmos snapshot now resolves by repo ID and the official N1.7 server loads both checkpoint shards. Attempt 3eb3db3a057d reached model load but port 8000 was occupied by an unrelated SSH tunnel, so retry once on a fresh output instance and an explicitly free policy port.",
+  "scope": "V1.2 official GR00T N1.7 + B1K-2026 isolated environment, workbench integration, and one-instance official radio closed-loop acceptance; no formal training, V2.2, or B1K-2025 adaptation",
+  "method_version": "V_1_2",
+  "protocol": "b1k2026_websocket",
+  "checkpoint": "/nvme3/checkpoints/memory_vla/official-n17-radio/turning_on_radio_GR00T-checkpoint-150000",
+  "checkpoint_sha256": "cd97a22ff74bd91838350e18fe94b48e1902d407f1256f5d48eb20befe277dc3",
+  "backbone": {
+    "repo_id": "nvidia/Cosmos-Reason2-2B",
+    "revision": "9ce19a195e423419c349abfc86fd07178b230561",
+    "local_path": "/nvme3/models/Cosmos-Reason2-2B",
+    "weight_sha256": "fa5a6e6ef4fce40216b185cc48a3b24d31637ac3e2ba69c107ed1f389c1e6ede",
+    "hub_cache": "/nvme3/models/.hf-cache/hub",
+    "status": "registered_and_offline_load_verified"
+  },
+  "isaac_groot_revision": "ace36d935b376fbf25cd56371e23877b95407c40",
+  "behavior_1k_revision": "a8247a8cc1633fe1ca0cc66aa07243d46c64f155",
+  "experiment_identity": null,
+  "notes": "V1.2 / N1.7 / B1K2026: official radio, RTC off",
+  "training_submissions": 0,
+  "evaluation_submissions": 3,
+  "successful_rollouts": 0,
+  "attempts": [
+    {"job_id": "3eb3db3a057d", "instance": 2, "gpu_index": 0, "policy_port": 8000, "state": "failed", "reason": "external SSH listener occupied port before evaluator start"},
+    {"job_id": null, "instance": 3, "gpu_index": 0, "policy_port": 8017, "state": "pending"}
+  ],
+  "isolation": {
+    "legacy_workbench": "http://127.0.0.1:8765",
+    "v12_workbench": "http://127.0.0.1:8767",
+    "unrelated_workbench": "8766 / BodyVLA; not managed by this task",
+    "environment": "/nvme3/envs/b1k2026-sim",
+    "behavior_root": "/nvme3/projects/GR00T/BEHAVIOR-1K-2026-a8247a8",
+    "evaluation_root": "/nvme3/projects/memory_vla/evaluation/V_1_2",
+    "asset_root": "/nvme3/datasets/b1k2026-assets"
+  },
+  "acceptance": {
+    "cache": "repo-ID config/processor load succeeds offline with pinned revision",
+    "preview": "fresh instance 3, GPU 0, port 8017, exact checkpoint/source/protocol and concise note",
+    "closed_loop": "one native JSON/video rollout with success and Q-score evidence",
+    "preservation": "8765/V2.1 unchanged; training submissions remain zero"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "plan_id": "v1_2_n17_b1k2026_transition_gate_v021",
+  "status": "in_progress",
+  "supersedes": "v1_2_n17_b1k2026_transition_gate_v020",
+  "change_reason": "Job 16a3f83f97c8 loaded the scene and R1Pro but Isaac's pip archive selected websockets 12.0 at policy import. A CPU reproduction confirms preloading the existing compatible websockets 16.1 before Kit path mutation preserves the required asyncio/sync interfaces. Retry through the same workbench after this engineering fix.",
+  "scope": "One native official radio closed-loop acceptance, followed by conditional retirement of confirmed legacy B1K-2025/V2.1 runtime services. Preserve historical data/checkpoints; no formal training or V2.2.",
+  "method_version": "V_1_2",
+  "protocol": "b1k2026_websocket",
+  "checkpoint": "/nvme3/checkpoints/memory_vla/official-n17-radio/turning_on_radio_GR00T-checkpoint-150000",
+  "checkpoint_sha256": "cd97a22ff74bd91838350e18fe94b48e1902d407f1256f5d48eb20befe277dc3",
+  "source_revisions": {
+    "groot": "ace36d935b376fbf25cd56371e23877b95407c40",
+    "behavior_1k": "a8247a8cc1633fe1ca0cc66aa07243d46c64f155"
+  },
+  "experiment_identity": null,
+  "notes": "V1.2 / N1.7 / B1K2026: official radio, RTC off",
+  "budget": {"training_steps": 0, "environments": 1, "rollouts": 1},
+  "next_attempt": {"instance": 15, "gpu": 0, "policy_port": 8029, "workbench": "http://127.0.0.1:8767"},
+  "mainline": [
+    {"node": "dependency_import", "depends_on": [], "parallel_branches": [], "acceptance": "CPU reproduction fails with Kit websockets 12 and passes with compatible module preloaded; runner preserves evaluator arguments and records dependency versions."},
+    {"node": "preview_instance_15", "depends_on": ["dependency_import"], "parallel_branches": [], "acceptance": "Live preview confirms exact official identities, one rollout, video and short version note; verify free port and current GPU capacity."},
+    {"node": "official_rollout", "depends_on": ["preview_instance_15"], "parallel_branches": [], "acceptance": "Official evaluator exits successfully with one valid native JSON episode, video, success and Q-score fields; distinguish infrastructure acceptance from model task success."},
+    {"node": "legacy_shutdown_gate", "depends_on": ["official_rollout"], "parallel_branches": [], "acceptance": "Only after native acceptance, query actual legacy jobs/services and dependencies; stop confirmed legacy 2025/V2.1 runtime through supported controls. Do not stop unrelated 8766."},
+    {"node": "archive", "depends_on": ["legacy_shutdown_gate"], "parallel_branches": [], "acceptance": "Record actual job, native metrics/video, stopped or retained services and zero formal training; update GitHub main with reviewable source/plan records."}
+  ],
+  "latest_failed_attempt": {"job_id": "16a3f83f97c8", "instance": 14, "returncode": 245, "native_episodes": 0, "videos": 0, "reason": "websockets.asyncio missing after Kit imported bundled websockets 12.0; simulator segfaulted during exception teardown."},
+  "migration_gate": {"on_fail": "Retain legacy runtime; preserve evidence and diagnose.", "on_pass": "Check legacy dependencies then stop only confirmed legacy runtime, retaining historical artifacts."}
+}

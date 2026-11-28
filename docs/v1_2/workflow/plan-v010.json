@@ -1,0 +1,52 @@
+{
+  "plan_id": "v1_2_n17_b1k2026_acceptance_v010",
+  "status": "in_progress",
+  "supersedes": "v1_2_n17_b1k2026_acceptance_v009",
+  "change_reason": "Job 5d3925b5a4aa loaded the official checkpoint and resolved instance 305, but OmniGibson could not copy its app files into the read-only /opt/isaac-sim-5.1/apps. Stage the pinned kit/icon and read-only extension links under V1.2 runtime, then run one fresh public instance.",
+  "scope": "Complete one official GR00T N1.7 + B1K-2026 turning_on_radio closed-loop acceptance; no training, V2.2, B1K-2025 adaptation, or changes to 8765/8766.",
+  "method_version": "V_1_2",
+  "protocol": "b1k2026_websocket",
+  "checkpoint": "/nvme3/checkpoints/memory_vla/official-n17-radio/turning_on_radio_GR00T-checkpoint-150000",
+  "checkpoint_sha256": "cd97a22ff74bd91838350e18fe94b48e1902d407f1256f5d48eb20befe277dc3",
+  "backbone": {
+    "repo_id": "nvidia/Cosmos-Reason2-2B",
+    "revision": "9ce19a195e423419c349abfc86fd07178b230561",
+    "path": "/nvme3/models/Cosmos-Reason2-2B",
+    "sha256": "fa5a6e6ef4fce40216b185cc48a3b24d31637ac3e2ba69c107ed1f389c1e6ede"
+  },
+  "source_revisions": {
+    "groot": "ace36d935b376fbf25cd56371e23877b95407c40",
+    "behavior_1k": "a8247a8cc1633fe1ca0cc66aa07243d46c64f155"
+  },
+  "experiment_identity": null,
+  "notes": "V1.2 / N1.7 / B1K2026: official radio, RTC off",
+  "training_submissions": 0,
+  "evaluation_submissions": 4,
+  "successful_rollouts": 0,
+  "mainline": [
+    {"node": "runtime_app_isolation", "depends_on": [], "parallel_branches": [], "acceptance": "V1.2 runner stages the pinned OmniGibson kit/icon in a writable isolated apps directory, links Isaac extensions read-only, and leaves /opt and 8765 unchanged."},
+    {"node": "preview_instance_5", "depends_on": ["runtime_app_isolation"], "parallel_branches": [], "acceptance": "8767 preview binds official checkpoint/source, GPU0, policy port 8019, one fresh instance, video enabled, and concise notes."},
+    {"node": "closed_loop_instance_5", "depends_on": ["preview_instance_5"], "parallel_branches": [], "acceptance": "Workbench job completes and produces official native JSON/video with success and Q-score fields."},
+    {"node": "archive_and_isolation_check", "depends_on": ["closed_loop_instance_5"], "parallel_branches": [], "acceptance": "Record job/outputs/metrics, zero training submissions, and unchanged 8765/V2.1."}
+  ],
+  "attempts": [
+    {"job_id": "3eb3db3a057d", "instance": 2, "port": 8000, "state": "failed", "reason": "External SSH listener occupied the policy port."},
+    {"job_id": "1054c41b53d3", "instance": 3, "port": 8017, "state": "failed", "reason": "Legacy OMNIGIBSON_DATA_PATH caused robot asset version resolution to None."},
+    {"job_id": "5d3925b5a4aa", "instance": 4, "port": 8018, "state": "failed", "reason": "Official server and public instance resolution passed; simulator could not write app files under /opt/isaac-sim-5.1/apps."},
+    {"job_id": null, "instance": 5, "port": 8019, "state": "pending", "reason": "Run only after app files are staged under isolated writable V1.2 runtime."}
+  ],
+  "isolation": {
+    "v12_workbench": "http://127.0.0.1:8767",
+    "legacy_workbench": "http://127.0.0.1:8765",
+    "unrelated_workbench": "8766 / BodyVLA; not managed",
+    "environment": "/nvme3/envs/b1k2026-sim",
+    "isaac_sim": "/opt/isaac-sim-5.1",
+    "isolated_app_root": "/nvme3/projects/memory_vla/evaluation/V_1_2/runtime/isaac",
+    "asset_root": "/nvme3/datasets/b1k2026-assets/data"
+  },
+  "acceptance": {
+    "preview": "Instance 5, GPU0, port 8019, official source/checkpoint and required run note via 8767 preview/start.",
+    "closed_loop": "One official native JSON/video rollout, verified success and Q-score.",
+    "preservation": "No formal training; no changes or restarts to 8765/V2.1 or 8766."
+  }
+}

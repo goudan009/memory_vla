@@ -1,0 +1,97 @@
+{
+  "plan_id": "v1_2_n17_b1k2026_transition_gate_v020",
+  "status": "in_progress",
+  "supersedes": "v1_2_n17_b1k2026_acceptance_v019",
+  "change_reason": "The user authorized a transition test for B1K-2026 and conditionally authorized stopping legacy B1K-2025/V2.1 operation only after the 2026 official rollout passes. Preserve the old service and jobs until the test has native success evidence.",
+  "scope": "Validate one GR00T N1.7 official turning_on_radio rollout on B1K-2026, then stop only confirmed legacy 2025/V2.1 runtime services if acceptance passes. Do not delete historical data/checkpoints or start formal training.",
+  "method_version": "V_1_2",
+  "protocol": "b1k2026_websocket",
+  "checkpoint": "/nvme3/checkpoints/memory_vla/official-n17-radio/turning_on_radio_GR00T-checkpoint-150000",
+  "checkpoint_sha256": "cd97a22ff74bd91838350e18fe94b48e1902d407f1256f5d48eb20befe277dc3",
+  "backbone": {
+    "repo_id": "nvidia/Cosmos-Reason2-2B",
+    "revision": "9ce19a195e423419c349abfc86fd07178b230561",
+    "path": "/nvme3/models/Cosmos-Reason2-2B",
+    "bytes": 4877470304,
+    "sha256": "fa5a6e6ef4fce40216b185cc48a3b24d31637ac3e2ba69c107ed1f389c1e6ede"
+  },
+  "source_revisions": {
+    "groot": "ace36d935b376fbf25cd56371e23877b95407c40",
+    "behavior_1k": "a8247a8cc1633fe1ca0cc66aa07243d46c64f155"
+  },
+  "experiment_identity": null,
+  "notes": "V1.2 / N1.7 / B1K2026: official radio, RTC off",
+  "training_submissions": 0,
+  "evaluation_submissions_before_test": 13,
+  "successful_rollouts_before_test": 0,
+  "migration_gate": {
+    "test": "One fresh public-test instance via 8767 preview/start, GPU0, one environment, one rollout.",
+    "pass": "Official evaluator exits successfully and produces native result JSON, video, valid episode, and success/Q-score fields.",
+    "on_pass": "Stop only live legacy B1K-2025/V2.1 policy services and the legacy 8765 workbench after checking dependent jobs; preserve historical outputs, checkpoints, and source files.",
+    "on_fail": "Keep legacy service/jobs unchanged; retain the failed 2026 attempt and diagnose from its evidence."
+  },
+  "compatibility_fix": {
+    "behavior_requirement": "warp-lang==1.12.0",
+    "installed_version": "1.12.0",
+    "environment": "/nvme3/envs/b1k2026-sim",
+    "runner_change": "Prioritize isolated evaluator site-packages over Isaac Sim bundled Warp while retaining Isaac omni.* extension paths.",
+    "validation": "A real rollout must verify Warp 1.12.0 import and official JSON/video output."
+  },
+  "mainline": [
+    {
+      "node": "preview_instance_14",
+      "depends_on": [],
+      "parallel_branches": [],
+      "acceptance": "8767 preview confirms fresh public instance 14, free policy port, GPU0, exact official identities and concise run note."
+    },
+    {
+      "node": "official_rollout",
+      "depends_on": ["preview_instance_14"],
+      "parallel_branches": [],
+      "acceptance": "One native evaluator rollout completes with JSON, video, valid episode, success and Q-score verified."
+    },
+    {
+      "node": "legacy_shutdown_gate",
+      "depends_on": ["official_rollout"],
+      "parallel_branches": [],
+      "acceptance": "Only after the rollout passes, inspect dependent jobs and stop confirmed legacy 2025/V2.1 runtime services; preserve historical records and artifacts."
+    },
+    {
+      "node": "archive",
+      "depends_on": ["legacy_shutdown_gate"],
+      "parallel_branches": [],
+      "acceptance": "Record actual job ID, rollout evidence, legacy services stopped or reason retained, and training_submissions=0."
+    }
+  ],
+  "latest_failed_attempt": {
+    "job_id": "7869458f47c9",
+    "instance": 13,
+    "port": 8027,
+    "reason": "Isaac bundled Warp 1.8.2 shadowed required Warp 1.12.0."
+  },
+  "next_attempt": {
+    "instance": 14,
+    "workbench": "http://127.0.0.1:8767",
+    "gpu": 0,
+    "episodes": 1,
+    "note": "V1.2 / N1.7 / B1K2026: official radio, RTC off"
+  },
+  "isolation": {
+    "workbench": "http://127.0.0.1:8767",
+    "legacy_workbench": "http://127.0.0.1:8765",
+    "legacy_workbench_shutdown_only_after_pass": true,
+    "unrelated_workbench": "8766 / BodyVLA; not managed",
+    "env": "/nvme3/envs/b1k2026-sim",
+    "warp": "1.12.0",
+    "isaac": "/opt/isaac-sim-5.1",
+    "isolated_apps": "/nvme3/projects/memory_vla/evaluation/V_1_2/runtime/isaac/apps",
+    "assets": "/nvme3/datasets/b1k2026-assets/data"
+  },
+  "preservation": {
+    "no_formal_training": true,
+    "no_v22": true,
+    "no_b1k2025_adaptation": true,
+    "preserve_historical_2025_artifacts": true,
+    "do_not_stop_legacy_before_2026_pass": true
+  }
+}

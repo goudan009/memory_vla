@@ -1,0 +1,62 @@
+{
+  "plan_id": "v1_2_n17_b1k2026_acceptance_v007",
+  "status": "in_progress",
+  "supersedes": "v1_2_n17_b1k2026_acceptance_v006",
+  "change_reason": "The user supplied the exact gated Cosmos-Reason2-2B snapshot on the 4090. Its local-dir files and revision/hash verify, but HF offline repo-ID loading does not discover that directory. Register the verified snapshot in an isolated /nvme3 Hub cache and retry one public-test rollout on an unused instance, preserving prior failure outputs and 8765.",
+  "scope": "V1.2 official GR00T N1.7 + B1K-2026 isolated environment, workbench integration, and one-instance official radio closed-loop acceptance; no formal training, V2.2, or B1K-2025 adaptation",
+  "method_version": "V_1_2",
+  "protocol": "b1k2026_websocket",
+  "checkpoint": "/nvme3/checkpoints/memory_vla/official-n17-radio/turning_on_radio_GR00T-checkpoint-150000",
+  "checkpoint_sha256": "cd97a22ff74bd91838350e18fe94b48e1902d407f1256f5d48eb20befe277dc3",
+  "backbone": {
+    "repo_id": "nvidia/Cosmos-Reason2-2B",
+    "revision": "9ce19a195e423419c349abfc86fd07178b230561",
+    "local_path": "/nvme3/models/Cosmos-Reason2-2B",
+    "weight_sha256": "fa5a6e6ef4fce40216b185cc48a3b24d31637ac3e2ba69c107ed1f389c1e6ede",
+    "hub_cache": "/nvme3/models/.hf-cache/hub",
+    "status": "download_verified_cache_registration_pending"
+  },
+  "isaac_groot_revision": "ace36d935b376fbf25cd56371e23877b95407c40",
+  "behavior_1k_revision": "a8247a8cc1633fe1ca0cc66aa07243d46c64f155",
+  "experiment_identity": null,
+  "notes": "V1.2 / N1.7 / B1K2026: official radio, RTC off",
+  "training_submissions": 0,
+  "evaluation_submissions": 2,
+  "successful_rollouts": 0,
+  "retry": {
+    "instance": 2,
+    "rollouts": 1,
+    "gpu_index": 0,
+    "preserve_failed_outputs": true
+  },
+  "isolation": {
+    "legacy_workbench": "http://127.0.0.1:8765",
+    "v12_workbench": "http://127.0.0.1:8767",
+    "unrelated_workbench": "8766 / BodyVLA PID 1014195; not managed by this task",
+    "environment": "/nvme3/envs/b1k2026-sim",
+    "behavior_root": "/nvme3/projects/GR00T/BEHAVIOR-1K-2026-a8247a8",
+    "evaluation_root": "/nvme3/projects/memory_vla/evaluation/V_1_2",
+    "asset_root": "/nvme3/datasets/b1k2026-assets"
+  },
+  "mainline": [
+    {"id": "environment", "depends_on": [], "parallel": ["assets"], "status": "complete", "acceptance": "Isolated Python 3.11 B1K-2026 environment imports pinned evaluator/runtime paths."},
+    {"id": "assets", "depends_on": [], "parallel": ["environment"], "status": "complete", "acceptance": "Pinned Cosmos snapshot and B1K-2026 assets/data are present and verified."},
+    {"id": "backbone_cache", "depends_on": ["assets"], "parallel": [], "status": "in_progress", "acceptance": "Offline loading by the official nvidia/Cosmos-Reason2-2B repo ID resolves config and processor from the isolated /nvme3 cache."},
+    {"id": "workbench_route", "depends_on": ["environment", "assets"], "parallel": [], "status": "complete", "acceptance": "V1.2 route remains isolated on 8767; 8765 and 8766 are untouched."},
+    {"id": "preview", "depends_on": ["backbone_cache", "workbench_route"], "parallel": [], "status": "pending", "acceptance": "Fresh preview binds exact checkpoint/source/protocol/task, unused public-test instance 2, GPU 0, and concise RTC-off note."},
+    {"id": "closed_loop", "depends_on": ["preview"], "parallel": [], "status": "pending", "acceptance": "One real workbench job yields native rollout JSON/video, success and Q-score evidence."},
+    {"id": "task40_compatibility", "depends_on": ["environment"], "parallel": ["workbench_route"], "status": "complete", "acceptance": "2025 Task40 remains schema-readable but incompatible with this N1.7/B1K-2026 route; no conversion."},
+    {"id": "archive", "depends_on": ["closed_loop", "task40_compatibility"], "parallel": [], "status": "pending", "acceptance": "Record actual job/output/evidence and confirm zero training plus unchanged V2.1/8765."}
+  ],
+  "resource_policy": {
+    "storage_root": "/nvme3",
+    "preserve_v21": true,
+    "formal_training": false,
+    "develop_v22": false,
+    "legacy_b1k2025_adaptation": false,
+    "do_not_restart_8765": true,
+    "v12_port": 8767,
+    "do_not_take_over_8766": true
+  },
+  "created_at": "2026-11-28"
+}

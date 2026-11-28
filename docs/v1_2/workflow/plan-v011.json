@@ -1,0 +1,33 @@
+{
+  "plan_id": "v1_2_n17_b1k2026_acceptance_v011",
+  "status": "in_progress",
+  "supersedes": "v1_2_n17_b1k2026_acceptance_v010",
+  "change_reason": "Instance 5 preview/start exposed an incorrect icon source path in the isolated app staging helper: the pinned post2 checkout stores docs/assets at repository root, while the kit file remains under OmniGibson/omnigibson. Correct the icon path and retry on a new public instance.",
+  "scope": "Complete one official GR00T N1.7 + B1K-2026 turning_on_radio closed-loop acceptance; no training, V2.2, B1K-2025 adaptation, or changes to 8765/8766.",
+  "method_version": "V_1_2",
+  "protocol": "b1k2026_websocket",
+  "checkpoint": "/nvme3/checkpoints/memory_vla/official-n17-radio/turning_on_radio_GR00T-checkpoint-150000",
+  "checkpoint_sha256": "cd97a22ff74bd91838350e18fe94b48e1902d407f1256f5d48eb20befe277dc3",
+  "backbone": {"repo_id": "nvidia/Cosmos-Reason2-2B", "revision": "9ce19a195e423419c349abfc86fd07178b230561", "path": "/nvme3/models/Cosmos-Reason2-2B", "sha256": "fa5a6e6ef4fce40216b185cc48a3b24d31637ac3e2ba69c107ed1f389c1e6ede"},
+  "source_revisions": {"groot": "ace36d935b376fbf25cd56371e23877b95407c40", "behavior_1k": "a8247a8cc1633fe1ca0cc66aa07243d46c64f155"},
+  "experiment_identity": null,
+  "notes": "V1.2 / N1.7 / B1K2026: official radio, RTC off",
+  "training_submissions": 0,
+  "evaluation_submissions": 5,
+  "successful_rollouts": 0,
+  "mainline": [
+    {"node": "stage_app_files", "depends_on": [], "parallel_branches": [], "acceptance": "Pinned kit/icon stage into writable isolated V1.2 apps; extension paths link read-only to Isaac Sim; /opt and 8765 unchanged."},
+    {"node": "preview_instance_6", "depends_on": ["stage_app_files"], "parallel_branches": [], "acceptance": "8767 preview confirms fresh instance 6, GPU0, port 8020, official identities, video and concise note."},
+    {"node": "official_rollout", "depends_on": ["preview_instance_6"], "parallel_branches": [], "acceptance": "Native evaluator completes with official JSON/video and verified success and Q-score."},
+    {"node": "archive", "depends_on": ["official_rollout"], "parallel_branches": [], "acceptance": "Record job, metrics and artifacts; training remains unsubmitted; 8765/V2.1 and 8766 remain unchanged."}
+  ],
+  "attempts": [
+    {"job_id": "3eb3db3a057d", "instance": 2, "port": 8000, "state": "failed", "reason": "External SSH listener occupied policy port."},
+    {"job_id": "1054c41b53d3", "instance": 3, "port": 8017, "state": "failed", "reason": "Inherited 2025 asset root prevented robot asset version resolution."},
+    {"job_id": "5d3925b5a4aa", "instance": 4, "port": 8018, "state": "failed", "reason": "Official model loaded and public instance resolved; read-only Isaac apps directory rejected kit copy."},
+    {"job_id": "1c5d7940bae5", "instance": 5, "port": 8019, "state": "failed", "reason": "Runner staged writable app files but used an incorrect post2 logo source path; simulator did not start."},
+    {"job_id": null, "instance": 6, "port": 8020, "state": "pending", "reason": "Fresh retry after correcting the verified docs/assets icon path."}
+  ],
+  "isolation": {"workbench": "http://127.0.0.1:8767", "legacy_workbench": "http://127.0.0.1:8765", "unrelated_workbench": "8766 / BodyVLA; not managed", "env": "/nvme3/envs/b1k2026-sim", "isaac": "/opt/isaac-sim-5.1", "isolated_apps": "/nvme3/projects/memory_vla/evaluation/V_1_2/runtime/isaac/apps", "assets": "/nvme3/datasets/b1k2026-assets/data"},
+  "acceptance": {"preview": "One official instance via 8767 preview/start, GPU0, port 8020, exact identities and run note.", "closed_loop": "One native JSON/video rollout with success and Q-score verified.", "preservation": "No formal training, V2.2, 2025 adaptation, or changes/restarts to 8765/8766."}
+}
