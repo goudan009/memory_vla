@@ -223,6 +223,45 @@
   .storage-toolbar>div.acts{margin-left:auto}
   .storage-toolbar .acts button{font-size:12px}
   @media(max-width:540px){nav.tabs{gap:3px}nav.tabs button{padding:7px 8px;font-size:11px}nav.tabs .registry-rescan{padding:6px 8px;font-size:11px}}
+/* Embedded registry: one central content column, no second directory hierarchy. */
+body.registry-embedded{--ink:#26364d;--muted:#687b94;--accent:#285fc6;--accent-soft:#edf3ff;--line:#dce5f0;background:white;font-size:13px}
+.registry-embedded .registry-header{display:none!important}
+.registry-embedded main{padding:0!important}
+.registry-embedded #resource-toolbar{margin:0 0 12px;justify-content:flex-start}
+.registry-embedded #resource-toolbar .acts{margin:0;justify-content:flex-start;width:100%;gap:8px}
+.registry-embedded #resource-toolbar label{font-size:12px}
+.registry-embedded #resource-file-workspace{display:flex;flex-direction:column;gap:14px}
+.registry-embedded #resource-file-workspace.hidden{display:none!important}
+.registry-embedded .ledger-list,.registry-embedded .ledger-detail{width:100%;border:0;box-shadow:none;padding:0;border-radius:0}
+.registry-embedded .ledger-list-head{display:flex;justify-content:flex-start;gap:8px;padding:0 0 8px;min-height:0;border:0}
+.registry-embedded .ledger-list-head strong{font-size:13px}
+.registry-embedded .storage-filters{display:flex;gap:8px;align-items:center;padding:0 0 10px;border:0}
+.registry-embedded .storage-filters input{flex:1;min-width:90px}
+.registry-embedded #res-kind{display:none}
+.registry-embedded #res-state{width:auto;max-width:120px}
+.registry-embedded #res-rows{max-height:260px;overflow:auto;border:1px solid var(--line);border-radius:6px;padding:0}
+.registry-embedded .embedded-resource-row{display:grid;grid-template-columns:minmax(0,1fr) 66px 67px 16px;gap:8px;align-items:center;text-align:left;width:100%;background:white;border:0;border-bottom:1px solid #e9eef5;border-radius:0;padding:9px 11px;font-size:12px;color:var(--muted)}
+.registry-embedded .embedded-resource-row:last-child{border-bottom:0}
+.registry-embedded .embedded-resource-row .resource-name{color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:550}
+.registry-embedded .embedded-resource-row[aria-current=true]{background:#edf3ff;box-shadow:inset 3px 0 #285fc6}
+.registry-embedded .embedded-resource-row[aria-current=true] .resource-name{color:#285fc6}
+.registry-embedded .resource-arrow{font-size:16px}
+.registry-embedded #resource-detail{padding:13px 0 0;border-top:1px solid var(--line)}
+.registry-embedded #resource-detail .detail-kicker{display:none}
+.registry-embedded #resource-detail h3{font-size:14px;line-height:1.5;margin:0 0 8px}
+.registry-embedded .storage-browser{margin-top:0;border:0;padding-top:0}
+.registry-embedded .storage-browser>.storage-path{font-size:11px;word-break:break-all}
+.registry-embedded .resource-info{margin:12px 0 0}
+.registry-embedded .storage-capacity{border:0;box-shadow:none}
+.registry-embedded .storage-disk{border:1px solid var(--line);border-radius:7px;background:white}
+.registry-embedded .storage-disk.stale{background:#f8fafc}
+.registry-embedded .storage-disk progress{accent-color:#285fc6}
+.registry-embedded .download-controls{gap:8px}
+.registry-embedded .resource-search-note{display:none}
+.registry-embedded .storage-entry{min-width:0}
+.registry-embedded .storage-menu summary{color:var(--muted)}
+.registry-embedded #res-message:empty{display:none}
+@media(max-width:450px){.registry-embedded .embedded-resource-row{grid-template-columns:minmax(0,1fr) 48px 53px 10px;gap:5px;padding:8px;font-size:11px}}
 </style>
 </head>
 <body>
@@ -312,8 +351,17 @@
 </dialog>
 
 <script>
-const compareOnly = new URLSearchParams(location.search).get("mode")==="compare";
-let D = null, A = {}, VIEW = compareOnly ? "exp" : "res", editingKey = null;
+const registryParams=new URLSearchParams(location.search);
+const compareOnly = registryParams.get("mode")==="compare";
+const embeddedRegistry=registryParams.get('embedded')==='1'&&window.parent!==window;
+const embeddedSection=embeddedRegistry&&['datasets','weights','downloads','disks'].includes(registryParams.get('section'))?registryParams.get('section'):'datasets';
+let D = null, A = {}, VIEW = compareOnly ? "exp" : embeddedRegistry&&['downloads','disks'].includes(embeddedSection)?embeddedSection:"res", editingKey = null;
+if(embeddedRegistry){
+ document.body.classList.add('registry-embedded');
+ document.getElementById('nav').hidden=true;
+ document.getElementById('res-host').value='all';
+ document.getElementById('res-kind').value=embeddedSection==='weights'?'weights':'dataset';
+}
 if(compareOnly){document.getElementById("nav").hidden=true;document.querySelector("header h1").textContent="多次评估对比";document.getElementById("view-exp").classList.remove("hidden");document.getElementById("view-res").classList.add("hidden");}
 let selectedExperiment = null, selectedTask = null, experimentsByTask = new Map(), visibleExperiments = [];
 let resourceRows = [], selectedResource, resourceDetailStamp;
@@ -467,13 +515,14 @@ function renderRes(){
   const renderItem=item=>`<button type="button" class="record-select" data-resource="${esc(resourceKey(item))}">
     <span class="record-name">${esc(item.name||'未命名资源')}</span><span class="record-context">${esc(KIND_LABEL[item.kind])} · ${resourceSize(item)}${query&&item.path?` · ${esc(item.path)}`:''}</span>
   </button>`;
-  document.getElementById('res-rows').innerHTML=renderDirectory(resourceRows,query?()=>[]:resourceDirectories,renderItem,expandedResources)||'<div class="empty">没有匹配的资源。</div>';
+  document.getElementById('res-rows').innerHTML=(embeddedRegistry?resourceRows.map(item=>`<button type="button" class="embedded-resource-row" data-resource="${esc(resourceKey(item))}"><span class="resource-name">${esc(item.name||'未命名资源')}</span><span>${esc(item.host||'—')}</span><span>${resourceSize(item)}</span><span class="resource-arrow">›</span></button>`).join(''):renderDirectory(resourceRows,query?()=>[]:resourceDirectories,renderItem,expandedResources))||'<div class="empty">没有匹配的资源。</div>';
   showResourceDetail();
 }
 function showResourceDetail(){
   document.querySelectorAll('#res-rows [data-resource]').forEach(button=>button.setAttribute('aria-current',String(button.dataset.resource===selectedResource)));
   const detail=document.getElementById('resource-detail');
   const item=resourceRows.find(resource=>resourceKey(resource)===selectedResource);
+  if(embeddedRegistry)window.parent.postMessage({type:'memoryvla-resource',section:embeddedSection,item:item?{name:item.name,kind:item.kind,host:item.host,path:item.path,size:resourceSize(item),updated:item.updated,count:item.kind==='dataset'?item.n_parquet:item.n_files,removed:!!A[item.id]?.hidden}:null},location.origin);
   if(!item){resourceDetailStamp=null;detail.innerHTML='<div class="empty">没有匹配的资源</div>';return;}
   const removed=!!A[item.id]?.hidden;
   const stamp=JSON.stringify([selectedResource,item,removed]);
@@ -518,7 +567,7 @@ function fillHostSelects(){
   const filter=document.getElementById('res-host');
   const previous=filter.value;
   filter.innerHTML='<option value="all">所有存放位置</option>'+hosts.map(host=>`<option value="${esc(host)}">${esc(host)}</option>`).join('');
-  if(hosts.includes(previous))filter.value=previous;
+  if(hosts.includes(previous)||previous==='all')filter.value=previous;
 }
 function fillLedgerFilters(){
   const chains=D.experiments||[];
@@ -550,6 +599,7 @@ async function load(force){
     fillHostSelects(); fillLedgerFilters(); show(VIEW);
   }catch(e){
     sub.textContent = `更新失败：${e.message}`;
+    if(embeddedRegistry){document.getElementById('res-message').textContent='读取资源失败：'+e.message;}
   }finally{scan.disabled=false;}
 }
 document.getElementById("nav").onclick = e => { const b = e.target.closest("button"); if(b?.dataset.v) show(b.dataset.v); };
@@ -631,6 +681,11 @@ document.getElementById('res-rows').addEventListener('click',event=>{
   showResourceDetail();
   if(matchMedia('(max-width:700px)').matches)document.getElementById('resource-detail').focus();
 });
+if(embeddedRegistry){
+ const tools=document.querySelector('#resource-toolbar .acts');
+ const scan=document.getElementById('rescan');if(tools&&scan)tools.append(scan);
+ show(VIEW);
+}
 load(false);
 </script>
 <script src="/registry_storage.js"></script>

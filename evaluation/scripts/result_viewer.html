@@ -2663,7 +2663,7 @@
   });
   $("refresh").onclick=refresh; refresh(); setInterval(refresh,5000);
 </script>
-<script src="/benchmarks.js"></script>
+<script src="/benchmarks.js?ui=2"></script>
 <script src="/training.js"></script>
 <script src="/agent_experiments.js"></script>
 <script>
@@ -2686,7 +2686,13 @@
       }else if(target.type==='eval'){
         selectPage('results');
         if(window.benchmarkWorkbench.current()==='b1k2026'||window.benchmarkWorkbench.current()==='libero'){
-          await window.benchmarkWorkbench.selectRun(target);
+          if(typeof window.benchmarkWorkbench.selectRun==='function')await window.benchmarkWorkbench.selectRun(target);
+          else if(window.benchmarkWorkbench.current()==='b1k2026'){
+            await window.benchmarkWorkbench.refresh();
+            const button=[...document.querySelectorAll('[data-native-job]')].find(b=>b.dataset.nativeJob===target.run);
+            if(!button)throw Error('所选评估未加载，请刷新新版工作台');
+            button.click();
+          }else throw Error('LIBERO 面板版本不一致，请刷新新版工作台');
         }else{
           const response=await fetch('/api/results',{cache:'no-store'});if(!response.ok)throw Error('评估结果读取失败');
           const data=await response.json();runs=data.runs||[];
