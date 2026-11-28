@@ -1,0 +1,18 @@
+{
+  "plan_id": "b1k2026_v0_identity_v030",
+  "status": "in_progress",
+  "supersedes": "v1_2_n17_b1k2026_training_chain_v029",
+  "change_reason": "User explicitly names the current 2026 baseline V0 and requires separation from 2025. Register V0, scope new runtime identities and outputs to b1k2026, retain all historical identities and artifacts.",
+  "benchmark": "b1k2026",
+  "method_version": "V_0",
+  "display_version": "V0",
+  "scientific_method_changed": false,
+  "experiment_identity": null,
+  "budget": {"formal_training_steps": 0, "engineering_training_max_steps": 100, "approved_exact_training_recipe": null},
+  "mainline": [
+    {"node": "version_registration", "depends_on": [], "parallel_branches": [], "acceptance": "User-confirmed V0 resolves to V_0/v0, explicitly belongs to b1k2026; legacy 2025 backends reject it."},
+    {"node": "runtime_identity", "depends_on": ["version_registration"], "parallel_branches": [], "acceptance": "New training/checkpoints/inference/evaluation metadata use 2026 V0 and new evaluation paths stay within evaluation/b1k2026/V_0; original historical jobs, notes, paths and IDs remain readable and unchanged."},
+    {"node": "verification", "depends_on": ["runtime_identity"], "parallel_branches": [], "acceptance": "Tests cover canonical V0, cross-benchmark rejection, saved checkpoint identity, new and historical artifact URLs; existing 8765 API verifies V0 without GPU submission."},
+    {"node": "training_chain", "depends_on": ["verification"], "parallel_branches": [], "acceptance": "Continue v029 launch gate and actual training/save/reload/resume/self-trained evaluation stages under b1k2026 V0 once exact recipe and test/experiment/run identity are confirmed; naming approval alone does not approve unspecified scientific choices."}
+  ]
+}
