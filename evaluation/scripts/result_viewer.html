@@ -759,14 +759,14 @@
 
           </section>
           <section id="eval-config" aria-label="启动评估">
-            <div class="section-head"><h2><span class="step-number">2</span>启动评估</h2><select id="launch-kind" aria-label="运行模式"><option value="new">B1K-2025 历史评估</option><option value="n17">V1.2 / N1.7 / B1K-2026</option><option value="resume">续跑已有评估</option><optgroup label="历史开发工具（非正式评估）"><option value="restore">Task40 检查点恢复</option><option value="collect">Task40 轨迹采集 · Exp09</option><option value="forward">Task40 冻结前向 · Exp09</option></optgroup></select></div>
+            <div class="section-head"><h2 id="eval-config-title">评估配置</h2><select id="launch-kind" aria-label="运行模式"><option value="new">新建策略评估</option><option value="n17">V1.2 / N1.7 / B1K-2026</option><option value="resume">续跑已有评估</option><optgroup label="历史开发工具（非正式评估）"><option value="restore">Task40 检查点恢复</option><option value="collect">Task40 轨迹采集 · Exp09</option><option value="forward">Task40 冻结前向 · Exp09</option></optgroup></select></div>
             <form id="launch-form">
               <div id="launch-device-field" class="launch-fields"><label class="wide">评估设备<select id="launch-device"><option value="local">4090 · 本机双卡</option><option value="a6000">RTX 6000 Ada · 单卡 48GB</option><option value="a100" disabled>A100 · 训练 / 推理设备</option></select><small id="launch-device-hint"></small></label></div>
               <fieldset id="launch-n17" class="launch-fields" hidden disabled>
-                <p class="wide mode-note">GR00T N1.7 官方 radio 权重 · turning_on_radio · 本机 4090 · 一环境一回合 · RTC 关闭。推理随评估启动，结束后释放。</p>
+                <div class="wide native-contract"><div class="native-contract-title"><strong>V1.2 · GR00T N1.7</strong><span>基线验收</span></div><dl><div><dt>模型</dt><dd>官方 Radio 权重</dd></div><div><dt>任务</dt><dd>Task0 · turning_on_radio</dd></div><div><dt>协议</dt><dd>原生 WebSocket</dd></div><div><dt>执行</dt><dd>单卡 · 1 环境 · 1 回合</dd></div><div><dt>设备</dt><dd>4090 · 本机</dd></div><div><dt>RTC</dt><dd>关闭</dd></div></dl></div><p id="n17-ready-state" class="wide mode-note" role="status">正在检查运行环境…</p>
                 <label>评估 GPU<select id="n17-gpu" required></select></label>
-                <label>公共测试实例<input id="n17-instance" type="number" min="0" max="19" step="1" value="0" required></label>
-                <label>尝试编号<input id="n17-attempt" type="number" min="1" max="99" step="1" value="1" required></label>
+                <label>公共测试序号<input id="n17-instance" type="number" min="0" max="19" step="1" value="0" required><small>0–19；实际实例由原生评估器解析。</small></label>
+                <label>尝试编号<input id="n17-attempt" type="number" min="1" max="99" step="1" value="1" required><small>重复运行时递增，避免覆盖。</small></label>
                 <label>任务指令<select id="n17-language"><option value="task_description">打开收音机（任务原文）</option><option value="official_default">官方默认（复现原始服务）</option></select></label>
                 <label>策略端口<input id="n17-port" type="number" min="1024" max="65535" value="8033" required></label>
                 <label class="wide">运行备注<input id="n17-notes" value="V1.2 / N1.7 / B1K2026: official radio, RTC off" maxlength="200" required></label>
@@ -891,7 +891,7 @@
     <section id="page-registry" role="tabpanel" aria-labelledby="page-tab-registry" hidden></section>
     <div class="page-foot" hidden>调试结果不计正式成绩</div>
   </main>
-<link rel="stylesheet" href="/workbench_embed.css?ui=3">
+<link rel="stylesheet" href="/workbench_embed.css?ui=5">
 <script>if(new URLSearchParams(location.search).get('embedded')==='1')document.body.classList.add('workbench-embedded');</script>
 <script src="/checkpoint_notes.js"></script>
 <script>
@@ -1023,7 +1023,9 @@
       if(needsInference&&window.benchmarkWorkbench?.current()!=='b1k2026'){$('launch-kind').value='new';updateLaunchForm();openInferencePanel();}
     }
   }
-  function selectLaunchView(view){launchView=view;$('launch-overview').hidden=view!=='overview';$('launch-create').hidden=view!=='new';$('launch-overview-tab').setAttribute('aria-pressed',String(view==='overview'));$('launch-new-tab').setAttribute('aria-pressed',String(view==='new'));}
+  function selectLaunchView(view){launchView=view;$('launch-overview').hidden=view!=='overview';$('launch-create').hidden=view!=='new';$('launch-overview-tab').setAttribute('aria-pressed',String(view==='overview'));$('launch-new-tab').setAttribute('aria-pressed',String(view==='new'));
+    if(document.body.classList.contains('workbench-embedded')&&window.parent!==window)window.parent.postMessage({type:'memoryvla-launch-view',view},location.origin);
+  }
   $('launch-overview-tab').onclick=()=>{selectLaunchView('overview');void refreshLaunchJobs();void refreshAllInference();};
   $('launch-new-tab').onclick=()=>selectLaunchView('new');
   function openInferencePanel() {
@@ -1089,15 +1091,20 @@
       pendingInference.host===$('launch-host').value && String(pendingInference.port)===$('launch-port').value &&
       pendingInference.state!=='ready';
   }
+  let embeddedPreviewKey=null;
   function updateLaunchAvailability() {
     const blocked=pendingPolicyBlocks();
     const kind=$('launch-kind').value;
     const native=kind==='n17', collect=kind==='collect', forward=kind==='forward', usesDevice=kind==='new'||collect||native;
     const unavailable=((collect||forward)&&!$('collect-policy').value)||(collect&&!$('collect-gpu').value)||
       (native&&(!launchOptions?.model_versions?.V_1_2?.launch_ready||!$('n17-gpu').value));
-    $('launch-submit').disabled=launchBusy||Boolean(blocked)||unavailable||(usesDevice&&(launchDeviceLoading||!launchDeviceReady));
+    let checked=true;
+    if(document.body.classList.contains('workbench-embedded')){try{checked=embeddedPreviewKey===JSON.stringify(collectLaunchRequest());}catch{checked=false;}}
+    $('launch-submit').disabled=launchBusy||Boolean(blocked)||unavailable||!checked||(usesDevice&&(launchDeviceLoading||!launchDeviceReady));
+    const nativeState=$('n17-ready-state');
+    if(nativeState&&native)nativeState.textContent=launchDeviceLoading?'正在检查设备…':!launchDeviceReady?'设备或仿真环境尚未就绪。':!launchOptions?.model_versions?.V_1_2?.launch_ready?'N1.7 官方权重或环境尚未就绪。':'运行环境已检测 · 请先检查本次配置。';
     $('launch-check').disabled=launchBusy||unavailable||(collect&&(launchDeviceLoading||!launchDeviceReady));
-    $('launch-submit').textContent=blocked?(pendingInference.state==='failed' || pendingInference.state==='stopped'?'推理未就绪':'等待推理就绪'):
+    $('launch-submit').textContent=!checked?'检查配置后启动':blocked?(pendingInference.state==='failed' || pendingInference.state==='stopped'?'推理未就绪':'等待推理就绪'):
       kind==='restore'?'启动检查点恢复':collect?'启动轨迹采集':forward?'启动冻结前向':kind==='resume'?'开始本次评估':'启动评估';
   }
   async function inferenceAPI(path,payload,device=$('inference-device').value||'a100') {
@@ -1492,6 +1499,8 @@
     $('forward-batch-field').hidden=!forward;$('forward-batch').disabled=!forward;
     $('collect-policy-label').textContent=forward?'A100 Task40 Trace 服务':'A100 Task40 诊断服务';
     $('model-config').hidden=resume||restore||native;
+    $('eval-config-title').textContent=native?'N1.7 基线评估':resume?'继续评估':restore||collect||forward?'工程诊断':'评估配置';
+    document.body.classList.toggle('native-launch',native);
     $('launch-device-field').hidden=resume||restore||forward||native;
     $('launch-device').disabled=resume||restore||forward||native||launchBusy;
     $('launch-host').disabled=resume||restore;$('launch-port').disabled=resume||restore;
@@ -1711,9 +1720,13 @@
     $('launch-message').className='launch-message';
     try{
       const request=collectLaunchRequest();
+      const key=JSON.stringify(request);
+      if(start&&document.body.classList.contains('workbench-embedded')&&embeddedPreviewKey!==key)throw Error('配置已变化，请重新检查配置');
+      embeddedPreviewKey=null;
       $('launch-message').textContent=start?'正在校验参数并提交启动…':'正在检查现有启动脚本参数…';
       const result=await launchAPI(start?'start':'preview',request);
       const plan=result.plan;
+      if(!start)embeddedPreviewKey=key;
       const collect=request.task40_collect;
       const forward=request.task40_forward;
       const endpoint=`推理 ${esc(request.policy_host)}:${esc(request.policy_port)} · ${esc(plan?.policy_identity?.checkpoint||'')}`;
@@ -1731,7 +1744,7 @@
         '已提交后台启动。下方可查看启动状态，结果生成后点击“评估结果”。'):
         '配置检查通过。尚未启动评估；最终目录编号由脚本自动分配。';
       $('launch-message').className='launch-message good';
-      if(start){selectLaunchView('overview');await refreshLaunchJobs();await refresh();}
+      if(start){selectLaunchView('overview');$('launch-overview-message').textContent='已提交评估作业 · '+(result.id||'');await refreshLaunchJobs();await refresh();}
     }catch(error){$('launch-message').textContent=(start?'提交未确认，请先核对评估作业列表，勿直接重试：':'配置检查失败：')+error.message;$('launch-message').className='launch-message error';}
     finally{launchBusy=false;$('launch-kind').disabled=false;updateLaunchForm();}
   }
@@ -1805,7 +1818,7 @@
           ${(()=>{const r=runs.find(r=>r._folder===job.folder);return r?`<div class="workbench-live-foot"><span>${esc(r.completed_episodes??r.recorded_episodes??0)} / ${esc(r.requested_episodes??'—')} 回合</span><span>成功率 ${pct(r.success_rate)}</span></div>`:'';})()}
           <details data-log="${esc(job.id+':info')}"${openPanels.has(job.id+':info')?' open':''}><summary class="subtle">作业信息</summary><div class="subtle">PID ${esc(safe(job.pid))} · ${esc(safe(job.started_at))}<br>${esc(job.output||'')}</div></details>
           ${collect||forward?renderTask40Job(job,logPanel):''}
-          ${native?renderNativeJob(job):''}
+          ${native?renderNativeJob(job)+(job.native_metrics?.length?`<button type="button" data-native-result="${esc(job.id)}">查看评估结果 →</button>`:''):''}
           ${restore&&job.state==='running'?`<button type="button" data-restore-stop="${esc(job.id)}">停止恢复任务</button>`:''}
           ${!native&&!collect&&!forward&&job.result_ready?`<button type="button" data-run="${esc(job.folder||'')}">评估结果 →</button>`:''}
           ${logPanel('launch','启动日志'+(job.returncode==null?'':` · 退出码 ${job.returncode}`),job.log_tail||'等待启动脚本输出…')}</article>`;
@@ -1816,6 +1829,10 @@
       list.innerHTML=history.map(card).join('')||'<p class="empty">暂无历史作业</p>';
       renderLaunchOverview();
       $('launch-overview').querySelectorAll('button[data-run]').forEach(button=>button.onclick=()=>void openLaunchResult(button.dataset.run));
+      $('launch-overview').querySelectorAll('button[data-native-result]').forEach(button=>button.onclick=async()=>{
+        if(document.body.classList.contains('workbench-embedded')&&window.parent!==window){window.parent.postMessage({type:'memoryvla-open-evaluation',benchmark:'b1k2026',run:button.dataset.nativeResult},location.origin);return;}
+        selectPage('results');await window.benchmarkWorkbench.selectRun({run:button.dataset.nativeResult});
+      });
       $('launch-overview').querySelectorAll('button[data-restore-stop]').forEach(button=>button.onclick=async()=>{
         button.disabled=true;try{await launchAPI('restore-stop',{job:button.dataset.restoreStop});await refreshLaunchJobs();}
         catch(error){button.disabled=false;button.title=error.message;}
@@ -1875,6 +1892,7 @@
     await refresh();
     const run=runs.find(r=>r._folder===folder);
     if(!run){$('launch-overview-message').textContent='结果尚未就绪';return;}
+    if(document.body.classList.contains('workbench-embedded')&&window.parent!==window){window.parent.postMessage({type:'memoryvla-open-evaluation',benchmark:'b1k',folder},location.origin);return;}
     selectResultRun(run);
   }
   function openRegistryResult(folder) {
@@ -2679,6 +2697,7 @@
     async select(target){
       if(!document.body.classList.contains('workbench-embedded'))throw Error('仅用于嵌入面板');
       document.body.dataset.embedTarget=target.type;
+      if(target.type==='launch-overview'){selectPage('launch');selectLaunchView('overview');return;}
       if(target.type==='experiment')return; // /ai?experiment= selects the recorded document.
       if(target.type==='train'){
         selectPage('training');

@@ -95,7 +95,7 @@ function openResource(){
  $('panel').onload=null;$('panel').src=url;
 }
 function openFrame(p,n,target){
-  const b=currentBenchmark(n),query=new URLSearchParams({embedded:'1',benchmark:b});
+  const b=p==='launch'&&benchmark!=='all'?benchmark:currentBenchmark(n),query=new URLSearchParams({embedded:'1',benchmark:b});
   if(p!=='results'&&p!=='experiment')query.set('page',p);
   if(n?.kind==='document')query.set('experiment',n.experiment);
   const url=(p==='experiment'?'/ai':'/')+'?'+query,requestKey=JSON.stringify(target||{});
@@ -172,7 +172,7 @@ function tabList(n){
  const list=[];
  if(page==='experiment'){if(n?.kind==='document')list.push(['document','实验文档']);else list.push(['lineage','实验谱系']);list.push(['overview','实验记录']);}
  if(page==='training'){list.push(['overview','训练记录']);if(getTrain(n))list.push(['detail','训练详情']);if(form?.type==='new-training')list.push(['new-training','新建训练']);}
- if(page==='launch'){list.push(['operations','运行总览']);if(form)list.push(['new-launch','新建评估']);}
+ if(page==='launch'){list.push(['operations','运行总览'],['new-launch','新建评估']);}
  if(page==='results'){list.push(['overview','评估记录']);if(n?.kind==='eval'&&!n.pending)list.push(['detail','回合与录像']);}
  if(compare.size>0&&page!=='registry')list.push(['compare','对比 ('+compare.size+')']);
  return list;
@@ -180,11 +180,11 @@ function tabList(n){
 function tabs(n){const list=tabList(n);if(!list.some(([k])=>k===tab))tab=defaultTab(page,n);$('tabs').innerHTML=list.map(([k,v])=>'<button data-tab="'+k+'" class="'+(tab===k?'active':'')+'" aria-selected="'+(tab===k)+'">'+v+'</button>').join('');}
 function renderHeader(n){
  document.body.dataset.page=page;
- $('crumb').textContent=page==='registry'?'':[labels[page],...ancestors(n).map(x=>x.title)].join(' / ');
+ $('crumb').textContent=page==='registry'?'':page==='launch'&&!form?'推理评估 / '+benchmarks[currentBenchmark(n)]:[labels[page],...ancestors(n).map(x=>x.title)].join(' / ');
  const tr=getTrain(n),ck=getWeight(n),acts=[];
  if(page==='registry'){$('title').textContent='资源管理';$('actions').innerHTML='';tabs(n);return;}
  if(form&&['new-training','new-launch'].includes(tab))$('title').textContent=form.type==='new-training'?'新建训练':form.target?'新建评估 · '+form.target.title:'新建评估';
- else $('title').textContent=n?n.title:labels[page];
+ else $('title').textContent=page==='launch'?'运行总览':n?n.title:labels[page];
  if(!form||!['new-training','new-launch'].includes(tab)){
   if(n&&['train','eval','checkpoint'].includes(n.kind)&&page!=='launch')acts.push('<button data-add="'+esc(n.id)+'" aria-pressed="'+compare.has(n.id)+'">'+(compare.has(n.id)?'已选对比 ✓':'加入对比')+'</button>');
   if(page==='experiment'&&tr)acts.push('<button data-action="training">查看训练 →</button>');
@@ -195,7 +195,7 @@ function renderHeader(n){
     else if(tr)acts.push('<button class="primary" data-action="evaluate-latest">最新权重评估 →</button>');
   }
   if(page==='training')acts.push('<button '+(tr?'':'class="primary"')+' data-action="new-training">＋ 新建训练</button>');
-  if(page==='launch')acts.push('<button class="primary" data-action="new-launch">＋ 新建评估</button>');
+
  }
  $('actions').innerHTML=acts.join('');tabs(n);
 }
@@ -213,7 +213,7 @@ function renderCenter(){
  if(tab==='detail'&&page==='training'&&tr){openFrame('training',tr,{type:'train',device:tr.device,run:tr.run,arm:tr.arm});return;}
  if(tab==='detail'&&page==='results'&&n?.kind==='eval'&&!n.pending){openFrame('results',n,{type:'eval',run:n.run,folder:n.folder});return;}
  if(tab==='document'&&n?.kind==='document'){openFrame('experiment',n,{type:'experiment'});return;}
- if(tab==='operations'&&page==='launch'){openFrame('launch',n);return;}
+ if(tab==='operations'&&page==='launch'){openFrame('launch',n,{type:'launch-overview'});return;}
  closeFrame();$('content').innerHTML=tab==='compare'?compareItems()+comparison():tab==='lineage'?lineage(n):overview(n);
 }
 function render(){nav();drawTree();renderCenter();}
@@ -231,6 +231,7 @@ function route(p){
 function choose(id,fromGraph=false){
  const n=nodes.get(id);if(!n||!scope(id))return;
  if(id===selected&&!fromGraph)return;
+ if(page==='launch'&&form){status('当前评估配置尚未结束，请先返回运行总览。');return;}
  if(page!=='registry'&&!leaveForm())return;
  selected=id;ancestors(n).forEach(x=>expanded.add(x.id));
  const oldFocus=nodes.get(graphFocus);
@@ -267,7 +268,11 @@ $('engineering').onchange=e=>{const checked=e.target.checked;includeEngineering=
 $('clear').onclick=()=>{$('search').value='';search='';drawTree();};
 $('collapse').onclick=()=>{expanded.clear();drawTree();};
 $('reload').onclick=()=>void refresh();
-$('tabs').onclick=e=>{const b=e.target.closest('[data-tab]');if(!b||b.dataset.tab===tab)return;if(!leaveForm())return;tab=b.dataset.tab;status('');renderCenter();};
+$('tabs').onclick=e=>{
+ const b=e.target.closest('[data-tab]');if(!b||b.dataset.tab===tab)return;
+ if(page==='launch'&&b.dataset.tab==='new-launch'){startForm('new-launch',nodes.get(selected));return;}
+ if(!leaveForm())return;tab=b.dataset.tab;status('');renderCenter();
+};
 document.body.addEventListener('click',async e=>{
  if(e.target.closest('#tree'))return;
  const b=e.target.closest('[data-action],[data-node],[data-add],[data-remove]');if(!b)return;
@@ -297,6 +302,17 @@ document.body.addEventListener('click',async e=>{
 });
 window.addEventListener('message',e=>{
  if(e.origin!==location.origin||e.source!==$('panel').contentWindow||$('panel').hidden||page==='registry')return;
+ if(e.data?.type==='memoryvla-launch-view'&&page==='launch'){
+   if(e.data.view==='overview'&&tab==='new-launch'){form=null;tab='operations';renderHeader(nodes.get(selected));}
+   else if(e.data.view==='new'&&!form){form={type:'new-launch',node:nodes.get(selected),inFrame:true};tab='new-launch';renderHeader(nodes.get(selected));}
+   return;
+ }
+ if(e.data?.type==='memoryvla-open-evaluation'&&page==='launch'){
+   const d=e.data;const id=d.benchmark==='b1k2026'?jsonKey('eval','b1k2026',d.run):jsonKey('eval','b1k',d.folder);
+   const open=()=>{if(!nodes.has(id))return false;form=null;selected=id;ancestors(nodes.get(id)).forEach(x=>expanded.add(x.id));graphFocus=id;page='results';tab='detail';closeFrame();saveRoute();render();return true;};
+   if(!open())void refresh().then(()=>{if(page==='launch'&&!open())status('评估结果尚未归档，请刷新后查看。');});
+   return;
+ }
  // Only a completed, explicit checkpoint hand-off can change the outer page.
  if(e.data?.type==='memoryvla-checkpoint-form'&&['training','launch'].includes(page)){
    const d=e.data,owner=nodes.get(jsonKey('train',d.device,d.run,d.arm));
