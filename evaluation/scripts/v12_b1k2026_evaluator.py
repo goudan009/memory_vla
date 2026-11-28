@@ -2,6 +2,7 @@
 """Isolate B1K-2026 Python imports across Isaac Kit startup."""
 
 from functools import wraps
+from importlib.machinery import PathFinder
 import json
 import os
 from pathlib import Path
@@ -37,28 +38,36 @@ def preload_cffi():
         sys.path.remove(str(archive))
 
 
-def configure_simulation_app():
+def preserve_numba_imports(finder):
+    original = finder.find_spec
+
+    @classmethod
+    def find_spec(cls, fullname, path=None, target=None):
+        # Kit's namespace resolution must remain active for omni/isaacsim.
+        # This compiled dependency pair instead uses the loaded parent path.
+        if path is not None and fullname.split(".", 1)[0] in {"numba", "llvmlite"}:
+            return PathFinder.find_spec(fullname, path, target)
+        return original(fullname, path, target)
+
+    finder.find_spec = find_spec
+
+
+def configure_simulation_app(output):
     import isaacsim
+    import numba
+    import llvmlite
+    from omni.ext._impl.fast_importer import FastFinder
+
+    preserve_numba_imports(FastFinder)
 
     original = isaacsim.SimulationApp
 
     @wraps(original)
     def simulation_app(config=None, *args, **kwargs):
-        # FastFinder ignores a loaded package's __path__ and can combine its
-        # submodules with Isaac's older bundled version. Use Kit's supported
-        # startup setting rather than preloading an ever-growing module list.
-        config = dict(config or {})
-        config["extra_args"] = [
-            *config.get("extra_args", []),
-            "--/app/extensions/fastImporter/enabled=false",
-        ]
         app = original(config, *args, **kwargs)
         import carb.settings
-        from omni.ext._impl.ext_settings import _get_fast_importer_settings
 
         enabled = carb.settings.get_settings().get("/app/extensions/fastImporter/enabled")
-        if enabled is not False or _get_fast_importer_settings().enabled:
-            raise RuntimeError("V1.2 Kit fast importer isolation did not take effect")
         # Exercise the same lazy Numba runtime used by the controller after
         # real Kit initialization, not just an approximation of sys.path.
         import numpy as np
@@ -71,12 +80,14 @@ def configure_simulation_app():
             return value.copy()
 
         np.testing.assert_array_equal(copy_array(np.arange(3.0)), np.arange(3.0))
-        print("V1.2 Kit import boundary: " + json.dumps({
+        evidence = {
             "fast_importer_enabled": enabled,
             "numba": numba.__version__, "numba_path": numba.__file__,
             "runtime_path": numba.core.runtime.context.__file__,
             "llvmlite": llvmlite.__version__, "jit": "passed",
-        }), flush=True)
+        }
+        (output / "import_boundary.json").write_text(json.dumps(evidence, indent=2) + "\n")
+        print("V1.2 Kit import boundary: " + json.dumps(evidence), flush=True)
         return app
 
     isaacsim.SimulationApp = simulation_app
@@ -85,7 +96,8 @@ def configure_simulation_app():
 def main():
     print("V1.2 evaluator CFFI: " + json.dumps(preload_cffi()), flush=True)
     print("V1.2 evaluator transport: " + json.dumps(preload_transport()), flush=True)
-    configure_simulation_app()
+    output = Path(sys.argv[sys.argv.index("--output-dir") + 1])
+    configure_simulation_app(output)
     runpy.run_module("omnigibson.eval.eval", run_name="__main__", alter_sys=True)
 
 
