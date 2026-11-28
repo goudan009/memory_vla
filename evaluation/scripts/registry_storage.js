@@ -50,7 +50,7 @@
     diskSelection=host;const version=++diskVersion;
     const hosts=host==='all'?window.registryStorage.hosts.map(row=>row.host):[host];
     const summaries=hosts.map(label=>label+' 查询中…');
-    const updateSummary=()=>{$('storage-capacity-summary').textContent=summaries.join('；');};
+    const updateSummary=()=>{$('storage-capacity-summary').textContent=summaries.join('；');if($('disk-visible-status'))$('disk-visible-status').textContent=summaries.some(s=>s.includes('查询中'))?'查询中…':'查询结束';};
     updateSummary();
     const slots=hosts.map(label=>{
       const slot=document.createElement('div');slot.className='storage-disk';slot.textContent=label+' · 正在查询磁盘…';return slot;
@@ -173,10 +173,17 @@
       finally{button.disabled=false;}
     }
   });
-  window.registryStorage={hosts:[{host:'4090',label:'4090 · 本机'},{host:'A100',label:'A100'},{host:'A6000',label:'RTX 6000 Ada'}],browse,showDisks};
+  function registerDownload(recipe){
+    show('res');dialog('register');
+    $('storage-host').value=recipe.host;
+    $('storage-kind').value=recipe.kind;
+    $('storage-path').value=recipe.target;
+    $('storage-name').value=recipe.target.split('/').filter(Boolean).at(-1)||'';
+  }
+  window.registryStorage={registerDownload,hosts:[{host:'4090',label:'4090 · 本机'},{host:'A100',label:'A100'},{host:'A6000',label:'RTX 6000 Ada'}],browse,showDisks};
   api('4090',{action:'hosts'}).then(result=>{
     window.registryStorage.hosts=result.hosts;$('storage-host').innerHTML=result.hosts.map(row=>`<option value="${esc(row.host)}">${esc(row.label)}</option>`).join('');
-    if(D)fillHostSelects();
+    if(D){fillHostSelects();if(VIEW==='disks')showDisks($('res-host').value,true);}
   }).catch(error=>{feedback('读取资源设备失败：'+error.message);});
   if(lastTrash)feedback('上次删除的项目可恢复：'+lastTrash.path);
   if(D&&VIEW==='res')renderRes();

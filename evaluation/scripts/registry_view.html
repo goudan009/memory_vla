@@ -133,7 +133,7 @@
   #storage-dialog label{min-width:0}#storage-dialog select{width:100%;min-width:0}#storage-dialog-path{overflow-wrap:anywhere}
   #storage-dialog-error{color:var(--bad);overflow-wrap:anywhere}
   @media(max-width:540px){.storage-entry{gap:6px;padding:8px}.storage-entry .storage-size{font-size:10px}}
-  .download-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.download-controls select{flex:1 1 200px;min-width:0;max-width:100%}.download-summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:8px;margin:10px 0}.download-summary>div{min-width:0;padding:9px;border:1px solid var(--line,#ddd);border-radius:6px}.download-summary strong,.download-summary small{display:block;overflow-wrap:anywhere}.download-summary small{color:#65736e;margin-bottom:4px}.download-raw{margin-top:10px}.download-raw pre{white-space:pre-wrap;overflow-wrap:anywhere;max-height:240px;overflow:auto}.download-raw summary{cursor:pointer}#resource-download-progress{width:100%}.download-summary[hidden],.download-raw[hidden]{display:none!important}
+  #storage-disk-panel[hidden],#resource-download-panel[hidden],#storage-register[hidden],#resource-download-register[hidden]{display:none!important}#storage-disk-panel>summary,#resource-download-panel>summary{display:none}#storage-disk-panel{padding-top:12px}#resource-download-register{margin-top:10px}.download-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.download-controls select{flex:1 1 200px;min-width:0;max-width:100%}.download-summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:8px;margin:10px 0}.download-summary>div{min-width:0;padding:9px;border:1px solid var(--line,#ddd);border-radius:6px}.download-summary strong,.download-summary small{display:block;overflow-wrap:anywhere}.download-summary small{color:#65736e;margin-bottom:4px}.download-raw{margin-top:10px}.download-raw pre{white-space:pre-wrap;overflow-wrap:anywhere;max-height:240px;overflow:auto}.download-raw summary{cursor:pointer}#resource-download-progress{width:100%}.download-summary[hidden],.download-raw[hidden]{display:none!important}
 </style>
 </head>
 <body>
@@ -148,7 +148,9 @@
 </header>
 
 <nav class="tabs" id="nav" aria-label="实验台账视图">
-  <button data-v="res" aria-selected="true" aria-controls="view-res">数据与权重</button>
+  <button data-v="res" aria-selected="true" aria-controls="resource-file-workspace">数据与权重</button>
+  <button data-v="downloads" aria-selected="false" aria-controls="resource-download-panel">下载任务</button>
+  <button data-v="disks" aria-selected="false" aria-controls="storage-disk-panel">磁盘空间</button>
   <button data-v="exp" aria-selected="false" aria-controls="view-exp">历史任务对比</button>
 </nav>
 
@@ -170,9 +172,9 @@
   </section>
 
   <section id="view-res">
-    <div class="storage-toolbar"><div><strong>资源文件</strong></div><div class="acts"><label>存放设备<select id="res-host" aria-label="存放位置"><option value="all">所有存放位置</option><option value="4090" selected>4090</option></select></label><button id="storage-register" type="button" class="primary">＋ 登记目录</button></div></div>
-    <details class="storage-capacity"><summary>磁盘 · <span id="storage-capacity-summary" role="status">正在查询…</span></summary><div class="acts" style="padding:0 12px 10px"><button id="storage-refresh-disks" type="button">刷新磁盘</button></div><div id="storage-disks" class="storage-disks" aria-label="磁盘容量" aria-live="polite"></div></details>
-    <details id="resource-download-panel" class="storage-capacity">
+    <div class="storage-toolbar" id="resource-toolbar"><div><strong id="resource-toolbar-title">资源文件</strong></div><div class="acts"><label>存放设备<select id="res-host" aria-label="存放位置"><option value="all">所有存放位置</option><option value="4090" selected>4090</option></select></label><button id="storage-register" type="button" class="primary">＋ 登记目录</button></div></div>
+    <details id="storage-disk-panel" class="storage-capacity" hidden><summary>磁盘 · <span id="storage-capacity-summary" role="status">正在查询…</span></summary><div class="acts" style="padding:0 12px 10px"><button id="storage-refresh-disks" type="button">刷新磁盘</button><span id="disk-visible-status" class="hint" role="status"></span></div><div id="storage-disks" class="storage-disks" aria-label="磁盘容量" aria-live="polite"></div></details>
+    <details id="resource-download-panel" class="storage-capacity" hidden>
       <summary>下载任务</summary>
       <div style="padding:12px">
         
@@ -180,11 +182,12 @@
         <p id="resource-download-message" class="hint" role="status"></p>
         <div id="resource-download-summary" class="download-summary" hidden></div>
         <progress id="resource-download-progress" max="1" value="0" hidden></progress>
+        <button type="button" id="resource-download-register" hidden>登记此资源</button>
         <details id="resource-download-raw" class="download-raw" hidden><summary>路径、环境与完整记录</summary><pre id="resource-download-detail"></pre></details>
       </div>
     </details>
     <div id="res-message" class="hint" role="status"></div>
-    <div class="ledger-workspace">
+    <div class="ledger-workspace" id="resource-file-workspace">
       <nav class="ledger-list" aria-label="资源目录"><div class="ledger-list-head"><strong>资源目录</strong><span id="res-count"></span></div>
         <div class="storage-filters">
           <input id="res-q" type="search" placeholder="搜索资源名称或路径…" aria-label="搜索资源">
@@ -383,7 +386,6 @@ function renderRes(){
     <span class="record-name">${esc(item.name||'未命名资源')}</span><span class="record-context">${esc(KIND_LABEL[item.kind])} · ${resourceSize(item)}${query&&item.path?` · ${esc(item.path)}`:''}</span>
   </button>`;
   document.getElementById('res-rows').innerHTML=renderDirectory(resourceRows,query?()=>[]:resourceDirectories,renderItem,expandedResources)||'<div class="empty">没有匹配的资源。</div>';
-  window.registryStorage?.showDisks(host);
   showResourceDetail();
 }
 function showResourceDetail(){
@@ -413,7 +415,18 @@ function showResourceDetail(){
 function show(v){
   VIEW = v;
   document.querySelectorAll("#nav button").forEach(b=>b.setAttribute("aria-selected", String(b.dataset.v===v)));
-  ["exp","res"].forEach(k=>document.getElementById("view-"+k).classList.toggle("hidden", k!==v));
+  document.getElementById("view-exp").classList.toggle("hidden",v!=="exp");
+  document.getElementById("view-res").classList.toggle("hidden",v==="exp");
+  const byId=id=>document.getElementById(id);
+  byId("resource-toolbar").classList.toggle("hidden",v==="downloads");
+  byId("resource-toolbar-title").textContent=v==="disks"?"存储设备":"资源文件";
+  byId("storage-register").hidden=v!=="res";
+  byId("resource-file-workspace").classList.toggle("hidden",v!=="res");
+  byId("res-message").classList.toggle("hidden",v!=="res");
+  const disks=byId("storage-disk-panel"),downloads=byId("resource-download-panel");
+  disks.hidden=v!=="disks";disks.open=v==="disks";
+  downloads.hidden=v!=="downloads";downloads.open=v==="downloads";
+  if(v==="disks")window.registryStorage?.showDisks(byId("res-host").value,true);
   if(!D)return;
   if(v==="exp") renderExp();
   if(v==="res") renderRes();
@@ -527,7 +540,8 @@ document.getElementById('resource-detail').addEventListener('click',async event=
 });
 document.getElementById('annotation-form').addEventListener('submit',async e=>{e.preventDefault();try{await saveAnnotation(editingKey,{label:document.getElementById('annotation-label').value,notes:document.getElementById('annotation-notes').value,hidden:!!A[editingKey]?.hidden});document.getElementById('annotation-dialog').close();}catch(error){alert(error.message);}});
 document.getElementById('annotation-cancel').onclick=()=>document.getElementById('annotation-dialog').close();
-["res-kind","res-host","res-q","res-state"].forEach(id=>document.getElementById(id).addEventListener("input", renderRes));
+["res-kind","res-q","res-state"].forEach(id=>document.getElementById(id).addEventListener("input", renderRes));
+document.getElementById("res-host").addEventListener("input",()=>{if(VIEW==="disks")window.registryStorage?.showDisks(document.getElementById("res-host").value,true);else renderRes();});
 document.getElementById('res-rows').addEventListener('click',event=>{
   const row=event.target.closest('[data-resource]');
   if(!row)return;

@@ -15,7 +15,7 @@ const assert=require('node:assert/strict');
     await registry.locator('#view-res').waitFor({state:'visible'});
     await registry.getByRole('button',{name:'历史任务对比'}).click();
     await registry.locator('#chains [aria-current="true"]').waitFor({state:'visible'});
-    assert.deepEqual(await registry.locator('#nav button').allTextContents(),['数据与权重','历史任务对比']);
+    assert.deepEqual(await registry.locator('#nav button').allTextContents(),['数据与权重','下载任务','磁盘空间','历史任务对比']);
     let annotations;
     await page.route('**/api/registry/annotations',async route=>{
       const {key,hidden}=route.request().postDataJSON();
