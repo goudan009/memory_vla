@@ -5,6 +5,8 @@
 - Status: `PARTIAL`; latest plan [workflow/plan-v024.json](workflow/plan-v024.json). Job `c3f412e1bde1` ended without native JSON/video: global FastFinder disable caused Isaac extension import errors and `lazy_isaacsim has no attribute core`. INVALID; legacy services retained.
 - Architecture correction: Kit needs its importer for extension namespaces, whereas Numba/llvmlite require consistent regular-package parent paths. Restore default Kit settings and delegate only this compiled stack's submodule lookups to standard PathFinder in the isolated bootstrap. Verify the installed FastFinder regression and real startup JIT, persisting boundary diagnostics outside suppressed startup logs.
 - Next attempt: fresh instance 18 / GPU0 / port 8032, unchanged official checkpoint, protocol, RTC and budget. Formal training submissions=0.
+- `importer_boundary` regression passed with the installed FastFinder class: mismatched Numba runtime is reproduced before the adapter and matching parent resolution passes after it; Isaac namespace handling remains delegated to Kit. Existing route/contract tests: 7 passed. Code commit `53976f6`.
+- `preview_instance_18` completed; `official_rollout` RUNNING: job `97f45ef78924`, PID `2738624`, started `2026-11-28 13:29:55`, GPU0, port 8032, output `evaluation/V_1_2/official/public_test_instance_18`, runner log `/nvme3/tmp/memory_vla/web_launch/97f45ef78924.log`. Original concise note is present in job.json. Next live check within one minute.
 
 ## 2026-11-28 - importer_boundary / Kit FastFinder
 
