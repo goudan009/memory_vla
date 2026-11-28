@@ -23,6 +23,9 @@ from v1_2_groot_baseline import b1k2026_capabilities
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]/'train'))
 from run_identity import canonical_version
 
+V12_TRAINED_RUN = (r'v1_2__test\d{2}__exp\d{2}__run\d{3,}__step\d{6,}'
+                   r'__task(?:0|40)__instance\d{2}__attempt\d{2}')
+
 
 TASK40_EXPERIMENT_KINDS = ('task40_collect', 'task40_forward')
 TASK40_DEFAULT_EXPERIMENT = 'experiment_09'
@@ -163,7 +166,8 @@ class LaunchManager:
     def _v12_prepare(self, request):
         allowed = {'version', 'protocol', 'task', 'instance', 'rollouts', 'gpu_index',
                    'policy_host', 'policy_port', 'run_tag', 'notes', 'record_video',
-                   'wait_for_gpu', 'attempt', 'language_mode'}
+                   'wait_for_gpu', 'attempt', 'language_mode', 'model_role', 'checkpoint',
+                   'checkpoint_sha256', 'engineering_only'}
         unknown = set(request) - allowed
         if unknown:
             raise ValueError('V1.2 不支持的启动参数：' + ', '.join(sorted(unknown)))
@@ -171,8 +175,28 @@ class LaunchManager:
             raise ValueError('V1.2 请求必须显式使用 V_1_2')
         if request.get('protocol') != v12_contracts.B1K2026:
             raise ValueError('V1.2 必须使用原生 B1K-2026 WebSocket 协议')
-        if request.get('task', 'turning_on_radio') != 'turning_on_radio':
+        role = request.get('model_role', 'official')
+        if role not in ('official', 'self_trained'):
+            raise ValueError('model_role must be official or self_trained')
+        task = request.get('task', 'turning_on_radio')
+        if role == 'official' and task != 'turning_on_radio':
             raise ValueError('官方 radio 权重只允许 turning_on_radio')
+        if role == 'official' and any(k in request for k in ('checkpoint', 'checkpoint_sha256')):
+            raise ValueError('official radio checkpoint is fixed; use the explicit self_trained role')
+        training = None
+        if role == 'self_trained':
+            from v1_2_groot_baseline.b1k2026_data import TASKS
+            if request.get('engineering_only') is not True:
+                raise ValueError('self-trained evaluation is engineering-only until real acceptance')
+            if task not in TASKS.values() or not request.get('checkpoint') or not request.get('checkpoint_sha256'):
+                raise ValueError('explicit supported task and exact self-trained checkpoint/hash required')
+            checkpoint = Path(request['checkpoint']).resolve(strict=True)
+            if not checkpoint.is_relative_to(self.root / 'training/b1k2026'):
+                raise ValueError('checkpoint must belong to a native B1K-2026 workbench training job')
+            training = v12_contracts.inspect_training_checkpoint(checkpoint)
+            task_index = next(i for i, name in TASKS.items() if name == task)
+            if task_index not in training['tasks']:
+                raise ValueError('requested task was not in this training manifest')
         instance = request.get('instance', 0)
         rollouts = request.get('rollouts', 1)
         gpu = request.get('gpu_index', 0)
@@ -186,13 +210,23 @@ class LaunchManager:
         if type(attempt) is not int or not 1 <= attempt <= 99:
             raise ValueError('attempt 必须为 1–99 的整数')
         language_mode = request.get('language_mode', 'official_default')
-        if language_mode not in ('official_default', 'task_description'):
+        if training:
+            if 'language_mode' in request and language_mode != training['language_mode']:
+                raise ValueError('evaluation language must match the training manifest')
+            language_mode = training['language_mode']
+        if language_mode not in ('official_default', 'task_description', 'native_tasks') or (not training and language_mode == 'native_tasks'):
             raise ValueError('language_mode 必须为 official_default 或 task_description')
         config = self._v12_config()
         if not self._v12_paths_ready():
             raise ValueError('V1.2 N1.7/B1K2026 独立环境或源码尚未就绪')
         language = dict(mode=language_mode, text_prompt=v12_contracts.OFFICIAL_DEFAULT_PROMPT)
-        if language_mode == 'task_description':
+        if training:
+            language = dict(mode=language_mode, task_index=task_index,
+                text_prompt=training['task_prompts'][str(task_index)],
+                data_manifest_sha256=training['data_manifest_sha256'])
+            if not language['text_prompt'].strip():
+                raise ValueError('empty training task prompt')
+        elif language_mode == 'task_description':
             metadata = config['task_metadata']
             raw = metadata.read_bytes()
             tasks = [json.loads(line) for line in raw.decode('utf-8').splitlines() if line.strip()]
@@ -204,7 +238,10 @@ class LaunchManager:
         name = f'public_test_instance_{instance:02d}'
         if attempt > 1:
             name += f'_attempt_{attempt:02d}'
-        output = self.evaluation / 'V_1_2' / 'official' / name
+        if training:
+            name = (f"{training['run_id']}__step{training['optimizer_step']:06d}"
+                    f'__task{task_index}__instance{instance:02d}__attempt{attempt:02d}')
+        output = self.evaluation / 'V_1_2' / role / name
         output.mkdir(parents=True, exist_ok=True)
         if any(output.iterdir()):
             raise ValueError('V1.2 验收输出必须是全新目录：' + str(output))
@@ -213,25 +250,33 @@ class LaunchManager:
         endpoint = dict(host=host, port=port, state='ready', version=v12_contracts.VERSION,
                         method='official', task_name='turning_on_radio', protocol=v12_contracts.B1K2026,
                         checkpoint_sha256=config['checkpoint_sha256'])
-        spec = v12_contracts.official_serve_spec(
-            python=config['python'], upstream=config['upstream'], checkpoint=config['checkpoint'],
-            host=host, port=port, gpu_index=gpu,
-            verified_radio_sha256=config['checkpoint_sha256'])
+        if training:
+            spec = v12_contracts.trained_serve_spec(
+                python=config['python'],upstream=config['upstream'],checkpoint=checkpoint,
+                host=host,port=port,gpu_index=gpu,task_index=task_index,
+                verified_sha256=request['checkpoint_sha256'])
+            endpoint.update(method='self_trained',task_name=task,
+                            checkpoint_sha256=spec['checkpoint_sha256'],training_identity=training)
+        else:
+            spec = v12_contracts.official_serve_spec(
+                python=config['python'], upstream=config['upstream'], checkpoint=config['checkpoint'],
+                host=host, port=port, gpu_index=gpu,
+                verified_radio_sha256=config['checkpoint_sha256'])
         spec['language'] = language
-        eval_spec = v12_contracts.official_eval_spec(
+        eval_spec = (v12_contracts.trained_eval_spec if training else v12_contracts.official_eval_spec)(
             python=config['behavior_python'], behavior_root=config['behavior_root'], output=output,
             endpoint=endpoint, instance=instance, rollouts=rollouts)
-        note = request.get('notes') or 'V1.2 / N1.7 / B1K2026：official radio, RTC off'
+        note = request.get('notes') or (None if training else 'V1.2 / N1.7 / B1K2026：official radio, RTC off')
         if not isinstance(note, str) or not 1 <= len(note) <= 200:
             raise ValueError('V1.2 notes 必须是 1–200 字符')
         plan = dict(kind='b1k2026_websocket', version=v12_contracts.VERSION,
-                    protocol=v12_contracts.B1K2026, task_id='turning_on_radio',
+                    protocol=v12_contracts.B1K2026, task_id=task, group=role,
                     instance=instance, rollouts=rollouts, output=str(output),
                     gpus=[gpu], gpu_index=gpu, instances={str(gpu): [instance]}, notes=note,
                     policy_identity=spec, evaluator=eval_spec,
                     source_revision=spec['source']['revision'],
                     checkpoint_sha256=spec['checkpoint_sha256'], rtc=False,
-                    official=True)
+                    official=not bool(training), model_role=role)
         plan.update(attempt=attempt, language=language)
         runner = self.root / 'evaluation/scripts/run_v12_b1k2026.py'
         argv = [str(config['behavior_python']), '-u', str(runner),

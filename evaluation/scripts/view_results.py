@@ -89,7 +89,9 @@ def restore_evaluation_jobs(manager, records):
     # Recover completed native runs from their original metadata when the
     # primary dashboard loads, without rewriting native results or history.
     known = {job['id'] for job in manager.jobs}
-    for path in sorted((manager.evaluation / 'V_1_2' / 'official').glob('*/job.json')):
+    native_paths = [p for group in ('official','self_trained')
+                    for p in (manager.evaluation / 'V_1_2' / group).glob('*/job.json')]
+    for path in sorted(native_paths):
         runner_path = path.with_name('runner.json')
         if not runner_path.is_file():
             continue
@@ -451,6 +453,9 @@ class Handler(BaseHTTPRequestHandler):
         managers=[]
         if device=='local':
             managers.extend([self.launch_manager,self.benchmark_manager])
+            local_training = (self.training_devices or {}).get('local')
+            if local_training is not None:
+                managers.append(local_training)
         else:
             managers.append((self.training_devices or {}).get(device))
             managers.append((self.inference_devices or {}).get(device))
@@ -1089,9 +1094,12 @@ class Handler(BaseHTTPRequestHandler):
             run = query.get('run', [''])[0]
             path = query.get('path', [''])[0]
             outputs = []
-            if re.fullmatch(r'public_test_instance_\d{2}(?:_attempt_\d{2})?', run):
+            from groot_web_launch import V12_TRAINED_RUN
+            if (re.fullmatch(r'public_test_instance_\d{2}(?:_attempt_\d{2})?', run)
+                    or re.fullmatch(V12_TRAINED_RUN, run)):
                 from groot_web_launch import v12_artifacts
-                root = (self.launch_manager.evaluation / 'V_1_2' / 'official').resolve()
+                group = 'self_trained' if run.startswith('v1_2__') else 'official'
+                root = (self.launch_manager.evaluation / 'V_1_2' / group).resolve()
                 output = (root / run).resolve()
                 if output.parent == root and path in {item['path'] for item in v12_artifacts(output)}:
                     outputs.append(output)
@@ -1540,6 +1548,8 @@ def main() -> int:
     except (OSError, ValueError) as error:
         parser.error(f"设备配置无效: {error}")
     Handler.training_devices={'a100':Handler.training_manager}
+    from v12_workbench import V12TrainingManager
+    Handler.training_devices['local'] = V12TrainingManager(EVALUATION_ROOT.parent)
     for key,device in devices.items():
         if key != 'a100':
             Handler.training_devices[key]=TrainingManager(EVALUATION_ROOT.parent,device['host'],key,device)

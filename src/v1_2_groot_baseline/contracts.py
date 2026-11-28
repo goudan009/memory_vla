@@ -109,7 +109,7 @@ def inspect_checkpoint(checkpoint, *, role):
     if role in ('generic','family_only'):
         # This is a family/schema check, not evidence of the pretrained origin.
         return result
-    if role != "official_2026_radio":
+    if role not in ("official_2026_radio", "trained_2026"):
         raise ValueError("checkpoint role not yet supported")
     modes = pc.get("modality_configs",{}).get("new_embodiment")
     if not modes or "new_embodiment" not in stats:
@@ -170,6 +170,13 @@ def checkpoint_digest(checkpoint):
 
 def official_serve_spec(*, python, upstream, checkpoint, host, port, gpu_index, verified_radio_sha256):
     """Native official reference process spec; never launches a service."""
+    return _native_serve_spec(python=python, upstream=upstream, checkpoint=checkpoint,
+        host=host, port=port, gpu_index=gpu_index, verified_sha256=verified_radio_sha256,
+        role='official_2026_radio', method='official', task='turning_on_radio')
+
+
+def _native_serve_spec(*, python, upstream, checkpoint, host, port, gpu_index,
+                       verified_sha256, role, method, task):
     python = executable(python)
     upstream, checkpoint = map(absolute, (upstream, checkpoint))
     if not python.is_file() or not isinstance(host,str) or not host.strip():
@@ -177,18 +184,18 @@ def official_serve_spec(*, python, upstream, checkpoint, host, port, gpu_index, 
     if type(port) is not int or not 1<=port<=65535 or type(gpu_index) is not int or gpu_index<0:
         raise ValueError("invalid workbench port/GPU")
     source = inspect_upstream(upstream)
-    identity = inspect_checkpoint(checkpoint,role="official_2026_radio")
+    identity = inspect_checkpoint(checkpoint,role=role)
     actual=checkpoint_digest(checkpoint)
     # A local Agent must establish this digest from the actual official
     # download and archive its provenance. Matching modality alone cannot
     # distinguish a radio checkpoint from any other R1Pro task.
-    if actual!=verified_radio_sha256:
-        raise ValueError("official radio download identity mismatch")
+    if actual!=verified_sha256:
+        raise ValueError("checkpoint download identity mismatch")
     argv = [str(python),"-u",str(upstream/"scripts/b1k/serve_b1k.py"),
             "--model-path",str(checkpoint),"--modality-config-path",str(upstream/"examples/b1k/r1pro.py"),
             "--embodiment-tag","NEW_EMBODIMENT","--device","cuda","--control-mode","temporal_ensemble",
             "--host",host,"--port",str(port)]
-    return dict(version=VERSION,method="official",task_name="turning_on_radio",protocol=B1K2026,
+    return dict(version=VERSION,method=method,task_name=task,protocol=B1K2026,
                 source=source,checkpoint=identity,checkpoint_sha256=actual,argv=argv,cwd=str(upstream),
                 env={"PYTHONPATH":str(upstream),"CUDA_VISIBLE_DEVICES":str(gpu_index),
                      "PYTHONNOUSERSITE":"1","PYTHONDONTWRITEBYTECODE":"1",
@@ -201,15 +208,22 @@ def official_serve_spec(*, python, upstream, checkpoint, host, port, gpu_index, 
 
 def official_eval_spec(*, python, behavior_root, output, endpoint, instance, rollouts):
     """Native 2026 evaluator. Output must already be allocated by workbench."""
+    if endpoint.get('task_name') != 'turning_on_radio' or endpoint.get('method') != 'official':
+        raise ValueError('must bind a verified ready official 2026 radio service')
+    return _native_eval_spec(python=python,behavior_root=behavior_root,output=output,
+                             endpoint=endpoint,instance=instance,rollouts=rollouts)
+
+
+def _native_eval_spec(*, python, behavior_root, output, endpoint, instance, rollouts):
     python = executable(python)
     behavior_root, output = map(absolute, (behavior_root, output))
     if not python.is_file() or not behavior_root.is_dir():
         raise ValueError("separate B1K2026 environment/source required")
     if not output.is_dir() or any(output.iterdir()):
         raise ValueError("expected fresh workbench-reserved evaluation output")
-    if endpoint.get("protocol")!=B1K2026 or endpoint.get("task_name")!="turning_on_radio" or endpoint.get("state")!="ready":
+    if endpoint.get("protocol")!=B1K2026 or endpoint.get("state")!="ready":
         raise ValueError("must bind a verified ready official 2026 radio service")
-    if endpoint.get("version")!=VERSION or endpoint.get("method")!="official" or not re.fullmatch(r"[0-9a-f]{64}",str(endpoint.get("checkpoint_sha256",""))):
+    if endpoint.get("version")!=VERSION or not re.fullmatch(r"[0-9a-f]{64}",str(endpoint.get("checkpoint_sha256",""))):
         raise ValueError("bind actual V1.2 official checkpoint hash before evaluation")
     if not isinstance(endpoint.get("host"),str) or not endpoint["host"].strip() or type(endpoint.get("port")) is not int or not 1<=endpoint["port"]<=65535:
         raise ValueError("invalid observed policy endpoint")
@@ -217,12 +231,71 @@ def official_eval_spec(*, python, behavior_root, output, endpoint, instance, rol
         raise ValueError("explicit public-test index and rollout budget required")
     # Local pinned evaluator version and flags must be checked during the
     # workbench preflight (not assumed equivalent to 2025).
-    return dict(version=VERSION,group="official",task_name="turning_on_radio",
+    return dict(version=VERSION,group=endpoint['method'],task_name=endpoint['task_name'],
                 protocol=B1K2026,output=str(output),instance_indices=[instance],
                 num_rollouts=rollouts,num_envs=1,policy_identity=dict(endpoint),
                 argv=[str(python),"-m","omnigibson.eval.eval",
-                      "--task-name","turning_on_radio","--mode","public_test",
+                      "--task-name",endpoint['task_name'],"--mode","public_test",
                       "--instance-indices",str(instance),"--num-rollouts",str(rollouts),"--num-envs","1",
                       "--host",str(endpoint["host"]),"--port",str(endpoint["port"]),
                       "--output-dir",str(output),"--write-video"],
                 cwd=str(behavior_root),control_mode="temporal_ensemble",rtc=False)
+
+
+TRAINING_STATE_FILES = ('optimizer.pt', 'scheduler.pt', 'rng_state.pth',
+                        'trainer_state.json', 'dataset_state.json')
+
+
+def file_sha256(path):
+    value = hashlib.sha256()
+    with Path(path).open('rb') as stream:
+        for chunk in iter(lambda: stream.read(1024 * 1024), b''):
+            value.update(chunk)
+    return value.hexdigest()
+
+
+def inspect_training_checkpoint(checkpoint):
+    """Validate a published checkpoint, including optimizer/data state integrity."""
+    checkpoint = absolute(checkpoint)
+    identity = read(checkpoint / 'b1k2026_training.json')
+    if (identity.get('version') != VERSION or identity.get('benchmark') != 'b1k2026'
+            or identity.get('complete') is not True or identity.get('parameter_update_verified') is not True
+            or not re.fullmatch(r'v1_2__test\d{2}__exp\d{2}__run[0-9]{3,}', identity.get('run_id', ''))
+            or type(identity.get('optimizer_step')) is not int or identity['optimizer_step'] < 1
+            or identity.get('source_revision') != FORK_REVISION):
+        raise ValueError('incomplete or inconsistent self-trained checkpoint identity')
+    if not identity.get('tasks') or not set(identity['tasks']) <= {0,40}:
+        raise ValueError('self-trained task whitelist missing or unsupported')
+    inspect_checkpoint(checkpoint, role='trained_2026')
+    if checkpoint_digest(checkpoint) != identity.get('checkpoint_sha256'):
+        raise ValueError('self-trained checkpoint hash mismatch')
+    for name in TRAINING_STATE_FILES:
+        if file_sha256(checkpoint / name) != identity.get('training_state_sha256', {}).get(name):
+            raise ValueError('training state hash mismatch: ' + name)
+    if read(checkpoint / 'trainer_state.json')['global_step'] != identity['optimizer_step']:
+        raise ValueError('checkpoint optimizer step mismatch')
+    return identity
+
+
+def trained_serve_spec(*, python, upstream, checkpoint, host, port, gpu_index,
+                       task_index, verified_sha256):
+    from .b1k2026_data import TASKS
+    identity = inspect_training_checkpoint(checkpoint)
+    if task_index not in identity['tasks']:
+        raise ValueError('requested task was not in this training manifest')
+    spec = _native_serve_spec(python=python,upstream=upstream,checkpoint=checkpoint,
+        host=host,port=port,gpu_index=gpu_index,verified_sha256=verified_sha256,
+        role='trained_2026',method='self_trained',task=TASKS[task_index])
+    spec['training_identity'] = identity
+    return spec
+
+
+def trained_eval_spec(*, python, behavior_root, output, endpoint, instance, rollouts):
+    from .b1k2026_data import TASKS
+    identity = endpoint.get('training_identity', {})
+    if (endpoint.get('method') != 'self_trained' or not identity.get('complete')
+            or endpoint.get('task_name') not in [TASKS[i] for i in identity.get('tasks', []) if i in TASKS]
+            or endpoint.get('checkpoint_sha256') != identity.get('checkpoint_sha256')):
+        raise ValueError('must bind the exact self-trained task/checkpoint identity')
+    return _native_eval_spec(python=python,behavior_root=behavior_root,output=output,
+                             endpoint=endpoint,instance=instance,rollouts=rollouts)

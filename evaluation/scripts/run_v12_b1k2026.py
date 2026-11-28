@@ -115,6 +115,15 @@ def main():
         raise ValueError("evaluator output does not match workbench allocation")
     if serve.get("protocol") != "b1k2026_websocket" or evaluate.get("protocol") != "b1k2026_websocket":
         raise ValueError("V1.2 runner only accepts the native B1K-2026 protocol")
+    # Recheck the submitted identity immediately before loading GPU weights.
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2] / 'src'))
+    from v1_2_groot_baseline.contracts import checkpoint_digest, inspect_training_checkpoint
+    checkpoint = serve['checkpoint']['path']
+    if checkpoint_digest(checkpoint) != serve['checkpoint_sha256']:
+        raise ValueError('checkpoint changed after workbench preview')
+    if serve.get('method') == 'self_trained':
+        if inspect_training_checkpoint(checkpoint) != serve['training_identity']:
+            raise ValueError('self-trained checkpoint identity changed after preview')
 
     (output / "server.log").touch()
     (output / "evaluator.log").touch()
@@ -177,7 +186,7 @@ def main():
     try:
         server_argv = list(serve['argv'])
         language = serve.get('language', {})
-        if language.get('mode') == 'task_description':
+        if language.get('mode') in ('task_description', 'native_tasks'):
             script = str(Path(serve['cwd']) / 'scripts/b1k/serve_b1k.py')
             if server_argv[1:3] != ['-u', script]:
                 raise ValueError('unexpected V1.2 official server script')
