@@ -1,5 +1,13 @@
 # V1.2 Progress
 
+## 2026-11-28 - register_identity / separate_native_routes / verify_and_activate (v030)
+
+- User-confirmed identity: `benchmark=b1k2026`, baseline family `V0`, concrete version `V0_0` (API `V_0_0`, run prefix `v0_0`). V0 minor versions may distinguish code and training-parameter tests, but are not allocated automatically. Replaced the unfinished V_0 registration with V_0_0; V0 alone cannot identify a training run.
+- New training/checkpoint/serve/evaluation records carry the concrete version and benchmark; new evaluation outputs are under `evaluation/b1k2026/V_0_0/`, training remains under the independent `training/b1k2026/` namespace. Explicit other-benchmark requests are rejected. Existing V1.2 native results keep their original identity/path and remain readable; no 2025 history is renamed or moved. The legacy frontend V_1_2 evaluation input remains a documented compatibility alias to the native route, whose new output records use V_0_0.
+- Verification: 42 targeted checks passed / 8 environment-specific skips in the system interpreter; all 9 training-chain CPU checks passed in the pinned N1.7 interpreter, including the native sampler/cursor, statistics, split and configuration checks. These use fixtures and do not constitute GPU training or real-data training-split acceptance.
+- Live preactivation audit: 302 evaluation jobs and 36 Benchmark jobs are terminal; local 2026 training jobs=0. A100 inference has 99 stopped / 5 failed records; A100 training has 9 completed / 6 cancelled / 1 paused. GPU activity from other workloads is retained. Existing 8765 service uses `KillMode=process`.
+- `training_chain_continuation` remains pending the exact engineering recipe and explicit training namespace/allocation authorization described in [the updated reviewable four-step proposal](engineering-acceptance-v029.md). Version naming is approved; data split, frozen modules, effective Batch and the proposed two-rollout budget have not been confirmed. No GPU training/rollout was submitted for the identity change; formal training remains disabled.
+
 ## 2026-11-28 - native_contract / dataset_preparation / training_controller / launch_gate (v029)
 
 - Status: PARTIAL. Plan [v029](workflow/plan-v029.json), continuing the user's full training-chain request. This phase implements actual workers/controllers behind existing workbench routes; it does not claim GPU acceptance. No formal training, V2.2, frontend or other Benchmark runtime changes. Existing dirty `registry_storage.py` belongs to the user and is excluded from commits.

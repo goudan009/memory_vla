@@ -26,6 +26,7 @@ Finish environment commissioning, native B1K-2026 workbench integration, and one
 
 2026-11-28 outcome: native environment / official checkpoint transport / primary workbench acceptance completed. Both the unchanged-default and corrected-task-language radio trials finished normally but failed the task (each 0/1, Q-score 0). Confirmed old V2.1/Exp13 automatic supervisors were disabled/stopped after native runtime acceptance; historical resources remain. Full task-performance and training readiness are not accepted; no formal training was submitted. See [acceptance report](acceptance-2026-11-28.md).
 
-- Latest plan: [plan-v028.json](workflow/plan-v028.json), the bounded backend/data acceptance follow-up to plan-v027. Full training and self-trained closed-loop acceptance remain pending.
+- Current user-approved naming: `benchmark=b1k2026`, baseline family `V0`, concrete version `V0_0` (`V_0_0` in APIs, `v0_0` in run IDs). Future V0 minor versions may distinguish code/parameter tests when explicitly registered. Preserve historical V1.2 and 2025 records under their original identities.
+- Latest plan: [plan-v030.json](workflow/plan-v030.json), continuing [training-chain plan v029](workflow/plan-v029.json) under the user-defined V0_0 identity. Full training and self-trained closed-loop acceptance remain pending; [the proposed engineering recipe](engineering-acceptance-v029.md) still needs confirmation of recipe and training identity allocation.
 - Prior Task40 audit: [local-preflight-2026-11-27.md](local-preflight-2026-11-27.md)
 - Progress: [progress.md](progress.md)

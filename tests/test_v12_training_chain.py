@@ -171,6 +171,17 @@ class SplitTest(unittest.TestCase):
 
 
 class ManagerTest(unittest.TestCase):
+    def test_current_training_identity_rejects_other_benchmarks_before_resource_checks(self):
+        from v12_workbench import V12TrainingManager
+        with tempfile.TemporaryDirectory() as directory:
+            manager=V12TrainingManager(directory)
+            request={key:None for key in ('base_checkpoint','base_sha256','data_manifest','finetune',
+                'gpu_index','seed','gradient_checkpointing','minimum_free_mib')}
+            request.update(version='V0_0',run_id='v0_0__test99__exp99__run999',benchmark='b1k',
+                           engineering_only=True,initiator='agent',notes='V0_0 engineering')
+            with self.assertRaisesRegex(ValueError,'exclusively'):
+                manager.prepare(request)
+
     def test_missing_request_is_a_validation_error(self):
         from v12_workbench import V12TrainingManager
         with tempfile.TemporaryDirectory() as directory:

@@ -25,6 +25,9 @@ from run_identity import canonical_version
 
 V12_TRAINED_RUN = (r'v1_2__test\d{2}__exp\d{2}__run\d{3,}__step\d{6,}'
                    r'__task(?:0|40)__instance\d{2}__attempt\d{2}')
+B1K2026_V0_TRAINED_RUN = (r'v0_0__test\d{2}__exp\d{2}__run\d{3,}__step\d{6,}'
+                         r'__task(?:0|40)__instance\d{2}__attempt\d{2}')
+B1K2026_V0_OFFICIAL_RUN = r'b1k2026__v0_0__official__instance\d{2}__attempt\d{2}'
 
 
 TASK40_EXPERIMENT_KINDS = ('task40_collect', 'task40_forward')
@@ -132,8 +135,11 @@ class LaunchManager:
                                              if p.is_dir() and not p.name.startswith("."))
         return {"tasks": [{"id": task, "name": name} for task, name in TASK_NAMES.items()],
                 "versions": versions, "evaluation_root": str(evaluation),
-                "model_versions": {"V_1_2": b1k2026_capabilities.options(
-                    self.root, evaluation, self._v12_config(), self._v12_paths_ready())},
+                "model_versions": {key: b1k2026_capabilities.options(
+                    self.root, evaluation, self._v12_config(), self._v12_paths_ready())
+                    for key in (v12_contracts.B1K2026_VERSION, 'V_1_2')},
+                "b1k2026_version": v12_contracts.B1K2026_VERSION,
+                "version_input_aliases": {'V_1_2': v12_contracts.B1K2026_VERSION},
                 "task40_collect": {"sim_slots": {str(gpu): 2 for gpu in (0, 1)
                     if (self.task40_experiment / 'metrics' / f'dual_gpu{gpu}_validated.json').is_file()}}}
 
@@ -167,12 +173,14 @@ class LaunchManager:
         allowed = {'version', 'protocol', 'task', 'instance', 'rollouts', 'gpu_index',
                    'policy_host', 'policy_port', 'run_tag', 'notes', 'record_video',
                    'wait_for_gpu', 'attempt', 'language_mode', 'model_role', 'checkpoint',
-                   'checkpoint_sha256', 'engineering_only'}
+                   'checkpoint_sha256', 'engineering_only', 'benchmark'}
         unknown = set(request) - allowed
         if unknown:
             raise ValueError('V1.2 不支持的启动参数：' + ', '.join(sorted(unknown)))
-        if canonical_version(request.get('version')) != v12_contracts.VERSION:
-            raise ValueError('V1.2 请求必须显式使用 V_1_2')
+        if canonical_version(request.get('version')) not in (v12_contracts.B1K2026_VERSION, 'V_1_2'):
+            raise ValueError('B1K-2026 当前具体版本为 V0_0（V_0_0），V0 是 baseline 系列')
+        if request.get('benchmark', 'b1k2026') != 'b1k2026':
+            raise ValueError('V0_0 belongs exclusively to benchmark b1k2026')
         if request.get('protocol') != v12_contracts.B1K2026:
             raise ValueError('V1.2 必须使用原生 B1K-2026 WebSocket 协议')
         role = request.get('model_role', 'official')
@@ -235,19 +243,18 @@ class LaunchManager:
                 raise ValueError('Task0 任务语言元数据不匹配')
             language.update(text_prompt=radio[0]['task'], task_index=0,
                             metadata=str(metadata), metadata_sha256=hashlib.sha256(raw).hexdigest())
-        name = f'public_test_instance_{instance:02d}'
-        if attempt > 1:
-            name += f'_attempt_{attempt:02d}'
+        name = f'b1k2026__v0_0__official__instance{instance:02d}__attempt{attempt:02d}'
         if training:
             name = (f"{training['run_id']}__step{training['optimizer_step']:06d}"
                     f'__task{task_index}__instance{instance:02d}__attempt{attempt:02d}')
-        output = self.evaluation / 'V_1_2' / role / name
+        output = self.evaluation / 'b1k2026' / v12_contracts.B1K2026_VERSION / role / name
         output.mkdir(parents=True, exist_ok=True)
         if any(output.iterdir()):
             raise ValueError('V1.2 验收输出必须是全新目录：' + str(output))
         host = request.get('policy_host', '127.0.0.1')
         port = request.get('policy_port', 8000)
-        endpoint = dict(host=host, port=port, state='ready', version=v12_contracts.VERSION,
+        endpoint = dict(host=host, port=port, state='ready', version=v12_contracts.B1K2026_VERSION,
+                        benchmark='b1k2026',
                         method='official', task_name='turning_on_radio', protocol=v12_contracts.B1K2026,
                         checkpoint_sha256=config['checkpoint_sha256'])
         if training:
@@ -266,10 +273,12 @@ class LaunchManager:
         eval_spec = (v12_contracts.trained_eval_spec if training else v12_contracts.official_eval_spec)(
             python=config['behavior_python'], behavior_root=config['behavior_root'], output=output,
             endpoint=endpoint, instance=instance, rollouts=rollouts)
-        note = request.get('notes') or (None if training else 'V1.2 / N1.7 / B1K2026：official radio, RTC off')
+        note = request.get('notes') or (None if training else 'B1K-2026 / V0_0 / N1.7：official radio, RTC off')
         if not isinstance(note, str) or not 1 <= len(note) <= 200:
             raise ValueError('V1.2 notes 必须是 1–200 字符')
-        plan = dict(kind='b1k2026_websocket', version=v12_contracts.VERSION,
+        plan = dict(kind='b1k2026_websocket', version=v12_contracts.B1K2026_VERSION,
+                    benchmark='b1k2026', display_version=v12_contracts.B1K2026_DISPLAY_VERSION,
+                    method_family=v12_contracts.B1K2026_FAMILY,
                     protocol=v12_contracts.B1K2026, task_id=task, group=role,
                     instance=instance, rollouts=rollouts, output=str(output),
                     gpus=[gpu], gpu_index=gpu, instances={str(gpu): [instance]}, notes=note,
@@ -430,7 +439,7 @@ class LaunchManager:
             return self._task40_collect(request)
         if request.get('task40_forward') is True:
             return self._task40_forward(request)
-        if canonical_version(request.get('version')) == 'V_1_2':
+        if canonical_version(request.get('version')) in ('V_1_2', v12_contracts.B1K2026_VERSION):
             return self._v12_prepare(request)
         argv = self.argv(request)
         identity=None
@@ -443,7 +452,7 @@ class LaunchManager:
                 host,port=request.get('policy_host',saved_host),request.get('policy_port',int(saved_port))
             identity=self.policy_resolver(host,int(port))
             if identity:
-                if canonical_version(identity.get('version'))=='V_1_2' or identity.get('protocol')=='b1k2026_websocket':
+                if canonical_version(identity.get('version')) in ('V_1_2', v12_contracts.B1K2026_VERSION) or identity.get('protocol')=='b1k2026_websocket':
                     raise ValueError('N1.7 websocket service cannot be evaluated by the legacy B1K2025 runner')
                 group=request.get('group')
                 if not request.get('resume_from') and group in ('baseline','memory','official') and identity.get('method') and group!=identity['method']:
@@ -863,7 +872,7 @@ class LaunchManager:
                 archived = {}
             fields = ('official', 'rtc', 'attempt', 'instance', 'rollouts', 'protocol',
                       'language', 'checkpoint_sha256', 'source_revision', 'policy_identity',
-                      'notes', 'initiator')
+                      'notes', 'initiator', 'display_version', 'method_family')
             for key in fields:
                 status[key] = plan.get(key) if plan.get(key) is not None else archived.get(key)
             status['artifacts'] = v12_artifacts(output)

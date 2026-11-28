@@ -2,13 +2,15 @@
 
 状态：实现与 CPU 接口验证已完成，尚未提交 GPU 训练。此文件是可审阅的建议，不是已获批准的实验任务书或正式训练配置。计划见 [v029](workflow/plan-v029.json)。
 
+2026-11-28 命名更新：用户已确认 `benchmark=b1k2026`、baseline 系列 `V0`、当前具体版本 `V0_0`（接口规范值 `V_0_0`，run 前缀 `v0_0`）。V0 的后续小版本可用于代码或训练参数对照，但不自动登记新版本。本文件以下建议配方尚待确认；命名确认不改动历史作业，也不代表启动正式训练。
+
 目标是验证通用 GR00T N1.7 → 2026 示教 → 参数更新 → 完整 checkpoint → 暂停释放进程 → 同 run 恢复 → 自训练权重推理 → 原生仿真 JSON / 视频。4步只能验收工程链路，不能检验任务学习效果。正式训练预算仍为0，不开发 V2.2，不修改其他 Benchmark 或前端。
 
 ## 建议的唯一实跑配方
 
 | 项目 | 待确认值 |
 | --- | --- |
-| 方法 | 已登记的 `V_1_2`，原生无记忆，无新增网络或技能监督 |
+| 方法 | 已登记的 `V0_0`（`V_0_0`），属于2026的 `V0` baseline 系列；原生无记忆，无新增网络或技能监督 |
 | 身份 | 用户指定 test / experiment / run，或明确授权 Agent 查重后分配未使用编号；当前为空，不猜编号 |
 | 初始权重 | `/nvme3/models/GR00T-N1.7-3B`；实体摘要 `6f381d7c9916112261c5d910ed1a54668c816fa3fb83b45ceef714f9b2b8546d` |
 | 上游 | `/nvme3/projects/GR00T/Isaac-GR00T-n1d7-ace36d9`，revision `ace36d935b376fbf25cd56371e23877b95407c40` |
@@ -28,7 +30,7 @@
 | 闭环 | 最终step4权重：Task0 public-test index18、Task40 index0，各1回合，分别独立服务/产物；共2回合 |
 | 仿真 | 已有 post2 / IsaacSim5.1 环境，WebSocket、temporal ensemble、RTC off；官方原生超时与成功/Q-score判据 |
 | 终止 | 4步完成且两回合有有效原生产物；NaN、无参数更新、状态缺失或 OOM 时记录失败并停止该工程作业，不改冻结范围/Batch冒充通过 |
-| 简短备注 | 训练「V1.2 / N1.7：2026原生4步工程验收」；评估「V1.2 / N1.7：自训练工程权重，RTC off」 |
+| 简短备注 | 训练「V0_0 / N1.7：2026原生4步工程验收」；评估「V0_0 / N1.7：2026自训练工程权重，RTC off」 |
 
 ## 现有工作台接口
 
@@ -38,9 +40,9 @@
 
 状态与证据沿用 `GET /api/training/jobs|detail|evidence?device=local`。暂停经既有 `POST /api/training/pause`；恢复经 `/api/training/resume`，先 `preview=true`，再false，保留原run、配方、代码摘要、完整训练状态与累计step。
 
-自训练评估仍走 `POST /api/launch/preview` → `/start`，使用 `version=V_1_2`、`protocol=b1k2026_websocket`、`model_role=self_trained`、`engineering_only=true`、checkpoint、checkpoint_sha256、task、instance、rollouts1、gpu_index、policy_host/port、record_video和notes。必须是本工作台发布的完整2026 checkpoint，任务属于训练清单，语言与训练一致。官方默认仍固定radio权重和Task0。
+自训练评估仍走 `POST /api/launch/preview` → `/start`，使用 `benchmark=b1k2026`、`version=V_0_0`、`protocol=b1k2026_websocket`、`model_role=self_trained`、`engineering_only=true`、checkpoint、checkpoint_sha256、task、instance、rollouts1、gpu_index、policy_host/port、record_video和notes。必须是本工作台发布的完整2026 checkpoint，任务属于训练清单，语言与训练一致。官方默认仍固定radio权重和Task0。
 
-产物位于 `evaluation/V_1_2/self_trained/<run>__stepNNNNNN__taskN__instanceNN__attemptNN/`，沿用原生 `json/`、`videos/`、job/runner与日志。jobs提供 benchmark、policy identity、native_episode_keys / native_metrics及原产物URL；JSON、MP4与标注仍走公共已有接口。不生成假的旧 `results.json`。
+新训练位于 `training/b1k2026/v0_0__testNN__expNN__runNNN/`。新评估产物位于 `evaluation/b1k2026/V_0_0/self_trained/<run>__stepNNNNNN__taskN__instanceNN__attemptNN/`，沿用原生 `json/`、`videos/`、job/runner与日志。jobs提供 benchmark、版本/系列、policy identity、native_episode_keys / native_metrics及原产物URL；JSON、MP4与标注仍走公共已有接口。历史 `evaluation/V_1_2` 只按原身份读取，不移动或重写。
 
 ## 已验证与未验证
 

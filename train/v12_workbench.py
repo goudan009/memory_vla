@@ -18,7 +18,8 @@ import zipfile
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'src'))
 from run_identity import validate_run_identity, MODEL_VERSIONS
 from v1_2_groot_baseline.contracts import (inspect_upstream, inspect_checkpoint, checkpoint_digest,
-                                         inspect_training_checkpoint)
+                                         inspect_training_checkpoint, B1K2026_VERSION,
+                                         B1K2026_DISPLAY_VERSION, B1K2026_FAMILY)
 from v1_2_groot_baseline.b1k2026_training_data import digest
 
 FINETUNE_REQUIRED = {'tune_llm', 'tune_visual', 'tune_projector', 'tune_diffusion_model',
@@ -65,7 +66,8 @@ class V12TrainingManager:
 
     def options(self):
         return dict(device_id='local', device_label=self.label, benchmark='b1k2026',
-            model_versions={}, registered_model_versions={'V_1_2': MODEL_VERSIONS['V_1_2']},
+            model_versions={}, registered_model_versions={B1K2026_VERSION: MODEL_VERSIONS[B1K2026_VERSION]},
+            version=B1K2026_VERSION, display_version=B1K2026_DISPLAY_VERSION, method_family=B1K2026_FAMILY,
             formal_training_available=False, engineering_training_verified=False,
             reason='工程训练、保存重载、严格恢复及自训练闭环尚待真实验收；仅接受显式 engineering 请求',
             python_path=str(self.python), upstream=str(self.upstream), gpus=gpu_info(),
@@ -78,15 +80,18 @@ class V12TrainingManager:
     def prepare(self, request):
         allowed = {'version','run_id','initiator','notes','engineering_only','base_checkpoint','base_sha256',
                    'data_manifest','finetune','gpu_index','seed','gradient_checkpointing','minimum_free_mib',
-                   'pause_after_steps'}
+                   'pause_after_steps','benchmark'}
         if not isinstance(request, dict) or set(request) - allowed:
             raise ValueError('unsupported B1K-2026 training fields')
-        if (allowed - {'pause_after_steps'}) - request.keys():
+        if (allowed - {'pause_after_steps','benchmark'}) - request.keys():
             raise ValueError('explicit B1K-2026 training fields required: ' +
-                             ','.join(sorted((allowed - {'pause_after_steps'}) - request.keys())))
+                             ','.join(sorted((allowed - {'pause_after_steps','benchmark'}) - request.keys())))
         identity = validate_run_identity(request.get('run_id'), request.get('version'))
-        if identity['model_version'] != 'V_1_2' or request.get('engineering_only') is not True:
-            raise ValueError('only explicit V_1_2 engineering training is enabled; no formal training')
+        if identity['model_version'] != B1K2026_VERSION or request.get('engineering_only') is not True:
+            raise ValueError('only B1K-2026 V0_0 engineering training is enabled; no formal training')
+        if request.get('benchmark', 'b1k2026') != 'b1k2026':
+            raise ValueError('V0_0 belongs exclusively to benchmark b1k2026')
+        request = dict(request, version=B1K2026_VERSION, benchmark='b1k2026')
         if request.get('initiator') not in ('agent', 'user') or not isinstance(request.get('notes'), str) or not request['notes'].strip():
             raise ValueError('explicit initiator and concise version notes required')
         if not 1 <= len(request['notes']) <= 200:
@@ -149,7 +154,8 @@ class V12TrainingManager:
             'import sys;from v1_2_groot_baseline.b1k2026_training_data import verify_manifest;verify_manifest(sys.argv[1])',
             str(manifest_path)], env={**os.environ,'PYTHONPATH':str(self.root / 'src')}, timeout=120)
         recipe_hash = hashlib.sha256(json.dumps(request, sort_keys=True).encode()).hexdigest()
-        return dict(version='V_1_2', benchmark='b1k2026', run_id=request['run_id'], request=request,
+        return dict(version=B1K2026_VERSION, display_version=B1K2026_DISPLAY_VERSION,
+            method_family=B1K2026_FAMILY, benchmark='b1k2026', run_id=request['run_id'], request=request,
             output=str(job), python=str(self.python), upstream=str(self.upstream), source_revision=source['revision'],
             gpu=gpu, data_manifest_sha256=digest(manifest_path), recipe_sha256=recipe_hash,
             tasks=manifest['views']['train']['tasks'], optimizer_steps=ft['max_steps'],
@@ -195,14 +201,16 @@ class V12TrainingManager:
                     bool(worker.get('process_start')) and process_token(worker.get('pid')) == worker['process_start'])
             if not live and state['state'] in ('starting','running'):
                 state = dict(state, state='failed', error='worker exited before final state')
-            jobs.append(dict(id=plan['run_id'], run=plan['run_id'], benchmark='b1k2026', version='V_1_2', arm='baseline',
+            jobs.append(dict(id=plan['run_id'], run=plan['run_id'], benchmark='b1k2026',
+                version=plan.get('version', 'V_1_2'), display_version=plan.get('display_version'),
+                method_family=plan.get('method_family'), arm='baseline',
                 output=str(marker.parent), gpu_index=plan['request']['gpu_index'], notes=plan['request']['notes'],
                 worker_alive=live, **state))
         return dict(jobs=jobs)
 
     def _job(self, request):
         run = request.get('run', request.get('run_id'))
-        validate_run_identity(run, 'V_1_2')
+        validate_run_identity(run, B1K2026_VERSION)
         root = self.training / run
         plan = json.loads((root / 'job.json').read_text())
         if plan['run_id'] != run:

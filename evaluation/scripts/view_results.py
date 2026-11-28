@@ -20,7 +20,7 @@ import webbrowser
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from groot_live_preview import read_preview, subscribe
-from groot_web_launch import LaunchManager, TASK40_DEFAULT_EXPERIMENT, TASK40_NEXT_EXPERIMENT, task40_artifacts
+from groot_web_launch import LaunchManager, TASK40_DEFAULT_EXPERIMENT, TASK40_NEXT_EXPERIMENT, task40_artifacts, v12_contracts
 from groot_inference_launch import InferenceManager
 import vlm_diagnosis
 import experiment_registry
@@ -91,6 +91,8 @@ def restore_evaluation_jobs(manager, records):
     known = {job['id'] for job in manager.jobs}
     native_paths = [p for group in ('official','self_trained')
                     for p in (manager.evaluation / 'V_1_2' / group).glob('*/job.json')]
+    native_paths.extend(p for group in ('official','self_trained')
+                        for p in (manager.evaluation / 'b1k2026' / v12_contracts.B1K2026_VERSION / group).glob('*/job.json'))
     for path in sorted(native_paths):
         runner_path = path.with_name('runner.json')
         if not runner_path.is_file():
@@ -1094,8 +1096,15 @@ class Handler(BaseHTTPRequestHandler):
             run = query.get('run', [''])[0]
             path = query.get('path', [''])[0]
             outputs = []
-            from groot_web_launch import V12_TRAINED_RUN
-            if (re.fullmatch(r'public_test_instance_\d{2}(?:_attempt_\d{2})?', run)
+            from groot_web_launch import V12_TRAINED_RUN, B1K2026_V0_TRAINED_RUN, B1K2026_V0_OFFICIAL_RUN
+            if re.fullmatch(B1K2026_V0_TRAINED_RUN, run) or re.fullmatch(B1K2026_V0_OFFICIAL_RUN, run):
+                from groot_web_launch import v12_artifacts
+                group = 'self_trained' if run.startswith('v0_0__') else 'official'
+                root = (self.launch_manager.evaluation / 'b1k2026' / v12_contracts.B1K2026_VERSION / group).resolve()
+                output = (root / run).resolve()
+                if output.parent == root and path in {item['path'] for item in v12_artifacts(output)}:
+                    outputs.append(output)
+            elif (re.fullmatch(r'public_test_instance_\d{2}(?:_attempt_\d{2})?', run)
                     or re.fullmatch(V12_TRAINED_RUN, run)):
                 from groot_web_launch import v12_artifacts
                 group = 'self_trained' if run.startswith('v1_2__') else 'official'

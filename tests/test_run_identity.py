@@ -9,6 +9,20 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'train'))
 import run_identity as identity
 
 
+@pytest.mark.parametrize('alias', ['V0_0', 'V_0_0', 'v0_0'])
+def test_b1k2026_baseline_has_a_concrete_version_and_separate_family(alias):
+    fields = identity.validate_run_identity('v0_0__test03__exp01__run001', alias)
+    assert fields['model_version'] == 'V_0_0'
+    version = identity.MODEL_VERSIONS[fields['model_version']]
+    assert version['benchmark'] == 'b1k2026'
+    assert version['family'] == 'V0'
+    assert version['display_name'] == 'V0_0'
+    with pytest.raises(ValueError, match='登记'):
+        identity.registered_version('V0')
+    with pytest.raises(ValueError, match='版本'):
+        identity.validate_run_identity('v1__test03__exp01__run001', alias)
+
+
 def test_unknown_version_cannot_create_an_experiment_version():
     with pytest.raises(ValueError, match='登记'):
         identity.training_base('V_12', 40, 'memory')

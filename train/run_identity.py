@@ -7,6 +7,9 @@ NAMING_SCHEMA = 'groot-runs-v3'
 # Register a method version only after its scientific meaning is agreed with
 # the user. Registration does not authorize training or change a recipe.
 MODEL_VERSIONS = {
+    'V_0_0': dict(prefix='v0_0', backend='b1k2026', benchmark='b1k2026', display_name='V0_0',
+                  family='V0', description='B1K-2026 / V0_0：GR00T N1.7 原生无记忆基线；V0 系列允许代码及训练参数小版本对照',
+                  launch_ready=False),
     'V_1': dict(prefix='v1', backend='v1', description='V1 方法及其已记录的历史适配'),
     'V_2': dict(prefix='v2', backend='v1', description='历史 V2；新任务仍须锁定具体方法配置'),
     'V_2_1': dict(prefix='v2_1', backend='v2_1', description='V2.1 方法；使用专用训练入口'),

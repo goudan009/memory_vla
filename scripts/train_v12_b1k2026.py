@@ -209,7 +209,8 @@ def train(job, resume_checkpoint=None):
             required = ['optimizer.pt', 'scheduler.pt', 'rng_state.pth', 'trainer_state.json', 'processor_config.json', 'statistics.json']
             if any(not (checkpoint / name).is_file() for name in required):
                 raise RuntimeError('native checkpoint is missing complete training state')
-            identity = dict(benchmark='b1k2026', version='V_1_2', run_id=request['run_id'],
+            identity = dict(benchmark='b1k2026', version=plan['version'], display_version=plan['display_version'],
+                method_family=plan['method_family'], run_id=request['run_id'],
                 optimizer_step=state.global_step, tasks=manifest['views']['train']['tasks'],
                 source_revision=plan['source_revision'], base_sha256=request['base_sha256'],
                 adapter_source_sha256=plan['adapter_source_sha256'],

@@ -4,7 +4,8 @@ import json
 from pathlib import Path
 import subprocess
 
-from .contracts import B1K2026, inspect_upstream
+from .contracts import (B1K2026, B1K2026_VERSION, B1K2026_DISPLAY_VERSION,
+                        B1K2026_FAMILY, inspect_upstream)
 
 
 def read(path):
@@ -83,7 +84,9 @@ def options(repo, evaluation, config, paths_ready):
         'multi_environment': dict(available=False, reason='当前只验收单环境、单回合'),
         'live_camera': dict(available=False, reason='没有实时采集端验收；现有视频为回合录像'),
     }
-    return dict(protocol=B1K2026, task='turning_on_radio', launch_ready=ready,
+    return dict(benchmark='b1k2026', version=B1K2026_VERSION,
+                display_version=B1K2026_DISPLAY_VERSION, method_family=B1K2026_FAMILY,
+                protocol=B1K2026, task='turning_on_radio', launch_ready=ready,
                 environment_present=paths_ready, reason=reason, capabilities=capabilities,
                 verified_job_ids=jobs, task_performance_accepted=False,
                 task_catalog_source=str(catalog_path), task_catalog=tasks,

@@ -12,6 +12,11 @@ import subprocess
 from pathlib import Path
 
 VERSION = "V_1_2"
+# VERSION remains the historical identity imported by the retired 2025 candidates.
+# New native 2026 jobs use the user's concrete version within the V0 family.
+B1K2026_VERSION = "V_0_0"
+B1K2026_DISPLAY_VERSION = "V0_0"
+B1K2026_FAMILY = "V0"
 FORK_URL = "https://github.com/wensi-ai/Isaac-GR00T"
 FORK_REVISION = "ace36d935b376fbf25cd56371e23877b95407c40"
 MODEL_ID = "nvidia/GR00T-N1.7-3B"
@@ -195,7 +200,9 @@ def _native_serve_spec(*, python, upstream, checkpoint, host, port, gpu_index,
             "--model-path",str(checkpoint),"--modality-config-path",str(upstream/"examples/b1k/r1pro.py"),
             "--embodiment-tag","NEW_EMBODIMENT","--device","cuda","--control-mode","temporal_ensemble",
             "--host",host,"--port",str(port)]
-    return dict(version=VERSION,method=method,task_name=task,protocol=B1K2026,
+    return dict(version=B1K2026_VERSION,benchmark='b1k2026',display_version=B1K2026_DISPLAY_VERSION,
+                method_family=B1K2026_FAMILY,
+                method=method,task_name=task,protocol=B1K2026,
                 source=source,checkpoint=identity,checkpoint_sha256=actual,argv=argv,cwd=str(upstream),
                 env={"PYTHONPATH":str(upstream),"CUDA_VISIBLE_DEVICES":str(gpu_index),
                      "PYTHONNOUSERSITE":"1","PYTHONDONTWRITEBYTECODE":"1",
@@ -223,7 +230,9 @@ def _native_eval_spec(*, python, behavior_root, output, endpoint, instance, roll
         raise ValueError("expected fresh workbench-reserved evaluation output")
     if endpoint.get("protocol")!=B1K2026 or endpoint.get("state")!="ready":
         raise ValueError("must bind a verified ready official 2026 radio service")
-    if endpoint.get("version")!=VERSION or not re.fullmatch(r"[0-9a-f]{64}",str(endpoint.get("checkpoint_sha256",""))):
+    if endpoint.get('benchmark', 'b1k2026') != 'b1k2026':
+        raise ValueError('native endpoint belongs exclusively to benchmark b1k2026')
+    if endpoint.get("version") not in (B1K2026_VERSION, VERSION) or not re.fullmatch(r"[0-9a-f]{64}",str(endpoint.get("checkpoint_sha256",""))):
         raise ValueError("bind actual V1.2 official checkpoint hash before evaluation")
     if not isinstance(endpoint.get("host"),str) or not endpoint["host"].strip() or type(endpoint.get("port")) is not int or not 1<=endpoint["port"]<=65535:
         raise ValueError("invalid observed policy endpoint")
@@ -231,7 +240,7 @@ def _native_eval_spec(*, python, behavior_root, output, endpoint, instance, roll
         raise ValueError("explicit public-test index and rollout budget required")
     # Local pinned evaluator version and flags must be checked during the
     # workbench preflight (not assumed equivalent to 2025).
-    return dict(version=VERSION,group=endpoint['method'],task_name=endpoint['task_name'],
+    return dict(version=endpoint['version'],benchmark='b1k2026',group=endpoint['method'],task_name=endpoint['task_name'],
                 protocol=B1K2026,output=str(output),instance_indices=[instance],
                 num_rollouts=rollouts,num_envs=1,policy_identity=dict(endpoint),
                 argv=[str(python),"-m","omnigibson.eval.eval",
@@ -258,9 +267,9 @@ def inspect_training_checkpoint(checkpoint):
     """Validate a published checkpoint, including optimizer/data state integrity."""
     checkpoint = absolute(checkpoint)
     identity = read(checkpoint / 'b1k2026_training.json')
-    if (identity.get('version') != VERSION or identity.get('benchmark') != 'b1k2026'
+    if (identity.get('version') != B1K2026_VERSION or identity.get('benchmark') != 'b1k2026'
             or identity.get('complete') is not True or identity.get('parameter_update_verified') is not True
-            or not re.fullmatch(r'v1_2__test\d{2}__exp\d{2}__run[0-9]{3,}', identity.get('run_id', ''))
+            or not re.fullmatch(r'v0_0__test\d{2}__exp\d{2}__run(?!0{3,}$)[0-9]{3,}', identity.get('run_id', ''))
             or type(identity.get('optimizer_step')) is not int or identity['optimizer_step'] < 1
             or identity.get('source_revision') != FORK_REVISION):
         raise ValueError('incomplete or inconsistent self-trained checkpoint identity')

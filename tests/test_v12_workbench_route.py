@@ -85,6 +85,10 @@ def test_v12_preview_binds_native_route(tmp_path, monkeypatch):
     prepared = manager.prepare(request)
     plan = prepared["plan"]
     assert plan["kind"] == c.B1K2026 and plan["instances"] == {"1": [3]}
+    assert plan['benchmark'] == 'b1k2026'
+    assert plan['version'] == 'V_0_0' and plan['display_version'] == 'V0_0'
+    assert plan['method_family'] == 'V0'
+    assert Path(plan['output']).is_relative_to(manager.evaluation/'b1k2026/V_0_0/official')
     assert plan["notes"].startswith("V1.2 / N1.7")
     assert "run_groot_eval.sh" not in prepared["command"]
     assert "serve_b1k.py" in json.dumps(plan["policy_identity"])
@@ -97,7 +101,7 @@ def test_v12_preview_binds_native_route(tmp_path, monkeypatch):
     monkeypatch.setenv("V12_TASK_METADATA", str(metadata))
     (Path(plan['output']) / 'job.json').write_text('original attempt retained')
     corrected = manager.prepare({**request, 'attempt': 2, 'language_mode': 'task_description'})['plan']
-    assert corrected['output'].endswith('public_test_instance_03_attempt_02')
+    assert corrected['output'].endswith('b1k2026__v0_0__official__instance03__attempt02')
     assert corrected['language']['text_prompt'] == prompt
     assert corrected['policy_identity']['language'] == corrected['language']
     assert (Path(plan['output']) / 'job.json').read_text() == 'original attempt retained'
@@ -107,6 +111,8 @@ def test_v12_preview_binds_native_route(tmp_path, monkeypatch):
     metadata.write_text(json.dumps(dict(task_index=0, task_name='turning_on_radio', task='wrong task')) + '\n')
     with pytest.raises(ValueError, match='Task0'):
         manager.prepare({**request, 'attempt': 2, 'language_mode': 'task_description'})
+    with pytest.raises(ValueError, match='exclusively'):
+        manager.prepare({**request, 'version': 'V0_0', 'benchmark': 'b1k'})
 
 
 def test_completed_native_run_survives_primary_workbench_reload(tmp_path):
@@ -138,13 +144,17 @@ def test_completed_native_run_survives_primary_workbench_reload(tmp_path):
     assert any(item["path"] == "json/radio.json" for item in jobs[0]["artifacts"])
 
 
-def test_same_instance_retry_artifact_is_readable_over_http(tmp_path):
+@pytest.mark.parametrize('relative', [
+    'V_1_2/official/public_test_instance_18_attempt_02',
+    'b1k2026/V_0_0/official/b1k2026__v0_0__official__instance18__attempt02',
+])
+def test_same_instance_retry_artifact_is_readable_over_http(tmp_path, relative):
     import threading
     import urllib.request
     import view_results as viewer
 
     manager = LaunchManager(tmp_path)
-    output = manager.evaluation / 'V_1_2/official/public_test_instance_18_attempt_02'
+    output = manager.evaluation / relative
     (output / 'json').mkdir(parents=True)
     result = dict(instance_id=319, steps=3225, success=False, q_score=dict(final=0.0))
     (output / 'json/radio.json').write_text(json.dumps(result))
@@ -168,7 +178,7 @@ def _training_checkpoint(checkpoint):
     _fixture_checkpoint(checkpoint)
     for name in c.TRAINING_STATE_FILES:
         (checkpoint/name).write_text(json.dumps({'global_step':4} if name=='trainer_state.json' else {}))
-    identity=dict(version='V_1_2',benchmark='b1k2026',run_id='v1_2__test99__exp99__run999',
+    identity=dict(version='V_0_0',benchmark='b1k2026',run_id='v0_0__test99__exp99__run999',
         complete=True,parameter_update_verified=True,optimizer_step=4,tasks=[40],
         source_revision=c.FORK_REVISION,recipe_sha256='a'*64,data_manifest_sha256='b'*64,
         language_mode='task_description',task_prompts={'40':'Make microwave popcorn.'},
@@ -182,7 +192,7 @@ def test_self_trained_task40_route_does_not_unlock_official_radio(tmp_path,monke
     upstream=tmp_path/'upstream';upstream.mkdir()
     behavior=tmp_path/'behavior';behavior.mkdir()
     python=tmp_path/'python';python.touch()
-    checkpoint=tmp_path/'training/b1k2026/v1_2__test99__exp99__run999/native/checkpoint-4'
+    checkpoint=tmp_path/'training/b1k2026/v0_0__test99__exp99__run999/native/checkpoint-4'
     checkpoint.mkdir(parents=True)
     identity=_training_checkpoint(checkpoint)
     monkeypatch.setattr(c,'inspect_upstream',lambda root:dict(root=str(root),revision=c.FORK_REVISION))
@@ -190,16 +200,18 @@ def test_self_trained_task40_route_does_not_unlock_official_radio(tmp_path,monke
     config=dict(python=python,upstream=upstream,behavior_python=python,behavior_root=behavior,
                 checkpoint=checkpoint,checkpoint_sha256=identity['checkpoint_sha256'])
     monkeypatch.setattr(manager,'_v12_config',lambda:config)
-    request=dict(version='V_1_2',protocol=c.B1K2026,task='make_microwave_popcorn',
+    request=dict(version='V0_0',benchmark='b1k2026',protocol=c.B1K2026,task='make_microwave_popcorn',
         model_role='self_trained',engineering_only=True,checkpoint=str(checkpoint),
         checkpoint_sha256=identity['checkpoint_sha256'],instance=0,rollouts=1,gpu_index=1,
-        policy_host='127.0.0.1',policy_port=8040,notes='V1.2 / N1.7: self-trained engineering checkpoint')
+        policy_host='127.0.0.1',policy_port=8040,notes='V0_0 / N1.7: self-trained engineering checkpoint')
     plan=manager.prepare(request)['plan']
     assert plan['official'] is False and plan['task_id']=='make_microwave_popcorn'
     assert plan['language']['text_prompt']=='Make microwave popcorn.'
     assert plan['policy_identity']['training_identity']==identity
     assert plan['evaluator']['group']=='self_trained'
     assert '/self_trained/' in plan['output']
+    assert '/b1k2026/V_0_0/' in plan['output']
+    assert plan['version'] == 'V_0_0'
     with pytest.raises(ValueError,match='官方 radio'):
         manager.prepare({**request,'model_role':'official'})
     with pytest.raises(ValueError,match='not in this training'):
@@ -211,27 +223,36 @@ def test_self_trained_task40_route_does_not_unlock_official_radio(tmp_path,monke
         manager.prepare(request)
 
 
-def test_self_trained_artifacts_and_restoration_use_native_outputs(tmp_path):
+@pytest.mark.parametrize('version,prefix,directory', [
+    ('V_1_2', 'v1_2', 'V_1_2'),
+    ('V_0_0', 'v0_0', 'b1k2026/V_0_0'),
+])
+def test_self_trained_artifacts_and_restoration_use_native_outputs(tmp_path, version, prefix, directory):
     import threading
     import urllib.request
     import view_results as viewer
     manager=LaunchManager(tmp_path,log_root=tmp_path/'logs')
     manager.log_root.mkdir()
     (manager.log_root/'trained.log').touch()
-    name='v1_2__test99__exp99__run999__step000004__task40__instance00__attempt01'
-    output=manager.evaluation/'V_1_2/self_trained'/name
+    name=f'{prefix}__test99__exp99__run999__step000004__task40__instance00__attempt01'
+    output=manager.evaluation/directory/'self_trained'/name
     (output/'json').mkdir(parents=True)
     (output/'videos').mkdir()
     native=dict(instance_id=5,steps=12,success=False,q_score=dict(final=.2))
     (output/'json/popcorn.json').write_text(json.dumps(native))
     (output/'videos/popcorn.mp4').write_bytes(b'fixture-video')
     (output/'job.json').write_text(json.dumps(dict(job_id='trained',output=str(output),gpus=[1],
-        kind=c.B1K2026,version='V_1_2',official=False,started_at='fixture',task_id='make_microwave_popcorn')))
+        kind=c.B1K2026,version=version,official=False,started_at='fixture',task_id='make_microwave_popcorn',
+        display_version='V0_0' if version=='V_0_0' else None,
+        method_family='V0' if version=='V_0_0' else None)))
     (output/'runner.json').write_text(json.dumps(dict(state='complete',evaluator_argv=['python','evaluator.py'])))
     viewer.restore_evaluation_jobs(manager,[])
     jobs=manager.snapshot()
     assert jobs[0]['native_episode_keys']==['json/popcorn.json']
     assert jobs[0]['official'] is False
+    assert jobs[0]['version'] == version
+    if version == 'V_0_0':
+        assert jobs[0]['display_version'] == 'V0_0' and jobs[0]['method_family'] == 'V0'
 
     class Handler(viewer.Handler):
         launch_manager=manager
