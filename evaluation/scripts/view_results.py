@@ -30,7 +30,7 @@ import task_stage_diagnostics
 import vlm_stage_diagnosis
 import human_review
 import episode_notes
-from agent_experiments import experiment_catalog, experiment_record
+from agent_experiments import experiment_catalog, experiment_record, workflow_plans
 from checkpoint_notes import CheckpointNotes
 
 
@@ -413,6 +413,50 @@ class Handler(BaseHTTPRequestHandler):
             raise ValueError('未知的资源操作')
         return self._storage().request(payload.pop('host', '4090'), payload)
 
+    def _agent_training_binding(self, request):
+        """Validate an Agent's explicit plan reference, without changing scientific settings."""
+        binding = request.pop('agent_plan', None)
+        if request.get('initiator') != 'agent':
+            if binding is not None:
+                raise ValueError('agent_plan 仅用于 Agent 作业')
+            return None
+        if not isinstance(request.get('notes'), str) or not request['notes'].strip():
+            raise ValueError('Agent 训练必须填写简短版本与目的备注')
+        run = request.get('run_id', '')
+        match = re.fullmatch(r'v[0-9_]+__test(\d{2})__exp(\d{2})__run\d+(?:__preflight\d+)?', run)
+        if not match or not isinstance(binding, dict) or set(binding) != {'version','node'}:
+            raise ValueError('Agent 新训练必须绑定规范 run_id 和 agent_plan（version、node）')
+        directory = self.agent_experiment_root / ('test_'+match[1]) / ('experiment_'+match[2])
+        plans = workflow_plans(directory)
+        if not plans['versions'] or plans['errors']:
+            raise ValueError('本实验缺少有效工作流计划，或计划存在错误')
+        plan = plans['versions'][-1]
+        if binding['version'] != plan['version']:
+            raise ValueError('必须绑定本实验最新计划版本')
+        node = next((n for n in plan['nodes'] if n['id']==binding['node']),None)
+        if node is None:
+            raise ValueError('计划节点不存在')
+        if node.get('review_experiment'):
+            record = experiment_record(directory.parent,directory.name)
+            if record['gates'].get(node['review_experiment'])!='true':
+                raise ValueError('前置实验尚未验收')
+        return dict(run_id=run, version=plan['version'], node=node['id'], experiment=str(directory),
+                    notes=request['notes'], recorded_at=time.time())
+
+    def _record_agent_binding(self, binding, device, value=None):
+        folder = EVALUATION_ROOT.parent/'outputs/workbench_agent_bindings'
+        folder.mkdir(parents=True,exist_ok=True)
+        path = folder/(binding['run_id']+'.json')
+        # Preserve a previously recorded successful submission on retry.
+        if value is None and path.is_file():
+            raise ValueError('该 Agent run 已有提交记录，请查询训练作业后核对，不要重复提交')
+        payload = {**binding,'device':device,'status':'submitted' if value is not None else 'submission_pending'}
+        if value is not None:
+            payload['receipt']=value
+        tmp=path.with_suffix('.pending')
+        tmp.write_text(json.dumps(payload,ensure_ascii=False,indent=2))
+        tmp.replace(path)
+
     def _launch_post(self, route):
         manager = (self.benchmark_manager if route.startswith('/api/benchmarks/') else
                    self.training_manager if route.startswith('/api/training/') else
@@ -430,8 +474,12 @@ class Handler(BaseHTTPRequestHandler):
             if not 0 < length <= 8192:
                 raise ValueError("启动参数长度不正确")
             request = json.loads(self.rfile.read(length))
+            if not isinstance(request,dict):
+                raise ValueError('启动参数必须是 JSON 对象')
+            binding = self._agent_training_binding(request) if route in ('/api/training/preview','/api/training/start') else None
             if route.startswith('/api/training/'):
-                manager = self._training_for(request.pop('device', 'a100'))
+                device = request.pop('device', 'a100')
+                manager = self._training_for(device)
             elif route.startswith('/api/launch/'):
                 device=request.pop('device','local')
                 manager=self._evaluation_for(device,request.get('run') or request.get('resume_from'))
@@ -463,8 +511,17 @@ class Handler(BaseHTTPRequestHandler):
                         pending.replace(self.evaluation_record)
             elif route == '/api/training/checkpoint-delete':
                 value = self._delete_training_checkpoint(manager, request)
+            elif binding and action == 'start':
+                with REGISTRY_ANNOTATIONS_LOCK:
+                    # Recheck the actual backend before creating a submission receipt.
+                    manager.prepare(request)
+                    self._record_agent_binding(binding,device)
+                    value = manager.start(request)
+                    self._record_agent_binding(binding,device,value)
             else:
                 value = getattr(manager, operation)(request)
+                if binding and isinstance(value,dict):
+                    value = {**value,'agent_plan':binding}
         except (ValueError, OSError, subprocess.SubprocessError) as error:
             self._json({"error": str(error)}, 400)
             return

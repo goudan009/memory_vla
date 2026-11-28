@@ -21,7 +21,8 @@
     frozen_forward: '冻结前向', replaying_probe: '探针回放'
   };
   let experiment = new URLSearchParams(location.search).get('experiment');
-  let catalogSignature;
+  let catalogSignature, allNames=[];
+  const trainingCache=new Map();
   let displayed, displayedLive;
   let workflowExperiment, workflowVersion, workflowNode, workflowSignature, workflowObserver;
   let requestId = 0;
@@ -54,6 +55,9 @@
 
   function renderList(names) {
     const list = byId('agent-experiment-list');
+    allNames=names;
+    const query=byId('agent-experiment-search')?.value.trim().toLowerCase()||'';
+    names=names.filter(id=>(testDirectory(id)+'/'+id).toLowerCase().includes(query));
     const signature = JSON.stringify(names);
     if (catalogSignature !== signature) {
       const groups = new Map();
@@ -68,8 +72,7 @@
         const folder = text('details', '', 'version-group');
         folder.dataset.directory = directory;
         folder.open = openFolders.get(directory) ?? (directory === activeDirectory);
-        const version = 'V' + Number(directory.slice('test_'.length));
-        const summary = text('summary', version + ' · ' + directory);
+        const summary = text('summary', 'Test ' + directory.slice('test_'.length) + ' · ' + directory);
         summary.append(text('small', ids.length + ' 个实验'));
         const contents = text('div', '', 'agent-version-experiments');
         for (const id of ids) {
@@ -394,15 +397,36 @@
     if (!record?.workflow?.versions.length) return new Map();
     const lines = (record.progress?.markdown || '').split('\n').map(line => line.trim());
     const tracked = progressStages(lines, quotedField(lines, '当前动作')).flatMap(row => row.training ? [row.training] : []);
-    const devices = new Set(tracked.map(([device]) => device));
+    const devices = new Set(['a100','a6000',...tracked.map(([device]) => device)]);
+    const match=record.path.match(/test_(\d+)\/experiment_(\d+)$/);
+    const pattern=match?'__test'+match[1]+'__exp'+match[2]+'__':null;
     const entries = await Promise.allSettled([...devices].map(async device => {
-      const response = await fetch('/api/training/jobs?' + new URLSearchParams({device}), {cache: 'no-store'});
-      if (!response.ok) return [];
-      const {jobs = []} = await response.json();
-      return jobs.filter(job => tracked.some(([host, run]) => host === device && run === job.run))
+      let cached=trainingCache.get(device);
+      if(!cached || Date.now()-cached.at>15000){
+        const response=await fetch('/api/training/jobs?'+new URLSearchParams({device}),{cache:'no-store'});
+        if(!response.ok)throw Error('设备状态不可查');
+        const {jobs=[]}=await response.json();
+        cached={at:Date.now(),jobs};trainingCache.set(device,cached);
+      }
+      return cached.jobs.filter(job => (pattern && String(job.run).includes(pattern)) || tracked.some(([host, run]) => host === device && run === job.run))
         .map(job => [device + ':' + job.run, job]);
     }));
-    return new Map(entries.flatMap(result => result.status === 'fulfilled' ? result.value : []));
+    const result=new Map(entries.flatMap(item => item.status === 'fulfilled' ? item.value : []));
+    result.partial=entries.some(item=>item.status!=='fulfilled');
+    return result;
+  }
+
+  function renderLinkedTraining(jobs){
+    const panel=byId('agent-live-training');
+    if(!panel)return;
+    panel.replaceChildren(text('h3','关联训练 · 工作台实际记录'));
+    if(!jobs.size)panel.append(text('p','暂无可关联训练记录；历史无规范身份的记录仅按明确绑定显示。','subtle'));
+    for(const [key,job] of jobs){
+      const who={agent:'Agent',user:'人工'}[job.initiator]||'来源未记录';
+      const details=[job.version||job.model_version,who,job.status,job.step==null?null:job.step+'/'+(job.max_steps??'—')+' 步',job.notes,key].filter(Boolean).join(' · ');
+      panel.append(focusCard(job.run,details,'agent-now'));
+    }
+    if(jobs.partial)panel.append(text('p','部分设备不可查；未将未知状态当作空闲或完成。','subtle'));
   }
 
   function renderLive(live) {
@@ -575,13 +599,14 @@
       const jobs = await workflowTraining(data.detail);
       if (id !== requestId) return;
       renderWorkflow(data.detail, jobs);
+      renderLinkedTraining(jobs);
       status.hidden = true;
-      byId('caption').textContent = 'AI 工作流 · ' + data.experiments.length + ' 个实验';
+      byId('caption').textContent = '实验管理 · ' + data.experiments.length + ' 个实验';
     } catch (error) {
       if (id !== requestId) return;
       status.textContent = '读取实验记录失败 · ' + error.message;
       status.hidden = false;
-      byId('caption').textContent = 'AI 工作流';
+      byId('caption').textContent = '实验管理';
     }
   }
 
@@ -596,5 +621,6 @@
       openPane(panes[keys[event.key]], true);
     };
   }
+  byId('agent-experiment-search')?.addEventListener('input',()=>renderList(allNames));
   window.agentExperimentBoard = {refresh};
 })();

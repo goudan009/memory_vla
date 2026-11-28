@@ -451,19 +451,19 @@
     </details>
     <div id="agent-board" class="layout" hidden>
       <section class="run-browser" aria-label="实验目录">
-        <div class="section-head"><h2>实验目录</h2><span id="agent-experiment-count" class="subtle"></span></div>
+        <div class="section-head"><h2>实验目录</h2><span id="agent-experiment-count" class="subtle"></span></div><div class="filters"><input id="agent-experiment-search" type="search" placeholder="搜索测试号 / 实验号" aria-label="搜索实验目录"></div>
         <div id="agent-experiment-list" class="run-list"></div>
       </section>
       <section class="detail" aria-label="实验记录">
         <div class="detail-heading"><div><div id="agent-experiment-path" class="subtle">Output</div><h2 id="agent-experiment-title">AI 工作流</h2></div></div>
         <nav class="detail-tabs" role="tablist" aria-label="实验记录">
-          <button id="agent-tab-task" type="button" role="tab" aria-selected="false" aria-controls="agent-task" tabindex="-1">任务安排</button>
-          <button id="agent-tab-progress" type="button" role="tab" aria-selected="true" aria-controls="agent-progress">运行进度</button>
+          <button id="agent-tab-task" type="button" role="tab" aria-selected="false" aria-controls="agent-task" tabindex="-1">实验方案</button>
+          <button id="agent-tab-progress" type="button" role="tab" aria-selected="true" aria-controls="agent-progress">执行进度</button>
           <button id="agent-tab-results" type="button" role="tab" aria-selected="false" aria-controls="agent-results" tabindex="-1">实验结果</button>
         </nav>
         <div id="agent-error" class="agent-document" role="status" hidden></div>
         <section id="agent-task" class="agent-document" role="tabpanel" aria-labelledby="agent-tab-task" hidden></section>
-        <section id="agent-progress" class="agent-document" role="tabpanel" aria-labelledby="agent-tab-progress"><div id="agent-workflow"></div><div id="agent-live"></div><div id="agent-progress-record"></div></section>
+        <section id="agent-progress" class="agent-document" role="tabpanel" aria-labelledby="agent-tab-progress"><div id="agent-workflow"></div><div id="agent-live"></div><div id="agent-live-training"></div><div id="agent-progress-record"></div></section>
         <section id="agent-results" class="agent-document" role="tabpanel" aria-labelledby="agent-tab-results" hidden></section>
       </section>
     </div>
@@ -618,7 +618,7 @@
       </section>
     </div>
     <section id="page-registry" role="tabpanel" aria-labelledby="page-tab-registry" hidden></section>
-    <div class="page-foot">GR00T N1.6 · B1K-2025 · 调试记录与正式评估分别标记</div>
+    <div class="page-foot">MemoryVLA · 按模型底座与评估协议区分运行 · 调试记录不计正式成绩</div>
   </main>
 <script src="/checkpoint_notes.js"></script>
 <script>

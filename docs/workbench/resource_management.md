@@ -15,3 +15,7 @@
 复制 `configs/workbench_downloads.example.json` 为本地 `configs/workbench_downloads.json`（Git 忽略）。管理员填写实际 host、已存在的资源根目录、专用目标目录、实际下载 Python（可导入 huggingface_hub）、仓库内固定清单及 resource 名称。示例目标与旧 N1.7 目标不同，避免冲突；不要把示例 Python 当实际环境。未配置时 UI/CLI 显示无配方，不执行任何下载。远程 SSH 复用现有设备配置。每个配方只允许一个明确目标；目标存在拒绝覆盖。当前仅支持带完整文件摘要的 Hugging Face 配方，其他下载来源需要显式接入。目标根目录必须为真实绝对路径，禁止软链接。检查磁盘保守预留完整清单+1 GiB；空间不足时先人工检查，禁止自动删除。
 
 API: GET /api/resources/downloads?action=options 或 action=status&recipe_id=ID；POST 同路径 JSON action=preview|start、recipe_id=ID。既有 /api/registry/storage 支持 hosts/disks/browse/stat/size/register/mkdir/trash/restore。CLI `memory-workbench resource --help`。下载任务状态以真实校验字节为准，不把下载开始当作完成。
+
+## 实验管理与 Agent 正式训练
+
+Agent 新训练经 HTTP/CLI 提交时必须显式填写 `initiator=agent`、简短 `notes`、规范 `run_id` 和 `agent_plan: {"version":"v001","node":"train"}`（节点值必须取当前真实计划）。工作台校验最新有效计划、节点及显式前置实验验收，记录实际提交回执于 outputs/workbench_agent_bindings/。预检不写提交记录。提交失败/超时先核对 jobs，pending 回执需人工核对后处理，不自行改 run_id 重试。该校验不等于对全部科学参数的用户批准，也不替代任务书。旧作业及严格续训不回填、不改身份。实验管理会按规范 run ID 自动关联训练记录，人工/Agent 来源按实际字段显示。
