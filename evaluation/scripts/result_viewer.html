@@ -683,6 +683,9 @@
     .launch-live-grid .launch-job{margin-bottom:6px}
     #launch-history>summary,#inference-history>summary{font-weight:550}
     @media(max-width:780px){body>header{padding:9px 12px;gap:7px}main{padding-top:12px}.workbench-counts>div:nth-child(2){border-right:0}.workbench-counts>div{padding:6px 10px}.device-dialog-body{padding:12px}.device-dialog-head{padding:12px}}
+    /* Keep the original list search, but avoid a tall dedicated search row. */
+    #page-results #run-search,#agent-experiment-search{height:29px;min-height:0;padding:4px 7px;font-size:12px}
+    #page-results #status-filter{height:29px;min-height:0;padding:3px 5px;font-size:12px}
   </style>
 </head>
 <body>
@@ -850,7 +853,7 @@
     </div>
     <div class="layout" id="page-results" role="tabpanel" aria-labelledby="page-tab-results">
       <details id="result-compare-panel"><summary>← 返回评估记录</summary><div id="result-compare-content"></div></details>
-      <section class="run-browser" aria-label="选择评估记录"><div class="section-head"><h2>评估记录</h2><span id="run-count" class="subtle">0 条</span><button id="result-compare-open" type="button">对比</button></div><div class="filters"><input id="run-search" type="search" placeholder="搜索版本、任务或运行名" aria-label="搜索评估记录"><select id="status-filter" aria-label="按运行状态筛选"><option value="">全部状态</option><option value="running">运行中</option><option value="complete">已完成</option><option value="failed">异常退出</option><option value="interrupted">已暂停 / 中断</option><option value="paused">已暂停</option><option value="cancelled">已暂停（历史停止）</option></select></div><div class="run-list" id="runs"></div><div id="empty" class="empty" hidden>还没有评估结果。</div></section>
+      <section class="run-browser" aria-label="选择评估记录"><div class="section-head"><h2>评估记录</h2><span id="run-count" class="subtle">0 条</span><button id="result-compare-open" type="button">对比</button></div><div class="filters"><input id="run-search" type="search" placeholder="搜索记录…" aria-label="搜索评估记录"><select id="status-filter" aria-label="按运行状态筛选"><option value="">全部状态</option><option value="running">运行中</option><option value="complete">已完成</option><option value="failed">异常退出</option><option value="interrupted">已暂停 / 中断</option><option value="paused">已暂停</option><option value="cancelled">已暂停（历史停止）</option></select></div><div class="run-list" id="runs"></div><div id="empty" class="empty" hidden>还没有评估结果。</div></section>
       <section aria-label="选中运行详情">
         <div class="detail-heading"><div><div id="detail-path" class="eyebrow">选择一次评估</div><h2 id="detail-title">运行详情</h2><div id="detail-subtitle" class="subtle"></div></div><div class="heading-status"><span id="detail-status"></span><span id="detail-mode" class="subtle"></span></div></div>
         <div class="evaluation-actions"><button type="button" id="result-export-analysis">导出 JSON</button><div id="evaluation-actions"></div><span id="evaluation-action-message" class="evaluation-action-message" role="status"></span></div>

@@ -391,6 +391,7 @@
 #page-training #bench-code-checks>summary small{display:none}
 #page-training #bench-code-checks .bench-form{padding:10px;display:grid;grid-template-columns:minmax(0,1fr);gap:6px}
 #page-training #bench-code-checks .bench-form>*{grid-column:1/-1;min-width:0}
+#page-training .train-record-filters #train-job-search{height:28px;min-height:0;padding:4px 7px;font-size:12px}
 </style>
 
 <p id="train-device-hint" class="train-hint" hidden></p>
@@ -400,7 +401,7 @@
   <div class="section-head"><h2>训练记录</h2><span id="train-count" class="subtle">读取中…</span><button id="train-records-toggle" class="train-records-toggle" type="button" aria-expanded="false" aria-controls="train-records-content">展开记录</button></div>
   <div class="train-sidebar-actions"><button id="train-overview-tab" type="button" aria-pressed="true">运行总览 <small id="train-active-count" hidden></small></button><button id="train-new" type="button" aria-pressed="false">＋ 新建训练</button></div>
   <div id="train-records-content" class="train-records-content"><div id="train-history-device-slot"><div class="train-device-tools" id="train-device-tools"><label>设备 <select id="train-device"><option value="a100">A100</option><option value="a6000">RTX 6000 Ada</option></select></label><button id="train-refresh" type="button" aria-label="刷新训练记录">↻</button></div></div>
-  <div class="train-record-filters"><input id="train-job-search" type="search" placeholder="任务、版本、备注…" aria-label="搜索训练记录或备注"><select id="train-job-filter" aria-label="训练状态筛选"><option value="history">历史记录</option><option value="all">全部状态</option><option value="active">运行中</option><option value="queued">排队中</option><option value="complete">已完成</option><option value="failed">异常/停止</option></select><select id="train-job-owner" aria-label="发起人筛选"><option value="all">全部来源</option><option value="user">用户</option><option value="agent">Agent</option><option value="unknown">未记录</option></select><select id="train-job-category" aria-label="训练用途筛选"><option value="research">研究训练</option><option value="engineering">工程预检</option><option value="all">全部用途</option></select></div>
+  <div class="train-record-filters"><input id="train-job-search" type="search" placeholder="搜索训练…" aria-label="搜索训练记录或备注"><select id="train-job-filter" aria-label="训练状态筛选"><option value="history">历史记录</option><option value="all">全部状态</option><option value="active">运行中</option><option value="queued">排队中</option><option value="complete">已完成</option><option value="failed">异常/停止</option></select><select id="train-job-owner" aria-label="发起人筛选"><option value="all">全部来源</option><option value="user">用户</option><option value="agent">Agent</option><option value="unknown">未记录</option></select><select id="train-job-category" aria-label="训练用途筛选"><option value="research">研究训练</option><option value="engineering">工程预检</option><option value="all">全部用途</option></select></div>
   <div id="train-jobs" class="train-jobs"><div class="empty">读取 A100 记录中…</div></div>
   </div>
  </section>

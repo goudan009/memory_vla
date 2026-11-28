@@ -114,7 +114,7 @@ function lineage(n){
 }
 
 function saveSelection(){const u=new URL(location.href);u.searchParams.set('benchmark',benchmark);if(selected)u.searchParams.set('node',selected);else u.searchParams.delete('node');history.replaceState(null,'',u);}
-function navigate(p,target,n){const b=target?.benchmark||currentBenchmark(n||nodes.get(selected));const q=new URLSearchParams({page:p,benchmark:b});if(target)q.set('lineage_target',JSON.stringify(target));if(selected)q.set('lineage_node',selected);location.assign('/?'+q);}
+function navigate(p,target,n){const b=target?.benchmark||(benchmark!=='all'?benchmark:currentBenchmark(n||nodes.get(selected)));const q=new URLSearchParams({page:p,benchmark:b});if(target)q.set('lineage_target',JSON.stringify(target));if(selected)q.set('lineage_node',selected);location.assign('/?'+q);}
 function details(n){
  if(!n){$('inspector').innerHTML='<div class="empty">选择节点</div>';return;}
  const r=n.raw||{},p=r.parameter_summary||{},s=n.kind==='eval'?summary(n):null,tr=getTrain(n),w=getWeight(n);
@@ -129,7 +129,7 @@ function details(n){
  if(n.kind==='checkpoint'&&tr&&n.benchmark==='b1k')actions.push(['evaluate','使用此权重评估 →',true],['training','查看所属训练 →',false]);
  if(n.kind==='eval')actions.push([n.pending?'launch':'result',n.pending?'查看运行 →':'查看评估结果 →',true]);
  if(n.kind==='checkpoint'&&!tr)actions.push(['weights','查看模型资源 →',true]);
- if(n.kind==='version'&&benchmark==='b1k')actions.push(['new-training','新建训练 →',true]);
+ 
  $('inspector').innerHTML='<div class="identity"><h3>'+esc(n.title)+'</h3></div>'+section('记录信息',rows)+'<div class="node-actions">'+actions.map(([a,t,primary])=>'<button data-action="'+a+'" class="'+(primary?'primary':'')+'">'+t+'</button>').join('')+'</div>';
 }
 function render(){nav();drawTree();const n=nodes.get(selected);$('crumb').textContent=n?ancestors(n).map(x=>x.title).join(' / '):'';$('content').innerHTML=lineage(n);details(n);}
@@ -138,7 +138,9 @@ async function loadCheckpoints(n){if(detailRequests.has(n.id))return detailReque
 async function refresh(){if(refreshing)return;refreshing=true;$('reload').disabled=true;const errors=[];
  const sources=[['a100','/api/training/jobs?device=a100'],['a6000','/api/training/jobs?device=a6000'],['results','/api/results'],['native','/api/launch/jobs?benchmark=b1k2026'],['launch','/api/launch/jobs'],['libero','/api/benchmarks/jobs'],['experiments','/api/agent-experiments']];
  try{await Promise.all(sources.map(async ([key,url])=>{try{const d=await api(url);if(key==='a100'||key==='a6000'){if(!Array.isArray(d.jobs))throw Error('缺少 jobs');cache.train=cache.train.filter(x=>x.device!==key).concat(d.jobs.map(job=>({device:key,job})));}else{const rows=key==='results'?d.runs:key==='experiments'?d.experiments:d.jobs;if(!Array.isArray(rows))throw Error('记录格式错误');cache[key]=rows;}}catch(e){errors.push(key+'：'+e.message);}}));
- rebuild();render();const active=nodes.get(selected);if(active?.kind==='train'&&!detailCache.has(active.id))void loadCheckpoints(active);
+ const requested=first?params.get('node'):null;rebuild();render();
+ if(requested&&!nodes.has(requested)){try{const key=JSON.parse(requested);if(key[0]==='checkpoint'&&nodes.get(key[1])?.kind==='train'){const owner=nodes.get(key[1]);await loadCheckpoints(owner);if(nodes.has(requested)&&scope(requested))choose(requested);}}catch{}}
+ const active=nodes.get(selected);if(active?.kind==='train'&&!detailCache.has(active.id))void loadCheckpoints(active);
  $('source-state').textContent=errors.length?'部分来源不可查 · '+errors.length+' 项':'已同步 · '+new Date().toLocaleTimeString();$('source-state').title=errors.join('；');
  }finally{$('reload').disabled=false;refreshing=false;}}
 async function devices(){const el=$('device-content');el.textContent='读取设备…';try{const d=await api('/api/services');el.innerHTML=[['remote','A100'],['local','4090'],['a6000','RTX 6000 Ada']].map(([k,label])=>{const h=d[k]||{},g=Array.isArray(h.gpus)?h.gpus:[];return '<section class="gpu-group"><strong>'+label+'</strong><div class="gpu-grid">'+(h.ok!==false&&g.length?g.map(x=>{const total=Number(x.total_mb),used=Number(x.used_mb),has=Number.isFinite(total)&&total>0&&Number.isFinite(used);return '<div class="gpu-cell"><b>GPU '+esc(x.index)+'</b><div>'+esc(x.name)+'</div><div>'+ (has?(used/1024).toFixed(1)+' / '+(total/1024).toFixed(1)+' GiB':'显存未记录')+'</div>'+(has?'<progress max="'+total+'" value="'+Math.max(0,Math.min(used,total))+'"></progress>':'')+'<div>利用率 '+(finite(x.utilization)?x.utilization+'%':'—')+'</div></div>';}).join(''):'<span class="muted">'+esc(h.error||'设备状态不可查')+'</span>')+'</div></section>';}).join('');}catch(e){el.textContent='设备读取失败：'+e.message;}}
