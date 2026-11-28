@@ -27,6 +27,7 @@ async function routeAll(page){
   if(p==='/benchmarks.js')return script('window.__benchmarkHTML='+JSON.stringify(evaluation('benchmark_workbench.html'))+';\n'+evaluation('benchmark_workbench.js')+'\n'+evaluation('libero_workflow.js'));
   if(p==='/training.js')return script('window.__grootTrainingPageHTML='+JSON.stringify(training('dashboard.html'))+';\n'+training('dashboard.js'));
   if(['/checkpoint_notes.js','/agent_experiments.js','/registry_storage.js','/resource_downloads.js','/task40_diagnostics.js'].includes(p))return script(evaluation(p.slice(1)));
+  if(p==='/api/checkpoint-notes')return json({notes:{},devices:{a100:{label:'A100',host:'172.28.62.17'},a6000:{label:'RTX 6000 Ada',host:'100.100.2.30'}}});
   if(p==='/api/results')return json({runs:[run],updated_at:'12:00'});
   if(p==='/api/services')return json({local:{ok:true,gpus:[gpu(0),gpu(1)],processes:[]},remote:{ok:true,gpus:[gpu(0),gpu(1),gpu(2),gpu(3)],processes:[]},a6000:{ok:true,gpus:[gpu(0)],processes:[]}});
   if(p==='/api/training/options')return json({datasets:[task,...[0,21,34].map(i=>({...task,task:i,task_name:'training_task_'+i}))],gpus:[0,1,2,3].map(gpu),checkpoints:[{path:checkpoint,label:'GR00T-N1.6-3B',training_profile:{kind:'base'}}],model_versions:{V_1:{backend:'v1',description:'Baseline',prefix:'v1'}},sync:{}});
@@ -67,7 +68,7 @@ async function bounds(page,name,selector){
  try{
   for(const width of [1440,1024,768,390,320]){
    const page=await browser.newPage({viewport:{width,height:900},serviceWorkers:'block'});
-   const errors=[];page.on('pageerror',e=>errors.push(e.message));
+   const errors=[];page.on('pageerror',e=>errors.push(e.stack||e.message));
    await routeAll(page);
    await page.goto(base+'/?page=training');
    await page.locator('#train-task-list input').first().waitFor({state:'attached'});
@@ -81,6 +82,7 @@ async function bounds(page,name,selector){
    await page.locator('#inference-panel > summary').click();
    await page.locator('#inference-gpu option[value="0"]').waitFor({state:'attached'});
    await bounds(page,'inference','#page-launch');
+   assert.ok(await page.locator('#inference-checkpoint-note textarea').isHidden(),'note defaults to collapsed');
    if([1440,390].includes(width))await page.screenshot({path:output+'/inference-'+width+'.png',fullPage:true});
    await page.locator('#page-tab-results').click();
    await bounds(page,'results','#page-results');

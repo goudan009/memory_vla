@@ -19,6 +19,7 @@
       const response = await fetch('/api/checkpoint-notes', {cache:'no-store'});
       const data = await response.json();
       if (!response.ok) throw Error(data.error || '读取备注失败');
+      if(!data.notes||typeof data.notes!=='object'||!data.devices||typeof data.devices!=='object')throw Error('备注接口返回格式错误');
       records = data.notes; devices = data.devices; loaded = true;
       window.dispatchEvent(new Event('checkpoint-notes-updated'));
     })().finally(() => { loading = null; });
@@ -36,6 +37,7 @@
     editor.save.disabled = !valid || saving.has(key) || value === original;
     editor.target.textContent = valid ? (devices[device].label + ' · ' + path.split('/').pop()) : '先选择已保存的 checkpoint；备注会关联到这份权重。';
     editor.target.title = valid ? path : '';
+    if(editor.summary){const preview=original.replace(/\s+/g,' ');editor.summary.textContent='Checkpoint 备注'+(value!==original?' · 未保存':preview?' · '+(preview.length>48?preview.slice(0,48)+'…':preview):'');editor.summary.title=original;}
     editor.status.textContent = editor.error || (!loaded ? '正在读取备注…' : saving.has(key) ? '正在保存…' :
       value !== original ? '尚未保存' : original ? '已保存 · 训练与评估共用' : '暂无备注');
   }
@@ -47,7 +49,14 @@
     root.innerHTML = '<label for="' + id + '-text">Checkpoint 备注</label><small class="checkpoint-note-target"></small>' +
       '<textarea id="' + id + '-text" rows="3" maxlength="2000" placeholder="例如：3000 步；验证效果较好；待评估 Task40。清空后保存可删除备注。"></textarea>' +
       '<div class="checkpoint-note-actions"><small role="status" aria-live="polite"></small><button type="button">保存备注</button></div>';
-    const editor = {root, input:root.querySelector('textarea'), target:root.querySelector('.checkpoint-note-target'),
+    let summary=null;
+    if(id!=='result-checkpoint-note'){
+      const fold=document.createElement('details');fold.className='checkpoint-note-fold';
+      summary=document.createElement('summary');summary.textContent='Checkpoint 备注';
+      const body=document.createElement('div');body.className='checkpoint-note-body';body.append(...root.childNodes);
+      fold.append(summary,body);root.append(fold);
+    }
+    const editor = {root, summary, input:root.querySelector('textarea'), target:root.querySelector('.checkpoint-note-target'),
       status:root.querySelector('[role=status]'), save:root.querySelector('button')};
     editor.input.oninput = event => {
       event.stopPropagation();

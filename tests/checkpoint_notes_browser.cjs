@@ -42,6 +42,7 @@ const assert=require('node:assert/strict');
   await page.locator('#train-tab-controls').click();
   const input=page.locator('#train-saved-checkpoint-note textarea');
   const save=page.locator('#train-saved-checkpoint-note button');
+  await page.locator('#train-saved-checkpoint-note summary').click();
   await input.waitFor();
   await page.waitForFunction(()=>!document.querySelector('#train-saved-checkpoint-note textarea').disabled);
   const text='验证集较好 <标签>\nTask40 待多回合评估';

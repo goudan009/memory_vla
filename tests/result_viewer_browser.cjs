@@ -91,7 +91,7 @@ async function checkTask40Collection(page){
 
   await page.locator('#inference-panel > summary').click();
   await page.locator('#inference-gpu option[value="2"]').waitFor({state:'attached'});
-  await page.locator('#inference-panel details').getByText('推理高级设置 · 源码、环境与种子').click();
+  await page.locator('#inference-panel details').getByText('高级设置',{exact:true}).click();
   await page.locator('#inference-task40').check();
   await page.locator('#inference-check').click();
   await page.getByText('检查通过，尚未启动推理。').waitFor();

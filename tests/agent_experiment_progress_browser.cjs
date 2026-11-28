@@ -36,6 +36,7 @@ const progress = `# Experiment 11 · 运行进度
       live: {jobs: [], partial: false}
     }}));
     await page.goto(base + '/ai?experiment=experiment_11');
+    await page.getByText('查看阶段明细',{exact:true}).click();
     const rows = page.locator('#agent-progress .agent-stage');
     await rows.first().waitFor();
     async function check(title, badge, kind, note) {

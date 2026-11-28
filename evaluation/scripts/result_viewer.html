@@ -531,6 +531,12 @@
     .agent-next{border-left-color:#b38b46;background:#fbf9f5}
     #agent-live-training>details,#agent-progress-record>details{border:1px solid var(--line);border-radius:7px;padding:10px 12px}
     #agent-live-training summary,#agent-progress-record>details>summary{color:var(--ink);font-weight:550}
+    .checkpoint-note:has(.checkpoint-note-fold){display:block;padding:0;margin:6px 0;background:white;border-radius:7px}
+    .checkpoint-note-fold>summary{cursor:pointer;padding:8px 10px;font-size:12px;color:var(--muted);overflow-wrap:anywhere}
+    .checkpoint-note-fold[open]>summary{border-bottom:1px solid var(--line)}
+    .checkpoint-note-body{display:grid;gap:7px;padding:10px}
+    #launch-checkpoint-note{margin:0 var(--panel-pad) 10px}
+    #inference-checkpoint-note{margin:0}
     .page-foot{margin-top:14px}
     @media(max-width:1050px){.layout{grid-template-columns:250px minmax(0,1fr)}.start-config{grid-template-columns:300px minmax(0,1fr)}.metric{padding:0 10px}.metric strong{font-size:23px}.page-nav button,.page-nav-link{padding-inline:10px}}
     @media(max-width:850px){.page-nav{overflow-x:auto;flex-wrap:nowrap}.page-tabs{flex:none}#benchmark-selector{margin-left:auto;flex:none}.page-nav button,.page-nav-link{padding-inline:9px}.start-config{grid-template-columns:1fr}#eval-config{grid-column:auto}#model-config .launch-fields{grid-template-columns:repeat(2,minmax(0,1fr))}}
@@ -1812,7 +1818,8 @@
   function renderSummary(r) {
     const done=r?.completed_episodes??r?.recorded_episodes??0, asked=r?.requested_episodes??0;
     const vals=[["有效回合",r?`${done} / ${asked}`:"—",['cancelled','paused','interrupted'].includes(r?.status)?`暂停中 · ${Math.max(0,asked-(r.recorded_episodes??done+(r.invalid_episodes??0)))} 回合尚未执行`:r?`${r.invalid_episodes??0} 个无效回合`:"尚未选择评估"],["平均 Q",qmean(r),r?.evaluation_mode==="fast-debug"?"调试 · 不计正式成绩":`0–1 · ${r?.q_score_episodes??0}/${done} 回合已记录`],["任务成功率",pct(r?.success_rate),r?`${r.successful_episodes??0} 个完整成功回合`:"完整任务成功比例"],["平均任务进度",r?.mean_task_progress==null?"—":`${num(r.mean_task_progress)}%`,"与 Q 分数分别统计"]];
-    $("summary").innerHTML=vals.map(([l,v,h],i)=>`<div class="metric ${i===2?"primary":""}"><label>${l}</label><strong>${esc(v)}</strong><small>${esc(h)}</small></div>`).join("");
+    const ordered=[vals[2],vals[0],vals[1],vals[3]];
+    $("summary").innerHTML=ordered.map(([l,v,h],i)=>`<div class="metric ${i===0?"primary":""}"><label>${l}</label><strong>${esc(v)}</strong><small>${esc(h)}</small></div>`).join("");
   }
   function renderDetails(r) {
     const checkpointIdentity=r?.policy_identity||r?.configuration?.policy_identity||{};
