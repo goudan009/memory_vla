@@ -43,6 +43,14 @@ def absolute(value):
     return path.resolve()
 
 
+def executable(value):
+    """Make an executable path absolute without resolving its venv symlink."""
+    path = Path(value)
+    if not path.is_absolute():
+        raise ValueError("paths must be explicitly resolved by the workbench")
+    return path.absolute()
+
+
 def inspect_upstream(root):
     """Check source identity without modifying a checkout or importing torch."""
     root = absolute(root)
@@ -159,7 +167,8 @@ def checkpoint_digest(checkpoint):
 
 def official_serve_spec(*, python, upstream, checkpoint, host, port, gpu_index, verified_radio_sha256):
     """Native official reference process spec; never launches a service."""
-    python, upstream, checkpoint = map(absolute,(python,upstream,checkpoint))
+    python = executable(python)
+    upstream, checkpoint = map(absolute, (upstream, checkpoint))
     if not python.is_file() or not isinstance(host,str) or not host.strip():
         raise ValueError("explicit target Python and bind host required")
     if type(port) is not int or not 1<=port<=65535 or type(gpu_index) is not int or gpu_index<0:
@@ -189,7 +198,8 @@ def official_serve_spec(*, python, upstream, checkpoint, host, port, gpu_index, 
 
 def official_eval_spec(*, python, behavior_root, output, endpoint, instance, rollouts):
     """Native 2026 evaluator. Output must already be allocated by workbench."""
-    python,behavior_root,output=map(absolute,(python,behavior_root,output))
+    python = executable(python)
+    behavior_root, output = map(absolute, (behavior_root, output))
     if not python.is_file() or not behavior_root.is_dir():
         raise ValueError("separate B1K2026 environment/source required")
     if not output.is_dir() or any(output.iterdir()):

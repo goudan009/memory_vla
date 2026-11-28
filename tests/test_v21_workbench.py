@@ -9,7 +9,7 @@ import pytest
 
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/'train'))
-from v21_workbench import Backend, controller, read, write
+from v21_workbench import Backend, controller, read, write, dashboard_metrics, metric_summary
 
 
 @pytest.fixture
@@ -286,3 +286,71 @@ def test_native_detail_reports_action_loss_without_state_weight(backend):
     detail=b.detail(dict(run=root.name))
     assert detail['curve']==[[1,.25,1]]
     assert detail['loss_series']==detail['curve']
+
+
+def test_native_dashboard_metrics_match_cards_timing_and_validation(backend):
+    b=backend;plan=b.prepare(native_request(b))
+    root=b.training/plan['run_id']
+    plan.update(source=str(b.live),source_manifest={'digest':'source'},preflight_only=False,preflight_steps=None)
+    write(root/'config/web_launch.json',plan)
+    rows=[dict(step=10,fm=.2,state=0.,grad_norm=.1,lr=1e-4,seen_samples=640,
+               elapsed_seconds=30.,gpu_peak_allocated=32*2**30),
+          dict(step=20,fm=.1,state=0.,grad_norm=.05,lr=9e-5,seen_samples=1280,
+               elapsed_seconds=50.,gpu_peak_allocated=33*2**30)]
+    write(root/'baseline/status.json',dict(status='training',step=22,last=rows[-1]))
+    (root/'run').mkdir()
+    journal=root/'run/metrics.jsonl'
+    journal.write_text(''.join(json.dumps(row)+'\n' for row in rows)+'{"step":')
+    write(root/'run/validation-000000.json',dict(step=0,fm=.3,samples=100))
+    before=journal.read_bytes()
+    job=b.jobs()[0];detail=b.detail(dict(run=root.name))
+    assert job['last']['loss']==.1 and job['last']['fm']==.1
+    assert job['last']['gradient_norm']==.05 and job['last']['peak_allocated_gib']==33
+    assert job['last']['seconds']==2. and job['last']['decisions_per_second_end_to_end']==32.
+    timing=detail['timing']
+    assert timing['elapsed_seconds']==50. and timing['last_step_seconds']==2.
+    assert timing['recent_mean_step_seconds']==2.5 and timing['recent_samples']==20
+    assert timing['eta_seconds']==pytest.approx((6000-22)*2.5)
+    assert detail['validation'][0]['validation_loss']==.3
+    assert detail['epochs']==[] and detail['curve_metadata']['has_epochs'] is False
+    assert detail['curve_metadata']['steps_label']=='记录点 Loss'
+    assert detail['state']['last']['loss']==.1 and journal.read_bytes()==before
+
+
+def test_legacy_dashboard_metrics_keep_weighted_loss_and_epoch_evidence(backend):
+    b=backend;root,launch=fixture_job(b,status='training')
+    rows=[dict(step=i,fm=.2,state=2.,seconds=2.,decisions=64,epoch=0 if i<3 else 1,
+               grad_norm=.1,peak_allocated_gib=30.) for i in (1,2,3)]
+    (root/'run').mkdir()
+    (root/'run/metrics.jsonl').write_text(''.join(json.dumps(row)+'\n' for row in rows))
+    write(root/'baseline/status.json',dict(status='training',step=3,last=rows[-1]))
+    detail=b.detail(dict(run=root.name));job=b.jobs()[0]
+    assert job['last']['loss']==pytest.approx(.22)
+    assert job['last']['decisions_per_second_end_to_end']==32.
+    assert detail['loss_series']==[[i,pytest.approx(.22),1] for i in (1,2,3)]
+    assert detail['curve']==[[3,pytest.approx(.22),3]]
+    assert detail['epochs'][0]['complete'] is True and detail['epochs'][1]['complete'] is False
+    assert detail['timing']['elapsed_seconds']==6. and detail['timing']['eta_seconds']==(6000-3)*2.
+    write(root/'baseline/status.json',dict(status='completed',step=6000,last=rows[-1]))
+    assert b.detail(dict(run=root.name))['timing']['eta_seconds']==0
+
+
+def test_missing_metrics_do_not_become_zero_loss_or_invented_timing(backend):
+    b=backend;root,_=fixture_job(b)
+    (root/'run').mkdir()
+    (root/'run/metrics.jsonl').write_text('{"step":1}\n{"step":2,"fm":NaN}\n')
+    detail=b.detail(dict(run=root.name))
+    assert detail['loss_series']==[] and detail['curve']==[]
+    assert detail['timing']['elapsed_seconds'] is None
+    assert b.jobs()[0]['last'] is None
+
+
+def test_native_timing_retains_elapsed_segments_after_resume_and_stop_budget():
+    launch=dict(recipe='native_random_v2',preflight_only=False,steps=6000)
+    rows=dashboard_metrics([dict(step=10,fm=.2,seen_samples=640,elapsed_seconds=30.),
+                            dict(step=20,fm=.1,seen_samples=1280,elapsed_seconds=20.)],launch)
+    summary=metric_summary(rows,launch,dict(status='training',step=22),dict(stop_after_step=100))
+    assert summary['timing']['elapsed_seconds']==50.
+    assert summary['timing']['eta_seconds']==78*2.5
+    assert rows[-1]['seconds']==2. and rows[-1]['decisions_per_second_end_to_end']==32.
+    assert metric_summary(rows,launch,dict(status='paused',step=22),{})['timing']['eta_seconds'] is None

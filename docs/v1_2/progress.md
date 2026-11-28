@@ -1,5 +1,27 @@
 # V1.2 Progress
 
+## 2026-11-28 - A100 backbone and route probe
+
+- Status: `PARTIAL / BLOCKED`; the requested A100 check was read-only and did not create or alter a job/service.
+- Plan: [workflow/plan-v006.json](workflow/plan-v006.json), superseding v005 after checking the preconfigured A100 host.
+- A100 host `gpuserver` (`172.28.62.17`) is reachable. GPU UUIDs were checked; current memory use was 35/32/32/10121 MiB on GPU 0-3 respectively. Existing V2.1 inference job `5557` remains `ready`; no A100 process was started or stopped.
+- A Hugging Face token file exists on A100, but its value was not displayed or copied. `huggingface.co` DNS resolution fails (`Temporary failure in name resolution`). The Hugging Face cache contains four other repositories and no Cosmos-Reason2-2B snapshot. No repository access check or download could complete while DNS is unavailable.
+- The legacy 8765 workbench exposes A100 inference options but lists no V1.2/N1.7 checkpoint. Its `/api/launch/options?device=a100` returns `unknown evaluation device`; do not bypass this route. The isolated V1.2 workbench remains on 8767, 8765 is serving normally, and 8766 remains the unrelated BodyVLA service (PID `1014195`).
+- No jobs were submitted in this probe. Counts remain `training_submissions=0`, `evaluation_submissions=2`, `successful_rollouts=0`; both earlier failed evaluations and their outputs remain preserved.
+- Next step: after A100 DNS/network access works, use its existing token through a supported HF client to check exact-revision repo access and download the snapshot under `/nvme3`; then add a supported isolated A100 policy route (with preview) before launching the existing B1K-2026 simulator on 8767. Do not restart 8765 or use B1K-2025.
+
+## 2026-11-28 - Isolated route and official checkpoint launch attempt
+
+- Status: `PARTIAL / BLOCKED`; environment and V1.2 workbench route are operational, but official closed-loop acceptance is blocked by missing gated backbone assets.
+- Latest plan: [workflow/plan-v005.json](workflow/plan-v005.json), superseding plan-v004 after the live launch exposed the final model-load dependency.
+- Workbench: isolated V1.2 service is live at `http://127.0.0.1:8767`; `GET /api/launch/options?device=local` reports `V_1_2` / `b1k2026_websocket` / `turning_on_radio` / `launch_ready=true`. Port `8766` is occupied by `/nvme3/projects/body_vla/evaluation/view_results.py` (PID `1014195`), so it was not touched. The existing 8765 process (PID `2112469`) is still alive and its service/options response remains available; it was not restarted or changed.
+- Isolated environment: `/nvme3/envs/b1k2026-sim`, Isaac Sim `/opt/isaac-sim-5.1`, pinned BEHAVIOR-1K-2026 revision `a8247a8cc1633fe1ca0cc66aa07243d46c64f155`, N1.7 revision `ace36d935b376fbf25cd56371e23877b95407c40`. Runtime imports and evaluator `--help` passed in the preceding stage.
+- Official checkpoint: exact radio checkpoint digest remains `cd97a22ff74bd91838350e18fe94b48e1902d407f1256f5d48eb20befe277dc3`; its 6.5 GiB safetensors contain backbone tensors. The pinned loader nevertheless invokes `Qwen3VLForConditionalGeneration.from_pretrained("nvidia/Cosmos-Reason2-2B")` before checkpoint weights are loaded, and the processor independently loads the same repo. `/nvme3/models/Cosmos-Reason2-2B` has only cache markers and a zero-byte lock; no usable local snapshot or HF token was found. Direct HF requests timed out and the mirror returned 403. The official backbone repo is gated; do not substitute another Qwen model or claim the checkpoint is self-contained.
+- Workbench evaluation attempts: job `9c7cf2ef0654` failed on a prior Python executable-resolution issue; job `68771bd9b18c` failed at official server health because Cosmos assets could not load. Both output directories and logs are retained under `evaluation/V_1_2/official/`; native JSON/video count is zero and successful rollout count is zero. The second process is terminated (zombie child reaped by its parent); no active evaluation remains.
+- Short note used for both evaluation previews: `V1.2 / N1.7 / B1K2026: official radio, RTC off`.
+- Compatibility: 2025 Task40 remains schema-readable but incompatible with the official 2026 checkpoint/runtime route; no conversion or B1K-2025 adaptation was performed. No formal training was started (`training_submissions=0`); no V2.2 work was done.
+- Next required input: an authorized HF account must accept the Cosmos-Reason2-2B gate and provide a token or a complete verified local snapshot. After that, cache the exact pinned revision under `/nvme3`, rerun preview then one new public-test instance, and archive native result/video/success/Q-score. Until then the closed-loop result remains blocked, not passed.
+
 ## 2026-11-28 - Official baseline commissioning
 
 - Status: `PARTIAL / BLOCKED`; no V1.2 evaluation job submitted.

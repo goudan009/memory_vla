@@ -1,0 +1,81 @@
+{
+  "plan_id": "v1_2_n17_b1k2026_acceptance_v006",
+  "status": "blocked",
+  "supersedes": "v1_2_n17_b1k2026_acceptance_v005",
+  "change_reason": "Checked the preconfigured A100 host as requested. It has an HF token file but no cached Cosmos-Reason2-2B snapshot, and cannot resolve huggingface.co; the legacy A100 inference route has no V1.2 checkpoint and the evaluation route rejects device=a100. Keep the 8765 V2.1 service/jobs unchanged and do not retry an unsupported route.",
+  "scope": "V1.2 official GR00T N1.7 + B1K-2026 isolated environment, workbench integration, and one-instance official radio closed-loop acceptance; no formal training, V2.2, or B1K-2025 adaptation",
+  "method_version": "V_1_2",
+  "protocol": "b1k2026_websocket",
+  "checkpoint": "/nvme3/checkpoints/memory_vla/official-n17-radio/turning_on_radio_GR00T-checkpoint-150000",
+  "checkpoint_sha256": "cd97a22ff74bd91838350e18fe94b48e1902d407f1256f5d48eb20befe277dc3",
+  "backbone": {
+    "repo_id": "nvidia/Cosmos-Reason2-2B",
+    "revision": "9ce19a195e423419c349abfc86fd07178b230561",
+    "local_path": "/nvme3/models/Cosmos-Reason2-2B",
+    "status": "blocked_a100_dns_and_snapshot_missing"
+  },
+  "isaac_groot_revision": "ace36d935b376fbf25cd56371e23877b95407c40",
+  "behavior_1k_revision": "a8247a8cc1633fe1ca0cc66aa07243d46c64f155",
+  "experiment_identity": null,
+  "notes": "V1.2 / N1.7 / B1K2026: official radio, RTC off",
+  "training_submissions": 0,
+  "evaluation_submissions": 2,
+  "successful_rollouts": 0,
+  "isolation": {
+    "legacy_workbench": "http://127.0.0.1:8765",
+    "v12_workbench": "http://127.0.0.1:8767",
+    "unrelated_workbench": "8766 / BodyVLA PID 1014195; not managed by this task",
+    "a100_host": "172.28.62.17 / gpuserver",
+    "a100_gpu_uuids": [
+      "GPU-182f3808-2eaa-8d68-36cf-47cc6a008d70",
+      "GPU-a9b38e95-c9d0-2d81-d4cc-793682058936",
+      "GPU-996ed9bb-ef43-12e7-2d63-be949b64988b",
+      "GPU-1bf501ca-0d49-a508-ea75-17e5c5a35e82"
+    ],
+    "environment": "/nvme3/envs/b1k2026-sim",
+    "behavior_root": "/nvme3/projects/GR00T/BEHAVIOR-1K-2026-a8247a8",
+    "evaluation_root": "/nvme3/projects/memory_vla/evaluation/V_1_2",
+    "asset_root": "/nvme3/datasets/b1k2026-assets"
+  },
+  "a100_probe": {
+    "hf_token_file_present": true,
+    "hf_token_value_logged": false,
+    "huggingface_dns": "failed: Temporary failure in name resolution",
+    "cached_huggingface_repositories": [
+      "HuggingFaceTB/SmolVLM2-500M-Video-Instruct",
+      "lerobot/smolvla_base",
+      "google/paligemma-3b-pt-224",
+      "lerobot/pi0_base"
+    ],
+    "cosmos_snapshot": "absent",
+    "gpu_memory_used_mib": [35, 32, 32, 10121],
+    "workbench_a100_v12_inference_route": "not_registered",
+    "workbench_a100_evaluation_route": "unsupported_device"
+  },
+  "attempts": [
+    {"job_id": "9c7cf2ef0654", "state": "failed", "reason": "N1.7 Python executable resolution produced an interpreter without torch; evidence retained."},
+    {"job_id": "68771bd9b18c", "state": "failed", "reason": "Cosmos-Reason2-2B unavailable offline; official model server did not pass health check; evidence retained."}
+  ],
+  "mainline": [
+    {"id": "environment", "depends_on": [], "parallel": ["assets"], "status": "complete", "acceptance": "Isolated Python 3.11 B1K-2026 environment imports pinned evaluator/runtime paths."},
+    {"id": "assets", "depends_on": [], "parallel": ["environment"], "status": "partial", "acceptance": "Challenge assets are extracted and recognized; gated Cosmos backbone files still require authorized network access."},
+    {"id": "workbench_route", "depends_on": ["environment", "assets"], "parallel": [], "status": "complete", "acceptance": "V1.2 route runs on isolated 8767; legacy 8765 and unrelated 8766 remain untouched."},
+    {"id": "a100_probe", "depends_on": ["workbench_route"], "parallel": [], "status": "complete", "acceptance": "Read-only probe recorded A100 auth/cache/network state, GPU UUIDs, and absence of a supported V1.2 A100 route."},
+    {"id": "preview", "depends_on": ["workbench_route"], "parallel": [], "status": "complete", "acceptance": "Two previews bind exact checkpoint/source/protocol/task and concise RTC-off note."},
+    {"id": "closed_loop", "depends_on": ["preview", "a100_probe"], "parallel": [], "status": "blocked", "acceptance": "One official radio rollout yields native JSON/video, success and Q-score evidence."},
+    {"id": "task40_compatibility", "depends_on": ["environment"], "parallel": ["workbench_route"], "status": "complete", "acceptance": "2025 Task40 incompatibility remains explicit; no conversion or B1K-2025 adaptation."},
+    {"id": "archive", "depends_on": ["closed_loop", "task40_compatibility"], "parallel": [], "status": "partial", "acceptance": "Actual jobs, logs, zero rollouts, zero training, A100 probe and service isolation are recorded."}
+  ],
+  "resource_policy": {
+    "storage_root": "/nvme3",
+    "preserve_v21": true,
+    "formal_training": false,
+    "develop_v22": false,
+    "legacy_b1k2025_adaptation": false,
+    "do_not_restart_8765": true,
+    "v12_port": 8767,
+    "do_not_take_over_8766": true,
+    "do_not_submit_a100_until_cosmos_available_and_route_supported": true
+  },
+  "created_at": "2026-11-28"
+}

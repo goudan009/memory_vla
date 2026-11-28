@@ -8,7 +8,7 @@ Finish environment commissioning, native B1K-2026 workbench integration, and one
 
 - Method/protocol: `V_1_2`, GR00T N1.7 official radio checkpoint, B1K-2026 WebSocket, temporal ensemble, RTC off.
 - Source: Isaac-GR00T `ace36d935b376fbf25cd56371e23877b95407c40`; BEHAVIOR-1K `a8247a8cc1633fe1ca0cc66aa07243d46c64f155` (`v3.9.3-post2`, not the unavailable exact `v3.9.3` tag).
-- Evaluation target: one public-test `turning_on_radio` instance, one environment, one rollout, with native JSON/video outputs.
+- Evaluation target: one public-test `turning_on_radio` instance, one environment, one rollout, with native JSON/video outputs. The isolated workbench is on `8767`; `8766` is occupied by another project's service and is not to be taken over.
 - Run note: `V1.2 / N1.7 / B1K2026: official radio, RTC off`.
 - No formal training, no V2.2 development, no B1K-2025 adaptation, and no modification or interruption of V2.1.
 - No `testNN` / `expNN` / `runNNN` is allocated because this task commissions infrastructure and evaluates a fixed official checkpoint; do not invent training identity.
@@ -24,6 +24,6 @@ Finish environment commissioning, native B1K-2026 workbench integration, and one
 
 ## Execution records
 
-- Plan: [plan-v002.json](workflow/plan-v002.json)
+- Latest plan: [plan-v005.json](workflow/plan-v005.json)
 - Prior Task40 audit: [local-preflight-2026-11-27.md](local-preflight-2026-11-27.md)
 - Progress: [progress.md](progress.md)

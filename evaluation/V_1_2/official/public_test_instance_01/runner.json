@@ -1,0 +1,12 @@
+{
+  "version": "V_1_2",
+  "protocol": "b1k2026_websocket",
+  "task": "turning_on_radio",
+  "checkpoint_sha256": "cd97a22ff74bd91838350e18fe94b48e1902d407f1256f5d48eb20befe277dc3",
+  "source_revision": "ace36d935b376fbf25cd56371e23877b95407c40",
+  "instance_indices": [
+    1
+  ],
+  "num_rollouts": 1,
+  "state": "starting"
+}

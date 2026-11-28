@@ -16,6 +16,8 @@ from urllib.parse import urlencode
 
 from groot_tasks import TASK_NAMES
 from groot_eval_control import EvaluationControl
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]/'src'))
+from v1_2_groot_baseline import contracts as v12_contracts
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]/'train'))
 from run_identity import canonical_version
 
@@ -52,6 +54,23 @@ def task40_artifacts(output):
             for relative, label in files.items()
             if (output / relative).resolve().is_relative_to(output)
             and (output / relative).is_file()]
+
+
+def v12_artifacts(output):
+    """Expose native BEHAVIOR-1K JSON/video files without rewriting them."""
+    output = Path(output).resolve()
+    files = {}
+    for path in sorted(output.glob("json/*.json")):
+        files[path.relative_to(output).as_posix()] = "native rollout JSON"
+    for path in sorted(output.glob("videos/*")):
+        if path.is_file():
+            files[path.relative_to(output).as_posix()] = "native rollout video"
+    for name in ("job.json", "runner.json", "server.log", "evaluator.log"):
+        if (output / name).is_file():
+            files[name] = "V1.2 run metadata" if name in ("job.json", "runner.json") else "V1.2 process log"
+    return [{'path': relative, 'label': label,
+             'url': '/api/launch/artifact?' + urlencode({'run': output.name, 'path': relative})}
+            for relative, label in files.items()]
 
 
 class LaunchManager:
@@ -108,8 +127,94 @@ class LaunchManager:
                                              if p.is_dir() and not p.name.startswith("."))
         return {"tasks": [{"id": task, "name": name} for task, name in TASK_NAMES.items()],
                 "versions": versions, "evaluation_root": str(evaluation),
+                "model_versions": {"V_1_2": {"protocol": v12_contracts.B1K2026,
+                                               "task": "turning_on_radio",
+                                               "launch_ready": self._v12_paths_ready()}},
                 "task40_collect": {"sim_slots": {str(gpu): 2 for gpu in (0, 1)
                     if (self.task40_experiment / 'metrics' / f'dual_gpu{gpu}_validated.json').is_file()}}}
+
+    @staticmethod
+    def _v12_config():
+        """Resolve only explicit V1.2 paths; never reuse the 2025 runtime."""
+        return {
+            'python': Path(os.environ.get('V12_GROOT_PYTHON',
+                '/nvme3/projects/GR00T/Isaac-GR00T-n1d7-ace36d9/.venv/bin/python')),
+            'upstream': Path(os.environ.get('V12_GROOT_ROOT',
+                '/nvme3/projects/GR00T/Isaac-GR00T-n1d7-ace36d9')),
+            'behavior_python': Path(os.environ.get('V12_BEHAVIOR_PYTHON',
+                '/nvme3/envs/b1k2026-sim/bin/python')),
+            'behavior_root': Path(os.environ.get('V12_BEHAVIOR_ROOT',
+                '/nvme3/projects/GR00T/BEHAVIOR-1K-2026-a8247a8')),
+            'checkpoint': Path(os.environ.get('V12_CHECKPOINT',
+                '/nvme3/checkpoints/memory_vla/official-n17-radio/turning_on_radio_GR00T-checkpoint-150000')),
+            'checkpoint_sha256': os.environ.get('V12_CHECKPOINT_SHA256',
+                'cd97a22ff74bd91838350e18fe94b48e1902d407f1256f5d48eb20befe277dc3'),
+        }
+
+    def _v12_paths_ready(self):
+        config = self._v12_config()
+        return all(path.is_file() if key.endswith('python') else path.is_dir()
+                   for key, path in config.items()
+                   if key in ('python', 'upstream', 'behavior_python', 'behavior_root', 'checkpoint'))
+
+    def _v12_prepare(self, request):
+        allowed = {'version', 'protocol', 'task', 'instance', 'rollouts', 'gpu_index',
+                   'policy_host', 'policy_port', 'run_tag', 'notes', 'record_video',
+                   'wait_for_gpu'}
+        unknown = set(request) - allowed
+        if unknown:
+            raise ValueError('V1.2 不支持的启动参数：' + ', '.join(sorted(unknown)))
+        if canonical_version(request.get('version')) != v12_contracts.VERSION:
+            raise ValueError('V1.2 请求必须显式使用 V_1_2')
+        if request.get('protocol') != v12_contracts.B1K2026:
+            raise ValueError('V1.2 必须使用原生 B1K-2026 WebSocket 协议')
+        if request.get('task', 'turning_on_radio') != 'turning_on_radio':
+            raise ValueError('官方 radio 权重只允许 turning_on_radio')
+        instance = request.get('instance', 0)
+        rollouts = request.get('rollouts', 1)
+        gpu = request.get('gpu_index', 0)
+        if type(instance) is not int or not 0 <= instance < 20:
+            raise ValueError('public-test instance 必须为 0–19 的整数')
+        if type(rollouts) is not int or rollouts != 1:
+            raise ValueError('V1.2 验收只允许一个 rollout')
+        if type(gpu) is not int or gpu < 0:
+            raise ValueError('GPU 编号必须为非负整数')
+        config = self._v12_config()
+        if not self._v12_paths_ready():
+            raise ValueError('V1.2 N1.7/B1K2026 独立环境或源码尚未就绪')
+        output = self.evaluation / 'V_1_2' / 'official' / f'public_test_instance_{instance:02d}'
+        output.mkdir(parents=True, exist_ok=True)
+        if any(output.iterdir()):
+            raise ValueError('V1.2 验收输出必须是全新目录：' + str(output))
+        host = request.get('policy_host', '127.0.0.1')
+        port = request.get('policy_port', 8000)
+        endpoint = dict(host=host, port=port, state='ready', version=v12_contracts.VERSION,
+                        method='official', task_name='turning_on_radio', protocol=v12_contracts.B1K2026,
+                        checkpoint_sha256=config['checkpoint_sha256'])
+        spec = v12_contracts.official_serve_spec(
+            python=config['python'], upstream=config['upstream'], checkpoint=config['checkpoint'],
+            host=host, port=port, gpu_index=gpu,
+            verified_radio_sha256=config['checkpoint_sha256'])
+        eval_spec = v12_contracts.official_eval_spec(
+            python=config['behavior_python'], behavior_root=config['behavior_root'], output=output,
+            endpoint=endpoint, instance=instance, rollouts=rollouts)
+        note = request.get('notes') or 'V1.2 / N1.7 / B1K2026：official radio, RTC off'
+        if not isinstance(note, str) or not 1 <= len(note) <= 200:
+            raise ValueError('V1.2 notes 必须是 1–200 字符')
+        plan = dict(kind='b1k2026_websocket', version=v12_contracts.VERSION,
+                    protocol=v12_contracts.B1K2026, task_id='turning_on_radio',
+                    instance=instance, rollouts=rollouts, output=str(output),
+                    gpus=[gpu], gpu_index=gpu, instances={str(gpu): [instance]}, notes=note,
+                    policy_identity=spec, evaluator=eval_spec,
+                    source_revision=spec['source']['revision'],
+                    checkpoint_sha256=spec['checkpoint_sha256'], rtc=False,
+                    official=True)
+        runner = self.root / 'evaluation/scripts/run_v12_b1k2026.py'
+        argv = [str(config['behavior_python']), '-u', str(runner),
+                '--serve-spec', json.dumps(spec, ensure_ascii=False),
+                '--eval-spec', json.dumps(eval_spec, ensure_ascii=False),
+                '--output', str(output)]
+        return {'argv': argv, 'command': shlex.join(argv), 'plan': plan}
 
     def argv(self, request):
         if not isinstance(request, dict):
@@ -257,7 +362,7 @@ class LaunchManager:
         if request.get('task40_forward') is True:
             return self._task40_forward(request)
         if canonical_version(request.get('version')) == 'V_1_2':
-            raise ValueError('V_1_2 requires an explicit N1.7 benchmark protocol; legacy B1K2025 route not verified')
+            return self._v12_prepare(request)
         argv = self.argv(request)
         identity=None
         if self.policy_resolver:
@@ -570,9 +675,13 @@ class LaunchManager:
 
     def start(self, request):
         prepared = self.prepare(request)
-        gpus = set(prepared["plan"]["instances"])
+        plan = prepared["plan"]
+        # Legacy plans use instances={gpu: [instance]}; V1.2 also carries a
+        # flat gpus list because it has one isolated service per GPU.
+        gpus = set(plan.get("instances", {}))
+        if not gpus:
+            gpus = {str(gpu) for gpu in plan.get("gpus", [plan.get("gpu_index", 0)])}
         with self.lock:
-            plan = prepared['plan']
             collect = plan.get('kind') == 'task40_collect'
             experiment = plan.get('kind') in TASK40_EXPERIMENT_KINDS
             active = [job for job in self.jobs if job['process'].poll() is None]
@@ -602,6 +711,11 @@ class LaunchManager:
                 prepared['plan']['started_at'] = time.strftime("%Y-%m-%d %H:%M:%S")
                 prepared['argv'][-1] = json.dumps(prepared['plan'], ensure_ascii=False)
                 prepared['command'] = shlex.join(prepared['argv'])
+            elif plan.get('kind') == 'b1k2026_websocket':
+                plan['job_id'] = job_id
+                plan['started_at'] = time.strftime("%Y-%m-%d %H:%M:%S")
+                (Path(plan['output']) / 'job.json').write_text(
+                    json.dumps(plan, ensure_ascii=False, indent=2) + '\n')
             with log_path.open("ab") as log:
                 process = subprocess.Popen(prepared["argv"], cwd=self.root, stdin=subprocess.DEVNULL,
                                            stdout=log, stderr=subprocess.STDOUT, start_new_session=True)
@@ -669,6 +783,12 @@ class LaunchManager:
                 "kind": plan.get("kind"), "seed": plan.get("seed"),
                 "policy_identity": plan.get("policy_identity"), "policy_port": self._policy_port(plan),
                 "process_start": job.get('process_start'), "batch": plan.get('batch')}
+        if plan.get('kind') == 'b1k2026_websocket':
+            status['artifacts'] = v12_artifacts(output)
+            native_json = sorted(output.glob('json/*.json'))
+            status['result_ready'] = bool(native_json)
+            status['native_results'] = [str(path.relative_to(output)) for path in native_json]
+            status['videos'] = [str(path.relative_to(output)) for path in sorted(output.glob('videos/*')) if path.is_file()]
         if plan.get('kind') in TASK40_EXPERIMENT_KINDS:
             if plan.get('kind') == 'task40_collect' and 'phase' not in plan:
                 # Restored workbench records contain a reduced plan.

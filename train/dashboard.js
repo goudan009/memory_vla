@@ -752,7 +752,8 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
     const points = (mode === 'epochs' ? detail.epochs.filter(e => e.complete).map(e => [e.last,e.loss,e.steps]) :
       mode === 'steps' ? (detail.loss_series || []) : detail.curve).filter(p => Number.isFinite(p[0]) && Number.isFinite(p[1]));
     const weight = Number(el('train-curve-smoothing').value), showRaw = el('train-curve-raw').checked;
-    const sourceLabel = {steps:'逐步 Loss',blocks:'50 步加权均值',epochs:'完整 Epoch 加权均值'}[mode];
+    const sourceLabel = {steps:detail.curve_metadata?.steps_label || '逐步 Loss',
+      blocks:detail.curve_metadata?.blocks_label || '50 步加权均值',epochs:'完整 Epoch 加权均值'}[mode];
     el('train-curve-smoothing-value').textContent = weight.toFixed(2);
     el('train-curve-source-label').textContent = sourceLabel;
     el('train-curve-trend-label').textContent = weight ? 'EMA 平滑趋势' : sourceLabel + ' · 未平滑';
@@ -931,7 +932,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
       job?.status === 'failed' ? '查看运行日志 →' : '查看权重 →';
     const metrics = [['训练步数', (job?.step ?? '—') + ' / ' + (job?.max_steps ?? '—'), '优化步'],
       ['最新 Loss', fmt(job?.last?.loss), '训练损失'],
-      ['训练吞吐', fmt(job?.last?.decisions_per_second_end_to_end), '决策 / 秒'],
+      ['训练吞吐', fmt(job?.last?.decisions_per_second_end_to_end), job?.last?.throughput_unit || '决策 / 秒'],
       ['峰值显存', fmt(job?.last?.peak_allocated_gib), 'GiB · 记录值']];
     el('train-metrics').innerHTML = metrics.map(([label,value,hint],i) => '<div class="metric' + (i === 1 ? ' primary' : '') + '"><label>' + label + '</label><strong>' + esc(value) + '</strong><small>' + hint + '</small></div>').join('');
     const timing = detail.timing || {}, lastSeconds = timing.last_step_seconds ?? job?.last?.seconds;
@@ -939,18 +940,31 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
     el('train-eta').textContent = timing.eta_seconds === 0 ? '训练已结束' : timeSpan(timing.eta_seconds);
     el('train-eta-note').textContent = timing.eta_seconds === 0 ? '训练优化已结束；独立验证状态另计' :
       timing.eta_seconds == null ? '等待运行中的计时记录；不含排队时间' :
-      '剩余 ' + timing.remaining_steps + ' 步 × 最近 ' + timing.recent_samples + ' 步均值；不含保存和验证';
+      '剩余 ' + timing.remaining_steps + ' 步 × 最近 ' + timing.recent_samples + ' 步均值；' +
+        (timing.scope === 'recorded_training_intervals' ? '按日志区间估算，包含区间内保存和验证耗时' : '不含保存和验证');
     el('train-step-time').textContent = timing.recent_mean_step_seconds == null ? '—' : timing.recent_mean_step_seconds.toFixed(2) + ' s / 步';
     el('train-step-time-note').textContent = lastSeconds == null ? '等待计时记录' :
-      '最近一步 ' + Number(lastSeconds).toFixed(2) + ' s' + (timing.mean_step_seconds == null ? '' : ' · 全程平均 ' + timing.mean_step_seconds.toFixed(2) + ' s');
+      (timing.scope === 'recorded_training_intervals' ? '最近记录区间平均每步 ' : '最近一步 ') +
+      Number(lastSeconds).toFixed(2) + ' s' + (timing.mean_step_seconds == null ? '' : ' · 全程平均 ' + timing.mean_step_seconds.toFixed(2) + ' s');
     const validation = job?.validation || {};
-    el('train-validation-info').textContent = job?.validation_enabled===false?'本次未启用验证': '独立验证 · ' + stateName(validation.status) +
+    el('train-validation-info').textContent = job?.validation_enabled===false?'本次未启用验证':
+      (detail.validation_scope === 'internal' ? '训练内验证 · ' + detail.validation.length + ' 次记录' : '独立验证 · ' + stateName(validation.status)) +
       (validation.checkpoint_step != null ? ' · step ' + validation.checkpoint_step : '') +
       (validation.completed_episodes != null ? ' · ' + validation.completed_episodes + '/' + validation.total_episodes + ' 集' : '');
-    el('train-epoch-table').innerHTML = '<table><thead><tr><th>Epoch</th><th>训练步</th><th>平均 Loss</th></tr></thead><tbody>' +
+    const metadata = detail.curve_metadata;
+    const epochOption = el('train-curve-mode').querySelector('option[value="epochs"]');
+    epochOption.disabled = metadata?.has_epochs === false;
+    epochOption.textContent = epochOption.disabled ? 'Epoch（本训练未记录）' : '完整 Epoch 平均';
+    if (epochOption.disabled && el('train-curve-mode').value === 'epochs') el('train-curve-mode').value = 'steps';
+    el('train-curve-mode').querySelector('option[value="steps"]').textContent = metadata?.steps_label || '逐步 Loss';
+    el('train-epoch-table').innerHTML = (metadata?.has_epochs === false ?
+      '<p class="train-hint">本训练未记录 Epoch，Loss 按实际日志记录点显示。</p>' :
+      '<table><thead><tr><th>Epoch</th><th>训练步</th><th>平均 Loss</th></tr></thead><tbody>' +
       detail.epochs.map(e => '<tr><td>' + e.epoch + (e.complete ? '' : '（未完整）') + '</td><td>' + e.first + '–' + e.last + '</td><td>' + fmt(e.loss) + '</td></tr>').join('') +
-      '</tbody></table><table><thead><tr><th>验证 checkpoint</th><th>验证 Loss</th><th>动作 MAE</th></tr></thead><tbody>' +
-      detail.validation.map(v => '<tr><td>' + v.step + '</td><td>' + fmt(v.validation_loss) + '</td><td>' + fmt(v.action_mae?.normal ?? v.action_mae) + '</td></tr>').join('') + '</tbody></table>';
+      '</tbody></table>') + '<table><thead><tr><th>验证 checkpoint</th><th>验证 Loss</th>' +
+      (detail.validation_scope === 'internal' ? '' : '<th>动作 MAE</th>') + '</tr></thead><tbody>' +
+      detail.validation.map(v => '<tr><td>' + v.step + '</td><td>' + fmt(v.validation_loss) + '</td>' +
+        (detail.validation_scope === 'internal' ? '' : '<td>' + fmt(v.action_mae?.normal ?? v.action_mae) + '</td>') + '</tr>').join('') + '</tbody></table>';
     const previous = el('train-saved-checkpoint').value;
     el('train-saved-checkpoint').innerHTML = (detail.checkpoints || []).map(p => '<option value="' + esc(p.path) + '">step ' + p.step + esc(checkpointNotes.brief(trainingDevice,p.path)) + '</option>').join('') || '<option value="">暂无已保存权重</option>';
     if ([...el('train-saved-checkpoint').options].some(o => o.value === previous)) el('train-saved-checkpoint').value = previous;

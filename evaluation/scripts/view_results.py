@@ -910,15 +910,22 @@ class Handler(BaseHTTPRequestHandler):
             query = parse_qs(urlparse(self.path).query)
             run = query.get('run', [''])[0]
             path = query.get('path', [''])[0]
-            if not re.fullmatch(r'[a-f0-9]{12}', run):
+            outputs = []
+            if re.fullmatch(r'public_test_instance_\d{2}', run):
+                from groot_web_launch import v12_artifacts
+                root = (self.launch_manager.evaluation / 'V_1_2' / 'official').resolve()
+                output = (root / run).resolve()
+                if output.parent == root and path in {item['path'] for item in v12_artifacts(output)}:
+                    outputs.append(output)
+            elif re.fullmatch(r'[a-f0-9]{12}', run):
+                for group in (TASK40_DEFAULT_EXPERIMENT, TASK40_NEXT_EXPERIMENT):
+                    root = self.launch_manager.task40_root(group).resolve() / 'runs'
+                    output = (root / run).resolve()
+                    if output.parent == root and path in {item['path'] for item in task40_artifacts(output)}:
+                        outputs.append(output)
+            else:
                 self.send_error(404)
                 return
-            outputs = []
-            for group in (TASK40_DEFAULT_EXPERIMENT, TASK40_NEXT_EXPERIMENT):
-                root = self.launch_manager.task40_root(group).resolve() / 'runs'
-                output = (root / run).resolve()
-                if output.parent == root and path in {item['path'] for item in task40_artifacts(output)}:
-                    outputs.append(output)
             if len(outputs) != 1:
                 self.send_error(404)
                 return

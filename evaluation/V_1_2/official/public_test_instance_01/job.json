@@ -1,0 +1,143 @@
+{
+  "kind": "b1k2026_websocket",
+  "version": "V_1_2",
+  "protocol": "b1k2026_websocket",
+  "task_id": "turning_on_radio",
+  "instance": 1,
+  "rollouts": 1,
+  "output": "/nvme3/projects/memory_vla/evaluation/V_1_2/official/public_test_instance_01",
+  "gpus": [
+    0
+  ],
+  "gpu_index": 0,
+  "instances": {
+    "0": [
+      1
+    ]
+  },
+  "notes": "V1.2 / N1.7 / B1K2026: official radio, RTC off",
+  "policy_identity": {
+    "version": "V_1_2",
+    "method": "official",
+    "task_name": "turning_on_radio",
+    "protocol": "b1k2026_websocket",
+    "source": {
+      "root": "/nvme3/projects/GR00T/Isaac-GR00T-n1d7-ace36d9",
+      "revision": "ace36d935b376fbf25cd56371e23877b95407c40",
+      "verified_files": {
+        "scripts/b1k/serve_b1k.py": "6ae5314095339551e83f8785fb3844e89605b361",
+        "scripts/b1k/train_b1k.py": "f5f60df9a4def3eaac1cd3b93270a94a11ce9961",
+        "examples/b1k/r1pro.py": "d54a400f3f48348eaefff1b9bf0f34caa51721af",
+        "examples/b1k/r1pro.json": "9287b28bade2af68a4e7442fcec1167845ee0432",
+        "gr00t/policy/websocket_b1k_server.py": "cb3191307561e805c5b83c0196b4f1d80693cfb5"
+      }
+    },
+    "checkpoint": {
+      "path": "/nvme3/checkpoints/memory_vla/official-n17-radio/turning_on_radio_GR00T-checkpoint-150000",
+      "processor": "/nvme3/checkpoints/memory_vla/official-n17-radio/turning_on_radio_GR00T-checkpoint-150000",
+      "role": "official_2026_radio",
+      "weights": [
+        "model-00001-of-00002.safetensors",
+        "model-00002-of-00002.safetensors"
+      ],
+      "model_horizon": 40,
+      "max_action_dim": 132,
+      "max_state_dim": 132,
+      "inference_steps": 4,
+      "valid_action_steps": 16,
+      "physical_action_dim": 23,
+      "raw_state_dim": 61,
+      "selected_state_dim": 25,
+      "protocol": "b1k2026_websocket"
+    },
+    "checkpoint_sha256": "cd97a22ff74bd91838350e18fe94b48e1902d407f1256f5d48eb20befe277dc3",
+    "argv": [
+      "/nvme3/projects/GR00T/Isaac-GR00T-n1d7-ace36d9/.venv/bin/python",
+      "-u",
+      "/nvme3/projects/GR00T/Isaac-GR00T-n1d7-ace36d9/scripts/b1k/serve_b1k.py",
+      "--model-path",
+      "/nvme3/checkpoints/memory_vla/official-n17-radio/turning_on_radio_GR00T-checkpoint-150000",
+      "--modality-config-path",
+      "/nvme3/projects/GR00T/Isaac-GR00T-n1d7-ace36d9/examples/b1k/r1pro.py",
+      "--embodiment-tag",
+      "NEW_EMBODIMENT",
+      "--device",
+      "cuda",
+      "--control-mode",
+      "temporal_ensemble",
+      "--host",
+      "127.0.0.1",
+      "--port",
+      "8000"
+    ],
+    "cwd": "/nvme3/projects/GR00T/Isaac-GR00T-n1d7-ace36d9",
+    "env": {
+      "PYTHONPATH": "/nvme3/projects/GR00T/Isaac-GR00T-n1d7-ace36d9",
+      "CUDA_VISIBLE_DEVICES": "0",
+      "PYTHONNOUSERSITE": "1",
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "HF_HUB_OFFLINE": "1",
+      "TRANSFORMERS_OFFLINE": "1"
+    },
+    "health_path": "/healthz",
+    "host": "127.0.0.1",
+    "port": 8000,
+    "gpu_index": 0,
+    "max_envs_per_service": 1,
+    "control_mode": "temporal_ensemble",
+    "rtc": false
+  },
+  "evaluator": {
+    "version": "V_1_2",
+    "group": "official",
+    "task_name": "turning_on_radio",
+    "protocol": "b1k2026_websocket",
+    "output": "/nvme3/projects/memory_vla/evaluation/V_1_2/official/public_test_instance_01",
+    "instance_indices": [
+      1
+    ],
+    "num_rollouts": 1,
+    "num_envs": 1,
+    "policy_identity": {
+      "host": "127.0.0.1",
+      "port": 8000,
+      "state": "ready",
+      "version": "V_1_2",
+      "method": "official",
+      "task_name": "turning_on_radio",
+      "protocol": "b1k2026_websocket",
+      "checkpoint_sha256": "cd97a22ff74bd91838350e18fe94b48e1902d407f1256f5d48eb20befe277dc3"
+    },
+    "argv": [
+      "/nvme3/envs/b1k2026-sim/bin/python",
+      "-m",
+      "omnigibson.eval.eval",
+      "--task-name",
+      "turning_on_radio",
+      "--mode",
+      "public_test",
+      "--instance-indices",
+      "1",
+      "--num-rollouts",
+      "1",
+      "--num-envs",
+      "1",
+      "--host",
+      "127.0.0.1",
+      "--port",
+      "8000",
+      "--output-dir",
+      "/nvme3/projects/memory_vla/evaluation/V_1_2/official/public_test_instance_01",
+      "--write-video"
+    ],
+    "cwd": "/nvme3/projects/GR00T/BEHAVIOR-1K-2026-a8247a8",
+    "control_mode": "temporal_ensemble",
+    "rtc": false
+  },
+  "source_revision": "ace36d935b376fbf25cd56371e23877b95407c40",
+  "checkpoint_sha256": "cd97a22ff74bd91838350e18fe94b48e1902d407f1256f5d48eb20befe277dc3",
+  "rtc": false,
+  "official": true,
+  "job_id": "68771bd9b18c",
+  "started_at": "2026-11-28 10:08:41"
+}

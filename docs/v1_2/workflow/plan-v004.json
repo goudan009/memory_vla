@@ -1,0 +1,36 @@
+{
+  "plan_id": "v1_2_n17_b1k2026_acceptance_v004",
+  "status": "in_progress",
+  "supersedes": "v1_2_n17_b1k2026_acceptance_v003",
+  "change_reason": "User authorized an isolated B1K-2026 environment and a separate 8766 service. Preserve the live 8765 Behavior-1K/V2.1 service and use separate environment, assets, outputs, process, and port.",
+  "scope": "V1.2 official GR00T N1.7 + B1K-2026 environment, isolated workbench route on 8766, and one-instance radio closed-loop acceptance; no formal training and no V2.2 development",
+  "method_version": "V_1_2",
+  "protocol": "b1k2026_websocket",
+  "checkpoint": "/nvme3/checkpoints/memory_vla/official-n17-radio/turning_on_radio_GR00T-checkpoint-150000",
+  "checkpoint_sha256": "cd97a22ff74bd91838350e18fe94b48e1902d407f1256f5d48eb20befe277dc3",
+  "isaac_groot_revision": "ace36d935b376fbf25cd56371e23877b95407c40",
+  "behavior_1k_revision": "a8247a8cc1633fe1ca0cc66aa07243d46c64f155",
+  "experiment_identity": null,
+  "notes": "V1.2 / N1.7 / B1K2026: official radio, RTC off",
+  "training_submissions": 0,
+  "evaluation_submissions": 0,
+  "isolation": {
+    "legacy_workbench": "http://127.0.0.1:8765",
+    "v12_workbench": "http://127.0.0.1:8766",
+    "environment": "/nvme3/envs/b1k2026-sim",
+    "behavior_root": "/nvme3/projects/GR00T/BEHAVIOR-1K-2026-a8247a8",
+    "evaluation_root": "/nvme3/projects/memory_vla/evaluation/V_1_2",
+    "asset_root": "/nvme3/datasets/b1k2026-assets"
+  },
+  "mainline": [
+    {"id": "environment", "depends_on": [], "parallel": ["assets"], "status": "in_progress", "acceptance": "Dedicated Python 3.11 environment imports Isaac Sim 5.1, OmniGibson, BDDL and the pinned B1K-2026 evaluator."},
+    {"id": "assets", "depends_on": [], "parallel": ["environment"], "status": "in_progress", "acceptance": "Required public-test assets are extracted or linked into the isolated runtime and recognized by the evaluator; hashes and sizes recorded."},
+    {"id": "workbench_route", "depends_on": ["environment", "assets"], "parallel": [], "status": "planned", "acceptance": "A separate 8766 process exposes explicit V_1_2/B1K2026 preview/start while 8765 remains unchanged."},
+    {"id": "preview", "depends_on": ["workbench_route"], "parallel": [], "status": "planned", "acceptance": "One public-test instance preview binds exact checkpoint/source/protocol and concise note without a 2025 runner."},
+    {"id": "closed_loop", "depends_on": ["preview"], "parallel": [], "status": "planned", "acceptance": "One official radio rollout produces native JSON/video, success and Q-score evidence."},
+    {"id": "task40_compatibility", "depends_on": ["environment"], "parallel": ["workbench_route"], "status": "complete", "acceptance": "2025 Task40 incompatibility remains explicit; no conversion or B1K-2025 adaptation."},
+    {"id": "archive", "depends_on": ["closed_loop", "task40_compatibility"], "parallel": [], "status": "planned", "acceptance": "Progress records actual job/artifacts, zero training and unchanged 8765/V2.1 state."}
+  ],
+  "resource_policy": {"storage_root": "/nvme3", "preserve_v21": true, "formal_training": false, "develop_v22": false, "legacy_b1k2025_adaptation": false, "do_not_restart_8765": true, "separate_port": 8766},
+  "created_at": "2026-11-28"
+}

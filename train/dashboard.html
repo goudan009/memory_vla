@@ -437,7 +437,7 @@
     <div class="train-chart-wrap"><svg id="train-chart" viewBox="0 0 900 300" role="img" aria-label="训练 Loss 曲线"></svg></div>
     <div id="train-curve-readout">悬停查看具体数值；平滑仅影响显示。</div>
     <p id="train-validation-info" class="train-validation-line"></p>
-    <details class="compact-fold"><summary>Epoch 与验证数值</summary><div id="train-epoch-table" class="train-table"></div><div class="details train-hint">Loss 按动作决策数加权，横轴为优化步。离线验证指标与任务成功率分别统计。</div></details>
+    <details class="compact-fold"><summary>Epoch 与验证数值</summary><div id="train-epoch-table" class="train-table"></div><div class="details train-hint">横轴为累计优化步；均值按实际记录的决策数或日志区间步数加权。验证 Loss 与任务成功率分别统计。</div></details>
    </div>
    <div id="train-pane-controls" role="tabpanel" aria-labelledby="train-tab-controls" hidden>
     <div id="train-cancel-panel" class="details" hidden><h3 id="train-cancel-title">取消本组排队</h3><p id="train-cancel-scope" class="train-info"></p><p class="train-hint">撤销后不会自动启动。保留配置和日志；需要训练时重新提交。此操作取消等待，不会强制抢占 GPU。</p><button id="train-cancel" type="button">取消本组排队</button></div>

@@ -6,6 +6,7 @@ workbench source snapshot, records progress, and never signals other jobs.
 import datetime
 import fcntl
 import json
+import math
 import os
 from pathlib import Path
 import re
@@ -39,6 +40,101 @@ def write(path, value):
 
 def now():
     return datetime.datetime.now().isoformat()
+
+
+def finite(value):
+    return type(value) in (int, float) and math.isfinite(value)
+
+
+def metric_rows(root, tail=False):
+    path=root/'run/metrics.jsonl'
+    if not path.is_file():return []
+    with path.open('rb') as handle:
+        if tail:
+            handle.seek(max(0,path.stat().st_size-65536))
+            if handle.tell():handle.readline()
+        lines=handle.read().decode(errors='replace').splitlines()
+    rows=[]
+    for line in lines:
+        try:row=json.loads(line)
+        except ValueError:continue  # The running trainer may still be writing the last line.
+        if isinstance(row,dict) and type(row.get('step')) is int and row['step']>0:
+            rows.append(row)
+    return rows
+
+
+def dashboard_metrics(rows, launch):
+    """Translate recorded V2_1 metrics to the shared dashboard contract."""
+    result=[];previous=None
+    for raw in rows:
+        row=dict(raw)
+        fm=raw.get('fm');state=raw.get('state',0);weight=launch.get('state_weight',0)
+        row['loss']=(fm+(weight*state if weight else 0) if finite(fm) and (not weight or finite(state)) else None)
+        if finite(raw.get('grad_norm')):row['gradient_norm']=raw['grad_norm']
+        if finite(raw.get('gpu_peak_allocated')):row['peak_allocated_gib']=raw['gpu_peak_allocated']/2**30
+        steps=1;seconds=raw.get('seconds')
+        if finite(raw.get('elapsed_seconds')):
+            steps=raw['step']-(previous['step'] if previous else 0)
+            before=previous.get('elapsed_seconds',0) if previous else 0
+            elapsed=raw['elapsed_seconds']
+            # Cumulative time restarts with each trainer process; step stays cumulative.
+            duration=elapsed-before if finite(before) and elapsed>=before else elapsed
+            seconds=duration/steps if steps>0 else None
+        row['seconds']=seconds if finite(seconds) and seconds>0 else None
+        row['recorded_steps']=max(1,steps)
+        if row['seconds'] is not None:
+            count=raw.get('decisions')
+            if finite(raw.get('seen_samples')):
+                before=previous.get('seen_samples',0) if previous else 0
+                count=(raw['seen_samples']-before)/steps if finite(before) and steps>0 else None
+            if finite(count) and count>0:
+                row['decisions_per_second_end_to_end']=count/row['seconds']
+                row['throughput_unit']='样本 / 秒' if launch.get('recipe') else '决策 / 秒'
+        result.append(row);previous=raw
+    return result
+
+
+def metric_summary(rows, launch, state, stop):
+    valid=[row for row in rows if finite(row.get('loss'))]
+    series=[[r['step'],r['loss'],1] for r in valid]
+    blocks=[];epochs={};groups={}
+    for row in valid:
+        key=(row['step']-1)//50
+        count=row.get('decisions') or row['recorded_steps']
+        group=groups.setdefault(key,dict(total=0.,count=0,steps=0,last=row['step']))
+        group.update(total=group['total']+row['loss']*count,count=group['count']+count,
+                     steps=group['steps']+1,last=row['step'])
+        if type(row.get('epoch')) is int:
+            epoch=epochs.setdefault(row['epoch'],dict(epoch=row['epoch']+1,total=0.,count=0,steps=0,first=row['step']))
+            epoch.update(total=epoch['total']+row['loss']*count,count=epoch['count']+count,
+                         steps=epoch['steps']+1,last=row['step'])
+    blocks=[[g['last'],g['total']/g['count'],g['steps']] for g in groups.values()]
+    means=[dict(epoch=e['epoch'],first=e['first'],last=e['last'],steps=e['steps'],
+                loss=e['total']/e['count'],complete=key<max(epochs)) for key,e in epochs.items()]
+    timed=[r for r in rows if r['seconds'] is not None]
+    elapsed=sum(r['seconds']*r['recorded_steps'] for r in timed)
+    steps=sum(r['recorded_steps'] for r in timed)
+    recent=[];left=50
+    for row in reversed(timed):
+        take=min(left,row['recorded_steps']);recent.append((row['seconds'],take));left-=take
+        if not left:break
+    count=sum(n for _,n in recent)
+    mean=sum(s*n for s,n in recent)/count if count else None
+    target=stop.get('stop_after_step',4 if launch.get('recipe') and launch['preflight_only'] else
+                    launch.get('preflight_steps') or launch['steps'])
+    remaining=max(0,target-state.get('step',rows[-1]['step'] if rows else 0))
+    complete=state.get('status') in ('completed','complete') or state.get('training_complete')
+    eta=0. if complete else (remaining*mean if mean is not None and state.get('status') in
+        ('training','running','saving_checkpoint','validating') else None)
+    native=launch.get('recipe')=='native_random_v2'
+    timing=dict(scope='recorded_training_intervals' if native else 'optimizer_loop',
+                elapsed_seconds=elapsed if steps else None,timed_steps=steps,
+                last_step_seconds=rows[-1]['seconds'] if rows else None,
+                mean_step_seconds=elapsed/steps if steps else None,recent_mean_step_seconds=mean,
+                recent_samples=count,recent_window=50,remaining_steps=0 if complete else remaining,eta_seconds=eta)
+    return dict(curve=blocks,loss_series=series,epochs=means,timing=timing,
+                curve_metadata=dict(has_epochs=bool(epochs),steps_label='记录点 Loss' if native else '逐步 Loss',
+                                    blocks_label='每 50 步记录均值' if native else '50 步加权均值'))
 
 
 class Backend:
@@ -393,6 +489,11 @@ class Backend:
             if state.get('status') not in TERMINAL and process.get('pid') and self.r['process_start'](process['pid']) is None:
                 state=dict(state,status='failed',error='Controller exited without a terminal record')
             status=state.get('status','submitted');terminal=status in TERMINAL
+            rows=dashboard_metrics(metric_rows(root,tail=True),launch)
+            last=next((row for row in reversed(rows) if finite(row.get('loss'))),None)
+            if last is None and state.get('last'):
+                candidate=dashboard_metrics([state['last']],launch)[0]
+                if finite(candidate.get('loss')):last=candidate
             result.append(dict(run=root.name,name=root.name,version=VERSION,model_version=VERSION,task=40,task_id=40,
                  arm=arm,method=launch['method'],training_id=root.name,train_number=launch['train_number'],
                  status=status,step=state.get('step',0),max_steps=launch.get('preflight_steps') or launch['steps'],gpus=','.join(map(str,launch['gpus'])),
@@ -401,23 +502,24 @@ class Backend:
                  can_delete=terminal,can_delete_files=terminal,can_stop=status in ('training','running','validating','submitted'),
                  can_cancel=status in ('queued','waiting_for_gpus'),resume=self.resume_info(root,launch,state),
                  checkpoint_interval=1000,notes=launch.get('notes',''),queue=queue or None,
-                 delete_block_reason='' if terminal else '请等待作业停止',validation_enabled=launch.get('validation_enabled',True),last=state.get('last')))
+                 delete_block_reason='' if terminal else '请等待作业停止',validation_enabled=launch.get('validation_enabled',True),last=last))
         return result
 
     def detail(self, request):
         root,launch=self.root(request)
-        metrics=[]
-        file=root/'run/metrics.jsonl'
-        if file.is_file():
-            for line in file.read_text().splitlines():
-                try:metrics.append(json.loads(line))
-                except ValueError:continue
-        return dict(run=root.name,arm=launch['arm'],config=launch,state=read(root/launch['arm']/'status.json',{}),
+        metrics=dashboard_metrics(metric_rows(root),launch)
+        state=read(root/launch['arm']/'status.json',{})
+        last=next((row for row in reversed(metrics) if finite(row.get('loss'))),None)
+        if last:state=dict(state,last=last)
+        summary=metric_summary(metrics,launch,state,read(root/'run/stop.json',{}))
+        validation=[]
+        for path in sorted((root/'run').glob('validation-*.json')):
+            row=read(path,{})
+            validation.append(dict(row,validation_loss=row.get('fm')))
+        return dict(run=root.name,arm=launch['arm'],config=launch,state=state,**summary,
              checkpoints=self.checkpoints(root),checkpoint=str(root/'run/checkpoints'),
-             curve=[[r['step'],r.get('fm',0)+launch.get('state_weight',0)*r.get('state',0),1] for r in metrics if 'step' in r],
-             loss_series=[[r['step'],r.get('fm',0)+launch.get('state_weight',0)*r.get('state',0),1] for r in metrics if 'step' in r],
              metrics=metrics[-100:],preflight=read(root/'run/preflight.json'),
-             log_tail=self.r['tail'](root/'logs/controller.log'),epochs=[],validation=[read(p,{}) for p in sorted((root/'run').glob('validation-*.json'))],
+             log_tail=self.r['tail'](root/'logs/controller.log'),validation=validation,validation_scope='internal',
              initial_weights=dict(checkpoint=launch['checkpoint'],label='V2_1 原始起点',mode='fresh'),
              training_parameters=dict(values=launch,sources=[str(root/'config/web_launch.json')]),
              resume=self.resume_info(root,launch,read(root/launch['arm']/'status.json',{})))
