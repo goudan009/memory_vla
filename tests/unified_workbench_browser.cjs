@@ -24,7 +24,21 @@ const read=name=>fs.readFileSync(path.join(dir,name),'utf8');
    if(p==='/api/launch/jobs')return json({jobs:u.searchParams.has('benchmark')?[native]:[]});
    if(p==='/api/benchmarks/jobs')return json({jobs:[]});
    if(p==='/api/agent-experiments')return json({experiments:['experiment_01']});
-   if(p==='/registry')return route.fulfill({contentType:'text/html',body:'<!doctype html><div id="registry-fixture">资源管理</div><script>parent.postMessage({type:"memoryvla-resource",section:new URLSearchParams(location.search).get("section"),item:{name:"fixture dataset",kind:"dataset",host:"4090",path:"/data/fixture",size:"12G"}},location.origin)</script>'});
+   if(p==='/registry')return route.fulfill({contentType:'text/html',body:read('registry_view.html')});
+   if(['/registry_storage.js','/resource_downloads.js'].includes(p))return route.fulfill({contentType:'application/javascript',body:read(p.slice(1))});
+   if(p==='/api/registry')return json({items:[
+      {id:'d1',kind:'dataset',host:'4090',name:'B1K-2026 Task0',path:'/data/task0',size_gb:12,n_parquet:200},
+      {id:'d2',kind:'dataset',host:'A100',name:'B1K-2025 Task40',path:'/data/task40',size_gb:21,n_parquet:200},
+      {id:'w1',kind:'weights',host:'4090',name:'GR00T N1.7 Radio',path:'/official/radio',size_gb:8,n_files:4}
+    ],hosts:[{host:'4090',label:'4090'},{host:'A100',label:'A100'}],experiments:[],generated_at:'fixture'});
+   if(p==='/api/registry/annotations')return json({});
+   if(p==='/api/registry/storage'){
+      const action=u.searchParams.get('action');
+      if(action==='hosts')return json({hosts:[{host:'4090',label:'4090'},{host:'A100',label:'A100'}]});
+      if(action==='browse'){const pth=u.searchParams.get('path');return json({type:'directory',path:pth,entries:[{name:'config.json',path:pth+'/config.json',type:'file',size:250,modified:0,can_delete:false}],offset:0,total:1,has_more:false});}
+      if(action==='disks')return json({disks:[{mount:'/data',total:107374182400,used:53687091200,free:53687091200,percent:50}]});
+   }
+   if(p==='/api/resources/downloads')return json({recipes:[]});
    if(p==='/')return route.fulfill({contentType:'text/html',body:'<!doctype html><div id="selected"></div><script>window.unifiedWorkbenchPanel={select:async t=>document.getElementById("selected").textContent=JSON.stringify(t)}</script>'});
    return route.fulfill({status:404,body:''});
   });
@@ -51,13 +65,15 @@ const read=name=>fs.readFileSync(path.join(dir,name),'utf8');
   await page.locator('#nav [data-page="results"]').click();
   await page.frameLocator('#panel').locator('#selected').filter({hasText:'radio'}).waitFor();
   await page.locator('#nav [data-page="registry"]').click();
-  await page.frameLocator('#panel').locator('#registry-fixture').waitFor();
-  await page.locator('#inspector').filter({hasText:'fixture dataset'}).waitFor();
+  await page.frameLocator('#panel').locator('[data-resource]').filter({hasText:'B1K-2026 Task0'}).waitFor();
+  await page.locator('#inspector').filter({hasText:'B1K-2026 Task0'}).waitFor();
+  await page.frameLocator('#panel').locator('#resource-browser').filter({hasText:'config.json'}).waitFor();
   assert.equal(await page.locator('#title').innerText(),'资源管理');
   assert.equal(await page.locator('#actions button').count(),0);
   assert.ok((await page.locator('#panel').getAttribute('src')).includes('/registry?embedded=1&section=datasets'));
   await page.locator('#tabs [data-tab="weights"]').click();
-  await page.frameLocator('#panel').locator('#registry-fixture').waitFor();
+  await page.frameLocator('#panel').locator('[data-resource]').filter({hasText:'GR00T N1.7 Radio'}).waitFor();
+  await page.locator('#inspector').filter({hasText:'GR00T N1.7 Radio'}).waitFor();
   assert.ok((await page.locator('#panel').getAttribute('src')).includes('section=weights'));
   await page.screenshot({path:'workbench-screenshots/unified-resources-a2.png'});
   for(const width of [1440,1024,768,390]){await page.setViewportSize({width,height:900});assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'layout overflow at '+width);}
