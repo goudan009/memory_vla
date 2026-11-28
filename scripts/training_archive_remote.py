@@ -37,7 +37,11 @@ def collect(request):
         add(metric, 'metrics.jsonl')
     patterns = ['config/*.json', 'config/web_resumes/resume-*/*.json', arm+'/config/*.json',
                 'status.json', arm+'/status.json', 'run/status.json', 'run/preflight.json',
-                'run/stop.json', 'metrics/stop_training.json', 'dataset/meta/info.json',
+                'run/stop.json', 'run/validation-*.json', 'run/native_contract.json',
+                'run/native_runtime.json', 'run/data_split.json', 'run/prepared/PREPARED.json',
+                'run/prepared/normalization_audit.json', 'run/prepared/train/meta/stats.json',
+                'run/prepared/train/meta/relative_stats.json', 'run/prepared/train/meta/modality.json',
+                'metrics/stop_training.json', 'dataset/meta/info.json',
                 'dataset/meta/tasks.jsonl']
     for pattern in patterns:
         for path in sorted(root.glob(pattern)):
@@ -56,7 +60,8 @@ def collect(request):
                 if path.suffix in ('.py', '.json', '.yaml', '.yml') and not {'tests', '__pycache__'} & set(path.parts):
                     add(path, 'source/'+str(path.relative_to(source)))
         for name in ('train/run_groot_train.sh', 'train/web_training_resume.py', 'train/run_identity.py',
-                     'train/v21_workbench.py', 'pyproject.toml'):
+                     'train/v21_workbench.py', 'scripts/stage1_native_train.py',
+                     'scripts/stage1_native_prepare.py', 'pyproject.toml'):
             add(source/name, 'source/'+name)
     return dict(files=files, origins=origins, metric_found=metric is not None)
 

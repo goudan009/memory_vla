@@ -123,6 +123,8 @@ def statistics(data, parameters):
     def loss(row):
         if 'loss' in row:
             return row['loss']
+        if parameters.get('recipe') == 'native_random_v2' and numeric(row.get('fm')):
+            return row['fm']
         weight = parameters.get('state_weight')
         if numeric(row.get('fm')) and numeric(row.get('state')) and numeric(weight):
             return row['fm']+weight*row['state']
@@ -141,7 +143,7 @@ def statistics(data, parameters):
             if key in {'loss', 'fm', 'state', 'seconds', 'learning_rate', 'lr', 'gradient_norm',
                        'gradient_norm_after_clip', 'grad_norm', 'peak_allocated_gib', 'decisions_per_second_end_to_end'}:
                 fields[key].append(value)
-            elif isinstance(value, dict) and ('grad' in key or key == 'body_flow_mse'):
+            elif isinstance(value, dict) and ('grad' in key or key in ('body_flow_mse', 'part_loss')):
                 for sub, v in value.items():
                     fields[key+'.'+sub].append(v)
     coverage = {}
@@ -244,6 +246,140 @@ def fmt(value):
     return str(value).replace('|', '\\|').replace('\n', ' ')
 
 
+
+def render_run_report(root, directory, record):
+    """Self-contained deterministic report. Never infer missing metrics."""
+    event = directory/'events'/record['event']
+    manifest = load(event/'MANIFEST.json', {})
+    payload = load(event/'workbench.json', {})
+    detail = payload.get('detail', {})
+    job, params, stats = record['job'], record['parameters'], record['statistics']
+    rec = event/'recorded/run'
+    runtime = load(rec/'native_runtime.json', {})
+    prepared = load(rec/'prepared/PREPARED.json', {})
+    contract = load(rec/'native_contract.json', {})
+    raw = b''.join((directory/p['path']).read_bytes()
+                   for p in manifest.get('metrics', {}).get('parts', []))
+    rows = []
+    for line in raw.splitlines():
+        try:
+            row = json.loads(line)
+        except ValueError:
+            continue  # collector already checks interior corruption
+        if row.get('kind') in (None, 'train') and isinstance(row.get('step'), int):
+            rows.append(row)
+    def val(row):
+        if numeric(row.get('loss')):
+            return row['loss']
+        if params.get('recipe') == 'native_random_v2':
+            return row.get('fm')
+        if numeric(row.get('fm')) and numeric(row.get('state')) and numeric(params.get('state_weight')):
+            return row['fm'] + params['state_weight']*row['state']
+        return None
+    def avg(values):
+        values = [v for v in values if numeric(v)]
+        return sum(values)/len(values) if values else None
+    lines = ['# 训练分析报告', '', '由工作台归档程序生成；不含 AI 推断。缺失字段为未记录，不以零替代。', '',
+             '## 1. 实验身份与权重', '',
+             '| 字段 | 值 |', '| --- | --- |']
+    def item(k,v):
+        lines.append(f'| {fmt(k)} | {fmt(v)} |')
+    for k,v in [('run',record['run']),('device',record['device']),('arm',record['arm']),
+                ('status',job.get('status')),('step',job.get('step')),('目标步数',job.get('max_steps')),
+                ('归档事件',record['event']),('归档时间',manifest.get('captured_at')),
+                ('训练备注',job.get('notes')),('源码摘要',job.get('source_digest')),
+                ('初始权重/续训',record.get('initial_weights'))]:
+        item(k,v)
+    lines += ['', '## 2. 实际训练配置', '', '配置来源：'+fmt(record.get('parameter_sources')), '',
+              '| 参数 | 值 |','| --- | --- |']
+    for k,v in sorted(params.items()):
+        if k not in {'argv','env','source_manifest'}:
+            item(k,v)
+    lines += ['', '## 3. 实际运行与数据', '', '| 字段 | 值 |','| --- | --- |']
+    for k,v in sorted(runtime.items()): item(k,v)
+    for k in ('mode','train_frames','val_frames','train_valid_anchors','accepted_cells','hashes'):
+        item('prepared.'+k, prepared.get(k))
+    item('split',contract.get('split'))
+    item('初始权重分片 SHA-256',contract.get('base_weights'))
+    item('统计量来源',contract.get('statistics'))
+    lines += ['', '## 4. 训练指标', '',
+              '训练 Loss 为记录点/日志区间值；验证 Loss 单独列出。不同动作归一化、mask、噪声采样及数据划分下的 Loss 不宜直接比较。',
+              '首尾统计为最多100条日志记录；日志间隔可能大于1步，步号间隔不等于丢失训练更新。', '',
+              '| 字段 | 值 |','| --- | --- |']
+    for k in ('records','first_step','last_step','duplicate_steps','nonincreasing_transitions',
+              'interior_missing_steps','incomplete_tail_records','finite_loss','loss_first100','loss_last100','loss_min'):
+        item(k,stats.get(k))
+    lines += ['', '### 每1000 optimizer steps 的训练记录均值', '',
+              '| 步数范围 | 记录数 | Loss | LR首值 | LR末值 | 梯度范数 | 底盘 | 躯干 | 左臂 | 右臂 | 左夹爪 | 右夹爪 |',
+              '| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |']
+    groups = defaultdict(list)
+    for row in rows:
+        groups[max(0,row['step']-1)//1000].append(row)
+    for k,group in sorted(groups.items()):
+        lr = [r.get('lr',r.get('learning_rate')) for r in group if numeric(r.get('lr',r.get('learning_rate')))]
+        values = [f'{k*1000+1}–{(k+1)*1000}',len(group),avg(val(r) for r in group),
+                  lr[0] if lr else None,lr[-1] if lr else None,
+                  avg(r.get('grad_norm',r.get('gradient_norm')) for r in group)]
+        for name in ('base','torso','left_arm','right_arm','left_gripper','right_gripper'):
+            values.append(avg((r.get('part_loss') or r.get('body_flow_mse') or {}).get(name) for r in group))
+        lines.append('| '+' | '.join(fmt(v) for v in values)+' |')
+    lines += ['', '### 按实际 epoch 字段汇总', '', '| epoch | 记录数 | Loss |','| --- | ---: | ---: |']
+    for k,v in stats.get('epochs',{}).items():
+        lines.append('| '+' | '.join(fmt(x) for x in (k,v.get('records'),v.get('mean_loss')))+' |')
+    lines += ['', '### 验证指标（独立于训练记录）', '', '| step | FM Loss | 样本数 |','| ---: | ---: | ---: |']
+    validation = {r.get('step'):r for r in detail.get('validation',[]) if isinstance(r,dict)}
+    for p in sorted(rec.glob('validation-*.json')):
+        v = load(p,{})
+        validation[v.get('step')] = v
+    for step,v in sorted(validation.items(),key=lambda kv:str(kv[0]).zfill(12)):
+        lines.append('| '+' | '.join(fmt(x) for x in (step,v.get('fm',v.get('validation_loss')),v.get('samples')))+' |')
+    if not validation: lines.append('| 未记录 | 未记录 | 未记录 |')
+    lines += ['', '### 指标覆盖', '', '| 字段 | 有限记录 | 缺失/非有限 | 均值 | 最小 | 最大 |',
+              '| --- | ---: | ---: | ---: | ---: | ---: |']
+    for k,v in stats.get('fields',{}).items():
+        lines.append('| '+' | '.join(fmt(x) for x in (k,v['finite'],v['missing_or_nonfinite'],v['mean'],v['minimum'],v['maximum']))+' |')
+    lines += ['', '## 5. Checkpoint', '', '| step | 路径 |','| ---: | --- |']
+    for c in record.get('checkpoints',[]):
+        lines.append('| '+' | '.join(fmt(x) for x in (c.get('step'),c.get('path')))+' |')
+    lines += ['', '## 6. 闭环评估（仅明确绑定本 run 的终态记录）', '']
+    found = False
+    for p in sorted((directory/'evaluations').glob('*/results.json')):
+        v = load(p,{}); identity = v.get('policy_identity') or v.get('configuration',{}).get('policy_identity') or {}
+        if identity.get('training_id') != record['run'] or not identity.get('checkpoint'):
+            continue
+        found = True
+        origin = load(p.parent/'origin.json',{})
+        lines += ['### '+fmt(origin.get('path')), '', '| 字段 | 值 |','| --- | --- |']
+        for k,x in [('checkpoint',identity['checkpoint']),('状态',v.get('status')),
+                    ('完成/计划',[v.get('completed_episodes'),v.get('requested_episodes')]),
+                    ('成功/有效',[v.get('successful_episodes'),v.get('official_episodes')]),
+                    ('Q Score',v.get('mean_q_score')),('Task Progress',v.get('mean_task_progress')),
+                    ('实际评估配置',v.get('configuration'))]: item(k,x)
+        ep = p.parent/'episodes.jsonl'
+        if ep.is_file():
+            lines += ['', '| 回合 | instance | seed | 成功 | Q Score | Task Progress | 终止 |',
+                      '| --- | --- | --- | --- | --- | --- | --- |']
+            for line in ep.read_text().splitlines():
+                try: r=json.loads(line)
+                except ValueError: continue
+                lines.append('| '+' | '.join(fmt(r.get(k)) for k in
+                    ('episode_index','instance_id','seed','success','q_score','task_progress','native_termination'))+' |')
+        lines += ['']
+    if not found: lines.append('尚未归档匹配的终态评估。训练结束不等于评估完成。')
+    lines += ['', '## 7. 证据与局限', '',
+              f'- [归档清单](events/{record["event"]}/MANIFEST.json)',
+              f'- [工作台原始快照](events/{record["event"]}/workbench.json)',
+              '- 原始指标按清单中的 SHA-256 分片保存；日志只保存已声明范围。未记录的指标不作推断。',
+              '- 归一化审计、实际 processor 配置、源码、终态评估及逐回合数据以归档证据为准。']
+    for name in sorted(manifest.get('files',{})):
+        if any(x in name for x in ('normalization_audit','relative_stats','native_runtime','native_contract','validation-','logs/')):
+            lines.append(f'- [{name}](events/{record["event"]}/{name})')
+    content = ('\n'.join(lines)+'\n').encode()
+    write(directory/'training_report.md',content)
+    # Immutable report revisions are content-addressed; no clock-driven churn.
+    write(directory/'report_revisions'/(sha(content)+'.md'),content)
+
+
 def render(root):
     lines = ['# 训练与评估自动汇总', '',
         '由 `scripts/training_archive.py` 按固定规则生成，无 LLM 参与。原始数据及 SHA-256 清单见各事件链接。', '',
@@ -256,8 +392,9 @@ def render(root):
     records = [(p,load(p)) for p in sorted((root/REPORT/'runs').glob('*/*/*/latest.json'))]
     for path, record in records:
         j,s = record['job'],record['statistics']
+        render_run_report(root, path.parent, record)
         rel = path.parent.relative_to(root/REPORT).as_posix()
-        lines.append(f"| [{fmt(record['device']+'/'+record['run']+'/'+record['arm'])}]({rel}/events/{record['event']}/workbench.json) | {fmt(j.get('status'))} | {fmt(j.get('step'))} / {fmt(j.get('max_steps'))} | {fmt(s['loss_first100'])} | {fmt(s['loss_last100'])} | {s['records']} |")
+        lines.append(f"| [{fmt(record['device']+'/'+record['run']+'/'+record['arm'])}]({rel}/training_report.md) | {fmt(j.get('status'))} | {fmt(j.get('step'))} / {fmt(j.get('max_steps'))} | {fmt(s['loss_first100'])} | {fmt(s['loss_last100'])} | {s['records']} |")
     lines += ['', '## 闭环评估总表', '',
         '覆盖本机 `evaluation/V_*/` 下的终态结果，包括历史训练和身份未完整记录的评估。未记录字段保留为空缺，不推断归属。中断作业的已完成回合与计划回合分别列出。', '',
         '| 评估 / 原始数据 | 训练 run | checkpoint | 结果状态 / 工作台状态 | job ID | 完成 / 计划回合 | 成功 / 有效回合 | 平均任务进度（原值） |',

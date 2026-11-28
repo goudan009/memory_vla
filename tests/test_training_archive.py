@@ -37,6 +37,24 @@ class ArchiveTests(unittest.TestCase):
         self.assertEqual(archive.statistics(data, {'state_weight':0.25})['loss_last100'], 2.75)
         self.assertIsNone(archive.statistics(data, {})['loss_last100'])
 
+    def test_native_report_loss_and_part_metrics(self):
+        data = b'{"step":10,"fm":0.2,"state":0,"lr":0.0001,"part_loss":{"left_arm":0.3}}\n'
+        stats = archive.statistics(data, {'recipe':'native_random_v2'})
+        self.assertEqual(stats['loss_last100'],0.2)
+        self.assertEqual(stats['fields']['part_loss.left_arm']['mean'],0.3)
+        with tempfile.TemporaryDirectory() as temp:
+            root=Path(temp)
+            job=dict(run='run1',arm='baseline',status='completed',step=10)
+            detail=dict(training_parameters=dict(values={'recipe':'native_random_v2'}),validation=[{'step':10,'fm':0.4,'samples':100}])
+            with patch.object(archive,'remote_snapshot',return_value=({'metrics.jsonl':data},{'metrics.jsonl':{'sha256':archive.sha(data)}})):
+                archive.archive(root,'a100',{},job,detail)
+            archive.render(root)
+            report=(root/archive.REPORT/'runs/a100/run1/baseline/training_report.md').read_text()
+            self.assertIn('0.4 | 100',report)
+            self.assertIn('part_loss.left_arm',report)
+            self.assertIn('0.2',report)
+            self.assertIn('尚未归档',report)
+
     def test_malformed_interior_record_is_an_error(self):
         with self.assertRaisesRegex(ValueError, 'line 1'):
             archive.statistics(b'{\n{"step":1,"loss":1}\n', {})
