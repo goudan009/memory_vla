@@ -687,7 +687,7 @@
 </head>
 <body>
   <header><div class="brand"><div class="brand-mark" aria-hidden="true">M</div><div><h1>MemoryVLA</h1><div id="caption" class="sr-only" role="status"></div></div></div><nav class="page-nav" aria-label="训练评估工作台页面">
-    <a class="page-nav-link" id="page-tab-ai" href="/ai" aria-label="实验管理" title="实验管理"><span class="nav-label-full">实验管理</span><span class="nav-label-short">实验</span></a>
+    <a class="page-nav-link" id="unified-workbench-link" href="/workbench" aria-label="新版三栏工作台" title="新版三栏工作台">新版</a><a class="page-nav-link" id="page-tab-ai" href="/ai" aria-label="实验管理" title="实验管理"><span class="nav-label-full">实验管理</span><span class="nav-label-short">实验</span></a>
     <div class="page-tabs" role="tablist" aria-label="工作台">
       <button type="button" id="page-tab-training" role="tab" aria-label="启动训练" aria-controls="page-training" aria-selected="false" onclick="selectPage('training')"><span class="nav-label-full">模型训练</span><span class="nav-label-short">训练</span></button>
       <button type="button" id="page-tab-launch" role="tab" aria-label="推理评估" aria-controls="page-launch" aria-selected="false" onclick="selectPage('launch')"><span class="nav-label-full">推理评估</span><span class="nav-label-short">推理</span></button>
@@ -891,6 +891,8 @@
     <section id="page-registry" role="tabpanel" aria-labelledby="page-tab-registry" hidden></section>
     <div class="page-foot" hidden>调试结果不计正式成绩</div>
   </main>
+<link rel="stylesheet" href="/workbench_embed.css">
+<script>if(new URLSearchParams(location.search).get('embedded')==='1')document.body.classList.add('workbench-embedded');</script>
 <script src="/checkpoint_notes.js"></script>
 <script>
   let runs = [], selected = null, refreshInFlight = false;
@@ -990,6 +992,9 @@
       return;
     }
     activePage=page;
+    if(document.body.classList.contains('workbench-embedded')&&window.parent!==window){
+      window.parent.postMessage({type:'memoryvla-embedded-page',page},location.origin);
+    }
     if(updateURL && workbenchPageFromURL()!==page){
       const url=new URL(location.href);
       if(page==='results') url.searchParams.delete('page');
@@ -2669,6 +2674,39 @@
     if(workbenchPageFromURL()!=='results') selectPage(workbenchPageFromURL(),false);
     window.addEventListener('popstate',()=>selectPage(workbenchPageFromURL(),false));
   }
+  // Same-origin shell bridge. All real starts continue through the original forms.
+  window.unifiedWorkbenchPanel = {
+    async select(target){
+      if(!document.body.classList.contains('workbench-embedded'))throw Error('仅用于嵌入面板');
+      if(target.type==='experiment')return; // /ai?experiment= selects the recorded document.
+      if(target.type==='train'){
+        selectPage('training');
+        if(!window.trainingDashboard?.selectRun)throw Error('训练面板未就绪');
+        await window.trainingDashboard.selectRun(target);
+      }else if(target.type==='eval'){
+        selectPage('results');
+        if(window.benchmarkWorkbench.current()==='b1k2026'||window.benchmarkWorkbench.current()==='libero'){
+          await window.benchmarkWorkbench.selectRun(target);
+        }else{
+          const response=await fetch('/api/results',{cache:'no-store'});if(!response.ok)throw Error('评估结果读取失败');
+          const data=await response.json();runs=data.runs||[];
+          const row=runs.find(r=>r._folder===target.folder);
+          if(!row)throw Error('评估记录暂不可查');
+          $('run-search').value='';$('status-filter').value='';selected=row;render();selectDetailTab('episodes');
+        }
+      }else if(target.type==='checkpoint'){
+        if(target.benchmark!=='b1k')throw Error('当前权重未通过跨接口启动校验');
+        await window.trainingDashboard.selectRun(target);
+        const options=[...$('train-saved-checkpoint').options];
+        if(!options.some(o=>o.value===target.path))throw Error('所选权重不在已发布权重列表');
+        $('train-saved-checkpoint').value=target.path;
+        $('train-use-checkpoint').click();
+      }else if(target.type==='new'){
+        if(target.page==='training'){selectPage('training');if(window.benchmarkWorkbench.current()==='b1k'){await window.trainingDashboard.open();$('train-new').click();}}
+        else if(target.page==='launch'){selectPage('launch');$('launch-new-tab').click();}
+      }
+    }
+  };
   const installButton = document.getElementById('install-workbench');
   window.addEventListener('beforeinstallprompt', event => {
     event.preventDefault();

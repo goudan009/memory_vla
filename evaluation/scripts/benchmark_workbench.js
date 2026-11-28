@@ -467,7 +467,11 @@ if(typeof module!=='undefined' && module.exports) module.exports={benchmarkMetri
   document.querySelectorAll('[data-bench-tab]').forEach(button=>button.onclick=()=>{tab=button.dataset.benchTab;if(tab!=='cameras')el('bench-pane-cameras').querySelector('video')?.pause();document.querySelectorAll('[data-bench-tab]').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.benchTab===tab)));for(const name of ['metrics','cameras','logs'])el('bench-pane-'+name).hidden=name!==tab;});
   el('bench-export').onclick=()=>{if(detail&&detail.job.id===selectedId)exportRecord(detail,benchmark);};
   el('bench-stop').onclick=async()=>{if(!detail)return;el('bench-stop').disabled=true;try{await api('stop',{run:detail.job.id});await refresh();}catch(e){message('bench-detail-message',e.message,true);el('bench-stop').disabled=false;}};
-  window.benchmarkWorkbench={route,isNative,refresh,current:()=>benchmark,renderNativeResults,nativeSetTab,nativeResultJob,liberoAnnotation,run,loadOptions,options:()=>options,updateButtons:setButtons,trainingReady:()=>{const sidebar=el('page-training').querySelector('.run-browser');if(sidebar)sidebar.append(checks);return route(page);}};
+  window.benchmarkWorkbench={selectRun:async target=>{
+    if(benchmark==='b1k2026'){await refreshNative();if(!nativeJobs.some(j=>j.id===target.run))throw Error('找不到原生评估记录');el('run-search').value='';el('status-filter').value='';nativeSelected=target.run;nativeEpisode=0;nativeTab='episodes';renderNativeResults();}
+    else if(benchmark==='libero'){await refresh();const value=await api('detail?run='+encodeURIComponent(target.run));selectedId=target.run;detail=value;renderList();renderDetail();}
+    else throw Error('当前 Benchmark 尚未支持该记录');
+  },route,isNative,refresh,current:()=>benchmark,renderNativeResults,nativeSetTab,nativeResultJob,liberoAnnotation,run,loadOptions,options:()=>options,updateButtons:setButtons,trainingReady:()=>{const sidebar=el('page-training').querySelector('.run-browser');if(sidebar)sidebar.append(checks);return route(page);}};
   el('benchmark-choice').value=benchmark;
   if(typeof agentBoardPage==='undefined'||!agentBoardPage)changeBenchmark(true);
   setInterval(()=>{if(!workspace.hidden||(!checks.hidden&&checks.open))void refresh();},4000);

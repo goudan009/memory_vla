@@ -1460,7 +1460,15 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
       if(currentJob()?.task!=null) el('launch-task').value=String(currentJob().task);
     };
   }
-  window.trainingDashboard = {open:async () => {
+  window.trainingDashboard = {selectRun:async target=>{
+    await window.trainingDashboard.open();
+    if(!mounted)throw Error('训练面板未就绪');
+    if(target.device!==trainingDevice){el('train-device').value=target.device;await el('train-device').onchange();}
+    if(target.device!==trainingDevice)throw Error('训练设备无法切换');
+    const found=jobs.find(j=>j.run===target.run&&j.arm===target.arm);
+    if(!found)throw Error('找不到所选训练记录');
+    chosen={run:found.run,arm:found.arm};showDetailLoading();selectView('detail');selectDetailTab('curve');await loadDetail();
+  },open:async () => {
     try {
       if (!mounted) {
         if (typeof pageHTML !== 'string') throw Error('训练页面版本不匹配，请按 Ctrl+F5 重新加载工作台');

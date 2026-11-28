@@ -1190,6 +1190,11 @@ class Handler(BaseHTTPRequestHandler):
             self.wfile.write(body)
             return
         ai_assets = {
+            '/workbench': ('unified_workbench.html', 'text/html'),
+            '/workbench/': ('unified_workbench.html', 'text/html'),
+            '/unified_workbench.js': ('unified_workbench.js', 'application/javascript'),
+            '/unified_workbench.css': ('unified_workbench.css', 'text/css'),
+            '/workbench_embed.css': ('workbench_embed.css', 'text/css'),
             '/agent_experiments.js': ('agent_experiments.js', 'application/javascript'),
             '/ai/preview': ('ai_workbench.html', 'text/html'),
             '/ai/preview/': ('ai_workbench.html', 'text/html'),
