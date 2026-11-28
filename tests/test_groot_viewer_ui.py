@@ -83,11 +83,13 @@ def test_native_2026_form_and_artifacts_use_the_native_contract():
 $('launch-kind').value='n17';$('n17-instance').value='18';$('n17-port').value='8032';
 $('n17-gpu').value='0';$('n17-notes').value='V1.2 / N1.7 / B1K2026: official radio, RTC off';
 $('n17-video').checked=true;
+$('n17-attempt').value='2';$('n17-language').value='task_description';
 const request=collectLaunchRequest();
 assert.equal(request.version,'V_1_2');assert.equal(request.protocol,'b1k2026_websocket');
 assert.equal(request.instance,18);assert.equal(request.rollouts,1);assert.equal(request.gpu_index,0);
 assert.equal(request.task,'turning_on_radio');assert.ok(request.notes);assert.equal(request.record_video,true);
 assert.equal(request.run_tag,undefined);assert.equal(request.seed_mode,undefined);
+assert.equal(request.attempt,2);assert.equal(request.language_mode,'task_description');
 $('n17-instance').value='20';assert.throws(()=>collectLaunchRequest(),/0–19/);
 $('n17-instance').value='18';$('n17-notes').value='';assert.throws(()=>collectLaunchRequest(),/备注/);
 const card=renderNativeJob({notes:'native baseline',native_metrics:[{instance_id:319,steps:100,success:false,q_score:0.5}],

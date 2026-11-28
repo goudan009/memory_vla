@@ -11,6 +11,24 @@ from groot_web_launch import LaunchManager
 from v1_2_groot_baseline import contracts as c
 
 
+def test_task_language_reaches_official_wrapper_and_restores_module():
+    from types import SimpleNamespace
+    from v12_b1k2026_server import task_language
+
+    class OfficialWrapper:
+        def __init__(self, policy, text_prompt="pick up the object and place it on the table"):
+            self.policy, self.text_prompt = policy, text_prompt
+
+    module = SimpleNamespace(B1KPolicyWrapper=OfficialWrapper)
+    prompt = "Turn on the radio receiver that's on the table in the living room."
+    assert module.B1KPolicyWrapper("checkpoint").text_prompt != prompt
+    with task_language(module, prompt):
+        policy = module.B1KPolicyWrapper(policy="checkpoint")
+        assert policy.text_prompt == prompt
+        assert policy.policy == "checkpoint"
+    assert module.B1KPolicyWrapper is OfficialWrapper
+
+
 def _fixture_checkpoint(root):
     (root / "config.json").write_text(json.dumps({
         "model_type": "Gr00tN1d7", "action_horizon": 40,
@@ -72,6 +90,23 @@ def test_v12_preview_binds_native_route(tmp_path, monkeypatch):
     assert "serve_b1k.py" in json.dumps(plan["policy_identity"])
     with pytest.raises(ValueError, match="B1K-2026"):
         manager.prepare({**request, "protocol": c.B1K2025})
+
+    metadata = tmp_path / "tasks.jsonl"
+    prompt = "Turn on the radio receiver that's on the table in the living room."
+    metadata.write_text(json.dumps(dict(task_index=0, task_name="turning_on_radio", task=prompt)) + "\n")
+    monkeypatch.setenv("V12_TASK_METADATA", str(metadata))
+    (Path(plan['output']) / 'job.json').write_text('original attempt retained')
+    corrected = manager.prepare({**request, 'attempt': 2, 'language_mode': 'task_description'})['plan']
+    assert corrected['output'].endswith('public_test_instance_03_attempt_02')
+    assert corrected['language']['text_prompt'] == prompt
+    assert corrected['policy_identity']['language'] == corrected['language']
+    assert (Path(plan['output']) / 'job.json').read_text() == 'original attempt retained'
+    assert plan['language']['mode'] == 'official_default'
+    with pytest.raises(ValueError, match='language_mode'):
+        manager.prepare({**request, 'language_mode': 'arbitrary'})
+    metadata.write_text(json.dumps(dict(task_index=0, task_name='turning_on_radio', task='wrong task')) + '\n')
+    with pytest.raises(ValueError, match='Task0'):
+        manager.prepare({**request, 'attempt': 2, 'language_mode': 'task_description'})
 
 
 def test_completed_native_run_survives_primary_workbench_reload(tmp_path):

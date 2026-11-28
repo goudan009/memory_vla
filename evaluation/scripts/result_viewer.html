@@ -766,8 +766,10 @@
                 <p class="wide mode-note">GR00T N1.7 官方 radio 权重 · turning_on_radio · 本机 4090 · 一环境一回合 · RTC 关闭。推理随评估启动，结束后释放。</p>
                 <label>评估 GPU<select id="n17-gpu" required></select></label>
                 <label>公共测试实例<input id="n17-instance" type="number" min="0" max="19" step="1" value="0" required></label>
+                <label>尝试编号<input id="n17-attempt" type="number" min="1" max="99" step="1" value="1" required></label>
+                <label>任务指令<select id="n17-language"><option value="task_description">打开收音机（任务原文）</option><option value="official_default">官方默认（复现原始服务）</option></select></label>
                 <label>策略端口<input id="n17-port" type="number" min="1024" max="65535" value="8033" required></label>
-                <label class="wide">运行备注<input id="n17-notes" value="V1.2 / N1.7 / B1K2026: official radio, RTC off" maxlength="200" required></label>
+                <label class="wide">运行备注<input id="n17-notes" value="V1.2 / N1.7 / B1K2026: radio task prompt, RTC off" maxlength="200" required></label>
                 <label class="switch"><input id="n17-video" type="checkbox" checked>保存原生录像</label>
               </fieldset>
               <fieldset id="launch-new">
@@ -1500,13 +1502,15 @@
   function collectLaunchRequest() {
     if($('launch-kind').value==='n17'){
       const instance=Number($('n17-instance').value), port=Number($('n17-port').value);
+      const attempt=Number($('n17-attempt').value||'1'), language_mode=$('n17-language').value||'task_description';
       const notes=$('n17-notes').value.trim(), gpu=$('n17-gpu').value;
       if(!Number.isInteger(instance)||instance<0||instance>19||!$('n17-instance').value) throw Error('公共测试实例须为 0–19 的整数');
       if(!Number.isInteger(port)||port<1024||port>65535) throw Error('策略端口须为 1024–65535 的整数');
+      if(!Number.isInteger(attempt)||attempt<1||attempt>99) throw Error('尝试编号须为 1–99 的整数');
       if(!notes||!gpu) throw Error('请选择 GPU 并填写简短版本备注');
       return {version:'V_1_2',protocol:'b1k2026_websocket',task:'turning_on_radio',instance,
         rollouts:1,gpu_index:Number(gpu),policy_host:'127.0.0.1',policy_port:port,
-        record_video:$('n17-video').checked,notes};
+        record_video:$('n17-video').checked,notes,attempt,language_mode};
     }
     if($('launch-kind').value==='forward'){
       const policy=selectedCollectionPolicy();
@@ -1705,7 +1709,7 @@
       const collect=request.task40_collect;
       const forward=request.task40_forward;
       const endpoint=`推理 ${esc(request.policy_host)}:${esc(request.policy_port)} · ${esc(plan?.policy_identity?.checkpoint||'')}`;
-      const info=plan?.kind==='b1k2026_websocket'?`V1.2 / N1.7 / B1K-2026 · 实例 ${esc(plan.instance)} · 1 回合 · RTC 关闭<br>${esc(plan.notes)}<br>权重 SHA256 ${esc(plan.checkpoint_sha256)}`:
+      const info=plan?.kind==='b1k2026_websocket'?`V1.2 / N1.7 / B1K-2026 · 实例 ${esc(plan.instance)} · 尝试 ${esc(plan.attempt||1)} · 1 回合 · RTC 关闭<br>${esc(plan.notes)}<br>任务指令：${esc(plan.language?.text_prompt||'官方默认')}<br>权重 SHA256 ${esc(plan.checkpoint_sha256)}`:
         plan&&forward?`批次 ${esc(request.batch)} · 本地控制器<br>${endpoint}`:
         plan&&request.restore_checkpoint?`仿真 GPU ${esc(request.sim_gpu)} · 恢复 ${esc(request.restore_checkpoint)} · 重复 ${esc(request.restore_repeats)} 次 · 每次最多 ${esc(request.cycles)} 次决策<br>${endpoint}`:
         plan&&collect?`${request.controlled_reclosure?'受控重关 · ':''}仿真 GPU ${esc(request.sim_gpu)} · 实例 ${esc(request.instances.join(', '))} · 每实例 ${esc(request.repetitions||1)} 次 · 基础种子 ${esc(request.seed)} · 每条最多 ${esc(request.cycles)} 次决策<br>${endpoint}`:
@@ -1763,7 +1767,7 @@
     }).join(' · ');
     const metrics=(job.native_metrics||[]).map(m=>
       `<div>实例 ${esc(m.instance_id)} · ${esc(m.steps)} 步 · ${m.success===true?'成功':m.success===false?'未成功':'待确认'} · Q-score ${esc(m.q_score)}</div>`).join('');
-    return `<div class="subtle">${esc(job.notes||'V1.2 / N1.7 / B1K2026')}</div>${metrics}<div class="launch-job-artifacts">${links||'等待原生产物'}</div>`;
+    return `<div class="subtle">${esc(job.notes||'V1.2 / N1.7 / B1K2026')}</div>${job.language?`<div class="subtle">任务指令：${esc(job.language.text_prompt)}</div>`:''}${metrics}<div class="launch-job-artifacts">${links||'等待原生产物'}</div>`;
   }
   async function refreshLaunchJobs() {
     if(launchOverviewBusy)return;

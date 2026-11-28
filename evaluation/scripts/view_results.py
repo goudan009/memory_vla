@@ -82,7 +82,7 @@ def restore_evaluation_jobs(manager, records):
         manager.jobs.append(dict(id=row['id'],process=DetachedEvaluation(row),gpus=set(row['gpus']),
             log_path=Path(row['log']),command=row['command'],started_at=row['started_at'],
             process_start=row.get('process_start'),
-            plan={k:row.get(k) for k in ['output','task_id','version','group','kind','seed','policy_identity','policy_port','batch','notes']}))
+            plan={k:row.get(k) for k in ['output','task_id','version','group','kind','seed','policy_identity','policy_port','batch','notes','language','attempt']}))
     # The isolated 2026 commissioning service has its own in-memory jobs.
     # Recover completed native runs from their original metadata when the
     # primary dashboard loads, without rewriting native results or history.

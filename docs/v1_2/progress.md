@@ -4,6 +4,8 @@
 
 - User requested continued completion. Latest plan: [workflow/plan-v027.json](workflow/plan-v027.json). Correct the verified language-wiring defect through an explicit adapter and repeat public index 18 in attempt 2; preserve the original default-prompt test. This is a labeled input correction, not a claim of reproducing unchanged official serving or a deterministic paired comparison.
 - 8765 was reloaded through `memory-vla-web-8765.service` after confirming zero active evaluations. Its native options are ready and job `97f45ef78924` is recovered with its original note and actual metrics (3225 / false / 0.0). Artifact endpoint does not implement HEAD; validate with normal GET rather than modifying the server for that optional method. Legacy timers remain enabled. No new rollout has started yet.
+- `task_language` completed: explicit `task_description` mode validates Task0 metadata and persists its full text and metadata SHA256. The server adapter supplies that text to the pinned official wrapper without editing upstream. The default mode remains available for original-serving reproduction. Attempt numbering preserves existing same-instance outputs. UI exposes the language choice, attempt, actual text and concise notes. Relevant regression checks: 74 passed.
+- Actual N1.7 Python / pinned R1Pro wrapper CPU check passed: a real `process_input` call emits `language.annotation.human.task_description=[["Turn on the radio receiver that's on the table in the living room."]]`, batch=1, three cameras and all six state groups. This checks actual model-input construction without claiming task success or performing training.
 
 ## 2026-11-28 - official_rollout / semantic_review / legacy_shutdown_gate
 

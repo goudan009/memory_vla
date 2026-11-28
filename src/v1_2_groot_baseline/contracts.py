@@ -19,6 +19,8 @@ BACKBONE_ID = "nvidia/Cosmos-Reason2-2B"
 OFFICIAL_RADIO_URL = "https://drive.google.com/file/d/1OXNm3SPLvWOSJR1e8In6xHMHxOYDp789/view?usp=sharing"
 B1K2026 = "b1k2026_websocket"
 B1K2025 = "b1k2025_zmq_candidate"
+RADIO_TASK_DESCRIPTION = "Turn on the radio receiver that's on the table in the living room."
+OFFICIAL_DEFAULT_PROMPT = "pick up the object and place it on the table"
 STATE_GROUPS_2026 = {"base_qvel": (0,3), "torso": (53,57), "left_arm": (3,10),
                      "left_gripper": (24,26), "right_arm": (28,35), "right_gripper": (49,51)}
 ACTION_GROUPS = {"base": (0,3), "torso": (3,7), "left_arm": (7,14),
@@ -29,6 +31,7 @@ UPSTREAM_FILES = {
     "examples/b1k/r1pro.py": "d54a400f3f48348eaefff1b9bf0f34caa51721af",
     "examples/b1k/r1pro.json": "9287b28bade2af68a4e7442fcec1167845ee0432",
     "gr00t/policy/websocket_b1k_server.py": "cb3191307561e805c5b83c0196b4f1d80693cfb5",
+    "gr00t/eval/eval_b1k_wrapper.py": "f9167c74e2f3dca325d60005abb78bf63f56e351",
 }
 
 

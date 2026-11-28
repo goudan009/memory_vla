@@ -1,6 +1,7 @@
 """Small web adapter for the canonical evaluation CLI; no simulator imports."""
 
 import json
+import hashlib
 import math
 import os
 from pathlib import Path
@@ -149,6 +150,8 @@ class LaunchManager:
                 '/nvme3/checkpoints/memory_vla/official-n17-radio/turning_on_radio_GR00T-checkpoint-150000')),
             'checkpoint_sha256': os.environ.get('V12_CHECKPOINT_SHA256',
                 'cd97a22ff74bd91838350e18fe94b48e1902d407f1256f5d48eb20befe277dc3'),
+            'task_metadata': Path(os.environ.get('V12_TASK_METADATA',
+                '/nvme3/datasets/b1k2026-task0-task40/meta/tasks.jsonl')),
         }
 
     def _v12_paths_ready(self):
@@ -160,7 +163,7 @@ class LaunchManager:
     def _v12_prepare(self, request):
         allowed = {'version', 'protocol', 'task', 'instance', 'rollouts', 'gpu_index',
                    'policy_host', 'policy_port', 'run_tag', 'notes', 'record_video',
-                   'wait_for_gpu'}
+                   'wait_for_gpu', 'attempt', 'language_mode'}
         unknown = set(request) - allowed
         if unknown:
             raise ValueError('V1.2 不支持的启动参数：' + ', '.join(sorted(unknown)))
@@ -179,10 +182,29 @@ class LaunchManager:
             raise ValueError('V1.2 验收只允许一个 rollout')
         if type(gpu) is not int or gpu < 0:
             raise ValueError('GPU 编号必须为非负整数')
+        attempt = request.get('attempt', 1)
+        if type(attempt) is not int or not 1 <= attempt <= 99:
+            raise ValueError('attempt 必须为 1–99 的整数')
+        language_mode = request.get('language_mode', 'official_default')
+        if language_mode not in ('official_default', 'task_description'):
+            raise ValueError('language_mode 必须为 official_default 或 task_description')
         config = self._v12_config()
         if not self._v12_paths_ready():
             raise ValueError('V1.2 N1.7/B1K2026 独立环境或源码尚未就绪')
-        output = self.evaluation / 'V_1_2' / 'official' / f'public_test_instance_{instance:02d}'
+        language = dict(mode=language_mode, text_prompt=v12_contracts.OFFICIAL_DEFAULT_PROMPT)
+        if language_mode == 'task_description':
+            metadata = config['task_metadata']
+            raw = metadata.read_bytes()
+            tasks = [json.loads(line) for line in raw.decode('utf-8').splitlines() if line.strip()]
+            radio = [t for t in tasks if t.get('task_index') == 0]
+            if len(radio) != 1 or radio[0].get('task_name') != 'turning_on_radio' or radio[0].get('task') != v12_contracts.RADIO_TASK_DESCRIPTION:
+                raise ValueError('Task0 任务语言元数据不匹配')
+            language.update(text_prompt=radio[0]['task'], task_index=0,
+                            metadata=str(metadata), metadata_sha256=hashlib.sha256(raw).hexdigest())
+        name = f'public_test_instance_{instance:02d}'
+        if attempt > 1:
+            name += f'_attempt_{attempt:02d}'
+        output = self.evaluation / 'V_1_2' / 'official' / name
         output.mkdir(parents=True, exist_ok=True)
         if any(output.iterdir()):
             raise ValueError('V1.2 验收输出必须是全新目录：' + str(output))
@@ -195,6 +217,7 @@ class LaunchManager:
             python=config['python'], upstream=config['upstream'], checkpoint=config['checkpoint'],
             host=host, port=port, gpu_index=gpu,
             verified_radio_sha256=config['checkpoint_sha256'])
+        spec['language'] = language
         eval_spec = v12_contracts.official_eval_spec(
             python=config['behavior_python'], behavior_root=config['behavior_root'], output=output,
             endpoint=endpoint, instance=instance, rollouts=rollouts)
@@ -209,6 +232,7 @@ class LaunchManager:
                     source_revision=spec['source']['revision'],
                     checkpoint_sha256=spec['checkpoint_sha256'], rtc=False,
                     official=True)
+        plan.update(attempt=attempt, language=language)
         runner = self.root / 'evaluation/scripts/run_v12_b1k2026.py'
         argv = [str(config['behavior_python']), '-u', str(runner),
                 '--serve-spec', json.dumps(spec, ensure_ascii=False),
@@ -791,6 +815,7 @@ class LaunchManager:
             status['native_results'] = [str(path.relative_to(output)) for path in native_json]
             status['videos'] = [str(path.relative_to(output)) for path in sorted(output.glob('videos/*')) if path.is_file()]
             status['notes'] = plan.get('notes')
+            status['language'] = plan.get('language')
             status['native_metrics'] = []
             for path in native_json:
                 try:

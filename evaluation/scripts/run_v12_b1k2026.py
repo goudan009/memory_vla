@@ -175,8 +175,17 @@ def main():
     evaluator_log = (output / "evaluator.log").open("ab")
     server = None
     try:
+        server_argv = list(serve['argv'])
+        language = serve.get('language', {})
+        if language.get('mode') == 'task_description':
+            script = str(Path(serve['cwd']) / 'scripts/b1k/serve_b1k.py')
+            if server_argv[1:3] != ['-u', script]:
+                raise ValueError('unexpected V1.2 official server script')
+            server_argv = [server_argv[0], '-u', str(Path(__file__).with_name('v12_b1k2026_server.py')),
+                           '--official-script', script, '--text-prompt', language['text_prompt'],
+                           *server_argv[3:]]
         server = subprocess.Popen(
-            serve["argv"], cwd=serve["cwd"], env=env, stdin=subprocess.DEVNULL,
+            server_argv, cwd=serve["cwd"], env=env, stdin=subprocess.DEVNULL,
             stdout=server_log, stderr=subprocess.STDOUT, start_new_session=True,
         )
         _health(serve)
@@ -186,6 +195,7 @@ def main():
             "source_revision": serve.get("source", {}).get("revision"),
             "instance_indices": evaluate.get("instance_indices"), "num_rollouts": evaluate.get("num_rollouts"),
             "state": "ready", "server_pid": server.pid, "evaluator_argv": evaluator_argv,
+            "server_argv": server_argv, "language": language,
         })
         completed = subprocess.run(
             evaluator_argv, cwd=evaluate["cwd"], env=eval_env, stdin=subprocess.DEVNULL,
@@ -202,6 +212,7 @@ def main():
             "state": "complete" if completed.returncode == 0 else "failed",
             "evaluator_returncode": completed.returncode,
             "evaluator_argv": evaluator_argv,
+            "server_argv": server_argv, "language": language,
             "native_json": [str(path.relative_to(output)) for path in native],
             "native_video": [str(path.relative_to(output)) for path in sorted((output / "videos").glob("*")) if path.is_file()],
         })
