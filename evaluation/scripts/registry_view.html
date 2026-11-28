@@ -262,6 +262,29 @@ body.registry-embedded{--ink:#26364d;--muted:#687b94;--accent:#285fc6;--accent-s
 .registry-embedded .storage-menu summary{color:var(--muted)}
 .registry-embedded #res-message:empty{display:none}
 @media(max-width:450px){.registry-embedded .embedded-resource-row{grid-template-columns:minmax(0,1fr) 48px 53px 10px;gap:5px;padding:8px;font-size:11px}}
+
+/* Resource list: plain text, one level of grouping, no folder cards or glyphs. */
+#res-rows{padding:5px 9px 10px}
+.resource-host-group+.resource-host-group{border-top:1px solid var(--line);margin-top:8px;padding-top:8px}
+.resource-host-title{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:12px;font-weight:600;padding:5px 6px}
+.resource-host-title small{font-size:11px;font-weight:400}
+#res-rows .resource-text-row{display:block;width:100%;background:transparent;border:1px solid transparent;border-radius:5px;text-align:left;padding:6px 8px;margin:1px 0;color:var(--ink)}
+#res-rows .resource-text-row:hover{background:#f4f7fb}
+#res-rows .resource-text-row[aria-current=true]{background:var(--accent-soft);border-color:#c7d8f5;box-shadow:none;color:var(--accent)}
+.resource-text-name{display:block;font-size:12px;font-weight:550;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.resource-text-meta{display:flex;justify-content:space-between;gap:8px;color:var(--muted);font-size:11px;line-height:1.5;margin-top:2px}
+.storage-entries{border-radius:6px}
+.storage-entry{padding:6px 10px;gap:8px;grid-template-columns:minmax(0,1fr) 88px 32px}
+.storage-entry:nth-child(even){background:#fff}
+.storage-entry>button:first-child{display:block;min-height:28px;line-height:1.4;width:100%;overflow:hidden;color:var(--ink)}
+.storage-entry .storage-name{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.storage-entry[data-kind=directory] .storage-name{font-weight:600}
+.storage-entry .storage-size{text-align:right}
+.storage-entry .storage-menu>summary{text-align:center}
+.storage-entry small{font-size:10px;margin-top:2px}
+.storage-breadcrumbs button{background:transparent;padding:4px 3px;min-height:24px;color:var(--accent)}
+.storage-breadcrumbs button:hover{background:#f4f7fb}
+@media(max-width:540px){.storage-entry{grid-template-columns:minmax(0,1fr) 66px 27px;padding:6px 7px;gap:5px}.storage-entry .storage-menu>summary{padding:4px}}
 </style>
 </head>
 <body>
@@ -311,7 +334,7 @@ body.registry-embedded{--ink:#26364d;--muted:#687b94;--accent:#285fc6;--accent-s
     <div class="ledger-workspace" id="resource-file-workspace">
       <nav class="ledger-list" aria-label="资源目录"><div class="ledger-list-head"><strong>资源目录</strong><span id="res-count"></span></div>
         <div class="storage-filters">
-          <input id="res-q" type="search" placeholder="搜索资源名称或路径…" aria-label="搜索资源">
+          <input id="res-q" type="search" placeholder="搜索资源…" aria-label="搜索资源">
           <select id="res-kind" aria-label="资源类型">
             <option value="all">全部资源</option><option value="dataset">数据集</option>
             <option value="weights">模型权重</option>
@@ -509,13 +532,21 @@ function renderRes(){
   if(!resourceRows.some(item=>resourceKey(item)===selectedResource)){
     selectedResource=resourceRows.length?resourceKey(resourceRows[0]):undefined;
   }
-  const selected=resourceRows.find(item=>resourceKey(item)===selectedResource);
-  if(selected && !query)openBranches(resourceDirectories(selected),expandedResources);
   document.getElementById('res-count').textContent=`${resourceRows.length} 项`;
-  const renderItem=item=>`<button type="button" class="record-select" data-resource="${esc(resourceKey(item))}">
-    <span class="record-name">${esc(item.name||'未命名资源')}</span><span class="record-context">${esc(KIND_LABEL[item.kind])} · ${resourceSize(item)}${query&&item.path?` · ${esc(item.path)}`:''}</span>
+  // A flat text list grouped only by physical host; filters already select the kind.
+  const groups=new Map();
+  for(const item of resourceRows){
+    const host=item.host||'位置未记录';
+    if(!groups.has(host))groups.set(host,[]);
+    groups.get(host).push(item);
+  }
+  const renderItem=item=>`<button type="button" class="resource-text-row" data-resource="${esc(resourceKey(item))}" title="${esc(item.path||item.name||'')}">
+    <span class="resource-text-name">${esc(item.name||'未命名资源')}</span>
+    <span class="resource-text-meta"><span>${esc(KIND_LABEL[item.kind])}</span><span>${resourceSize(item)}</span></span>
   </button>`;
-  document.getElementById('res-rows').innerHTML=(embeddedRegistry?resourceRows.map(item=>`<button type="button" class="embedded-resource-row" data-resource="${esc(resourceKey(item))}"><span class="resource-name">${esc(item.name||'未命名资源')}</span><span>${esc(item.host||'—')}</span><span>${resourceSize(item)}</span><span class="resource-arrow">›</span></button>`).join(''):renderDirectory(resourceRows,query?()=>[]:resourceDirectories,renderItem,expandedResources))||'<div class="empty">没有匹配的资源。</div>';
+  document.getElementById('res-rows').innerHTML=[...groups].sort(([a],[b])=>a.localeCompare(b,'zh-CN',{numeric:true})).map(([host,items])=>
+    `<div class="resource-host-group"><div class="resource-host-title">${esc(host)} <small>${items.length}</small></div>${items.map(renderItem).join('')}</div>`
+  ).join('')||'<div class="empty">没有匹配的资源。</div>';
   showResourceDetail();
 }
 function showResourceDetail(){
@@ -688,7 +719,7 @@ if(embeddedRegistry){
 }
 load(false);
 </script>
-<script src="/registry_storage.js"></script>
+<script src="/registry_storage.js?ui=text1"></script>
 <script src="/resource_downloads.js"></script>
 </body>
 </html>

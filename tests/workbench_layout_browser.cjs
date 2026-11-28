@@ -165,6 +165,10 @@ async function bounds(page,name,selector){
    await page.locator('#page-tab-registry').click();
    const frame=page.frameLocator('#registry-frame');
    await frame.locator('#resource-browser .storage-entry').first().waitFor({state:'visible'});
+   assert.equal(await frame.locator('#res-rows details[data-directory]').count(),0,'flat resource list');
+   assert.ok(await frame.locator('#res-rows .resource-text-row').count()>0,'text-only resource rows');
+   assert.equal(await frame.locator('.storage-entry[data-kind="directory"] .storage-name').first().innerText(),'model');
+   assert.equal(await frame.locator('.storage-entry[data-kind="file"] .storage-name').first().innerText(),'config.json');
    await bounds(page,'resources','#page-registry');
    assert.ok(await frame.locator('header.registry-header').evaluate(e=>e.getBoundingClientRect().height===0),'no repeated resource header');
    assert.equal(await frame.locator('[data-v="res"]').evaluate(e=>getComputedStyle(e).backgroundColor),'rgb(40, 95, 198)');
