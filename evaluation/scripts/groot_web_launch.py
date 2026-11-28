@@ -809,13 +809,22 @@ class LaunchManager:
                 "initiator": plan.get("initiator"),
                 "process_start": job.get('process_start'), "batch": plan.get('batch')}
         if plan.get('kind') == 'b1k2026_websocket':
+            try:
+                archived = json.loads((output/'job.json').read_text(encoding='utf-8'))
+            except (OSError, ValueError):
+                archived = {}
+            if not isinstance(archived, dict) or archived.get('job_id') != job['id']:
+                archived = {}
+            fields = ('official', 'rtc', 'attempt', 'instance', 'rollouts', 'protocol',
+                      'language', 'checkpoint_sha256', 'source_revision', 'policy_identity',
+                      'notes', 'initiator')
+            for key in fields:
+                status[key] = plan.get(key) if plan.get(key) is not None else archived.get(key)
             status['artifacts'] = v12_artifacts(output)
             native_json = sorted(output.glob('json/*.json'))
             status['result_ready'] = bool(native_json)
             status['native_results'] = [str(path.relative_to(output)) for path in native_json]
             status['videos'] = [str(path.relative_to(output)) for path in sorted(output.glob('videos/*')) if path.is_file()]
-            status['notes'] = plan.get('notes')
-            status['language'] = plan.get('language')
             status['native_metrics'] = []
             status['native_episode_keys'] = []
             for path in native_json:

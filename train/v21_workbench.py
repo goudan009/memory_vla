@@ -572,7 +572,8 @@ class Backend:
             if last is None and state.get('last'):
                 candidate=dashboard_metrics([state['last']],launch)[0]
                 if finite(candidate.get('loss')):last=candidate
-            result.append(dict(run=root.name,name=root.name,version=VERSION,model_version=VERSION,task=40,task_id=40,
+            summary_keys = ('fine_tuning_mode','learning_rate','scheduler','warmup_ratio','microbatch','global_decisions','global_windows_per_step','train_episodes','validation_episodes','checkpoint','frozen_eagle','memory_length','seed','training_protocol')
+            result.append(dict(parameter_summary={k: launch[k] for k in summary_keys if launch.get(k) is not None},run=root.name,name=root.name,version=VERSION,model_version=VERSION,task=40,task_id=40,
                  arm=arm,method=launch['method'],training_id=root.name,train_number=launch['train_number'],
                  status=status,step=state.get('step',0),max_steps=launch.get('preflight_steps') or launch['steps'],gpus=','.join(map(str,launch['gpus'])),
                  output=str(root),source=launch['source'],source_digest=launch['source_manifest']['digest'],

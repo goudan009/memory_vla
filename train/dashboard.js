@@ -594,6 +594,13 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
     } catch (error) { reportError(error); }
     finally { busy = false; el('train-submit').disabled = el('train-check').disabled = false; }
   }
+  function jobParameterTags(job){
+    const p=job.parameter_summary||{};
+    const mode=({action_full:'动作头全量',full:'全模型',lora:'LoRA',custom:'自定义冻结'})[p.fine_tuning_mode]||p.fine_tuning_mode;
+    const tags=[mode,p.learning_rate!=null?'LR '+p.learning_rate:null,p.scheduler,p.global_decisions!=null?'Batch '+p.global_decisions:p.global_decisions_max!=null?'Batch ≤'+p.global_decisions_max:null,p.train_episodes!=null?'示教 '+p.train_episodes:null,p.checkpoint?'起点 '+String(p.checkpoint).split('/').filter(Boolean).pop():null].filter(Boolean);
+    return tags.length?tags:['训练参数未索引'];
+  }
+  function jobParameterLine(job){return '<div class="subtle" style="overflow-wrap:anywhere">'+esc(jobParameterTags(job).join(' · '))+'</div>';}
   function renderOverview(){
     const all=jobDevices.flatMap(device=>(jobSnapshots.get(device)?.jobs||[]).map(job=>({device,job})));
     const live=all.filter(({job})=>liveStates.has(job.status));
@@ -607,7 +614,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
     const cards=live.sort((a,b)=>Number(queueStates.has(a.job.status))-Number(queueStates.has(b.job.status)));
     list.innerHTML=cards.length?cards.map(({device,job},i)=>{
       const pct=Math.max(0,Math.min(100,Number(job.step||0)/(Number(job.max_steps)||1)*100));
-      return '<button type="button" class="workbench-live-row" data-live-train="'+i+'"><div class="workbench-live-head"><strong>'+esc(jobVersion(job)+' · '+taskLabel(job)+' · '+methodLabel(jobMethod(job)))+'</strong>'+stateBadge(job.status)+'</div><div class="subtle">'+esc(job.run)+' · '+esc(deviceName(device))+' · GPU '+esc(job.gpus??'未知')+' · '+esc(({agent:'Agent',user:'用户'})[job.initiator]||'未知来源')+'</div><div class="progress-track"><span style="width:'+pct+'%"></span></div><div class="workbench-live-foot"><span>'+esc(job.step??'—')+' / '+esc(job.max_steps??'—')+' 步</span><span>Loss '+fmt(job.last?.loss)+'</span><span>详情 →</span></div></button>';
+      return '<button type="button" class="workbench-live-row" data-live-train="'+i+'"><div class="workbench-live-head"><strong>'+esc(jobVersion(job)+' · '+taskLabel(job)+' · '+methodLabel(jobMethod(job)))+'</strong>'+stateBadge(job.status)+'</div><div class="subtle">'+esc(job.run)+' · '+esc(deviceName(device))+' · GPU '+esc(job.gpus??'未知')+' · '+esc(({agent:'Agent',user:'用户'})[job.initiator]||'未知来源')+'</div>'+jobParameterLine(job)+'<div class="progress-track"><span style="width:'+pct+'%"></span></div><div class="workbench-live-foot"><span>'+esc(job.step??'—')+' / '+esc(job.max_steps??'—')+' 步</span><span>Loss '+fmt(job.last?.loss)+'</span><span>详情 →</span></div></button>';
     }).join(''):'<p class="empty">'+(jobDevices.some(d=>jobSnapshots.get(d)?.error)?'部分设备不可查':'暂无运行任务')+'</p>';
     list.querySelectorAll('[data-live-train]').forEach(button=>button.onclick=async()=>{
       if(busy||jobActionBusy||switchingDevice)return;
@@ -627,7 +634,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
     const stateGroups = {active:['training','running','submitted','initializing','starting','validating','resuming'],
       queued:['queued','waiting_for_gpus','waiting_for_four_runs'],complete:['complete','completed'],failed:['failed','stopped','paused']};
     const visible = jobs.map((job,i)=>({job,i})).filter(({job}) => (category==='all'||(category==='engineering'?job.category==='engineering_preflight':job.category!=='engineering_preflight'||chosen?.run===job.run))&&(owner==='all'||owner===(job.initiator||'unknown'))&&(filter==='history'?(!liveStates.has(job.status)||(view==='detail'&&chosen?.run===job.run&&chosen?.arm===job.arm)):(!stateGroups[filter] || stateGroups[filter].includes(job.status))) &&
-      (!search || [job.name,job.run,jobVersion(job),...jobTasks(job).map(task=>'task'+task),taskLabel(job),jobMethod(job),job.training_id,job.notes].join(' ').toLowerCase().includes(search)));
+      (!search || [job.name,job.run,jobVersion(job),...jobTasks(job).map(task=>'task'+task),taskLabel(job),jobMethod(job),job.training_id,job.notes,...jobParameterTags(job)].join(' ').toLowerCase().includes(search)));
     el('train-count').textContent = visible.length + ' / ' + jobs.length;
     const versions = new Map();
     visible.forEach(({job,i}) => {
@@ -661,6 +668,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
         '" aria-pressed="' + selected + '" data-job="' + i + '" title="' + esc(job.name || job.run) + '">' +
         '<div class="run-card-top"><strong>' + esc(methodLabel(jobMethod(job))) + ' · 第 ' + esc(job.train_number || 1) + ' 次训练</strong></div>' +
         '<div class="subtle">' + stateBadge(job.status) + ' · GPU ' + esc(job.gpus) + ' · '+esc(({user:'用户',agent:'Agent'})[job.initiator]||'未知来源')+'</div>' +
+        jobParameterLine(job)+
         (job.notes ? '<div class="train-job-note" title="' + esc(job.notes) + '">' + esc(job.notes) + '</div>' : '') +
         '<div class="progress-track"><span style="width:' + progress + '%"></span></div>' +
         '<div class="train-job-stats"><span>' + esc(job.step) + ' / ' + esc(job.max_steps ?? '?') + ' 步</span><span>Loss ' + fmt(job.last?.loss) + '</span></div></button>';
