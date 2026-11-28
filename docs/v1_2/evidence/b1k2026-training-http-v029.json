@@ -1,0 +1,52 @@
+{
+  "schema": "b1k2026-training-http-acceptance-v1",
+  "checked_at": "2026-11-28 Asia/Shanghai",
+  "adapter_commit": "5ade736",
+  "service": "memory-vla-web-8765.service (user)",
+  "service_pid_after_reload": 2966579,
+  "base_url": "http://127.0.0.1:8765",
+  "pre_reload_counts": {
+    "local_evaluation": 302,
+    "a100_training": 16,
+    "a100_inference": 104,
+    "benchmark": 36,
+    "active_managed_jobs": 0
+  },
+  "checks": {
+    "local_training_options": {
+      "http_status": 200,
+      "device_id": "local",
+      "benchmark": "b1k2026",
+      "formal_training_available": false,
+      "engineering_training_verified": false,
+      "registered_model_versions": ["V_1_2"],
+      "public_model_versions": {}
+    },
+    "local_training_jobs": {"http_status": 200, "count": 0},
+    "missing_identity_preview": {"http_status": 400, "submitted": false},
+    "retained_native_jobs": [
+      {
+        "id": "3fc189e832d8", "state": "complete",
+        "native_episode_keys": ["json/turning_on_radio_319_0.json"],
+        "native_metrics": [{"instance_id": 319, "steps": 3225, "success": false, "q_score": 0.0}],
+        "native_json_http_status": 200, "native_json_bytes": 519
+      },
+      {
+        "id": "97f45ef78924", "state": "complete",
+        "native_episode_keys": ["json/turning_on_radio_319_0.json"],
+        "native_metrics": [{"instance_id": 319, "steps": 3225, "success": false, "q_score": 0.0}],
+        "native_json_http_status": 200, "native_json_bytes": 518
+      }
+    ]
+  },
+  "tests": {
+    "native_cpu_unittest": {"passed": 8, "failed": 0},
+    "backend_identity_resource_pytest": {"passed": 51, "skipped": 5, "failed": 0},
+    "existing_frontend_harness": "Not accepted: old DOM fixture misses getAttribute and asserts superseded legacy elements; frontend unchanged."
+  },
+  "new_training_submissions": 0,
+  "new_optimizer_steps": 0,
+  "new_evaluation_submissions": 0,
+  "real_training_chain_accepted": false,
+  "remaining_gate": "Confirm explicit engineering recipe and test/experiment/run identity or authorize unused identity allocation."
+}
