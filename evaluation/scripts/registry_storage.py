@@ -9,6 +9,7 @@ import re
 import shlex
 import shutil
 import subprocess
+import stat
 import sys
 import threading
 import time
@@ -24,9 +25,11 @@ def clean_path(value):
 
 def checked_path(value, roots):
     path = Path(clean_path(value))
-    if not path.is_absolute() or any(part in ('.workbench-trash','.workbench-downloads') for part in path.parts):
+    if not path.is_absolute() or '..' in path.parts or any(part in ('.workbench-trash','.workbench-downloads') for part in path.parts):
         raise ValueError('请选择资源范围内的绝对路径')
     resolved = path.resolve()
+    if any(part in ('.workbench-trash','.workbench-downloads') for part in resolved.parts):
+        raise ValueError('路径超出资源范围')
     if not any(resolved.is_relative_to(root.resolve()) for root in roots):
         raise ValueError('路径超出资源范围')
     return path
@@ -49,6 +52,20 @@ def entry(path):
     return dict(name=path.name, path=str(path), type='directory' if directory else 'file',
                 size=None if directory else stat.st_size, modified=stat.st_mtime,
                 is_symlink=path.is_symlink(), link_target=str(path.resolve()) if path.is_symlink() else None)
+
+
+def deletion_allowed(path, request):
+    resolved=path.resolve()
+    protected=[Path(p).resolve() for p in request.get('protected',[])]
+    if resolved!=path or len(resolved.parts)<=3 or any(root.is_relative_to(resolved) for root in protected):
+        return False
+    if any(part.startswith(('checkpoint-','step-')) or part=='training' for part in resolved.parts):
+        return False
+    if any(resolved.is_relative_to(Path(root).resolve()) for root in request.get('training_roots',[])):
+        return False
+    if path.is_dir() and (path/'.workbench-downloads').exists():
+        return False
+    return True
 
 
 def operate(request):
@@ -82,7 +99,7 @@ def operate(request):
         raise ValueError('路径不存在或设备尚未挂载')
     if action == 'mkdir':
         name = request.get('name', '')
-        if not isinstance(name, str) or name in ('', '.', '..', '.workbench-trash') or '/' in name or '\x00' in name or len(name)>200:
+        if not isinstance(name, str) or name in ('', '.', '..', '.workbench-trash', '.workbench-downloads') or '/' in name or '\x00' in name or len(name)>200:
             raise ValueError('请输入有效的文件夹名称，不含路径分隔符')
         target = checked_path(str(path/name), roots)
         target.mkdir()
@@ -94,8 +111,8 @@ def operate(request):
         if any(part.startswith(('checkpoint-', 'step-')) or part=='training' for part in path.parts):
             raise ValueError('训练权重请通过训练详情的受保护 checkpoint 删除入口')
         protected = [Path(p).resolve() for p in request.get('protected', [])]
-        if path.resolve() in protected or len(path.resolve().parts) <= 3:
-            raise ValueError('不能删除存储根目录，请选择其中的资源')
+        if not deletion_allowed(path,request):
+            raise ValueError('不能删除存储根目录、受保护训练路径或下载目录，请选择其中可回收的资源')
         trash = path.parent/'.workbench-trash'
         if trash.is_symlink():
             raise ValueError('回收目录不能是软链接')
@@ -116,9 +133,7 @@ def operate(request):
         raise ValueError('未知的资源操作')
     result = entry(path)
     result['disk'] = disk_info(path)
-    result['can_delete'] = (path.resolve() not in [Path(p).resolve() for p in request.get('protected', [])]
-                            and len(path.resolve().parts)>3 and not path.is_symlink()
-                            and not any(part.startswith(('checkpoint-','step-')) or part=='training' for part in path.parts))
+    result['can_delete'] = deletion_allowed(path,request)
     if action == 'stat':
         return result
     parent = path.parent
@@ -131,11 +146,15 @@ def operate(request):
         rows = []
         for child in children[offset:offset+limit]:
             try:
-                rows.append(entry(child))
+                row=entry(child)
+                row['can_delete']=deletion_allowed(child,request)
+                rows.append(row)
             except OSError:
                 rows.append(dict(name=child.name, path=str(child), type='unavailable', size=None))
         result.update(entries=rows, total=len(children), offset=offset, has_more=offset+limit<len(children))
     else:
+        if not stat.S_ISREG(path.stat().st_mode):
+            raise ValueError('仅支持普通文件预览')
         with path.open('rb') as stream:
             content = stream.read(65_537)
         try:
@@ -177,7 +196,8 @@ class StorageService:
         items = self.catalog().get('items', []) + self.registered()
         roots = list(dict.fromkeys(defaults + [clean_path(item['path']) for item in items
                     if item.get('host')==host and item.get('path') and item.get('kind') in ('dataset','weights')]))
-        request = {**payload, 'roots':roots, 'protected':defaults}
+        request = {**payload, 'roots':roots, 'protected':defaults,
+                   'training_roots':[paths.get('training',project+'/training')]}
         action = payload.get('action','browse')
         if action == 'register':
             # Validate an existing folder on the selected device before saving its index entry.

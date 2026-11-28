@@ -586,7 +586,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
   function renderJobs() {
     const scroll = el('train-jobs').scrollTop;
     const search = (el('train-job-search').value || '').trim().toLowerCase().replace(/task\s+/g,'task');
-    const filter = el('train-job-filter').value || 'all', owner=el('train-job-owner').value||'all', category=el('train-job-category').value||'research', filtering = !!search || filter !== 'all'||owner!=='all'||category!=='all';
+    const filter = el('train-job-filter').value || 'all', owner=el('train-job-owner').value||'all', category=el('train-job-category').value||'research', filtering = !!search || filter !== 'all'||owner!=='all'||category==='engineering';
     const stateGroups = {active:['training','running','submitted','initializing','starting','validating','resuming'],
       queued:['queued','waiting_for_gpus','waiting_for_four_runs'],complete:['complete','completed'],failed:['failed','stopped','paused']};
     const visible = jobs.map((job,i)=>({job,i})).filter(({job}) => (category==='all'||(category==='engineering'?job.category==='engineering_preflight':job.category!=='engineering_preflight'||chosen?.run===job.run))&&(owner==='all'||owner===(job.initiator||'unknown'))&&(!stateGroups[filter] || stateGroups[filter].includes(job.status)) &&

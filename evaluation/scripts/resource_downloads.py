@@ -36,6 +36,8 @@ def validate(recipe):
             raise ValueError('每个文件必须登记大小和摘要')
     if not names:
         raise ValueError('空清单')
+    if any(parent in names for name in names for parent in name.parents):
+        raise ValueError('清单中文件与目录路径冲突')
     return sum(row['bytes'] for row in recipe['files'])
 
 def verify(path,row):
@@ -63,6 +65,8 @@ def read_state(work):
         return {}
 
 def active(work):
+    if (work/'lock').is_symlink():
+        raise ValueError('下载锁不能是软链接')
     if not (work/'lock').is_file():
         return False
     with (work/'lock').open('r') as lock:
@@ -98,9 +102,20 @@ def operation(recipe,action,source=None):
     if check.returncode:
         raise ValueError('配置的 Python 环境无法导入 huggingface_hub')
     free=shutil.disk_usage(target.parent).free
-    if free<total+1024**3:
-        raise ValueError('可用空间不足：完整清单+1 GiB 预留')
-    plan=dict(job_id=identity,target=str(target),total_bytes=total,free_bytes=free,python=recipe['python'],
+    # Verified staging files already consume disk space. Do not charge their
+    # bytes a second time on restart. Unverified partial files are not credited.
+    staged=0
+    stage=work/'staging'
+    if stage.resolve()!=stage:
+        raise ValueError('不安全的暂存路径')
+    for row in recipe['files']:
+        candidate=stage/row['path']
+        if candidate.resolve()==candidate and candidate.is_file() and candidate.stat().st_size==row['bytes']:
+            staged+=row['bytes']
+    remaining=total-staged
+    if free<remaining+1024**3:
+        raise ValueError('可用空间不足：剩余文件+1 GiB 预留')
+    plan=dict(job_id=identity,target=str(target),total_bytes=total,free_bytes=free,remaining_estimate_bytes=remaining,python=recipe['python'],
               repo=recipe['repo'],revision=recipe['revision'],file_count=len(recipe['files']))
     if action=='preview':
         return plan
@@ -141,20 +156,28 @@ def worker(recipe_path,lock_fd):
             if path.resolve()!=path:
                 raise ValueError('不安全的文件路径')
             save(current_file=name)
+            corrupted=False
             if path.exists():
                 try:
                     verify(path,row)
                 except ValueError:
                     path.unlink()
+                    corrupted=True
             if not path.exists():
                 hf_hub_download(recipe['repo'],name,repo_type=recipe['repo_type'],
-                                revision=recipe['revision'],local_dir=str(stage))
+                                revision=recipe['revision'],local_dir=str(stage),force_download=corrupted)
                 verify(path,row)
             state['verified_bytes']+=row['bytes']
             state['verified_files']+=1
             save()
         if os.path.lexists(target):
             raise ValueError('目标已出现，拒绝覆盖')
+        # Atomically publish only verified files, without carrying the HF cache.
+        cache=stage/'.cache'
+        if cache.is_symlink():
+            raise ValueError('不安全的缓存路径')
+        if cache.is_dir():
+            shutil.rmtree(cache)
         stage.rename(target)
         save(status='complete',current_file=None)
     except Exception as error:
@@ -172,6 +195,7 @@ class DownloadService:
         if not path.is_file():
             return {}
         result={}
+        targets=set()
         for item in json.loads(path.read_text()).get('recipes',[]):
             key=item['id']
             if not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_.-]{0,79}',key) or key in result:
@@ -185,13 +209,17 @@ class DownloadService:
             recipe={k:item[k] for k in ('id','host','kind','root','target','python')}
             recipe.update({k:resource[k] for k in ('repo','repo_type','revision','files')})
             validate(recipe)
+            target=(recipe['host'],recipe['target'])
+            if target in targets:
+                raise ValueError('多个下载配方不能共用同一目标')
+            targets.add(target)
             result[key]=recipe
         return result
     def request(self,action,recipe_id=None):
         recipes=self.recipes()
         if action=='options':
             return {'recipes':[{**{k:v for k,v in r.items() if k!='files'},'total_bytes':sum(f['bytes'] for f in r['files'])} for r in recipes.values()]}
-        if action not in ('status','preview','start') or recipe_id not in recipes:
+        if action not in ('status','preview','start') or not isinstance(recipe_id,str) or recipe_id not in recipes:
             raise ValueError('请选择登记的下载配方')
         recipe=recipes[recipe_id]
         source=Path(__file__).read_text()
