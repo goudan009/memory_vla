@@ -1225,10 +1225,11 @@
     return [...linked.values()];
   }
   function renderLaunchOverview(){
+    const native=window.benchmarkWorkbench?.current()==='b1k2026';
     const active=launchJobSnapshot.filter(j=>launchActiveStates.has(j.state));
-    const ready=allInferenceJobs.filter(j=>inferenceActiveStates.has(j.state));
+    const ready=native?[]:allInferenceJobs.filter(j=>inferenceActiveStates.has(j.state));
     const queued=active.filter(j=>['queued','waiting_for_gpus'].includes(j.state));
-    const external=runs.filter(r=>r.status==='running'&&!active.some(j=>j.folder===r._folder));
+    const external=native?[]:runs.filter(r=>r.status==='running'&&!active.some(j=>j.folder===r._folder));
     const partial=Object.keys(launchDeviceErrors).length||Object.keys(allInferenceErrors).length;
     $('launch-overview-counts').innerHTML=[['评估运行',active.length-queued.length+external.length],['排队',queued.length],['推理服务',ready.length],['历史作业',launchJobSnapshot.length-active.length]].map(([k,v])=>'<div><small>'+k+'</small><strong>' +v+'</strong></div>').join('');
     $('launch-active-count').textContent=String(active.length+external.length);
@@ -1366,7 +1367,7 @@
       $('launch-task').innerHTML=launchOptions.tasks.map(t=>`<option value="${t.id}">Task${t.id} · ${esc(t.name.replace(/_/g,' '))}</option>`).join('');
       $('launch-task').value=loaded.tasks.some(t=>String(t.id)===task)?task:String(loaded.tasks[0]?.id??'');
       $('launch-versions').innerHTML=Object.keys(launchOptions.versions).sort((a,b)=>b.localeCompare(a,undefined,{numeric:true})).map(v=>`<option value="${esc(v)}">`).join('');
-      if(device==='local'&&loaded.model_versions?.V_1_2?.launch_ready&&$('launch-kind').value==='new') $('launch-kind').value='n17';
+      if(device==='local'&&loaded.model_versions?.V_1_2?.launch_ready&&$('launch-kind').value==='new'&&window.benchmarkWorkbench?.current()!=='b1k') $('launch-kind').value='n17';
       updateLaunchGroups();updateLaunchForm();
     }catch(error){if(device!==$('launch-device').value) return;launchDeviceReady=false;$('launch-device-hint').textContent='设备暂不可用：'+error.message;launchOptions=null;updateCollectionDevice();}
     finally{if(device===$('launch-device').value){launchDeviceLoading=false;updateLaunchAvailability();}}
@@ -1773,9 +1774,11 @@
     if(launchOverviewBusy)return;
     launchOverviewBusy=true;
     try{
-      const data=await launchAPI('jobs');
+      const benchmark=window.benchmarkWorkbench?.current();
+      const data=await launchAPI(benchmark==='b1k2026'?'jobs?benchmark=b1k2026':'jobs');
+      if(benchmark!==window.benchmarkWorkbench?.current())return;
       if(!Array.isArray(data.jobs))throw Error('评估记录不可查');
-      const jobs=data.jobs, list=$('launch-jobs'), live=$('launch-active-jobs');
+      const jobs=data.jobs.filter(job=>benchmark==='b1k2026'?job.kind==='b1k2026_websocket':benchmark==='b1k'?job.kind!=='b1k2026_websocket':true), list=$('launch-jobs'), live=$('launch-active-jobs');
       launchJobSnapshot=jobs;launchDeviceErrors=data.device_errors||{};
       const openPanels=new Set([...$('launch-overview').querySelectorAll('details[open][data-log]')].map(panel=>panel.dataset.log));
       const active=jobs.filter(job=>launchActiveStates.has(job.state)), history=jobs.filter(job=>!launchActiveStates.has(job.state));
@@ -1800,7 +1803,7 @@
           ${!native&&!collect&&!forward&&job.result_ready?`<button type="button" data-run="${esc(job.folder||'')}">评估结果 →</button>`:''}
           ${logPanel('launch','启动日志'+(job.returncode==null?'':` · 退出码 ${job.returncode}`),job.log_tail||'等待启动脚本输出…')}</article>`;
       };
-      const unmanaged=runs.filter(r=>r.status==='running'&&!active.some(job=>job.folder===r._folder));
+      const unmanaged=benchmark==='b1k2026'?[]:runs.filter(r=>r.status==='running'&&!active.some(job=>job.folder===r._folder));
       live.innerHTML=active.map(card).join('')+unmanaged.map(r=>`<article class="launch-job"><div class="launch-job-top"><strong>${esc(r.version||'')} · Task${esc(r.task_id)}</strong>${statusBadge(r.status)}</div><div class="subtle">${esc(r._folder)}</div><div class="workbench-live-foot"><span>${esc(r.completed_episodes??r.recorded_episodes??0)} / ${esc(r.requested_episodes??'—')} 回合</span><span>成功率 ${pct(r.success_rate)}</span></div><button type="button" data-run="${esc(r._folder)}">详情 →</button></article>`).join('');
       if(!live.innerHTML)live.innerHTML='<p class="empty">暂无运行评估</p>';
       list.innerHTML=history.map(card).join('')||'<p class="empty">暂无历史作业</p>';
@@ -2535,9 +2538,13 @@
     }
     const benchmark=typeof window!=='undefined'?window.benchmarkWorkbench:null;
     try {
-      if(benchmark && !benchmark.isNative()){await benchmark.refresh();return;}
+      if(benchmark && (!benchmark.isNative()||benchmark.current?.()==='b1k2026')){
+        await benchmark.refresh();
+        if(activePage==='launch'&&benchmark.current?.()==='b1k2026')void refreshLaunchJobs();
+        return;
+      }
       const res=await fetch("/api/results",{cache:"no-store"}); const data=await res.json();
-      if(typeof window!=='undefined' && window.benchmarkWorkbench && !window.benchmarkWorkbench.isNative())return;
+      if(typeof window!=='undefined' && window.benchmarkWorkbench && (!window.benchmarkWorkbench.isNative()||window.benchmarkWorkbench.current?.()==='b1k2026'))return;
       const old=selected?._folder; runs=data.runs||[]; selected=runs.find(r=>r._folder===old)||runs[0]||null;
       $("caption").textContent=`更新 ${data.updated_at}`;
       render();if(activePage==='launch'){renderLaunchTemplates();void refreshLaunchJobs();void refreshInferenceJobs();void refreshAllInference();}

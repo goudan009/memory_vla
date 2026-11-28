@@ -78,15 +78,19 @@ if(typeof module!=='undefined' && module.exports) module.exports={benchmarkMetri
   const workspace=holder.querySelector('#bench-workspace'), resultSwitch=holder.querySelector('#bench-result-switch'), checks=holder.querySelector('#bench-code-checks');
   document.getElementById('page-results').before(resultSwitch,workspace);
   document.getElementById('page-training').before(checks);
+  document.getElementById('page-results').before(holder.querySelector('#n17-workspace'));
   const el=id=>document.getElementById(id), escape=benchmarkEscape;
-  const titles={b1k:'BEHAVIOR-1K',libero:'LIBERO',mikasa:'MIKASA-Robo',simpler:'SimplerEnv'};
+  const titles={b1k2026:'BEHAVIOR-1K 2026',b1k:'BEHAVIOR-1K 2025',libero:'LIBERO',mikasa:'MIKASA-Robo',simpler:'SimplerEnv'};
   const status={starting:'启动中',running:'运行中',stopping:'停止中',stopped:'已停止',complete:'检查通过',failed:'检查失败',interrupted:'运行中断'};
-  let benchmark='b1k', page='results', resultMode='policy', selectedId=null, detail=null;
+  const requestedBenchmark=new URL(location.href).searchParams.get('benchmark');
+  let benchmark=Object.hasOwn(titles,requestedBenchmark)?requestedBenchmark:'b1k2026';
+  let page=new URL(location.href).searchParams.get('page')||'results', resultMode='policy', selectedId=null, detail=null;
+  let nativeJobs=[], nativeSelected=null, nativeRefresh=null, nativeVideo='';
   let options=null, jobs=[], busy=false, refreshing=false, tab='metrics', optionsAt=0;
   const selection={};
   const running=s=>['starting','running','stopping'].includes(s);
   const currentKind=()=>benchmark==='b1k'?'code':benchmark;
-  const isNative=()=>benchmark==='b1k' && (page!=='results'||resultMode==='policy');
+  const isNative=()=>(benchmark==='b1k' && (page!=='results'||resultMode==='policy')) || (benchmark==='b1k2026' && page==='launch');
   function message(id,text,error=false){el(id).textContent=text;el(id).className='bench-message'+(error?' error':'');}
   async function api(action,body){
     const response=await fetch('/api/benchmarks/'+action,body?{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}:{cache:'no-store'});
@@ -94,6 +98,32 @@ if(typeof module!=='undefined' && module.exports) module.exports={benchmarkMetri
   }
   function route(nextPage){
     page=nextPage;
+    el('n17-workspace').hidden=benchmark!=='b1k2026'||!['training','results'].includes(page);
+    el('n17-training').hidden=benchmark!=='b1k2026'||page!=='training';
+    el('n17-results').hidden=benchmark!=='b1k2026'||page!=='results';
+    if(benchmark!=='b1k2026'||page!=='results')el('n17-result-video').pause();
+    if(page==='registry'){
+      workspace.hidden=true;checks.hidden=true;resultSwitch.hidden=true;return false;
+    }
+    if(benchmark==='b1k2026'){
+      workspace.hidden=true;checks.hidden=true;resultSwitch.hidden=true;
+      for(const name of ['training','launch','results'])el('page-'+name).hidden=!(page==='launch'&&name==='launch');
+      el('service-overview').hidden=false;el('gpu-overview').hidden=false;
+      stopPreview();el('video-player').pause();
+      if(page==='launch'){
+        el('launch-kind').value='n17';
+        if(el('launch-device').value!=='local'){
+          el('launch-device').value='local';
+          if(typeof launchOptions!=='undefined')launchOptions=null;
+        }
+        for(const option of el('launch-kind').options)option.hidden=option.disabled=option.value!=='n17';
+        updateLaunchForm();
+      }
+      if(page==='results')void refreshNative();
+      return page!=='launch';
+    }
+    for(const option of el('launch-kind').options)option.hidden=option.disabled=option.value==='n17';
+    if(el('launch-kind').value==='n17')el('launch-kind').value='new';
     if(page!=='results')el('bench-pane-cameras').querySelector('video')?.pause();
     const native=isNative();
     for(const name of ['training','launch','results']) el('page-'+name).hidden=!(native && name===page);
@@ -114,9 +144,18 @@ if(typeof module!=='undefined' && module.exports) module.exports={benchmarkMetri
     window.liberoWorkflow?.route(benchmark,page);
     return !native;
   }
-  function changeBenchmark(){
+  function changeBenchmark(initial=false){
     selection[currentKind()]=selectedId;
     benchmark=el('benchmark-choice').value;
+    document.body.dataset.benchmark=benchmark;
+    const url=new URL(location.href);url.searchParams.set('benchmark',benchmark);history.replaceState(null,'',url);
+    if(benchmark==='b1k2026'){
+      el('benchmark-capability').textContent='N1.7 推理与原生评估已接入；训练尚未验收';
+      el('benchmark-choice').title=el('benchmark-capability').textContent;
+      el('benchmark-description').textContent='查看 2026 原生回合、任务结果与完整录像。';
+      document.querySelector('.page-foot').textContent='GR00T N1.7 · B1K-2026';
+      if(initial)route(page);else selectPage(page);return;
+    }
     selectedId=selection[currentKind()]||null;detail=null;
     const available=benchmark==='b1k'?'训练、策略推理与闭环评估已接入':benchmark==='libero'?'示教准备、训练与策略评估已接入 · 本机单卡':'环境、训练与策略接口待接入';
     el('benchmark-capability').textContent=available;
@@ -133,8 +172,55 @@ if(typeof module!=='undefined' && module.exports) module.exports={benchmarkMetri
     el('bench-results-subtitle').textContent=benchmark==='b1k'?'开发快测与正式策略评估分开记录。':benchmark==='libero'?'数据准备、训练、策略评估分别记录；短回合调试不计入完整时长成功率。':'该 benchmark 暂无已接入的运行记录。';
     el('bench-pane-cameras').querySelector('video')?.pause();
     stopPreview();el('video-player').pause();
-    selectPage(page);
+    if(initial)route(page);else selectPage(page);
     renderList();renderDetail();
+    if(isNative())void window.refresh();
+  }
+  function nativeStatus(job){
+    return ({complete:'回合完成',failed:'运行失败',running:'运行中',starting:'启动中',stopped:'已停止',interrupted:'运行中断'})[job.state]||job.state||'未知';
+  }
+  function nativeArtifact(artifact){
+    try{
+      const url=new URL(artifact.url,location.origin);
+      return url.origin===location.origin&&url.pathname==='/api/launch/artifact'?url.href:null;
+    }catch{return null;}
+  }
+  function renderNativeResults(){
+    const visible=nativeJobs.filter(job=>el('n17-result-filter').value==='all'||job.native_metrics?.length||running(job.state));
+    if(!visible.some(job=>job.id===nativeSelected))nativeSelected=visible[0]?.id||null;
+    el('n17-result-count').textContent=visible.length+' 条';
+    el('n17-result-list').innerHTML=visible.map(job=>'<button type="button" class="bench-job" data-native-job="'+escape(job.id)+'" aria-selected="'+String(job.id===nativeSelected)+'"><span class="bench-job-top"><strong>'+escape(job.task_id||'turning_on_radio')+'</strong><span class="bench-status '+escape(job.state)+'">'+escape(nativeStatus(job))+'</span></span><small>'+escape(job.started_at)+' · '+escape(job.id)+'</small><small>'+escape(job.notes||'无运行备注')+'</small></button>').join('')||'<div class="bench-empty">暂无 2026 评估回合。可切换“全部作业”查看启动记录。</div>';
+    const job=visible.find(job=>job.id===nativeSelected);
+    el('n17-result-title').textContent=job?'V1.2 / N1.7 · '+(job.task_id||'turning_on_radio'):'选择一次评估';
+    el('n17-result-status').textContent=job?nativeStatus(job):'';
+    el('n17-result-status').className='bench-status '+(job?.state||'');
+    el('n17-result-description').textContent=job?[job.started_at,job.notes,job.folder].filter(Boolean).join(' · '):'';
+    el('n17-result-language').textContent=job?.language?.text_prompt?'任务指令：'+job.language.text_prompt:'';
+    el('n17-result-metrics').innerHTML=job?.native_metrics?.length?benchmarkTable(['实例','执行步数','任务结果','终态 Q-score'],job.native_metrics.map(m=>[m.instance_id,m.steps,m.success===true?'成功':m.success===false?'未成功':'未记录',m.q_score??'未记录']))+'<p class="bench-subtle">Q-score 为终态目标条件得分；执行步数不代表任务完成度。</p>':job?'<p class="bench-subtle">尚无有效原生回合指标。</p>':'';
+    const artifacts=(job?.artifacts||[]).filter(artifact=>nativeArtifact(artifact));
+    const video=artifacts.find(artifact=>artifact.path?.endsWith('.mp4'));
+    const source=video?nativeArtifact(video):'';
+    if(source!==nativeVideo){
+      const player=el('n17-result-video');player.pause();
+      if(source)player.src=source;else player.removeAttribute('src');
+      player.load();nativeVideo=source;
+    }
+    el('n17-result-video').hidden=!source;
+    el('n17-result-links').innerHTML=artifacts.map(artifact=>'<a target="_blank" rel="noopener" href="'+escape(nativeArtifact(artifact))+'">'+escape(artifact.path?.endsWith('.mp4')?'打开完整视频':artifact.path?.endsWith('.json')?'原生记录 · '+artifact.path:artifact.label||artifact.path)+'</a>').join(' · ');
+  }
+  async function refreshNative(){
+    if(nativeRefresh)return nativeRefresh;
+    nativeRefresh=(async()=>{
+      try{
+        const response=await fetch('/api/launch/jobs?benchmark=b1k2026',{cache:'no-store'}),data=await response.json();
+        if(!response.ok||!Array.isArray(data.jobs))throw Error(data.error||'2026 评估记录不可查');
+        nativeJobs=data.jobs.filter(job=>job.kind==='b1k2026_websocket').sort((a,b)=>(b.started_at||'').localeCompare(a.started_at||''));
+        if(benchmark!=='b1k2026')return;
+        renderNativeResults();message('n17-result-message','');
+        el('caption').textContent='B1K-2026 · '+nativeJobs.filter(job=>job.native_metrics?.length).length+' 条有效回合';
+      }catch(error){message('n17-result-message',error.message,true);}
+    })();
+    try{await nativeRefresh;}finally{nativeRefresh=null;}
   }
   function updateGPUs(){
     for(const id of ['bench-gpu','bench-code-gpu']){
@@ -164,6 +250,7 @@ if(typeof module!=='undefined' && module.exports) module.exports={benchmarkMetri
     window.liberoWorkflow?.buttons({busy,anyRunning,options});
   }
   async function refresh(){
+    if(benchmark==='b1k2026')return refreshNative();
     if(refreshing)return;refreshing=true;
     try{
       if(!options)await loadOptions();
@@ -232,7 +319,10 @@ if(typeof module!=='undefined' && module.exports) module.exports={benchmarkMetri
     }catch(error){message(target,error.message,true);}
     finally{busy=false;setButtons();}
   }
-  el('benchmark-choice').onchange=changeBenchmark;
+  el('benchmark-choice').onchange=()=>changeBenchmark();
+  el('n17-to-results').onclick=()=>selectPage('results');
+  el('n17-result-filter').onchange=renderNativeResults;
+  el('n17-result-list').onclick=event=>{const button=event.target.closest('[data-native-job]');if(button){nativeSelected=button.dataset.nativeJob;renderNativeResults();}};
   el('bench-to-launch').onclick=()=>selectPage('launch');el('bench-to-results').onclick=()=>selectPage('results');
   el('bench-run-new').onclick=()=>{selectPage(benchmark==='b1k'?'training':'launch');if(benchmark==='b1k')checks.open=true;};
   el('bench-switch-libero').onclick=()=>{el('benchmark-choice').value='libero';changeBenchmark();};
@@ -248,7 +338,8 @@ if(typeof module!=='undefined' && module.exports) module.exports={benchmarkMetri
   el('bench-job-list').onclick=e=>{const button=e.target.closest('[data-run]');if(button){selectedId=button.dataset.run;detail=null;renderList();renderDetail();void refresh();}};
   document.querySelectorAll('[data-bench-tab]').forEach(button=>button.onclick=()=>{tab=button.dataset.benchTab;if(tab!=='cameras')el('bench-pane-cameras').querySelector('video')?.pause();document.querySelectorAll('[data-bench-tab]').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.benchTab===tab)));for(const name of ['metrics','cameras','logs'])el('bench-pane-'+name).hidden=name!==tab;});
   el('bench-stop').onclick=async()=>{if(!detail)return;el('bench-stop').disabled=true;try{await api('stop',{run:detail.job.id});await refresh();}catch(e){message('bench-detail-message',e.message,true);el('bench-stop').disabled=false;}};
-  window.benchmarkWorkbench={route,isNative,refresh,run,loadOptions,options:()=>options,updateButtons:setButtons,trainingReady:()=>{const sidebar=el('page-training').querySelector('.run-browser');if(sidebar)sidebar.append(checks);return route(page);}};
-  route(page);
+  window.benchmarkWorkbench={route,isNative,refresh,current:()=>benchmark,run,loadOptions,options:()=>options,updateButtons:setButtons,trainingReady:()=>{const sidebar=el('page-training').querySelector('.run-browser');if(sidebar)sidebar.append(checks);return route(page);}};
+  el('benchmark-choice').value=benchmark;
+  if(typeof agentBoardPage==='undefined'||!agentBoardPage)changeBenchmark(true);
   setInterval(()=>{if(!workspace.hidden||(!checks.hidden&&checks.open))void refresh();},4000);
 })();

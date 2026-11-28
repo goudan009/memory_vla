@@ -38,10 +38,37 @@
 #bench-result-switch button[aria-pressed=true]{background:var(--soft);color:var(--accent);border-color:#c7d8f5}
 .bench-job[aria-selected=true]{background:var(--soft);box-shadow:none;border:1px solid #9abaf0}
 #bench-result-switch{margin-bottom:10px;gap:4px}#bench-result-switch button{padding:6px 10px;border-radius:6px}#bench-result-switch button[aria-pressed=true]{background:var(--soft);color:var(--accent);border-color:#c7d8f5}
+#n17-result-video{display:block;width:100%;max-height:65vh;background:#152030;border-radius:8px;margin-top:16px}
+#n17-result-video[hidden]{display:none}
+body[data-benchmark="b1k2026"] #inference-panel,
+body[data-benchmark="b1k2026"] #launch-overview .launch-live-grid>div:nth-child(2){display:none}
+body[data-benchmark="b1k2026"] #launch-overview .launch-live-grid{grid-template-columns:1fr}
+body.agent-board #n17-workspace{display:none}
 </style>
 <div id="benchmark-selector" class="benchmark-switch">
- <label for="benchmark-choice">Benchmark<select id="benchmark-choice" aria-label="Benchmark"><option value="b1k">BEHAVIOR-1K</option><option value="libero">LIBERO</option><option value="mikasa">MIKASA-Robo · 待接入</option><option value="simpler">SimplerEnv · 待接入</option></select></label>
+ <label for="benchmark-choice">Benchmark<select id="benchmark-choice" aria-label="Benchmark"><option value="b1k2026" selected>BEHAVIOR-1K 2026</option><option value="b1k">BEHAVIOR-1K 2025 · 历史</option><option value="libero">LIBERO</option><option value="mikasa">MIKASA-Robo · 待接入</option><option value="simpler">SimplerEnv · 待接入</option></select></label>
  <div><strong id="benchmark-capability">训练、策略推理与闭环评估已接入</strong><p id="benchmark-description">三步共用当前 benchmark，记录按 benchmark 分开查看。</p></div>
+</div>
+<div id="n17-workspace" hidden>
+ <section id="n17-training" hidden>
+  <div class="detail-heading"><h2>BEHAVIOR-1K 2026 · 训练</h2><span class="bench-status">尚未验收</span></div>
+  <div class="bench-body"><p>V1.2 / GR00T N1.7 的正式训练尚未开放。当前已完成官方权重的推理与仿真评估接入。</p><p class="bench-subtle">Task0 / Task40 数据已下载；训练数据划分、真实 batch 前后向、保存重载及严格恢复仍待验证。</p><button type="button" id="n17-to-results">查看已有评估与视频 →</button></div>
+ </section>
+ <div id="n17-results" hidden>
+  <div class="page-intro"><div><h2>BEHAVIOR-1K 2026 · 评估结果</h2><p class="bench-subtle">V1.2 / GR00T N1.7 · 官方原生回合；回合完成与任务成功分别显示。</p></div></div>
+  <div class="bench-layout">
+   <section><div class="section-head"><h2>评估记录 <small id="n17-result-count"></small></h2></div>
+    <div class="bench-body"><label class="bench-subtle" for="n17-result-filter">显示记录</label><select class="bench-search" id="n17-result-filter"><option value="rollouts">有效回合 / 运行中</option><option value="all">全部作业（含启动失败）</option></select></div>
+    <div id="n17-result-list" class="bench-jobs"></div>
+   </section>
+   <section><div class="detail-heading"><h2 id="n17-result-title">选择一次评估</h2><span id="n17-result-status" class="bench-status"></span></div>
+    <div class="bench-body"><p id="n17-result-description" class="bench-subtle"></p><p id="n17-result-language" class="bench-subtle"></p>
+     <div id="n17-result-metrics"></div><video id="n17-result-video" controls playsinline preload="metadata" hidden></video>
+     <div id="n17-result-links" class="launch-job-artifacts"></div><div id="n17-result-message" class="bench-message" role="status"></div>
+    </div>
+   </section>
+  </div>
+ </div>
 </div>
 <div id="bench-workspace" hidden>
  <div id="bench-training" hidden>

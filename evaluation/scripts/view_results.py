@@ -1380,6 +1380,11 @@ class Handler(BaseHTTPRequestHandler):
                     value = manager.options() if route.endswith('/options') else manager.snapshot()
                     if not inference and route.endswith('/jobs'):
                         value=[dict(job,device=job.get('device') or 'local') for job in value]
+                        benchmark = parse_qs(urlparse(self.path).query).get('benchmark', [''])[0]
+                        if benchmark == 'b1k2026':
+                            self._json({'jobs': [job for job in value if job.get('kind') == 'b1k2026_websocket'],
+                                        'device_errors': {}})
+                            return
                         errors={}
                         for key,remote in (self.evaluation_devices or {}).items():
                             try:

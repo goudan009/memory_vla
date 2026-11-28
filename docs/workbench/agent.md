@@ -66,6 +66,8 @@ V_2_1 训练指标在工作台查询时转换为共享展示字段：Loss 沿用
 
 ### V1.2 / N1.7 / B1K-2026 原生 radio 验收
 
+工作台 Benchmark 下拉框默认选择 **BEHAVIOR-1K 2026**；**BEHAVIOR-1K 2025 · 历史** 单独查看旧记录。可用 `/?benchmark=b1k2026` 或 `/?benchmark=b1k` 直接进入对应视图。2026「结果分析」直接展示原生回合指标和内嵌视频，默认显示有效回合与运行中作业；启动失败记录在「全部作业」中查看。自动刷新保留正在播放的视频及播放位置。2026「模型训练」明确显示尚未验收，不展示旧训练入口。
+
 当前本机 8765 的 `/api/launch/options?device=local` 提供 `model_versions.V_1_2`。该路由自行管理本机官方 N1.7 策略服务和独立 B1K-2026 evaluator，使用原生 WebSocket、单环境单回合、temporal ensemble、RTC off。任务与 checkpoint 限定为 `turning_on_radio`。先读 [最新迁移计划](../v1_2/n17-baseline.md) 和当前 workflow，不复用 2025 ZMQ 参数或训练候选。
 
 请求显式包含 `version=V_1_2`、`protocol=b1k2026_websocket`、`task=turning_on_radio`、`instance`（0–19）、`rollouts=1`、`gpu_index`、`policy_host=127.0.0.1`、空闲 `policy_port`、`record_video=true` 和简短 `notes`。`attempt` 默认为1，后续同实例的独立尝试显式填写2–99，保留原目录；不是续跑同一条已完成回合，也不自动推断新 seed。
@@ -73,6 +75,8 @@ V_2_1 训练指标在工作台查询时转换为共享展示字段：Loss 沿用
 必须核对 `language_mode`：`task_description` 会验证本地 Task0 原文，并通过本仓库 adapter 显式交给官方 wrapper，preview/job/runner 保存文本与元数据 SHA256；`official_default`（API 兼容默认值）保留上游的 `pick up the object and place it on the table`，用于原样服务复现。工作台表单默认选择任务原文。两种输入配置分别报告，不混为一个成功率。固定上游不作修改。
 
 仍按同配置 preview → start → jobs 核对真实作业。工作台作业卡提供 `native_metrics`、`language`、`notes`、原生 JSON/MP4 和实际启动元数据；原生产物通过 `/api/launch/artifact` 的 GET 读取，不生成假的旧 `results.json`。正式训练能力仍关闭；本入口通过不代表所有任务、训练或模型成功率已验收。
+
+2026 结果页读取 `GET /api/launch/jobs?benchmark=b1k2026`，仅返回本机原生 2026 作业，不等待无关的旧远端设备。旧 `/api/results` 保持读取历史 `results.json`。回合正常完成只标为「回合完成」，任务成功与终态 Q-score 分别按原生指标展示。
 
 以训练请求为例，`REQUEST_JSON` 是按当前任务填写的 JSON 文件，包含 `device`。推理和评估使用表中的接口前缀。
 

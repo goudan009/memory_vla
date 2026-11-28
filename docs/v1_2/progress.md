@@ -1,5 +1,13 @@
 # V1.2 Progress
 
+## 2026-11-28 - workbench year selector / native results visibility
+
+- User reported that 8765 still appeared to contain only 2025 results. Root cause: the previous integration exposed 2026 artifacts only in launch-history cards, while the main results page continued reading legacy `results.json`; the Benchmark selector did not distinguish years.
+- Workbench maintenance only, with no new experiment or workflow budget: default Benchmark is now **BEHAVIOR-1K 2026**; **BEHAVIOR-1K 2025 · 历史** retains old records separately. URL selection uses `?benchmark=b1k2026` / `?benchmark=b1k`. The native results page displays actual notes, task text, per-rollout success / final Q-score / steps, embedded video and original artifact links. It preserves playback during refresh. Startup failures remain accessible through the all-jobs filter.
+- Native training shows its actual unaccepted state; the 2026 launch form selects only the native N1.7 route. Legacy launch history is filtered out of that view. `GET /api/launch/jobs?benchmark=b1k2026` returns only local native jobs without polling unrelated old remote devices. Historical results, files and native JSON are unchanged; training submissions and new evaluation submissions both remain 0 for this maintenance.
+- Verification: 16 targeted API / JavaScript / native-contract checks passed, plus page-ID and JavaScript syntax checks. Expanded checks: 71 passed, 10 failed, 2 deselected; all 10 failures reproduced against pre-change viewer code (8 existing UI assertions and 2 missing historical V2 protocol fixtures). No browser runtime was available, so no real-browser rendering pass is claimed.
+- Before service reload, live workbench reported 302 terminal evaluation jobs, 104 terminal A100 inference jobs and 16 non-active A100 training jobs. Reloaded only `memory-vla-web-8765.service`. Live HTTP verifies the updated selector/assets, exactly two valid native jobs (`3fc189e832d8`, `97f45ef78924`), their original notes / metrics, and both MP4 downloads (HTTP 200; 5,838,507 / 5,710,785 bytes). Both task outcomes remain false / Q-score 0.
+
 ## 2026-11-28 - migration_gate / archive
 
 - Current outcome: infrastructure/workbench acceptance DONE; task-performance acceptance NOT PASSED; training NOT EXECUTED. Latest [plan-v027](workflow/plan-v027.json) is complete for its bounded test and migration-decision scope. See [acceptance report](acceptance-2026-11-28.md) and [small evidence snapshot](evidence/native-acceptance-2026-11-28.json).
