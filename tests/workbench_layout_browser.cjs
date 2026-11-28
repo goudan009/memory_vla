@@ -98,7 +98,7 @@ async function bounds(page,name,selector){
    assert.ok(await page.locator('#train-config-device-slot #train-device').isVisible(),'device selector in new configuration');
    assert.ok(await page.locator('#page-training .run-browser #bench-code-checks').count(),'development checks in sidebar');
    await page.locator('#train-task-list input').first().waitFor({state:'attached'});
-   assert.equal(await page.locator('#page-tab-training').evaluate(e=>getComputedStyle(e).backgroundColor),'rgb(237, 242, 247)');
+   assert.equal(await page.locator('#page-tab-training').evaluate(e=>getComputedStyle(e).backgroundColor),'rgb(40, 95, 198)');
    assert.equal(await page.locator('#page-tab-training').evaluate(e=>getComputedStyle(e).boxShadow),'none');
    assert.ok(await page.locator('#train-review-details').isVisible(),'A2 summary visible');
    if(width===1440){const form=await page.locator('#train-setup-0').boundingBox(),summary=await page.locator('#train-review-details').boundingBox();assert.ok(summary.x>=form.x+form.width,'desktop live summary beside form');}
@@ -167,7 +167,7 @@ async function bounds(page,name,selector){
    await frame.locator('#resource-browser .storage-entry').first().waitFor({state:'visible'});
    await bounds(page,'resources','#page-registry');
    assert.ok(await frame.locator('header.registry-header').evaluate(e=>e.getBoundingClientRect().height===0),'no repeated resource header');
-   assert.equal(await frame.locator('[data-v="res"]').evaluate(e=>getComputedStyle(e).backgroundColor),'rgb(237, 242, 247)');
+   assert.equal(await frame.locator('[data-v="res"]').evaluate(e=>getComputedStyle(e).backgroundColor),'rgb(40, 95, 198)');
    assert.ok(await frame.locator('body').evaluate(()=>document.documentElement.scrollWidth<=innerWidth+2),'iframe overflow');
    if([1440,390].includes(width))await page.screenshot({path:output+'/resources-'+width+'.png',fullPage:true});
    await frame.locator('[data-v="downloads"]').click();
