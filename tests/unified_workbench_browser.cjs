@@ -25,6 +25,8 @@ const dir=path.join(__dirname,'../evaluation/scripts'),read=name=>fs.readFileSyn
  const base='http://workbench.test/workbench';
  await page.goto(base);
  await page.locator('#tree .pick').filter({hasText:'Train 01'}).waitFor();
+ const palette=await page.evaluate(()=>({body:getComputedStyle(document.body).backgroundColor,active:getComputedStyle(document.querySelector('#nav button.active')).backgroundColor,selected:getComputedStyle(document.querySelector('.lineage-node.active')).backgroundColor,normal:getComputedStyle(document.querySelector('.lineage-node.kind-train:not(.active)')).backgroundColor}));
+ assert.deepEqual(palette,{body:'rgb(242, 245, 249)',active:'rgb(234, 241, 255)',selected:'rgb(234, 241, 255)',normal:'rgb(255, 255, 255)'},'shared neutral palette');
  assert.equal(await page.locator('#search,.tree .folder,.tree .file,iframe').count(),0);
  await page.locator('#open-device-dialog').click();await page.locator('#device-content').filter({hasText:'10.0 / 80.0 GiB'}).waitFor();await page.locator('#close-device-dialog').click();
  await page.locator('.lineage-node').filter({hasText:'Train 01'}).click();
