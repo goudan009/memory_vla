@@ -6,14 +6,15 @@ const dir=path.join(__dirname,'../evaluation/scripts'),read=name=>fs.readFileSyn
  const page=await browser.newPage({viewport:{width:1440,height:900},serviceWorkers:'block'}),errors=[];
  page.on('pageerror',e=>errors.push(e.message));
  const checkpoint='/archive/step6000',job={run:'run1',arm:'baseline',version:'V_2_1',method:'baseline',task:40,training_id:'train1',train_number:1,status:'complete',parameter_summary:{learning_rate:1e-5},last:{loss:.025}};
+ const job2={...job,run:'run2',training_id:'train2',train_number:2,method:'memory',arm:'memory'};
  const run={_folder:'V_2_1/baseline/eval1',version:'V_2_1',task_id:40,status:'complete',success_rate:.5,completed_episodes:2,policy_identity:{training_id:'train1',checkpoint,checkpoint_step:6000}};
  const native={id:'radio',kind:'b1k2026_websocket',version:'V_1_2',task_id:'turning_on_radio',official:true,state:'complete',policy_identity:{checkpoint:{path:'/official/radio'}},native_metrics:[{success:false}]};
  await page.route('**/*',async route=>{const u=new URL(route.request().url()),p=u.pathname,json=data=>route.fulfill({json:data});
   if(p==='/workbench')return route.fulfill({contentType:'text/html',body:read('unified_workbench.html')});
   if(p==='/unified_workbench.js')return route.fulfill({contentType:'application/javascript',body:read('unified_workbench.js')});
   if(p==='/unified_workbench.css')return route.fulfill({contentType:'text/css',body:read('unified_workbench.css')});
-  if(p==='/api/training/jobs')return json({jobs:u.searchParams.get('device')==='a100'?[job]:[]});
-  if(p==='/api/training/detail')return json({checkpoints:[{path:checkpoint,step:6000}]});
+  if(p==='/api/training/jobs')return json({jobs:u.searchParams.get('device')==='a100'?[job,job2]:[]});
+  if(p==='/api/training/detail')return json({checkpoints:u.searchParams.get('run')==='run1'?[{path:'/archive/step3000',step:3000},{path:checkpoint,step:6000}]:[{path:'/archive/run2/step6000',step:6000}]});
   if(p==='/api/results')return json({runs:[run]});
   if(p==='/api/launch/jobs')return json({jobs:u.searchParams.has('benchmark')?[native]:[]});
   if(p==='/api/benchmarks/jobs')return json({jobs:[]});
@@ -28,6 +29,29 @@ const dir=path.join(__dirname,'../evaluation/scripts'),read=name=>fs.readFileSyn
  await page.locator('#open-device-dialog').click();await page.locator('#device-content').filter({hasText:'10.0 / 80.0 GiB'}).waitFor();await page.locator('#close-device-dialog').click();
  await page.locator('.lineage-node').filter({hasText:'Train 01'}).click();
  assert.match(await page.locator('#inspector').innerText(),/查看训练详情/);
+ assert.equal(await page.locator('#inspector-kind').innerText(),'训练');
+ await page.locator('.lineage-node').filter({hasText:'Step 3000'}).waitFor();
+ await page.locator('.lineage-node').filter({hasText:'Step 6000'}).click();
+ assert.equal(await page.locator('#inspector-kind').innerText(),'权重');
+ assert.match(await page.locator('#inspector').innerText(),/所属训练/);
+ await page.locator('.lineage-node').filter({hasText:'Train 01'}).click();
+ async function checkEdges(){
+  await page.waitForFunction(()=>document.querySelectorAll('.graph-edge').length>=3);
+  const check=await page.evaluate(()=>{
+   const graph=document.querySelector('#lineage-graph'),bounds=graph.getBoundingClientRect();
+   const buttons=new Map([...graph.querySelectorAll('.lineage-node')].map(el=>[el.dataset.node,el]));
+   return [...graph.querySelectorAll('.graph-edge')].map(edge=>{
+    const parent=buttons.get(edge.dataset.parent),child=buttons.get(edge.dataset.child),a=parent.getBoundingClientRect(),b=child.getBoundingClientRect();
+    const start=edge.getPointAtLength(0),end=edge.getPointAtLength(edge.getTotalLength()),c=JSON.parse(edge.dataset.child),p=JSON.parse(edge.dataset.parent);
+    const correctParent=c[0]!=='checkpoint'||c[1]===edge.dataset.parent;
+    return correctParent&&Math.abs(start.x-(a.left+a.width/2-bounds.left))<1.5&&Math.abs(start.y-(a.bottom-bounds.top))<1.5&&Math.abs(end.x-(b.left+b.width/2-bounds.left))<1.5&&Math.abs(end.y-(b.top-bounds.top))<1.5;
+   });
+  });
+  assert.ok(check.length>=3&&check.every(Boolean),'edge endpoints and checkpoint parent identity');
+ }
+ await checkEdges();
+ await page.setViewportSize({width:1180,height:900});await page.waitForTimeout(120);await checkEdges();
+ await page.setViewportSize({width:1440,height:900});
  await page.locator('#inspector [data-action="training"]').click();await page.waitForURL(u=>u.pathname==='/');
  let q=new URL(page.url()).searchParams;assert.equal(q.get('page'),'training');assert.equal(JSON.parse(q.get('lineage_target')).run,'run1');
  await page.goto(base);await page.locator('#tree .pick').filter({hasText:'Step 6000'}).waitFor();await page.locator('#tree .pick').filter({hasText:'Step 6000'}).click();

@@ -14,13 +14,14 @@ const priorPage=params.get('page');if(priorPage&&priorPage!=='experiment'&&Objec
 let selected=params.get('node'),expanded=new Set(),nodes=new Map(),roots=[],refreshing=false,first=true,includeEngineering=false;
 let cache={train:[],results:[],native:[],libero:[],experiments:[],launch:[]};
 const detailCache=new Map(),detailRequests=new Map(),checkpointByTraining=new Map();
-let graphFocus=null;
+let graphFocus=null,graphObserver=null,wireFrame=0;
+const nodeTypes={version:'代码版本',train:'训练',checkpoint:'权重',eval:'评估',group:'分组',document:'文档'};
 const pathValue=v=>typeof v==='string'?v:typeof v?.path==='string'?v.path:typeof v?.checkpoint==='string'?v.checkpoint:typeof v?.directory==='string'?v.directory:null;
 function status(msg,error=false){$('message').className='notice'+(error?' error':'');$('message').textContent=msg||'';}
 async function api(path){const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),18000);try{const r=await fetch(path,{cache:'no-store',signal:controller.signal});const d=await r.json();if(!r.ok||d.error)throw Error(d.error||('HTTP '+r.status));return d;}finally{clearTimeout(timer);}}
 function add(n,parent){if(nodes.has(n.id))return nodes.get(n.id);n.children=[];n.parent=parent?.id||null;nodes.set(n.id,n);if(parent)parent.children.push(n.id);else roots.push(n.id);return n;}
 function versionNode(v){return add({id:jsonKey('version',v),kind:'version',title:v,version:v});}
-function weightNode(parent,path,meta){return add({id:jsonKey('checkpoint',parent.id,path),kind:'checkpoint',title:meta.step!=null?'Step '+meta.step:meta.title||String(path).split('/').filter(Boolean).pop()||'权重',path,version:parent.version,benchmark:meta.benchmark||parent.benchmark,device:parent.device,train:parent.kind==='train'?parent.id:null,raw:meta,official:meta.official===true},parent);}
+function weightNode(parent,path,meta){const recorded=nodes.get(jsonKey('checkpoint',parent.id,path));if(recorded){recorded.raw={...meta,...recorded.raw};if(recorded.raw.step!=null)recorded.title='Step '+recorded.raw.step;return recorded;}return add({id:jsonKey('checkpoint',parent.id,path),kind:'checkpoint',title:meta.step!=null?'Step '+meta.step:meta.title||String(path).split('/').filter(Boolean).pop()||'权重',path,version:parent.version,benchmark:meta.benchmark||parent.benchmark,device:parent.device,train:parent.kind==='train'?parent.id:null,raw:meta,official:meta.official===true},parent);}
 function identity(r){return r.policy_identity||r.configuration?.policy_identity||{};}
 function rebuild(){
   const previous=selected;nodes=new Map();roots=[];
@@ -78,7 +79,13 @@ function nav(){
  $('nav').innerHTML=Object.entries(labels).map(([k,v])=>'<button data-page="'+k+'" class="'+(page===k?'active':'')+'" aria-current="'+(page===k?'page':'false')+'">'+v+'</button>').join('');
  const select=$('benchmarks');if(!select.options.length)select.innerHTML=Object.entries(benchmarks).map(([k,v])=>'<option value="'+k+'">'+v+'</option>').join('');select.value=benchmark;
 }
-function treeHTML(ids){return '<ul>'+ids.filter(matchesBranch).map(id=>{const n=nodes.get(id),children=n.children.filter(matchesBranch),open=expanded.has(id);return '<li><div class="tree-row"><button class="toggle" data-expand="'+esc(id)+'" aria-label="'+(open?'收起':'展开')+'" '+(!children.length&&n.kind!=='train'?'disabled':'')+'>'+(children.length||n.kind==='train'?(open?'▾':'▸'):'·')+'</button><button class="pick '+(selected===id?'active':'')+'" data-node="'+esc(id)+'" title="'+esc(n.title)+'"><span>'+esc(n.title)+'</span>'+(children.length?'<small class="count">'+children.length+'</small>':'')+'</button></div>'+(open&&children.length?treeHTML(children):'')+'</li>';}).join('')+'</ul>';}
+function treeHTML(ids){
+ return '<ul>'+ids.filter(matchesBranch).map(id=>{
+  const n=nodes.get(id),children=n.children.filter(matchesBranch),open=expanded.has(id),expandable=children.length>0||n.kind==='train';
+  const type=n.kind==='version'||n.kind==='group'?'':nodeTypes[n.kind];
+  return '<li><div class="tree-row kind-'+n.kind+'"><button class="toggle" data-expand="'+esc(id)+'" aria-label="'+(open?'收起':'展开')+'" aria-expanded="'+open+'" '+(!expandable?'disabled':'')+'>'+(expandable?(open?'▾':'▸'):'')+'</button><button class="pick '+(selected===id?'active':'')+'" data-node="'+esc(id)+'" data-kind="'+n.kind+'" aria-current="'+(selected===id?'true':'false')+'" title="'+esc(nodeTypes[n.kind]+' · '+n.title)+'">'+(type?'<small class="tree-type">'+esc(type)+'</small>':'')+'<span class="tree-name">'+esc(n.title)+'</span>'+(children.length?'<small class="count">'+children.length+'</small>':'')+'</button></div>'+(open&&children.length?treeHTML(children):'')+'</li>';
+ }).join('')+'</ul>';
+}
 function drawTree(){const el=$('tree'),scroll=el.scrollTop;el.innerHTML=treeHTML(roots)||'<div class="empty">暂无记录</div>';el.scrollTop=scroll;}
 function descendants(n,kind){return n?(n.kind===kind?[n]:[]).concat(n.children.flatMap(id=>descendants(nodes.get(id),kind))).filter(x=>visibleSelf(x)):[];}
 function ancestors(n){const rows=[];for(let x=n;x;x=nodes.get(x.parent))rows.unshift(x);return rows;}
@@ -89,50 +96,83 @@ function section(title,rows){rows=rows.filter(([,v])=>v!==undefined&&v!==null&&v
 function pct(n){return finite(n)?(100*n).toFixed(1)+'%':'—';}
 function summary(n){const r=n.raw||{},p=identity(r);if(n.benchmark==='b1k2026'){const m=(r.native_metrics||[]).filter(x=>typeof x.success==='boolean');return {rate:m.length?m.filter(x=>x.success).length/m.length:null,episodes:m.length,state:r.state};}return {rate:r.success_rate,episodes:r.completed_episodes??r.recorded_episodes,state:r.status||r.state,checkpoint:p.checkpoint};}
 function lineage(n){
- if(!n)return '<div class="empty">选择实验节点</div>';
- const focused=nodes.get(graphFocus);const chain=focused&&ancestors(focused).some(x=>x.id===n.id)?ancestors(focused):ancestors(n),levels=[];const tip=chain.at(-1);
- // Show siblings at each layer but descend only along the selected branch.
- // This avoids visual edges between unrelated training runs.
+ if(!n)return '<div class="empty">从左侧选择实验记录</div>';
+ const focused=nodes.get(graphFocus);
+ const chain=focused&&scope(focused.id)&&ancestors(focused).some(x=>x.id===n.id)?ancestors(focused):ancestors(n),levels=[];
+ const tip=chain.at(-1);
  for(let i=0;i<chain.length;i++){
    const focus=chain[i],parent=chain[i-1];
    const siblings=parent?parent.children.map(id=>nodes.get(id)).filter(x=>scope(x.id)):[focus];
    let group=siblings.slice(0,3);
    if(!group.some(x=>x.id===focus.id))group=group.slice(0,2).concat(focus);
-   levels.push({group,focus:focus.id,kind:focus.kind,more:Math.max(0,siblings.length-group.length)});
+   levels.push({group,focus:focus.id,more:Math.max(0,siblings.length-group.length)});
  }
  const children=tip.children.map(id=>nodes.get(id)).filter(x=>scope(x.id));
- if(children.length){const group=children.slice(0,3);levels.push({group,focus:null,kind:group.every(x=>x.kind===group[0].kind)?group[0].kind:'group',more:Math.max(0,children.length-group.length)});}
- const names={version:'网络版本',train:'训练记录',checkpoint:'模型权重',eval:'关联评估',group:'关联记录',document:'实验文档'};
- const subtitle=x=>{const r=x.raw||{},p=r.parameter_summary||{};if(x.kind==='train')return [stateLabel(r.status),p.learning_rate!=null?'LR '+p.learning_rate:null,p.global_decisions!=null?'Batch '+p.global_decisions:p.global_decisions_max!=null?'Batch '+p.global_decisions_max:null].filter(Boolean).join(' · ');if(x.kind==='eval'){const s=summary(x);return [stateLabel(s.state),s.rate!=null?'SR '+pct(s.rate):null].filter(Boolean).join(' · ');}if(x.kind==='checkpoint')return [x.official?'官方权重':null,x.children.length?x.children.length+' 次评估':null].filter(Boolean).join(' · ');return x.children.length?x.children.length+' 项记录':'';};
- const wire=(previous,level)=>{
-   const a=previous.group.findIndex(x=>x.id===previous.focus);if(a<0)return '';
-   const sx=300*(a+.5)/previous.group.length;
-   const xs=level.group.map((_,i)=>300*(i+.5)/level.group.length);
-   return '<svg class="lineage-wire" viewBox="0 0 300 28" preserveAspectRatio="none" aria-hidden="true"><path d="M'+sx+' 0 V14 M'+Math.min(sx,...xs)+' 14 H'+Math.max(sx,...xs)+' '+xs.map(x=>'M'+x+' 14 V28').join(' ')+'" stroke="#9eb0c8" stroke-width="1.1" fill="none" vector-effect="non-scaling-stroke"/></svg>';
- };
- return '<div class="lineage panel-card"><div class="lineage-context"><h3>实验谱系</h3><small>点击节点选择 · 上方按钮打开详情</small></div>'+levels.map((level,i)=>(i?wire(levels[i-1],level):'')+'<div class="layer-label">'+esc(names[level.kind]||'关联记录')+(level.more?' · 另 '+level.more+' 项见目录':'')+'</div><div class="lineage-level '+(level.group.length===1?'single':'')+'">'+level.group.map(x=>'<button class="lineage-node '+(x.id===selected?'active':x.id===level.focus?'branch':'')+'" data-node="'+esc(x.id)+'" title="'+esc(x.title)+'"><b>'+esc(x.title)+'</b>'+(subtitle(x)?'<small>'+esc(subtitle(x))+'</small>':'')+'</button>').join('')+'</div>').join('')+'</div>';
+ if(children.length)levels.push({group:children.slice(0,3),focus:null,more:Math.max(0,children.length-3)});
+ const subtitle=x=>{const r=x.raw||{},p=r.parameter_summary||{};if(x.kind==='train')return [r.status?stateLabel(r.status):null,p.learning_rate!=null?'LR '+p.learning_rate:null].filter(Boolean).join(' · ');if(x.kind==='eval'){const s=summary(x);return [s.state?stateLabel(s.state):null,s.rate!=null?'SR '+pct(s.rate):null].filter(Boolean).join(' · ');}if(x.kind==='checkpoint')return [x.official?'官方来源':null,x.children.length?x.children.length+' 次评估':null].filter(Boolean).join(' · ');if(x.kind==='version')return x.children.length?x.children.length+' 项直接记录':'';return '';};
+ return '<div class="lineage graph" id="lineage-graph"><svg class="graph-wires" aria-hidden="true"></svg>'+levels.map((level,i)=>{
+  const kinds=[...new Set(level.group.map(x=>x.kind))],label=kinds.length===1?nodeTypes[kinds[0]]:'关联记录';
+  return '<div class="graph-row"><div class="graph-label">'+esc(label)+(level.more?'<small>+'+level.more+'</small>':'')+'</div><div class="lineage-level" style="--columns:'+level.group.length+'">'+level.group.map(x=>'<button class="lineage-node kind-'+x.kind+' '+(x.id===selected?'active':x.id===level.focus?'branch':'')+'" data-node="'+esc(x.id)+'" data-kind="'+x.kind+'" aria-pressed="'+(x.id===selected)+'" title="'+esc(nodeTypes[x.kind]+' · '+x.title)+'"><span class="node-type">'+esc(nodeTypes[x.kind])+'</span><b>'+esc(x.title)+'</b>'+(subtitle(x)?'<small>'+esc(subtitle(x))+'</small>':'')+'</button>').join('')+'</div></div>';
+ }).join('')+'</div>';
 }
-
+function drawWires(){
+ const graph=$('lineage-graph');if(!graph)return;
+ const svg=graph.querySelector('.graph-wires'),bounds=graph.getBoundingClientRect();
+ if(!svg||!bounds.width||!bounds.height)return;
+ svg.setAttribute('viewBox','0 0 '+bounds.width+' '+bounds.height);
+ const rendered=new Map([...graph.querySelectorAll('.lineage-node')].map(el=>[el.dataset.node,el]));
+ const branch=new Set(ancestors(nodes.get(selected)).map(n=>n.id));
+ const ns='http://www.w3.org/2000/svg',fragment=document.createDocumentFragment();
+ for(const [id,child] of rendered){
+   const parentId=nodes.get(id)?.parent,parent=rendered.get(parentId);
+   if(!parent)continue;
+   const a=parent.getBoundingClientRect(),b=child.getBoundingClientRect();
+   const x1=a.left+a.width/2-bounds.left,y1=a.bottom-bounds.top,x2=b.left+b.width/2-bounds.left,y2=b.top-bounds.top;
+   if(y2<=y1)continue;
+   const mid=(y1+y2)/2,edge=document.createElementNS(ns,'path');
+   edge.setAttribute('d','M '+x1+' '+y1+' V '+mid+' H '+x2+' V '+y2);
+   edge.setAttribute('class','graph-edge'+(branch.has(id)&&branch.has(parentId)?' selected-edge':''));
+   edge.dataset.parent=parentId;edge.dataset.child=id;fragment.append(edge);
+ }
+ svg.replaceChildren(fragment);
+}
+function scheduleWires(){
+ if(wireFrame)cancelAnimationFrame(wireFrame);
+ wireFrame=requestAnimationFrame(()=>{wireFrame=0;drawWires();});
+}
+function observeGraph(){
+ graphObserver?.disconnect();
+ const graph=$('lineage-graph');if(!graph)return;
+ if(typeof ResizeObserver==='function'){graphObserver=new ResizeObserver(scheduleWires);graphObserver.observe(graph);graph.querySelectorAll('.lineage-node').forEach(el=>graphObserver.observe(el));}
+ scheduleWires();
+}
+window.addEventListener('resize',scheduleWires);
 function saveSelection(){const u=new URL(location.href);u.searchParams.set('benchmark',benchmark);if(selected)u.searchParams.set('node',selected);else u.searchParams.delete('node');history.replaceState(null,'',u);}
 function navigate(p,target,n){const b=target?.benchmark||(benchmark!=='all'?benchmark:currentBenchmark(n||nodes.get(selected)));const q=new URLSearchParams({page:p,benchmark:b});if(target)q.set('lineage_target',JSON.stringify(target));if(selected)q.set('lineage_node',selected);location.assign('/?'+q);}
 function details(n){
- if(!n){$('inspector').innerHTML='<div class="empty">选择节点</div>';return;}
- const r=n.raw||{},p=r.parameter_summary||{},s=n.kind==='eval'?summary(n):null,tr=getTrain(n),w=getWeight(n);
- let rows=[['版本',n.version],['Benchmark',n.benchmark?benchmarks[n.benchmark]:null]];
- if(n.kind==='version')rows.push(['训练',descendants(n,'train').length],['评估',descendants(n,'eval').length]);
- if(n.kind==='train')rows.push(['状态',stateLabel(r.status)],['任务',r.task],['设备',n.device],['微调',p.fine_tuning_mode],['LR',p.learning_rate],['Batch',p.global_decisions??p.global_decisions_max],['步数',r.step],['Loss',r.last?.loss]);
- if(n.kind==='checkpoint')rows.push(['所属训练',tr?.title],['步数',r.step],['来源',n.official?'官方权重':null],['路径',n.path]);
- if(n.kind==='eval')rows.push(['状态',stateLabel(s.state)],['任务',r.task_id??r.task],['回合',s.episodes],['成功率',pct(s.rate)],['权重',w?.title],['协议',r.protocol??r.evaluation_mode],['备注',r.notes]);
- let actions=[];
- if(n.kind==='document')actions.push(['document','打开实验文档',true]);
- if(n.kind==='train')actions.push(['training','查看训练详情 →',true]);
- if(n.kind==='checkpoint'&&tr&&n.benchmark==='b1k')actions.push(['evaluate','使用此权重评估 →',true],['training','查看所属训练 →',false]);
- if(n.kind==='eval')actions.push([n.pending?'launch':'result',n.pending?'查看运行 →':'查看评估结果 →',true]);
- if(n.kind==='checkpoint'&&!tr)actions.push(['weights','查看模型资源 →',true]);
- 
- $('inspector').innerHTML='<div class="identity"><h3>'+esc(n.title)+'</h3></div>'+section('记录信息',rows)+'<div class="node-actions">'+actions.map(([a,t,primary])=>'<button data-action="'+a+'" class="'+(primary?'primary':'')+'">'+t+'</button>').join('')+'</div>';
+ $('inspector-kind').textContent=n?nodeTypes[n.kind]:'';
+ if(!n){$('inspector').innerHTML='<div class="empty">选择节点后查看详情</div>';return;}
+ const r=n.raw||{},p=r.parameter_summary||{},s=n.kind==='eval'?summary(n):null,tr=getTrain(n),w=getWeight(n),owner=nodes.get(n.parent);
+ let rows=[],actions=[];
+ if(n.kind==='version'){
+   rows=[['代码版本',n.version],['训练记录',descendants(n,'train').length],['已索引权重',descendants(n,'checkpoint').length],['评估记录',descendants(n,'eval').length]];
+ }else if(n.kind==='train'){
+   rows=[['代码版本',n.version],['任务',r.task],['方法',r.method||n.arm],['状态',stateLabel(r.status)],['设备',n.device],['微调',p.fine_tuning_mode],['学习率',p.learning_rate],['Batch',p.global_decisions??p.global_decisions_max],['步数',r.last?.step??r.step],['Loss',r.last?.loss],['训练 ID',r.training_id||n.run],['备注',r.notes]];
+   actions.push(['training','查看训练详情 →',true]);
+ }else if(n.kind==='checkpoint'){
+   rows=[['代码版本',n.version],['来源',n.official?'官方权重':tr?'训练产物':'未记录'],['所属训练',tr?.title],['保存步数',r.step],['设备',n.device],['关联评估',descendants(n,'eval').length],['权重路径',n.path],['SHA256',r.sha]];
+   if(tr&&n.benchmark==='b1k')actions.push(['evaluate','使用此权重评估 →',true],['training','查看所属训练 →',false]);
+   else actions.push(['weights','查看模型资源 →',true]);
+ }else if(n.kind==='eval'){
+   rows=[['代码版本',n.version],['任务',r.task_id??r.task??r.config?.suite],['状态',stateLabel(s.state)],['回合',s.episodes],['成功率',pct(s.rate)],['权重',w?.title],['协议',typeof r.protocol==='string'?r.protocol:r.evaluation_mode],['指令',r.language?.mode],['RTC',r.rtc==null?null:r.rtc?'开启':'关闭'],['备注',r.notes]];
+   actions.push([n.pending?'launch':'result',n.pending?'查看运行 →':'查看评估结果 →',true]);
+ }else if(n.kind==='document')actions.push(['document','打开实验文档 →',true]);
+ else rows.push(['关联记录',n.children.filter(scope).length]);
+ const children=n.children.map(id=>nodes.get(id)).filter(x=>scope(x.id));
+ const links=children.length?'<div class="group-title">直接关联 · '+children.length+'</div><div class="related-list">'+children.slice(0,6).map(x=>'<button data-node="'+esc(x.id)+'" title="'+esc(x.title)+'"><small>'+esc(nodeTypes[x.kind])+'</small><span>'+esc(x.title)+'</span><span aria-hidden="true">›</span></button>').join('')+(children.length>6?'<small class="muted">其余记录可在左侧目录查看</small>':'')+'</div>':'';
+ $('inspector').innerHTML='<div class="identity"><h3>'+esc(n.title)+'</h3>'+(n.benchmark?'<small>'+esc(benchmarks[n.benchmark])+'</small>':'')+'</div><div class="node-actions">'+actions.map(([a,t,primary])=>'<button data-action="'+a+'" class="'+(primary?'primary':'')+'">'+t+'</button>').join('')+'</div>'+section('记录信息',rows)+links;
 }
-function render(){nav();drawTree();const n=nodes.get(selected);$('crumb').textContent=n?ancestors(n).map(x=>x.title).join(' / '):'';$('content').innerHTML=lineage(n);details(n);}
+function render(){nav();drawTree();const n=nodes.get(selected);$('crumb').textContent=n?ancestors(n).map(x=>x.title).join(' / '):'';$('content').innerHTML=lineage(n);observeGraph();details(n);}
 function choose(id){const n=nodes.get(id);if(!n||!scope(id))return;selected=id;ancestors(n).forEach(x=>expanded.add(x.id));const old=nodes.get(graphFocus);if(!old||!ancestors(old).some(x=>x.id===id))graphFocus=id;saveSelection();status('');render();if(n.kind==='train')void loadCheckpoints(n);}
 async function loadCheckpoints(n){if(detailRequests.has(n.id))return detailRequests.get(n.id);const promise=(async()=>{try{const d=await api('/api/training/detail?'+new URLSearchParams({device:n.device,run:n.run,arm:n.arm}));detailCache.set(n.id,d);checkpointByTraining.set(n.id,Array.isArray(d.checkpoints)?d.checkpoints.filter(c=>c&&typeof c.path==='string'):[]);rebuild();render();}catch(e){status('权重读取失败：'+e.message,true);}})();detailRequests.set(n.id,promise);try{await promise;}finally{detailRequests.delete(n.id);}}
 async function refresh(){if(refreshing)return;refreshing=true;$('reload').disabled=true;const errors=[];
@@ -151,7 +191,7 @@ $('tree').onclick=e=>{const exp=e.target.closest('[data-expand]');if(exp){const 
 $('content').onclick=e=>{const b=e.target.closest('[data-node]');if(b)choose(b.dataset.node);};
 $('engineering').onchange=e=>{includeEngineering=e.target.checked;if(selected&&!scope(selected)){selected=null;graphFocus=null;rebuild();}render();};
 $('collapse').onclick=()=>{expanded.clear();drawTree();};$('reload').onclick=()=>void refresh();
-$('inspector').onclick=e=>{const a=e.target.closest('[data-action]')?.dataset.action,n=nodes.get(selected);if(!a||!n)return;const tr=getTrain(n),w=getWeight(n);
+$('inspector').onclick=e=>{const pick=e.target.closest('[data-node]');if(pick){choose(pick.dataset.node);return;}const a=e.target.closest('[data-action]')?.dataset.action,n=nodes.get(selected);if(!a||!n)return;const tr=getTrain(n),w=getWeight(n);
  if(a==='document'){location.assign('/ai?'+new URLSearchParams({experiment:n.experiment,benchmark:currentBenchmark(n)}));return;}
  if(a==='training'&&tr)navigate('training',{type:'train',benchmark:tr.benchmark,device:tr.device,run:tr.run,arm:tr.arm},tr);
  if(a==='evaluate'&&tr&&w)navigate('training',{type:'checkpoint',benchmark:'b1k',device:tr.device,run:tr.run,arm:tr.arm,path:w.path},tr);
