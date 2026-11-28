@@ -111,7 +111,7 @@ python -m compileall -q train/dashboard.py train/dashboard_remote.py train/v21_w
 
 随后先用自定义参数创建4步工程预检、从暂停的step2恢复到4。详情的「预检转正式训练」复制配方、原谱系和预检序号；仍须用户核对并提交。「复制训练配置」创建新run；「调整配置后继续训练」选择父权重、默认重置优化器与调度器，显示新增预算。没有真实证据的选项不自动启动。历史记录的发起人未记录时显示未记录；用户表单写 initiator=user，Agent 请求显式填写 initiator=agent。
 
-报告可直接下载Markdown；若旧run已经归档但缺少新收集字段，显式执行：
+报告可直接下载Markdown，或下载ZIP证据包（当前归档事件、原始指标分片、配置、已归档评估与清单，逐项验证SHA-256；不含模型/optimizer张量或视频）。若旧run已经归档但缺少新收集字段，显式执行：
 
 ~~~bash
 python scripts/training_archive.py --once --refresh-run <实际run_id>

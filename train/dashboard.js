@@ -659,6 +659,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
     el('train-copy-config').hidden=detail?.config?.recipe!=='native_random_v2';
     el('train-formal-from-preflight').hidden=!(detail?.config?.recipe==='native_random_v2'&&detail.config.custom_config&&detail.config.preflight_only&&detail.preflight?.passed&&job?.status==='completed');
     el('train-download-report').disabled=!detail?.analysis_report?.text;
+    el('train-download-evidence').disabled=!detail?.analysis_report?.text;
     el('train-download-report').title=detail?.analysis_report?'已归档 step '+detail.analysis_report.step+' · '+detail.analysis_report.status:'尚未生成报告；终态归档服务完成后自动可用';
     const resumeKey = job?.run + '/' + job?.arm + '/' + resume?.step;
     if (el('train-resume-panel').dataset.key !== resumeKey) {
@@ -1214,6 +1215,17 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
       const url=URL.createObjectURL(new Blob([report.text],{type:'text/markdown;charset=utf-8'}));
       const anchor=document.createElement('a');anchor.href=url;anchor.download=chosen.run+'__training_report.md';anchor.click();
       setTimeout(()=>URL.revokeObjectURL(url),1000);
+    };
+    el('train-download-evidence').onclick=async()=>{
+      if(!chosen||!detail?.analysis_report)return;
+      const id=chosen;
+      const url='/api/training/evidence?device='+encodeURIComponent(trainingDevice)+'&run='+encodeURIComponent(id.run)+'&arm='+encodeURIComponent(id.arm);
+      try{
+        const response=await fetch(url,{cache:'no-store'});
+        if(!response.ok)throw Error((await response.json()).error||'证据包生成失败');
+        const blob=URL.createObjectURL(await response.blob()),a=document.createElement('a');
+        a.href=blob;a.download=id.run+'__training_evidence.zip';a.click();setTimeout(()=>URL.revokeObjectURL(blob),1000);
+      }catch(error){reportError(error);}
     };
     function fillNativeConfig(p) {
       const fields={'train-steps':p.steps,'train-lr':p.learning_rate,'train-microbatch':p.microbatch,

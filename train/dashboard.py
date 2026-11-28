@@ -301,6 +301,58 @@ class TrainingManager:
                     pass
         return result
 
+
+    def evidence(self, request):
+        """Export a verified archive, not the live training directory."""
+        import hashlib
+        import io
+        import re
+        import zipfile
+        result=self._remote('detail',request)
+        run,arm=result.get('run'),result.get('arm')
+        if not all(isinstance(x,str) and re.fullmatch(r'[A-Za-z0-9_.-]+',x) and x not in ('.','..') for x in (run,arm,self.device_id)):
+            raise ValueError('无效报告身份')
+        root=(self.root/'reports/training/runs').resolve()
+        directory=root/self.device_id/run/arm
+        if not directory.resolve().is_relative_to(root):raise ValueError('无效归档路径')
+        def content(relative,expected=None):
+            p=directory/relative
+            if not p.resolve().is_relative_to(directory.resolve()) or p.is_symlink() or not p.is_file():
+                raise ValueError('归档文件缺失或路径无效: '+str(relative))
+            data=p.read_bytes()
+            if expected and hashlib.sha256(data).hexdigest()!=expected:
+                raise ValueError('证据校验失败: '+str(relative))
+            return data
+        record=json.loads(content('latest.json'))
+        if (record.get('run'),record.get('arm'),record.get('device'))!=(run,arm,self.device_id):
+            raise ValueError('归档身份不匹配')
+        event=record.get('event')
+        if not isinstance(event,str) or not re.fullmatch(r'[0-9a-f]+-[0-9a-f]+',event):
+            raise ValueError('归档事件无效')
+        prefix=Path('events')/event
+        manifest=json.loads(content(prefix/'MANIFEST.json'))
+        if (manifest.get('run'),manifest.get('arm'),manifest.get('device'))!=(run,arm,self.device_id):
+            raise ValueError('清单身份不匹配')
+        output=io.BytesIO();size=0
+        with zipfile.ZipFile(output,'w',compression=zipfile.ZIP_DEFLATED) as z:
+            def add(relative,digest=None):
+                nonlocal size
+                relative=Path(relative)
+                if relative.is_absolute() or '..' in relative.parts:
+                    raise ValueError('归档相对路径无效')
+                data=content(relative,digest);size+=len(data)
+                if size>128*1024*1024:raise ValueError('证据包超过128MiB，请使用本地归档目录')
+                z.writestr(str(relative),data)
+            for name in ('latest.json','training_report.md',prefix/'MANIFEST.json'):add(name)
+            for name,meta in sorted(manifest.get('files',{}).items()):add(prefix/name,meta['sha256'])
+            for part in manifest.get('metrics',{}).get('parts',[]):add(part['path'],part['sha256'])
+            for p in sorted((directory/'evaluations').glob('*/origin.json')):
+                rel=p.relative_to(directory);origin=json.loads(content(rel))
+                add(rel)
+                add(rel.parent/'results.json',origin.get('results_sha256'))
+                if origin.get('episodes_sha256'):add(rel.parent/'episodes.jsonl',origin['episodes_sha256'])
+        return run+'__training_evidence.zip',output.getvalue()
+
     def stop(self, request):
         return self._remote('stop',request)
 

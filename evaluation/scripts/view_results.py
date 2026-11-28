@@ -1178,6 +1178,16 @@ class Handler(BaseHTTPRequestHandler):
                 if action == 'options': value = manager.options()
                 elif action == 'jobs': value = manager.snapshot()
                 elif action == 'detail': value = manager.detail(query)
+                elif action == 'evidence':
+                    name,body=manager.evidence(query)
+                    self.send_response(200)
+                    self.send_header('Content-Type','application/zip')
+                    self.send_header('Content-Disposition',f'attachment; filename="{name}"')
+                    self.send_header('Content-Length',str(len(body)))
+                    self.send_header('Cache-Control','no-store')
+                    self.end_headers()
+                    self.wfile.write(body)
+                    return
                 elif action == 'sync': value = manager.sync_state()
                 else:
                     self.send_error(404)
