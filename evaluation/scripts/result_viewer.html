@@ -2707,7 +2707,7 @@
         const options=[...$('train-saved-checkpoint').options];
         if(!options.some(o=>o.value===target.path))throw Error('所选权重不在已发布权重列表');
         $('train-saved-checkpoint').value=target.path;
-        $('train-use-checkpoint').click();
+        await $('train-use-checkpoint').onclick();
       }else if(target.type==='new'){
         if(target.page==='training'){selectPage('training');if(window.benchmarkWorkbench.current()==='b1k'){await window.trainingDashboard.open();$('train-new').click();}}
         else if(target.page==='launch'){selectPage('launch');$('launch-new-tab').click();}

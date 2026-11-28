@@ -192,7 +192,7 @@ function renderHeader(n){
   if((page==='experiment'||page==='results')&&n?.pending)acts.push('<button data-action="launch">查看运行 →</button>');
   if(page==='experiment'||page==='training'){
     if(ck&&ck.train&&ck.benchmark==='b1k')acts.push('<button class="primary" data-action="evaluate">使用权重评估 →</button>');
-    else if(tr)acts.push('<button class="primary" data-action="evaluate-latest">选择权重评估 →</button>');
+    else if(tr)acts.push('<button class="primary" data-action="evaluate-latest">最新权重评估 →</button>');
   }
   if(page==='training')acts.push('<button '+(tr?'':'class="primary"')+' data-action="new-training">＋ 新建训练</button>');
   if(page==='launch')acts.push('<button class="primary" data-action="new-launch">＋ 新建评估</button>');
@@ -205,6 +205,7 @@ function renderCenter(){
  const tr=getTrain(n);
  if(tab==='new-training'&&form?.type==='new-training'){openFrame('training',form.node,{type:'new',page:'training'});return;}
  if(tab==='new-launch'&&form?.type==='new-launch'){
+   if(form.inFrame&&!$('panel').hidden)return;
    if(form.target){const t=form.target,owner=form.owner;openFrame('training',owner,{type:'checkpoint',benchmark:'b1k',device:owner.device,run:owner.run,arm:owner.arm,path:t.path});}
    else openFrame('launch',form.node,{type:'new',page:'launch'});
    return;
@@ -295,10 +296,16 @@ document.body.addEventListener('click',async e=>{
  }
 });
 window.addEventListener('message',e=>{
- if(e.origin!==location.origin||e.source!==$('panel').contentWindow||$('panel').hidden||page==='registry'||e.data?.type!=='memoryvla-embedded-page')return;
- if(e.data.page==='launch'&&page==='training'){
-   page='launch';tab='new-launch';form={type:'new-launch',node:nodes.get(selected),target:getWeight(nodes.get(selected)),owner:getTrain(nodes.get(selected))};
-   saveRoute();nav();renderHeader(nodes.get(selected));
+ if(e.origin!==location.origin||e.source!==$('panel').contentWindow||$('panel').hidden||page==='registry')return;
+ // Only a completed, explicit checkpoint hand-off can change the outer page.
+ if(e.data?.type==='memoryvla-checkpoint-form'&&['training','launch'].includes(page)){
+   const d=e.data,owner=nodes.get(jsonKey('train',d.device,d.run,d.arm));
+   if(!owner||typeof d.path!=='string'||!d.path)return;
+   const target=nodes.get(jsonKey('checkpoint',owner.id,d.path));
+   if(target){selected=target.id;ancestors(target).forEach(x=>expanded.add(x.id));graphFocus=target.id;}
+   else {selected=owner.id;ancestors(owner).forEach(x=>expanded.add(x.id));}
+   page='launch';tab='new-launch';form={type:'new-launch',node:owner,target:target||{path:d.path,title:d.path.split('/').pop()},owner,inFrame:true};
+   saveRoute();nav();drawTree();renderHeader(nodes.get(selected));
  }
 });
 render();void refresh();setInterval(refresh,45000);

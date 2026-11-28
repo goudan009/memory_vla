@@ -1447,6 +1447,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
     el('train-use-checkpoint').onclick = async () => {
       const path = el('train-saved-checkpoint').value, source = currentJob()?.source;
       if (!path) return;
+      const handoff={type:'memoryvla-checkpoint-form',path,device:trainingDevice,run:chosen?.run,arm:chosen?.arm};
       selectPage('inference');
       await selectInferenceDevice(trainingDevice);
       el('launch-device').value=trainingDevice==='a6000'?'a6000':'local';
@@ -1458,6 +1459,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
       if(currentJob()?.version) el('launch-version').value=currentJob().version;
       el('launch-group').value=currentJob()?.method || (chosen.arm==='baseline'?'baseline':'memory');
       if(currentJob()?.task!=null) el('launch-task').value=String(currentJob().task);
+      if(document.body.classList.contains('workbench-embedded')&&window.parent!==window)window.parent.postMessage(handoff,location.origin);
     };
   }
   window.trainingDashboard = {selectRun:async target=>{
