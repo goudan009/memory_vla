@@ -1,18 +1,18 @@
 {
-  "plan_id": "b1k2026_v0_identity_v030",
+  "plan_id": "b1k2026_v0_0_identity_v030",
   "status": "in_progress",
   "supersedes": "v1_2_n17_b1k2026_training_chain_v029",
-  "change_reason": "User explicitly names the current 2026 baseline V0 and requires separation from 2025. Register V0, scope new runtime identities and outputs to b1k2026, retain all historical identities and artifacts.",
+  "change_reason": "User defines V0 as the B1K-2026 baseline family and V0_0 as the current concrete baseline; minor versions may distinguish code or training parameter tests. Keep 2025 history separate.",
   "benchmark": "b1k2026",
-  "method_version": "V_0",
-  "display_version": "V0",
-  "scientific_method_changed": false,
+  "method_family": "V0",
+  "method_version": "V0_0",
+  "canonical_version": "V_0_0",
   "experiment_identity": null,
-  "budget": {"formal_training_steps": 0, "engineering_training_max_steps": 100, "approved_exact_training_recipe": null},
+  "budget": {"formal_training_steps": 0, "new_gpu_jobs_for_identity_change": 0},
   "mainline": [
-    {"node": "version_registration", "depends_on": [], "parallel_branches": [], "acceptance": "User-confirmed V0 resolves to V_0/v0, explicitly belongs to b1k2026; legacy 2025 backends reject it."},
-    {"node": "runtime_identity", "depends_on": ["version_registration"], "parallel_branches": [], "acceptance": "New training/checkpoints/inference/evaluation metadata use 2026 V0 and new evaluation paths stay within evaluation/b1k2026/V_0; original historical jobs, notes, paths and IDs remain readable and unchanged."},
-    {"node": "verification", "depends_on": ["runtime_identity"], "parallel_branches": [], "acceptance": "Tests cover canonical V0, cross-benchmark rejection, saved checkpoint identity, new and historical artifact URLs; existing 8765 API verifies V0 without GPU submission."},
-    {"node": "training_chain", "depends_on": ["verification"], "parallel_branches": [], "acceptance": "Continue v029 launch gate and actual training/save/reload/resume/self-trained evaluation stages under b1k2026 V0 once exact recipe and test/experiment/run identity are confirmed; naming approval alone does not approve unspecified scientific choices."}
+    {"node": "register_identity", "depends_on": [], "parallel_branches": [], "acceptance": "Register explicit user-approved V0 family and V0_0 concrete version; do not assign scientific recipe or test/exp/run IDs."},
+    {"node": "separate_native_routes", "depends_on": ["register_identity"], "parallel_branches": [], "acceptance": "2026 training/checkpoint/serve/eval records carry benchmark and concrete version; new artifacts use benchmark/version directories; preserve legacy paths and jobs."},
+    {"node": "verify_and_activate", "depends_on": ["separate_native_routes"], "parallel_branches": [], "acceptance": "Identity, wrong-benchmark rejection, old/new artifact retrieval and existing backend tests pass; activate on 8765 after checking active jobs, preserve unavailable real-training capabilities."},
+    {"node": "training_chain_continuation", "depends_on": ["verify_and_activate"], "parallel_branches": [], "acceptance": "Continue v029 real dataset/training/save/reload/resume/closed-loop sequence under V0_0 once exact engineering recipe and test/exp/run identity are locked. Version naming alone does not approve a split or training budget."}
   ]
 }
