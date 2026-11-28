@@ -891,7 +891,7 @@
     <section id="page-registry" role="tabpanel" aria-labelledby="page-tab-registry" hidden></section>
     <div class="page-foot" hidden>调试结果不计正式成绩</div>
   </main>
-<link rel="stylesheet" href="/workbench_embed.css">
+<link rel="stylesheet" href="/workbench_embed.css?ui=3">
 <script>if(new URLSearchParams(location.search).get('embedded')==='1')document.body.classList.add('workbench-embedded');</script>
 <script src="/checkpoint_notes.js"></script>
 <script>
@@ -2678,6 +2678,7 @@
   window.unifiedWorkbenchPanel = {
     async select(target){
       if(!document.body.classList.contains('workbench-embedded'))throw Error('仅用于嵌入面板');
+      document.body.dataset.embedTarget=target.type;
       if(target.type==='experiment')return; // /ai?experiment= selects the recorded document.
       if(target.type==='train'){
         selectPage('training');

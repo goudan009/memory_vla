@@ -32,6 +32,10 @@ const read=name=>fs.readFileSync(path.join(dir,name),'utf8');
   await page.locator('#tree .pick').filter({hasText:'V2.1'}).waitFor();
   await page.locator('#tree .pick').filter({hasText:'V2.1'}).click();
   await page.locator('#tree .pick').filter({hasText:'Train 01'}).click();
+  await page.locator('.lineage-level').first().waitFor();
+  assert.equal(await page.locator('.lineage-wire').count()>0,true);
+  fs.mkdirSync('workbench-screenshots',{recursive:true});
+  await page.screenshot({path:'workbench-screenshots/unified-lineage-a2.png'});
   await page.locator('#tree .pick').filter({hasText:'Step 6000'}).waitFor();
   await page.locator('#nav [data-page="training"]').click();
   await page.frameLocator('#panel').locator('#selected').filter({hasText:'run1'}).waitFor();
@@ -55,6 +59,7 @@ const read=name=>fs.readFileSync(path.join(dir,name),'utf8');
   await page.locator('#tabs [data-tab="weights"]').click();
   await page.frameLocator('#panel').locator('#registry-fixture').waitFor();
   assert.ok((await page.locator('#panel').getAttribute('src')).includes('section=weights'));
+  await page.screenshot({path:'workbench-screenshots/unified-resources-a2.png'});
   for(const width of [1440,1024,768,390]){await page.setViewportSize({width,height:900});assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'layout overflow at '+width);}
   assert.deepEqual(errors,[]);
  }finally{await browser.close();}
