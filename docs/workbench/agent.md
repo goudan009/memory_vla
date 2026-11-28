@@ -64,19 +64,21 @@ V_2_1 训练指标在工作台查询时转换为共享展示字段：Loss 沿用
 
 两个 `collect` 函数位于 `evaluation/scripts/result_viewer.html`。设备选择型接口的 GET 请求通过查询参数指定 `device`，对应的启动 POST 将 `device` 放在 JSON 内。评估的 `GET /api/launch/jobs` 汇总本机和远程记录。
 
-### V1.2 / N1.7 / B1K-2026 原生 radio 验收
+### V0_0 / N1.7 / B1K-2026 原生链路
 
-工作台 Benchmark 下拉框默认选择 **BEHAVIOR-1K 2026**；**BEHAVIOR-1K 2025 · 历史** 单独查看旧记录。可用 `/?benchmark=b1k2026` 或 `/?benchmark=b1k` 直接进入对应视图。2026「结果分析」直接展示原生回合指标和内嵌视频，默认显示有效回合与运行中作业；启动失败记录在「全部作业」中查看。自动刷新保留正在播放的视频及播放位置。2026「模型训练」明确显示尚未验收，不展示旧训练入口。
+工作台 Benchmark 下拉框默认选择 **BEHAVIOR-1K 2026**；**BEHAVIOR-1K 2025 · 历史** 单独查看旧记录。可用 `/?benchmark=b1k2026` 或 `/?benchmark=b1k` 直接进入对应视图。2026「结果分析」直接展示原生回合指标和内嵌视频，默认显示有效回合与运行中作业；启动失败记录在「全部作业」中查看。自动刷新保留正在播放的视频及播放位置。2026工程训练验收状态以本机 `/api/training/options?device=local` 的 `engineering_training_verified` 及原始证据为准；正式训练仍关闭，不复用2025训练入口。
 
-当前本机 8765 的 `/api/launch/options?device=local` 提供 `model_versions.V_1_2`。该路由自行管理本机官方 N1.7 策略服务和独立 B1K-2026 evaluator，使用原生 WebSocket、单环境单回合、temporal ensemble、RTC off。任务与 checkpoint 限定为 `turning_on_radio`。先读 [最新迁移计划](../v1_2/n17-baseline.md) 和当前 workflow，不复用 2025 ZMQ 参数或训练候选。
+当前本机 8765 的 `/api/launch/options?device=local` 提供 `model_versions.V_0_0`，系列V0、具体版本V0_0；历史输入 `V_1_2` 保留兼容映射，历史作业身份和路径不变。该路由自行管理本机 N1.7 策略服务和独立 B1K-2026 evaluator，使用原生 WebSocket、单环境单回合、temporal ensemble、RTC off。官方权重仍只允许 `turning_on_radio`；自训练 `make_microwave_popcorn` 仅按实际验收的checkpoint白名单和工程作用域开放。读取 `capabilities`、`checkpoint_whitelist` 和任务的 `model_roles`，不得把radio权重用于Task40。先读 [最新迁移计划](../v1_2/n17-baseline.md) 和当前 workflow，不复用 2025 ZMQ 参数或训练候选。
 
-请求显式包含 `version=V_1_2`、`protocol=b1k2026_websocket`、`task=turning_on_radio`、`instance`（0–19）、`rollouts=1`、`gpu_index`、`policy_host=127.0.0.1`、空闲 `policy_port`、`record_video=true` 和简短 `notes`。`attempt` 默认为1，后续同实例的独立尝试显式填写2–99，保留原目录；不是续跑同一条已完成回合，也不自动推断新 seed。
+官方评估请求显式包含 `benchmark=b1k2026`、`version=V_0_0`、`protocol=b1k2026_websocket`、`task=turning_on_radio`、`instance`（0–19）、`rollouts=1`、`gpu_index`、`policy_host=127.0.0.1`、空闲 `policy_port`、`record_video=true` 和简短 `notes`。`attempt` 默认为1，后续同实例的独立尝试显式填写2–99，保留原目录；不是续跑同一条已完成回合，也不自动推断新 seed。自训练Task40另显式传 `model_role=self_trained`、`engineering_only=true`、确切 `checkpoint` / `checkpoint_sha256`；实际请求见[已锁定配置](../../Output/test_04/experiment_01/configs/evaluation.json)，不能把该文件直接重复提交为新回合。
 
 必须核对 `language_mode`：`task_description` 会验证本地 Task0 原文，并通过本仓库 adapter 显式交给官方 wrapper，preview/job/runner 保存文本与元数据 SHA256；`official_default`（API 兼容默认值）保留上游的 `pick up the object and place it on the table`，用于原样服务复现。工作台表单默认选择任务原文。两种输入配置分别报告，不混为一个成功率。固定上游不作修改。
 
 仍按同配置 preview → start → jobs 核对真实作业。工作台作业卡提供 `native_metrics`、`language`、`notes`、原生 JSON/MP4 和实际启动元数据；原生产物通过 `/api/launch/artifact` 的 GET 读取，不生成假的旧 `results.json`。正式训练能力仍关闭；本入口通过不代表所有任务、训练或模型成功率已验收。
 
 2026 结果页读取 `GET /api/launch/jobs?benchmark=b1k2026`，仅返回本机原生 2026 作业，不等待无关的旧远端设备。旧 `/api/results` 保持读取历史 `results.json`。回合正常完成只标为「回合完成」，任务成功与终态 Q-score 分别按原生指标展示。
+
+本次工程训练使用现有 `/api/training` 的 `device=local` 入口，规范ID `v0_0__test04__exp01__run001`，显式 `engineering_only=true`；请求和Agent计划绑定见[实验任务书](../../Output/test_04/experiment_01/task.md)。训练、完整断点恢复仍走同配置preview/start及 `/api/training/resume`，恢复保留原run。已存在该run时先读jobs/detail，不重复启动。终态可从 `/api/training/evidence?device=local&run=实际run_id` 导出证据ZIP。四步工程验收不开放正式训练；累计预算、科学配置或独立初始化的变更仍遵循Skill。
 
 以训练请求为例，`REQUEST_JSON` 是按当前任务填写的 JSON 文件，包含 `device`。推理和评估使用表中的接口前缀。
 

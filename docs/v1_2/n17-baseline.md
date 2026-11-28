@@ -4,7 +4,7 @@
 
 > 2026-11-27 用户确认：V1.2 和后续 V2.2 全面使用 B1K-2026；取消新底座的 B1K-2025 适配路线。先下载资源、跑通官方无记忆基线，后续再确认正式训练方案。旧运行的保护限制已由下方 2026-11-28 授权更新，历史权重及结果继续保留。
 
-> 2026-11-28 授权更新：先测试 B1K-2026；官方闭环产出有效原生 JSON、视频、success/Q-score 且正常退出、任务语义接入核对通过后，核对依赖并停用已确认的旧 B1K-2025/V2.1 运行服务。历史数据、权重、源码和结果保留。仍不启动正式训练、不开发 V2.2。最新执行计划见 [plan-v029.json](workflow/plan-v029.json)，训练链路工程验收配方见[待确认方案](engineering-acceptance-v029.md)，实时证据见 [progress.md](progress.md)，验收汇总见 [实机报告](acceptance-2026-11-28.md)。
+> 2026-11-28 授权更新：先测试 B1K-2026；官方闭环产出有效原生 JSON、视频、success/Q-score 且正常退出、任务语义接入核对通过后，核对依赖并停用已确认的旧 B1K-2025/V2.1 运行服务。历史数据、权重、源码和结果保留。仍不启动正式训练、不开发 V2.2。最新执行计划见 [plan-v031.json](workflow/plan-v031.json)，已确认的 Task40 工程配方见[任务书](../../Output/test_04/experiment_01/task.md)，实时证据见 [progress.md](progress.md)，官方基线验收见 [实机报告](acceptance-2026-11-28.md)。原v029方案保留为历史提案，不能覆盖当前Task40-only预算。
 
 > 实测结论：2026 环境、官方权重推理、原生评估链路及 8765 工作台产物接入通过；原样默认语言及显式 Task0 语言的两个配置各运行一个完整回合，均为 3225 步、success=false、Q-score=0，任务效果未通过。已停用确认归属旧 V2.1/Exp13 的自动派发 timer 与看护进程。正式训练入口保持关闭；不能把运行兼容性通过表述为所有任务或训练已验收。
 
@@ -50,14 +50,14 @@ V1.2 的 B1K-2025 数据转换、模态适配、旧 ZMQ 通信兼容、训练入
 
 工作台接入仍复用现有 InferenceManager、LaunchManager 和训练控制器，不另设调度器；增加显式 V_1_2 + b1k2026_websocket 路由、/healthz、checkpoint/source身份、原生 JSON/视频、success、Q-score、回合及运行备注。不得将2026评估伪装成2025任务或沿用旧 ZMQ runner。先确认 GPU/资源与真实实验身份并按 Skill 保存 task/progress/plan；preview → start → 查询实际 job。先完成一个官方公共测试实例的短闭环接口验收，记录真实结果，不以单回合推断统计性能。正式回合预算另行确认。
 
-## 3. 2026 原生无记忆训练（后续确认，当前不启动）
+## 3. 2026 原生无记忆训练（已授权四步工程验收，正式训练未启动）
 
 V1.2正式训练只从核实的通用 N1.7-3B 开始，使用2026的 LeRobot v3、R1Pro 官方 modality（examples/b1k/r1pro.py/.json）与原生 trainer。先核对真实数据结构，使用 deploy_modality.py 的检查逻辑在独立训练视图配置 modality；不得直接用旧2025训练候选。原生 v3 的聚合 parquet / 视频可能包含多个 episode，必须按真实 episode 行区间及视频索引隔离训练和验证，重新计算训练集统计；不能套用每个 parquet 对应一个 episode 的2025检查。split、horizon、步数、冻结策略、有效 Batch、评估实例及终止条件在用户批准正式任务前锁定，不直接照搬2025或官方八卡预算。原生 global_batch_size 为累积前跨卡 batch；4×2×8 应传8、有效64，仅为算例。
 
-先完成2026 loader、processor、动作编码/解码、真实 batch 前后向、保存重载和工作台接入验收；正式累计超过2000步必须严格同run暂停/恢复，不能依赖上游普通 resume 的 ignore_data_skip=True 冒充完整恢复。通过闭环验证基础动作与任务成功后，才开始讨论 V2.2 的记忆模块。训练/评估备注按最新 Skill 简短填写，例如「V1.2 / N1.7 / B1K2026：原生无记忆基线」。
+当前已按用户批准的Task40-only180/20划分、冻结LLM/visual、有效Batch1执行四步工程训练，在step2完整暂停并通过工作台同run恢复到step4。最终step4原生闭环已正常结束（job076b8962918c，4857步，success0/1、Q-score0），JSON与视频校验通过。工程链路验收见[报告](../../Output/test_04/experiment_01/report.md)及[证据](evidence/training-acceptance-v031.json)；四步工程自检不代表正式训练或任务效果通过。正式累计超过2000步必须严格同run暂停/恢复，不能依赖上游普通 resume 的 ignore_data_skip=True 冒充完整恢复。通过闭环验证基础动作与任务成功后，才开始讨论 V2.2 的记忆模块。训练/评估备注按最新 Skill 简短填写，例如「V0_0 / N1.7：2026 Task40 工程链路，RTC off」。
 
 ## 4. 当前执行边界
 
-V_1_2 原生路由已在主工作台 `8765` 开放 preview/start、任务语言与原生产物展示，原临时工作台 `8767` 在核对无活动作业及原结果已接管后收尾，`8766` 属于其他项目。源码、官方 radio 权重、Cosmos、本机 Isaac Sim 5.1 和 2026 资产已进入实跑验收；路由就绪不代表所有任务或训练均已通过。模型版本登记中的正式训练能力仍未开放，当前不创建训练编号或启动正式训练，也不开发 V2.2。旧服务依照上面的最新切换门槛处理。后续正式实验使用已核实的 testNN/expNN/runNNN 与现有规范输出目录，按 AGENTS.md 和 robot-vla-experiment-ops Skill 执行。无需继续完成已取消的2025适配检查。
+原生路由已在主工作台 `8765` 开放 preview/start、任务语言与原生产物展示，新作业使用 `V_0_0` / `b1k2026`；历史 `V_1_2` 身份保持稳定。原临时工作台 `8767` 已收尾，`8766` 属于其他项目。官方radio链路已验收；Task40使用本次独立自训练step4权重，不能把radio权重限制直接解除。工程能力仅按真实验收证据开放；正式训练、多环境、评估暂停恢复和实时相机仍未开放。本次工程编号已授权并锁定test04/exp01/run001，不创建额外训练或启动正式训练，不开发V2.2。旧服务依照上面的最新切换门槛处理，历史资源保留。后续正式实验使用已核实的 testNN/expNN/runNNN 与现有规范输出目录，按 AGENTS.md 和 robot-vla-experiment-ops Skill 执行。无需继续完成已取消的2025适配检查。
 
 参考：[官方基线手册](https://behavior.stanford.edu/challenge/baselines)、[2026数据说明](https://behavior.stanford.edu/challenge/dataset)、[2026官方任务描述提交](https://huggingface.co/datasets/behavior-1k/2026-challenge-demos/commit/2add61313bac4f1a42363d00ad03bd45949941a8)。

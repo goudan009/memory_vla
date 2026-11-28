@@ -1,0 +1,137 @@
+{
+  "schema": "b1k2026-task40-engineering-acceptance-v1",
+  "accepted": true,
+  "scope": "Task40 four-step engineering training, strict pause/resume, checkpoint reload and one native rollout; no task-performance or formal-training acceptance",
+  "checked_at": "2026-11-28T19:48:13+08:00",
+  "benchmark": "b1k2026",
+  "method_family": "V0",
+  "version": "V_0_0",
+  "display_version": "V0_0",
+  "tasks": [
+    40
+  ],
+  "optimizer_steps": 4,
+  "formal_training_steps": 0,
+  "run_id": "v0_0__test04__exp01__run001",
+  "upstream": "/nvme3/projects/GR00T/Isaac-GR00T-n1d7-ace36d9",
+  "python": "/nvme3/projects/GR00T/Isaac-GR00T-n1d7-ace36d9/.venv/bin/python",
+  "checkpoint": "/nvme3/projects/memory_vla/training/b1k2026/v0_0__test04__exp01__run001/checkpoints/v0_0__test04__exp01__run001__step000004",
+  "checkpoint_sha256": "20e6ea6d2a322f6ca6b3c1de028d21a2b5063e47c0d309b87f5aa4928d53e286",
+  "evaluation_output": "evaluation/b1k2026/V_0_0/self_trained/v0_0__test04__exp01__run001__step000004__task40__instance00__attempt01",
+  "evaluation_job_id": "076b8962918c",
+  "native_json": "json/make_microwave_popcorn_301_0.json",
+  "files_sha256": {
+    "training/b1k2026/v0_0__test04__exp01__run001/job.json": "52baa9e0aed7a9558db59b07c47407cb16562298d96ec527cb2c421becf172de",
+    "training/b1k2026/v0_0__test04__exp01__run001/status.json": "4c68bf7a4cf589a2e5753b01d63a9a93f1a1f8524214b4dd7f32bb6c840c4d03",
+    "training/b1k2026/v0_0__test04__exp01__run001/metrics.jsonl": "33385a7d3c4277945fcf4cf435e16820688b8c8883e97a9fc336bd71e72e0231",
+    "training/b1k2026/v0_0__test04__exp01__run001/loss.jsonl": "4bbb578da9b986868d802c14d8946bf2e47b18640a7062cb9d68a9c6b99900fa",
+    "training/b1k2026/v0_0__test04__exp01__run001/resume_events.jsonl": "b13af5617f7a517f0ab7f52bdb03723cfe389847de80328ff1651f39ad54835a",
+    "training/b1k2026/v0_0__test04__exp01__run001/native/checkpoint-4/b1k2026_training.json": "c5c540d162f3e1d831b5e31ec47bee2a0a826ba36d3a87df70fee74e830cd143",
+    "evaluation/b1k2026/V_0_0/self_trained/v0_0__test04__exp01__run001__step000004__task40__instance00__attempt01/job.json": "45c55d098ba8653a90cb47157685cd31005aac7ab764b358638e30206777ae32",
+    "evaluation/b1k2026/V_0_0/self_trained/v0_0__test04__exp01__run001__step000004__task40__instance00__attempt01/runner.json": "0985b79f8fb795630592d4da70bcf5b2cf66d079deddc6ff1fade19704bc26d8",
+    "evaluation/b1k2026/V_0_0/self_trained/v0_0__test04__exp01__run001__step000004__task40__instance00__attempt01/json/make_microwave_popcorn_301_0.json": "675a761e640809e1635c0a657dd5dba3fb3bb5171c2b5a24c591d5598b705302"
+  },
+  "native_result": {
+    "task": "make_microwave_popcorn",
+    "instance_id": 301,
+    "rollout_id": 0,
+    "steps": 4857,
+    "success": false,
+    "agent_distance": {
+      "base": 13.695463449439558,
+      "left": 259.18452200025786,
+      "right": 288.2475601307815
+    },
+    "normalized_agent_distance": {
+      "base": 0.6281788149602238,
+      "left": 0.010904586347163077,
+      "right": 0.03014249277967147
+    },
+    "q_score": {
+      "final": 0
+    },
+    "time": {
+      "simulator_steps": 4857,
+      "simulator_time": 161.9,
+      "normalized_time": 0.6666203417747582
+    }
+  },
+  "instance_index": 0,
+  "seed": 0,
+  "configured_timeout_steps": 4856,
+  "reported_steps": 4857,
+  "success_count": 0,
+  "valid_rollouts": 1,
+  "success_rate_exact_95_percent_ci": [
+    0,
+    0.975
+  ],
+  "task_performance_accepted": false,
+  "formal_training_available": false,
+  "video": {
+    "path": "videos/make_microwave_popcorn_301_0.mp4",
+    "bytes": 25437478,
+    "sha256": "deb77f069b70d5e2ce48208a0655c1fb0951d5a44245dafd687acf4ebc2febdf",
+    "codec": "h264",
+    "width": 672,
+    "height": 448,
+    "fps": 30,
+    "frames": 4857,
+    "duration_seconds": 161.9,
+    "full_decode_returncode": 0,
+    "http_status": 200,
+    "http_matches_local": true
+  },
+  "contact_sheet": "Output/test_04/experiment_01/evidence/task40-step4-contact-sheet.jpg",
+  "contact_sheet_seconds": [
+    0,
+    20,
+    40,
+    60,
+    80,
+    100,
+    120,
+    140,
+    160
+  ],
+  "training_data": {
+    "train_episodes": 180,
+    "train_rows": 583195,
+    "validation_episodes": 20,
+    "validation_rows": 64360,
+    "data_manifest_sha256": "24d71f4d7ff2a8a5832e95598789a0dbc7f378aacecf6fe5e03c29c46d5217fc",
+    "recipe_sha256": "126ae184563e0515d07979754eab93daa3a7785a25499b564a9badc06bf69295"
+  },
+  "training_resume": {
+    "pause_step": 2,
+    "end_step": 4,
+    "optimizer_entries": 537,
+    "restored_optimizer_max_step": 2,
+    "restored_scheduler_last_epoch": 2,
+    "sample_cursor_from": 2,
+    "sample_cursor_to": 4,
+    "full_state_sha256_verified": true,
+    "worker_exited_after_pause": true,
+    "worker_exited_after_completion": true
+  },
+  "training_peak_cuda_bytes": 38527117312,
+  "evaluator_returncode": 0,
+  "evaluation_started_at": "2026-11-28T19:08:43+08:00",
+  "evaluation_runner_completed_at": "2026-11-28T19:46:15.379906+08:00",
+  "released": {
+    "runner_pid": 3027554,
+    "server_pid": 3027958,
+    "evaluator_pid": 3028162,
+    "all_exited": true,
+    "policy_port": 8040,
+    "port_released": true,
+    "gpu1_remaining_mib": 6188
+  },
+  "training_evidence_zip_sha256": "c8896f832c699d636eb55a911c6111672bc23814a8dd0555febd5e6a2426becc",
+  "tests": {
+    "backend_passed": 40,
+    "backend_skipped": 7,
+    "native_resume_passed": 13
+  },
+  "report": "Output/test_04/experiment_01/report.md"
+}
