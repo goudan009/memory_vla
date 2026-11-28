@@ -1,0 +1,39 @@
+{
+  "device": "local",
+  "benchmark": "b1k2026",
+  "version": "V_0_0",
+  "run_id": "v0_0__test04__exp01__run001",
+  "initiator": "agent",
+  "notes": "V0_0 / N1.7：2026 Task40 四步训练链路验收",
+  "engineering_only": true,
+  "base_checkpoint": "/nvme3/models/GR00T-N1.7-3B",
+  "base_sha256": "6f381d7c9916112261c5d910ed1a54668c816fa3fb83b45ceef714f9b2b8546d",
+  "data_manifest": "/nvme3/datasets/b1k2026-v0_0-task40-test04-exp01-run001/data_manifest.json",
+  "finetune": {
+    "tune_llm": false,
+    "tune_visual": false,
+    "tune_projector": true,
+    "tune_diffusion_model": true,
+    "state_dropout_prob": 0.2,
+    "global_batch_size": 1,
+    "gradient_accumulation_steps": 1,
+    "dataloader_num_workers": 0,
+    "learning_rate": 0.0001,
+    "weight_decay": 0.00001,
+    "warmup_ratio": 0.05,
+    "max_steps": 4,
+    "save_steps": 2,
+    "shard_size": 4,
+    "episode_sampling_rate": 0.1,
+    "num_shards_per_epoch": 100
+  },
+  "gpu_index": 1,
+  "seed": 42,
+  "gradient_checkpointing": false,
+  "minimum_free_mib": 30000,
+  "pause_after_steps": 2,
+  "agent_plan": {
+    "version": "v001",
+    "node": "train"
+  }
+}
