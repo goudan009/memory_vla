@@ -91,7 +91,7 @@ def operate(request):
         if path.is_symlink():
             raise ValueError('软链接请由管理员核对后处理')
         # Managed training weights must pass the existing dependency checks.
-        if any(part.startswith(('checkpoint-', 'step-')) or part in ('checkpoints','training') for part in path.parts):
+        if any(part.startswith(('checkpoint-', 'step-')) or part=='training' for part in path.parts):
             raise ValueError('训练权重请通过训练详情的受保护 checkpoint 删除入口')
         protected = [Path(p).resolve() for p in request.get('protected', [])]
         if path.resolve() in protected or len(path.resolve().parts) <= 3:
@@ -116,7 +116,9 @@ def operate(request):
         raise ValueError('未知的资源操作')
     result = entry(path)
     result['disk'] = disk_info(path)
-    result['can_delete'] = path.resolve() not in [Path(p).resolve() for p in request.get('protected', [])] and len(path.resolve().parts)>3
+    result['can_delete'] = (path.resolve() not in [Path(p).resolve() for p in request.get('protected', [])]
+                            and len(path.resolve().parts)>3 and not path.is_symlink()
+                            and not any(part.startswith(('checkpoint-','step-')) or part=='training' for part in path.parts))
     if action == 'stat':
         return result
     parent = path.parent

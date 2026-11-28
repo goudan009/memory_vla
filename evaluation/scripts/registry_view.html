@@ -225,7 +225,9 @@
 </dialog>
 
 <script>
-let D = null, A = {}, VIEW = "res", editingKey = null;
+const compareOnly = new URLSearchParams(location.search).get("mode")==="compare";
+let D = null, A = {}, VIEW = compareOnly ? "exp" : "res", editingKey = null;
+if(compareOnly){document.getElementById("nav").hidden=true;document.querySelector("header h1").textContent="多次评估对比";document.getElementById("view-exp").classList.remove("hidden");document.getElementById("view-res").classList.add("hidden");}
 let selectedExperiment = null, selectedTask = null, experimentsByTask = new Map(), visibleExperiments = [];
 let resourceRows = [], selectedResource, resourceDetailStamp;
 const KIND_LABEL = {all:"全部", weights:"模型权重", dataset:"数据集"};
@@ -291,11 +293,11 @@ function showTaskComparison(){
   const comparison=rows.map(row=>`<tr><td>
     <button type="button" class="record-select" data-compare-record="${esc(row.recordKey)}">${esc(row.name)}</button>
     <span class="record-context">${esc(row.version)} / ${esc(row.arm)} · ${esc(statusText(row.status))}${A[row.id]?.label?` · ${esc(A[row.id].label)}`:''}</span></td>
-    <td>${metric(row.mean_q_score,3)}</td><td>${metric(row.success_rate==null?null:row.success_rate*100,1,'%')}</td>
+    <td>${metric(row.success_rate==null?null:row.success_rate*100,1,'%')}</td><td>${metric(row.mean_q_score,3)}</td>
     <td>${metric(row.mean_progress,1,'%')}</td></tr>`).join('');
   detail.innerHTML=`<div class="detail-kicker">任务对比</div><h3>${esc(selectedTask)}</h3>
-    <p class="hint">${rows.length} 次评估 · 按更新时间倒序</p>
-    <div class="table-wrap"><table class="ledger-table"><thead><tr><th>运行 / 版本</th><th>Q Score</th><th>成功率</th><th>任务进度</th></tr></thead><tbody>${comparison}</tbody></table></div>`;
+    <p class="hint">${rows.length} 次评估 · 按更新时间倒序。这里只汇总历史记录；协议、任务实例、种子与回合数一致后才可作为正式对照，不自动排名。</p>
+    <div class="table-wrap"><table class="ledger-table"><thead><tr><th>运行 / 版本</th><th>成功率</th><th>Q Score</th><th>任务进度</th></tr></thead><tbody>${comparison}</tbody></table></div>`;
 }
 
 function renderExperimentDetail(row){

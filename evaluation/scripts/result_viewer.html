@@ -198,7 +198,9 @@
     .page-tabs { display:flex; flex:0 0 auto; gap:8px }
     .page-nav button { font-size:13px; padding:7px 18px; border-color:transparent }
     .page-nav button[aria-selected="true"] { color:var(--green); background:var(--soft); border-color:#bfded0 }
-    #registry-frame { display:block; width:100%; border:0; min-height:120px }
+    #registry-frame, #result-compare-frame { display:block; width:100%; border:0; min-height:120px }
+    #result-compare-panel {grid-column:1/-1;min-width:0}
+    #result-compare-panel summary {cursor:pointer;padding:10px 12px}
     body:has(#page-registry:not([hidden])) :is(.gpu-overview-panel,#bench-workspace) { display:none }
     .launch-fields { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px 16px; padding:14px 20px }
     .launch-fields label { font-size:12px; color:#5e7268; display:grid; gap:5px; min-width:0 }
@@ -579,10 +581,11 @@
         </div>
     </div>
     <div class="layout" id="page-results" role="tabpanel" aria-labelledby="page-tab-results">
+      <details id="result-compare-panel"><summary>多次评估对比 · 按任务浏览历史结果</summary><div id="result-compare-content"></div></details>
       <section class="run-browser" aria-label="选择评估记录"><div class="section-head"><h2>全部运行</h2><span id="run-count" class="subtle">0 条</span></div><div class="filters"><input id="run-search" type="search" placeholder="搜索版本、任务或运行名" aria-label="搜索评估记录"><select id="status-filter" aria-label="按运行状态筛选"><option value="">全部状态</option><option value="running">运行中</option><option value="complete">已完成</option><option value="failed">异常退出</option><option value="interrupted">已暂停 / 中断</option><option value="paused">已暂停</option><option value="cancelled">已暂停（历史停止）</option></select></div><div class="run-list" id="runs"></div><div id="empty" class="empty" hidden>还没有评估结果。</div></section>
       <section aria-label="选中运行详情">
         <div class="detail-heading"><div><div id="detail-path" class="eyebrow">选择一次评估</div><h2 id="detail-title">运行详情</h2><div id="detail-subtitle" class="subtle">任务、进度与成绩集中显示在这里</div></div><div class="heading-status"><span id="detail-status"></span><span id="detail-mode" class="subtle"></span></div></div>
-        <div class="evaluation-actions"><div id="evaluation-actions"></div><span id="evaluation-action-message" class="evaluation-action-message" role="status"></span></div>
+        <div class="evaluation-actions"><button type="button" id="result-export-analysis">导出本次结果 JSON</button><div id="evaluation-actions"></div><span id="evaluation-action-message" class="evaluation-action-message" role="status"></span></div>
         <details id="result-note-panel"><summary>Checkpoint 备注 <small id="result-note-preview"></small></summary><div id="result-checkpoint-note"></div></details>
         <div class="summary" id="summary"></div>
         <nav class="detail-tabs" role="tablist" aria-label="运行详情视图"><button type="button" id="tab-episodes" role="tab" aria-controls="pane-episodes" onclick="selectDetailTab('episodes')">回合成绩</button><button type="button" id="tab-media" role="tab" aria-controls="pane-media" onclick="selectDetailTab('media')">录像与相机</button><button type="button" id="tab-info" role="tab" aria-controls="pane-info" onclick="selectDetailTab('info')">日志与配置</button></nav>
@@ -679,6 +682,26 @@
     });
     $('page-registry').append(frame);
   }
+  function openResultComparison(){
+    if($('result-compare-frame'))return;
+    const frame=document.createElement('iframe');
+    frame.id='result-compare-frame';frame.title='多次评估对比';frame.src='/registry?mode=compare';
+    frame.addEventListener('load',()=>{
+      const body=frame.contentDocument.body;
+      const resize=()=>{frame.style.height=Math.ceil(body.getBoundingClientRect().height)+'px';};
+      new ResizeObserver(resize).observe(body);resize();
+    });
+    $('result-compare-content').append(frame);
+  }
+  $('result-compare-panel').addEventListener('toggle',()=>{if($('result-compare-panel').open)openResultComparison();});
+  $('result-export-analysis').onclick=()=>{
+    if(!selected){$('evaluation-action-message').textContent='请先选择评估记录';return;}
+    const snapshot={schema:1,exported_at:new Date().toISOString(),note:'工作台评估记录快照；视频为索引，不含视频文件。缺失字段不补造。',run:selected};
+    const url=URL.createObjectURL(new Blob([JSON.stringify(snapshot,null,2)],{type:'application/json;charset=utf-8'}));
+    const anchor=document.createElement('a');anchor.href=url;
+    anchor.download=String(selected._folder||'evaluation').replace(/[^A-Za-z0-9_.-]/g,'_')+'__analysis.json';
+    anchor.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+  };
   function selectPage(page, updateURL=true) {
     const needsInference=page==='inference';
     if(needsInference) page='launch';
@@ -1274,8 +1297,9 @@
     }
     const select=$('launch-service');
     if(launchServiceChoice===null){
-      const initial=launchServices.find(p=>String(p.configured_port)===$('launch-port').value && p.host===$('launch-host').value);
-      if(initial){launchServiceChoice=initial.host+':'+initial.configured_port;$('launch-endpoint').open=false;}
+      const ready=launchServices.filter(p=>p.listening_ports?.includes(Number(p.configured_port)));
+      const initial=ready.find(p=>String(p.configured_port)===$('launch-port').value && p.host===$('launch-host').value) || (ready.length===1?ready[0]:null);
+      if(initial){launchServiceChoice=initial.host+':'+initial.configured_port;$('launch-host').value=initial.host;$('launch-port').value=String(initial.configured_port);applyEvaluationIdentity(initial.host,initial.configured_port);$('launch-endpoint').open=false;}
     }
     const serviceGroups=new Map();
     for(const p of launchServices){
@@ -1474,6 +1498,7 @@
     selectResultRun(run);
   }
   function openRegistryResult(folder) {
+    $('result-compare-panel').open=false;
     const run=runs.find(item=>item._folder===folder);
     if(run && (!window.benchmarkWorkbench || window.benchmarkWorkbench.isNative())) selectResultRun(run);
     else selectPage('results');
