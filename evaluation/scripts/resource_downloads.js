@@ -3,7 +3,11 @@
   const panel=$('resource-download-panel'), choice=$('resource-download-choice'), start=$('resource-download-start');
   const refresh=$('resource-download-refresh'), preview=$('resource-download-preview');
   const status=$('resource-download-message'), detail=$('resource-download-detail'), progress=$('resource-download-progress');
+  const summary=$('resource-download-summary'), raw=$('resource-download-raw');
   let recipes=[], previewed=null, busy=false, lastStatus=null;
+  const gib=value=>Number.isFinite(value)?(value/1024**3).toFixed(2)+' GiB':'—';
+  const shortPath=value=>String(value||'').split('/').filter(Boolean).at(-1)||'—';
+  function summaryCard(label,value){const card=document.createElement('div'),key=document.createElement('small'),val=document.createElement('strong');key.textContent=label;val.textContent=value;card.append(key,val);return card;}
   async function api(action,id,write=false,expected){
     const payload={action,...(id?{recipe_id:id}:{}),...(expected?{expected_job_id:expected}:{})};
     const response=await fetch('/api/resources/downloads'+(write?'':'?'+new URLSearchParams(payload)),
@@ -18,11 +22,14 @@
   function show(data){
     lastStatus=data.status||null;
     detail.textContent=JSON.stringify(data,null,2);
+    const recipe=recipes.find(r=>r.id===choice.value)||{};
+    if(summary){const cards=[summaryCard('设备',recipe.host||'—'),summaryCard('目标',shortPath(data.target||recipe.target)),summaryCard('总量',gib(data.total_bytes))];if(Number.isFinite(data.free_bytes))cards.push(summaryCard('可用空间',gib(data.free_bytes)));if(Number.isFinite(data.verified_bytes))cards.push(summaryCard('已校验',gib(data.verified_bytes)));summary.replaceChildren(...cards);summary.hidden=false;}
+    if(raw)raw.hidden=false;
     progress.hidden=!(data.total_bytes>0 && data.status);
     progress.value=Math.min(1,(data.verified_bytes||0)/(data.total_bytes||1));
-    status.textContent=({not_started:'未启动',starting:'已提交，等待后台',running:'下载及校验中',complete:'已校验完成，可通过添加已有目录登记',existing:'目标已存在，请核对并登记',failed:'下载失败，检查错误后可重试同配方',interrupted:'下载中断，检查后可重试'})[data.status]||'预检通过，请核对设备、路径、容量和版本';
+    status.textContent=({not_started:'未启动',starting:'已提交，等待后台',running:'下载及校验中',complete:'下载完成 · 请登记目录',existing:'目标已存在 · 请核对后登记',failed:'下载失败 · '+String(data.error||'请查看详情').slice(0,140),interrupted:'下载中断 · 可重新预检'})[data.status]||'预检通过 · 确认目标后下载';
   }
-  function reset(){previewed=null;lastStatus=null;detail.textContent='';progress.hidden=true;controls();}
+  function reset(){previewed=null;lastStatus=null;detail.textContent='';progress.hidden=true;if(summary)summary.hidden=true;if(raw){raw.hidden=true;raw.open=false;}controls();}
   async function load(){
     if(busy)return;busy=true;reset();status.textContent='正在查询下载配方…';
     try{
@@ -30,7 +37,7 @@
       recipes=(await api('options')).recipes;
       choice.replaceChildren(...recipes.map(r=>new Option(r.id+' · '+r.host+' · '+r.repo,r.id)));
       if(recipes.some(r=>r.id===old))choice.value=old;
-      if(!choice.value){status.textContent='尚无可执行配方。请管理员按 configs/workbench_downloads.example.json 配置实际设备与 Python。';return;}
+      if(!choice.value){status.textContent='暂无下载配方，请在设备配置中登记。';return;}
       show(await api('status',choice.value));
     }catch(e){status.textContent=e.message;}finally{busy=false;controls();}
   }
@@ -38,13 +45,13 @@
   refresh.onclick=()=>void load();
   preview.onclick=async()=>{
     if(busy||!choice.value||preview.disabled)return;busy=true;reset();const id=choice.value;
-    status.textContent='正在检查环境、磁盘与目标…';
+    status.textContent='正在预检…';
     try{const data=await api('preview',id,true);show(data);previewed={id,job_id:data.job_id};}
     catch(e){status.textContent=e.message;}finally{busy=false;controls();}
   };
   start.onclick=async()=>{
     if(busy||previewed?.id!==choice.value)return;
-    if(!confirm('确认启动该下载？不会覆盖已有目标。'))return;
+    if(!confirm('确认下载？已有目标不会覆盖。'))return;
     busy=true;const id=choice.value,expected=previewed.job_id;previewed=null;controls();
     try{show(await api('start',id,true,expected));}catch(e){status.textContent=e.message+'；先查询状态再决定是否重试。';lastStatus='starting';}finally{busy=false;controls();}
   };

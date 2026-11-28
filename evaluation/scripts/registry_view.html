@@ -133,13 +133,14 @@
   #storage-dialog label{min-width:0}#storage-dialog select{width:100%;min-width:0}#storage-dialog-path{overflow-wrap:anywhere}
   #storage-dialog-error{color:var(--bad);overflow-wrap:anywhere}
   @media(max-width:540px){.storage-entry{gap:6px;padding:8px}.storage-entry .storage-size{font-size:10px}}
+  .download-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.download-controls select{flex:1 1 200px;min-width:0;max-width:100%}.download-summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:8px;margin:10px 0}.download-summary>div{min-width:0;padding:9px;border:1px solid var(--line,#ddd);border-radius:6px}.download-summary strong,.download-summary small{display:block;overflow-wrap:anywhere}.download-summary small{color:#65736e;margin-bottom:4px}.download-raw{margin-top:10px}.download-raw pre{white-space:pre-wrap;overflow-wrap:anywhere;max-height:240px;overflow:auto}.download-raw summary{cursor:pointer}#resource-download-progress{width:100%}.download-summary[hidden],.download-raw[hidden]{display:none!important}
 </style>
 </head>
 <body>
 <header>
   <div>
     <h1>资源管理</h1>
-    <div class="sub" id="sub" role="status">正在读取实验记录…</div>
+    <div class="sub" id="sub" role="status">读取中…</div>
   </div>
   <div class="acts">
     <button type="button" id="rescan" class="primary">重新扫描</button>
@@ -169,16 +170,17 @@
   </section>
 
   <section id="view-res">
-    <div class="storage-toolbar"><div><strong>数据与权重文件</strong><p class="hint">从左侧选择资源，在右侧浏览文件夹与文件内容。</p></div><div class="acts"><label>存放设备<select id="res-host" aria-label="存放位置"><option value="all">所有存放位置</option><option value="4090" selected>4090</option></select></label><button id="storage-register" type="button" class="primary">＋ 添加已有目录</button></div></div>
-    <details class="storage-capacity"><summary>磁盘用量 · <span id="storage-capacity-summary" role="status">正在查询…</span></summary><div class="acts" style="padding:0 12px 10px"><button id="storage-refresh-disks" type="button">刷新磁盘用量</button></div><div id="storage-disks" class="storage-disks" aria-label="磁盘容量" aria-live="polite"></div></details>
+    <div class="storage-toolbar"><div><strong>资源文件</strong></div><div class="acts"><label>存放设备<select id="res-host" aria-label="存放位置"><option value="all">所有存放位置</option><option value="4090" selected>4090</option></select></label><button id="storage-register" type="button" class="primary">＋ 登记目录</button></div></div>
+    <details class="storage-capacity"><summary>磁盘 · <span id="storage-capacity-summary" role="status">正在查询…</span></summary><div class="acts" style="padding:0 12px 10px"><button id="storage-refresh-disks" type="button">刷新磁盘</button></div><div id="storage-disks" class="storage-disks" aria-label="磁盘容量" aria-live="polite"></div></details>
     <details id="resource-download-panel" class="storage-capacity">
-      <summary>下载中心 · 固定版本、指定设备和环境</summary>
+      <summary>下载任务</summary>
       <div style="padding:12px">
-        <p class="hint">先查已有资源，再选择管理员登记的下载配方；预检通过后启动。已有目标不覆盖。</p>
-        <div class="acts"><select id="resource-download-choice" aria-label="下载配方"></select><button type="button" id="resource-download-refresh">查询</button><button type="button" id="resource-download-preview">检查下载</button><button type="button" id="resource-download-start" disabled>启动下载</button></div>
+        
+        <div class="download-controls"><select id="resource-download-choice" aria-label="下载配方"></select><button type="button" id="resource-download-refresh" title="刷新下载状态">刷新</button><button type="button" id="resource-download-preview">预检</button><button type="button" id="resource-download-start" class="primary" disabled>下载</button></div>
         <p id="resource-download-message" class="hint" role="status"></p>
-        <pre id="resource-download-detail" style="white-space:pre-wrap;overflow-wrap:anywhere"></pre>
+        <div id="resource-download-summary" class="download-summary" hidden></div>
         <progress id="resource-download-progress" max="1" value="0" hidden></progress>
+        <details id="resource-download-raw" class="download-raw" hidden><summary>路径、环境与完整记录</summary><pre id="resource-download-detail"></pre></details>
       </div>
     </details>
     <div id="res-message" class="hint" role="status"></div>
@@ -296,7 +298,7 @@ function showTaskComparison(){
     <td>${metric(row.success_rate==null?null:row.success_rate*100,1,'%')}</td><td>${metric(row.mean_q_score,3)}</td>
     <td>${metric(row.mean_progress,1,'%')}</td></tr>`).join('');
   detail.innerHTML=`<div class="detail-kicker">任务对比</div><h3>${esc(selectedTask)}</h3>
-    <p class="hint">${rows.length} 次评估 · 按更新时间倒序。这里只汇总历史记录；协议、任务实例、种子与回合数一致后才可作为正式对照，不自动排名。</p>
+    <p class="hint">${rows.length} 次评估 · 正式对比须使用相同评估协议、实例和种子。</p>
     <div class="table-wrap"><table class="ledger-table"><thead><tr><th>运行 / 版本</th><th>成功率</th><th>Q Score</th><th>任务进度</th></tr></thead><tbody>${comparison}</tbody></table></div>`;
 }
 
@@ -388,7 +390,7 @@ function showResourceDetail(){
   document.querySelectorAll('#res-rows [data-resource]').forEach(button=>button.setAttribute('aria-current',String(button.dataset.resource===selectedResource)));
   const detail=document.getElementById('resource-detail');
   const item=resourceRows.find(resource=>resourceKey(resource)===selectedResource);
-  if(!item){resourceDetailStamp=null;detail.innerHTML='<div class="empty">没有匹配的资源，可调整筛选或添加已有目录。</div>';return;}
+  if(!item){resourceDetailStamp=null;detail.innerHTML='<div class="empty">没有匹配的资源</div>';return;}
   const removed=!!A[item.id]?.hidden;
   const stamp=JSON.stringify([selectedResource,item,removed]);
   if(resourceDetailStamp===stamp)return;
@@ -404,7 +406,7 @@ function showResourceDetail(){
     ${fileCount==null?'':`<div><dt>${fileLabel}</dt><dd>${esc(fileCount)}</dd></div>`}
     <div class="resource-full-path"><dt>完整路径</dt><dd class="mono">${esc(item.path||'—')}</dd></div>
     ${files.length?`<div class="resource-full-path"><dt>扫描记录的文件示例</dt><dd><ul>${files.map(path=>`<li>${esc(path)}</li>`).join('')}</ul></dd></div>`:''}</dl>
-    ${item.id?`<p class="hint">从台账移除只隐藏清单记录；文件操作请使用上方目录菜单。</p><div class="detail-actions"><button type="button" data-resource-manage class="${removed?'':'danger'}">${removed?'恢复到清单':'从台账移除'}</button></div>`:''}</details>`;
+    ${item.id?`<p class="hint">仅隐藏清单，不删除文件。</p><div class="detail-actions"><button type="button" data-resource-manage class="${removed?'':'danger'}">${removed?'恢复到清单':'从台账移除'}</button></div>`:''}</details>`;
   window.registryStorage?.browse(item);
 }
 

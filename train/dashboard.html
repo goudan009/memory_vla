@@ -247,6 +247,7 @@
  #page-training #train-form > .launch-actions{position:static;box-shadow:none}
  #page-training .train-submit-summary{flex-basis:100%}
 }
+  #page-training .train-step-intro{font-size:12px;margin:0 0 8px}#page-training .train-form-extras{display:grid;gap:6px}#page-training .train-form-extras details{margin:0}#page-training .train-notes textarea{min-height:44px}#page-training .train-job-actions{gap:6px}#page-training .train-job-actions button{white-space:normal}#page-training .train-recommendation p{margin:5px 0}#page-training .train-timing small{font-size:11px}
 </style>
 <div class="page-intro"><h2>启动训练</h2><div class="train-device-tools"><label>训练设备 <select id="train-device"><option value="a100">A100 · 多卡训练</option><option value="a6000">RTX 6000 Ada · 单卡 48GB</option></select></label><button id="train-refresh" type="button">↻ 刷新</button></div></div>
 <p id="train-device-hint" class="train-hint" hidden></p>
@@ -262,17 +263,17 @@
  </section>
  <div class="train-content">
   <section id="train-config" aria-label="训练配置">
-   <div class="detail-heading"><div><h2>新建训练</h2><div class="subtle">按四步配置，确认后启动；切换步骤会保留已填内容</div></div><span id="train-device-label" class="chip gpu">A100</span></div>
+   <div class="detail-heading"><div><h2>新建训练</h2></div><span id="train-device-label" class="chip gpu">A100</span></div>
    <form id="train-form" novalidate>
     <nav class="train-steps" aria-label="新建训练步骤">
-     <button type="button" data-train-setup-step="0" aria-current="step" aria-controls="train-setup-0"><span class="train-step-number">1</span><span><strong>实验与模型</strong><small id="train-step-summary-0">设置实验身份与初始权重</small></span></button>
-     <button type="button" data-train-setup-step="1" aria-controls="train-setup-1"><span class="train-step-number">2</span><span><strong>数据任务</strong><small id="train-step-summary-1">选择训练任务</small></span></button>
-     <button type="button" data-train-setup-step="2" aria-controls="train-setup-2"><span class="train-step-number">3</span><span><strong>GPU 与验证</strong><small id="train-step-summary-2">分配训练和验证资源</small></span></button>
-     <button type="button" data-train-setup-step="3" aria-controls="train-setup-3"><span class="train-step-number">4</span><span><strong>参数与启动</strong><small id="train-step-summary-3">确认预算并检查配置</small></span></button>
+     <button type="button" data-train-setup-step="0" aria-current="step" aria-controls="train-setup-0"><span class="train-step-number">1</span><span><strong>实验与模型</strong><small id="train-step-summary-0">模型 / 权重</small></span></button>
+     <button type="button" data-train-setup-step="1" aria-controls="train-setup-1"><span class="train-step-number">2</span><span><strong>数据任务</strong><small id="train-step-summary-1">任务</small></span></button>
+     <button type="button" data-train-setup-step="2" aria-controls="train-setup-2"><span class="train-step-number">3</span><span><strong>GPU 与验证</strong><small id="train-step-summary-2">资源</small></span></button>
+     <button type="button" data-train-setup-step="3" aria-controls="train-setup-3"><span class="train-step-number">4</span><span><strong>参数与启动</strong><small id="train-step-summary-3">参数</small></span></button>
     </nav>
     <div class="train-form-body">
     <div id="train-setup-0" class="train-setup-panel" data-train-setup-panel="0">
-    <p class="train-step-intro" tabindex="-1">第 1 / 4 步 · 确认方法版本、起始权重和本次实验身份。已有作业续训请在训练记录中操作。</p>
+    <p class="train-step-intro" tabindex="-1">新建训练 · 续训请选已有记录</p>
     <div class="train-form-section">
     <h3 class="train-form-heading">实验与模型</h3>
     <div class="train-config-fields train-identity">
@@ -280,17 +281,17 @@
      <label>方法<select id="train-arm"><option value="baseline">Baseline · 无记忆微调</option><option value="memory_v1">Memory · 完整记忆</option></select></label>
      <label class="train-initial-weights train-wide">初始权重<select id="train-checkpoint-choice" required><option value="" disabled selected>正在读取设备权重列表…</option></select><span id="train-checkpoint-note"></span></label>
      <label id="train-checkpoint-custom" class="train-wide" hidden>自定义设备权重路径<input id="train-checkpoint" list="train-checkpoints" required><datalist id="train-checkpoints"></datalist></label>
-     <label class="train-wide">微调方式<select id="train-fine-tuning"><option value="action_full">动作头 / 记忆全参数微调（冻结 Eagle）</option><option value="full">整个模型全参数微调（包含 Eagle）</option><option value="lora">LoRA 微调</option><option value="custom">自定义组件冻结</option></select></label>
+     <label class="train-wide">微调方式<select id="train-fine-tuning"><option value="action_full">动作头 / 记忆（冻结 Eagle）</option><option value="full">全模型微调</option><option value="lora">LoRA 微调</option><option value="custom">自定义组件冻结</option></select></label>
      <div class="train-wide train-run-identity">
       <label>测试编号<input id="train-test-id" type="number" min="1" max="99" required placeholder="如 2"></label>
       <label>实验编号<input id="train-experiment-id" type="number" min="1" max="99" required placeholder="如 1"></label>
-      <label>独立训练次数<input id="train-run-number" type="number" min="1" value="1" required></label>
+      <label>训练序号<input id="train-run-number" type="number" min="1" value="1" required></label>
      </div>
     </div>
     </div>
     </div>
     <div id="train-setup-1" class="train-setup-panel" data-train-setup-panel="1" hidden>
-    <p class="train-step-intro" tabindex="-1">第 2 / 4 步 · 支持多任务联合训练。已选任务可展开管理；缺失数据先准备完成。</p>
+    <p class="train-step-intro" tabindex="-1">选择任务</p>
     <div class="train-form-section">
      <h3 class="train-form-heading">训练数据 <small id="train-task-count" class="train-hint"></small></h3>
      <div class="train-task-picker">
@@ -300,28 +301,28 @@
       <div class="train-task-shortcuts"><button id="train-select-ready" type="button">选择已就绪任务</button><button id="train-clear-tasks" type="button">清空选择</button></div>
       <details class="train-selected-tasks"><summary id="train-task-selection-summary">已选任务</summary><div id="train-task-selection" class="train-task-selection" aria-label="已选任务"></div></details>
       <div id="train-split" class="train-hint" aria-live="polite"></div>
-      <button id="train-prepare-data" type="button">准备所选缺失数据 → 当前设备</button>
+      <button id="train-prepare-data" type="button">准备缺失数据</button>
       <span id="train-data-status" class="train-hint"></span>
      </div>
     </div>
     </div>
     <div id="train-setup-2" class="train-setup-panel" data-train-setup-panel="2" hidden>
-    <p class="train-step-intro" tabindex="-1">第 3 / 4 步 · 分别选择训练卡和验证卡，再决定立即启动或等待 GPU 空闲。</p>
+    <p class="train-step-intro" tabindex="-1">分配资源</p>
     <div class="train-form-section">
     <h3 class="train-form-heading">GPU 与验证</h3>
     <div class="train-config-fields">
      <div class="train-wide"><div class="train-hint">训练 GPU · 可多选</div><div id="train-gpus" class="train-gpus"></div></div>
-     <label class="train-wide train-check"><input id="train-enqueue" type="checkbox">GPU 空闲后按顺序排队启动</label>
+     <label class="train-wide train-check"><input id="train-enqueue" type="checkbox">等待空闲 GPU</label>
      <label class="train-wide train-check"><input id="train-validation-enabled" type="checkbox" checked>启用独立 Episode 验证</label>
-     <label id="train-validation-gpu-field">验证 GPU<select id="train-validation-gpu"></select><span class="train-hint">优先选独立空闲卡；验证卡不计入训练卡数。</span></label>
+     <label id="train-validation-gpu-field">验证 GPU<select id="train-validation-gpu"></select><span class="train-hint">独立验证卡</span></label>
      <label id="train-validation-percent-field">验证集比例（%）<input id="train-validation-percent" type="number" min="1" max="50" step="1" value="10"></label>
      <div id="train-batch" class="train-hint train-wide"></div>
-     <label class="train-wide train-check"><input id="train-share" type="checkbox">允许与现有进程共卡</label>
+     <label class="train-wide train-check"><input id="train-share" type="checkbox">允许共卡</label>
     </div>
     </div>
     </div>
     <div id="train-setup-3" class="train-setup-panel" data-train-setup-panel="3" hidden>
-    <p class="train-step-intro" tabindex="-1">第 4 / 4 步 · 核对本次配置，调整训练预算，然后检查配置或启动训练。</p>
+    <p class="train-step-intro" tabindex="-1">核对参数</p>
     <div class="train-form-section"><h3 class="train-form-heading">本次训练</h3><dl id="train-review" class="train-review"></dl></div>
     <div class="train-form-section">
     <h3 class="train-form-heading">训练参数</h3>
@@ -334,13 +335,13 @@
     <div class="train-config-fields train-hyperparameters">
      <label>训练步数<input id="train-steps" type="number" min="1000" step="1000" placeholder="选择任务和 GPU 后推荐" required></label>
      <label>学习率<input id="train-lr" type="number" min="0.000000001" max="0.01" step="any" value="0.00001" required></label>
-     <label>全局窗口数 / 优化步<input id="train-windows" type="number" min="1" max="180" value="3" required><span class="train-hint">每窗口最多 32 决策，Episode 尾窗保留实际长度。</span></label>
-     <label>Microbatch / GPU<input id="train-microbatch" type="number" min="1" max="32" value="4" required><span class="train-hint">每次并行计算的决策数，控制显存。</span></label>
+     <label>全局窗口数 / 优化步<input id="train-windows" type="number" min="1" max="180" value="3" required><span class="train-hint">最多 32 决策/窗口</span></label>
+     <label>Microbatch / GPU<input id="train-microbatch" type="number" min="1" max="32" value="4" required><span class="train-hint">每卡并行决策数</span></label>
     </div>
     <div id="train-native-config" class="train-form-section" hidden>
-     <h3 class="train-form-heading">V2_1 原生训练 · 自定义配方</h3>
+     <h3 class="train-form-heading">原生训练参数</h3>
      <div class="train-config-fields">
-      <label>运行阶段<select id="train-native-phase"><option value="preflight">4步工程预检（2步暂停后恢复）</option><option value="formal">正式训练（须有同谱系预检证据）</option></select></label>
+      <label>运行阶段<select id="train-native-phase"><option value="preflight">工程预检（4 步）</option><option value="formal">正式训练</option></select></label>
       <label>预检序号<input id="train-native-attempt" type="number" min="1" max="999" step="1" value="1" required></label>
       <label>学习率调度<select id="train-native-scheduler"><option value="cosine">Cosine</option><option value="constant">Constant</option><option value="constant_with_warmup">Constant + Warmup</option><option value="linear">Linear</option></select></label>
       <label>Warmup (%)<input id="train-native-warmup" type="number" min="0" max="50" step="0.1" value="5" required></label>
@@ -361,7 +362,7 @@
       <label class="train-check"><input id="train-native-dit" type="checkbox" checked>动作 DiT</label>
       <label class="train-check"><input id="train-native-projector" type="checkbox" checked>状态 / 动作投影及解码</label>
       <label class="train-check"><input id="train-native-vlln" type="checkbox" checked>动作 VLLN</label>
-      <div class="train-wide train-hint">固定原生随机分片、Task40原180/20划分、seed42、4张A100。原生入口暂不支持LoRA、独立视觉投影或记忆模块；旧版本不受影响。</div>
+      <div class="train-wide train-hint">固定 Task40 · 180/20 · seed42 · 4 卡。暂不支持 LoRA。</div>
      </div>
     </div>
     <div class="train-notes"><label>训练备注（可选）<textarea id="train-notes" rows="2" maxlength="2000" placeholder="记录训练目的或本次调整"></textarea></label></div>
@@ -383,7 +384,7 @@
        <label>LoRA alpha<input id="train-lora-alpha" type="number" min="0.001" step="any" value="32"></label>
        <label>LoRA dropout<input id="train-lora-dropout" type="number" min="0" max="0.99" step="0.01" value="0"></label>
       </div>
-      <div class="train-hint train-wide">全模型训练会重算 Eagle 并反传，显存需求高于冻结骨干。LoRA 默认适配 LLM 与动作 DiT，动作投影、LayerNorm、记忆全参数训练；可分别冻结。</div>
+      <div class="train-hint train-wide">全模型微调占用更多显存。LoRA 默认适配 LLM / DiT。</div>
      </div></details>
     <details id="train-advanced" class="compact-fold"><summary>优化器、随机种子与图像增强</summary>
      <div class="train-config-fields">
@@ -408,22 +409,22 @@
      <div class="train-config-fields">
       <label>完整验证间隔（步）<input id="train-validation-interval" type="number" min="1000" step="1000" value="1000" required><span class="train-hint">关闭验证时忽略；权重仍每 1000 步保存。</span></label>
       <label class="train-check"><input id="train-early-stopping" type="checkbox">验证停滞时自动早停</label>
-      <div class="train-hint train-wide">推荐关闭自动早停，先完成所设训练预算，再比较验证指标和任务成功率。手动启用后可能提前结束。</div>
+      <div class="train-hint train-wide">启用早停可能提前结束训练。</div>
      </div>
     </details>
     <details class="compact-fold"><summary>消融实验标识</summary><div class="train-config-fields">
       <label>消融方法名（可选）<input id="train-method" placeholder="ablation_no_perception" pattern="ablation_[a-z0-9_]+"></label>
       <label>消融改动说明<input id="train-method-description" placeholder="对应源码或配置的实际改动"></label>
-      <div class="train-hint train-wide">消融名称用于追踪，不会自动关闭模块；使用 Memory 类型及对应的代码或配置。</div>
+      <div class="train-hint train-wide">标识仅用于追踪，不改变模型结构。</div>
     </div></details>
    <details class="compact-fold"><summary>代码同步 · 4090 → 当前训练设备</summary>
     <div class="train-actions train-sync-actions"><label class="train-check"><input type="checkbox" id="train-autosync">自动同步改动</label><button id="train-sync-once" type="button">立即同步</button></div>
     <p id="train-sync-state" class="train-info train-sync-state"></p>
-    <div class="train-sync-state train-hint">启动训练时会自动同步并固定源码快照。自动同步每 4 秒检查，仅传代码与依赖配置，关闭浏览器后继续运行。</div>
+    <div class="train-sync-state train-hint">启动时固定源码快照；自动同步仅传代码。</div>
    </details>
     </div>
     <div id="train-preview-result" class="train-preview-result" role="status" hidden></div>
-    <details id="train-plan-details" class="train-form-extras compact-fold" hidden><summary>查看完整检查结果与启动参数</summary><pre id="train-plan" class="log" hidden></pre></details>
+    <details id="train-plan-details" class="train-form-extras compact-fold" hidden><summary>完整预检记录</summary><pre id="train-plan" class="log" hidden></pre></details>
     </div>
     </div>
     <div class="launch-actions"><div id="train-submit-summary" class="train-submit-summary" aria-live="polite"></div><div class="train-step-actions"><button id="train-previous" type="button" hidden>上一步</button><button id="train-next" class="primary-button" type="button">下一步：数据任务</button><button id="train-check" type="button" hidden>检查配置</button><button id="train-submit" class="primary-button" type="submit" hidden>启动训练</button></div></div>
@@ -448,31 +449,31 @@
    <div id="train-runtime-note" class="train-runtime-note" hidden><span id="train-runtime-text"></span><button id="train-runtime-controls" type="button">查看任务控制 →</button></div>
    <div id="train-metrics" class="summary"></div>
    <div class="train-timing" aria-label="训练时间估计">
-    <div><label>累计训练耗时</label><strong id="train-elapsed">—</strong><small>已记录优化循环；不含初始化、保存和验证</small></div>
-    <div><label>预计训练剩余</label><strong id="train-eta">—</strong><small id="train-eta-note">按最近 50 步估计；不含保存和验证</small></div>
+    <div><label>累计训练耗时</label><strong id="train-elapsed">—</strong><small>仅优化循环</small></div>
+    <div><label>预计训练剩余</label><strong id="train-eta">—</strong><small id="train-eta-note">最近 50 步估算</small></div>
     <div><label>平均每优化步</label><strong id="train-step-time">—</strong><small id="train-step-time-note">等待计时记录</small></div>
    </div>
    <nav id="train-detail-tabs" class="detail-tabs" role="tablist" aria-label="训练详情视图">
     <button id="train-tab-curve" type="button" role="tab" aria-controls="train-pane-curve" aria-selected="true" data-train-tab="curve">训练曲线</button>
-    <button id="train-tab-controls" type="button" role="tab" aria-controls="train-pane-controls" aria-selected="false" data-train-tab="controls" tabindex="-1">权重、备注与控制</button>
+    <button id="train-tab-controls" type="button" role="tab" aria-controls="train-pane-controls" aria-selected="false" data-train-tab="controls" tabindex="-1">权重与控制</button>
     <button id="train-tab-info" type="button" role="tab" aria-controls="train-pane-info" aria-selected="false" data-train-tab="info" tabindex="-1">训练参数</button>
     <button id="train-tab-logs" type="button" role="tab" aria-controls="train-pane-logs" aria-selected="false" data-train-tab="logs" tabindex="-1">运行日志</button>
    </nav>
    <div id="train-pane-curve" role="tabpanel" aria-labelledby="train-tab-curve">
     <div class="train-toolbar train-curve-toolbar"><h3 id="train-chart-title">训练 Loss</h3><div class="train-curve-controls"><select id="train-curve-mode" aria-label="曲线统计方式"><option value="steps">逐步 Loss</option><option value="blocks">每 50 步平均</option><option value="epochs">完整 Epoch 平均</option></select><label>平滑<input id="train-curve-smoothing" aria-label="Loss 曲线平滑强度" type="range" min="0" max="0.99" step="0.01" value="0.9"><output id="train-curve-smoothing-value" for="train-curve-smoothing">0.90</output></label><label><input id="train-curve-raw" type="checkbox" checked>显示原始线</label></div></div>
-    <div id="train-curve-legend" class="train-curve-legend"><span id="train-curve-raw-key"><i class="train-curve-key raw"></i><span id="train-curve-source-label">逐步 Loss</span></span><span><i class="train-curve-key"></i><span id="train-curve-trend-label">EMA 平滑趋势</span></span><span>横轴：优化步 · 纵轴：Loss</span></div>
+    <div id="train-curve-legend" class="train-curve-legend"><span id="train-curve-raw-key"><i class="train-curve-key raw"></i><span id="train-curve-source-label">逐步 Loss</span></span><span><i class="train-curve-key"></i><span id="train-curve-trend-label">EMA 平滑趋势</span></span><span>优化步 / Loss</span></div>
     <div class="train-chart-wrap"><svg id="train-chart" viewBox="0 0 900 300" role="img" aria-label="训练 Loss 曲线"></svg></div>
-    <div id="train-curve-readout">悬停查看具体数值；平滑仅影响显示。</div>
+    <div id="train-curve-readout">悬停查看数值</div>
     <div id="train-diagnostic-curves" class="train-form-section" hidden>
      <div class="train-toolbar"><h3>学习率、梯度与分部件损失</h3><select id="train-diagnostic-metric" aria-label="诊断指标"><option value="learning_rate">实际学习率</option><option value="gradient_norm">梯度范数</option><option value="base">底盘 Loss</option><option value="torso">躯干 Loss</option><option value="left_arm">左臂 Loss</option><option value="right_arm">右臂 Loss</option><option value="left_gripper">左夹爪 Loss</option><option value="right_gripper">右夹爪 Loss</option><option value="validation">验证 Loss</option></select></div>
      <svg id="train-diagnostic-chart" viewBox="0 0 900 240" width="100%" role="img" aria-label="训练诊断曲线"></svg>
      <p id="train-diagnostic-hint" class="train-hint"></p>
     </div>
     <p id="train-validation-info" class="train-validation-line"></p>
-    <details class="compact-fold"><summary>Epoch 与验证数值</summary><div id="train-epoch-table" class="train-table"></div><div class="details train-hint">横轴为累计优化步；均值按实际记录的决策数或日志区间步数加权。验证 Loss 与任务成功率分别统计。</div></details>
+    <details class="compact-fold"><summary>Epoch 与验证数值</summary><div id="train-epoch-table" class="train-table"></div><div class="details train-hint">加权均值；验证 Loss 与成功率分开统计。</div></details>
    </div>
    <div id="train-pane-controls" role="tabpanel" aria-labelledby="train-tab-controls" hidden>
-    <div id="train-cancel-panel" class="details" hidden><h3 id="train-cancel-title">取消本组排队</h3><p id="train-cancel-scope" class="train-info"></p><p class="train-hint">撤销后不会自动启动。保留配置和日志；需要训练时重新提交。此操作取消等待，不会强制抢占 GPU。</p><button id="train-cancel" type="button">取消本组排队</button></div>
+    <div id="train-cancel-panel" class="details" hidden><h3 id="train-cancel-title">取消本组排队</h3><p id="train-cancel-scope" class="train-info"></p><p class="train-hint">取消等待，保留配置和日志。</p><button id="train-cancel" type="button">取消本组排队</button></div>
     <p id="train-cancel-message" class="train-info train-control-note" role="status"></p>
     <div class="train-config-fields"><label class="train-wide">已保存权重<select id="train-saved-checkpoint"></select></label><div id="train-checkpoint-path" class="train-path train-wide"></div><div id="train-saved-checkpoint-note" class="train-wide"></div><div class="train-wide train-actions"><button id="train-use-checkpoint" type="button">用于推理评估 →</button><button id="train-checkpoint-delete" type="button" disabled>删除此 checkpoint</button></div><div class="train-wide"><p id="train-checkpoint-delete-message" class="train-info" role="status"></p><button id="train-checkpoint-undo" type="button" hidden>撤销刚才的回收</button></div></div>
     <details id="train-stop-panel" class="compact-fold"><summary>指定保存后停止步数</summary><div class="train-config-fields train-command-fields"><label>停止步数<input id="train-stop-step" type="number" min="1" step="1" value="3000"></label><div class="train-actions"><button id="train-stop" type="button">设置停止点</button></div></div><p class="train-hint train-control-note">关闭验证或使用独立异步验证时，可指定未来任意整数步保存后停止，适合短训检查。旧同步验证模式仍需1000的整数倍。已排队验证继续完成。</p><p id="train-stop-message" class="train-info train-control-note" role="status"></p></details>

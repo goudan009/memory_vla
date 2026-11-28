@@ -275,7 +275,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
       seed:Number(el('train-seed').value)});
     const status = el('train-recommendation-status');
     recommendation = result;
-    status.textContent = automatic ? result.supported ? '推荐已填入参数' : '等待生成推荐' : '手动模式 · 点击“恢复推荐”应用';
+    status.textContent = automatic ? result.supported ? '已应用推荐' : '等待推荐' : '手动配置';
     el('train-recommendation-summary').textContent = result.supported ?
       result.values.steps + ' 步 · 学习率 ' + result.values.learning_rate.toExponential() +
       ' · 全局 ' + result.values.global_windows_per_step + ' 窗口 · Microbatch ' + result.values.microbatch +
@@ -447,23 +447,23 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
     el('train-checkpoint-custom').hidden = !custom;
     const label = choice.endsWith('/GR00T-N1.6-3B') ? '通用预训练起点' :
       choice.endsWith('/GR00T-N1.6-BEHAVIOR1k') ? '已在 BEHAVIOR1k 上微调的起点' : '从所选权重初始化';
-    el('train-checkpoint-note').textContent = label + '；新建优化器，不恢复原训练状态。';
+    el('train-checkpoint-note').textContent = label + ' · 新建优化器';
     el('train-checkpoint-note').title = el('train-checkpoint').value;
   }
   function datasetHint() {
     const selected=selectedDatasets(),enabled=el('train-validation-enabled').checked;
     const validation=enabled?2*Number(el('train-validation-percent').value):0;
     el('train-split').textContent=selected.length ? selected.length+' 个任务 · 共 '+selected.length*(200-validation)+' 集训练 / '+selected.length*validation+' 集验证'+
-      ' · 每任务 '+(200-validation)+' / '+validation+' 集 · '+(enabled?'按 Episode 隔离':'全部200集用于训练，不启动验证') : '请选择训练任务';
+      (enabled?' · Episode 隔离':' · 无验证') : '请选择训练任务';
     el('train-split').title=selected.map(data=>data.dataset || '').join('\n');
     el('train-validation-gpu-field').hidden=el('train-validation-percent-field').hidden=nativeMode()||!enabled;
     el('train-validation-gpu').disabled=el('train-validation-percent').disabled=nativeMode()||!enabled;
-    if(nativeMode())el('train-split').textContent='原生 Stage1：固定 Task40，180条训练 / 20条验证，使用训练卡内部验证。';
+    if(nativeMode())el('train-split').textContent='Task40 · 180 训练 / 20 验证';
     el('train-prepare-data').disabled=!selected.some(data=>!data.ready && data.can_prepare && !['queued','starting','converting','syncing'].includes(data.preparation?.status));
     el('train-prepare-data').hidden=!selected.some(data=>!data.ready);
     el('train-task-count').textContent = '已选 ' + selected.length + ' 个';
-    el('train-task-selection-summary').textContent = '已选 ' + selected.length + ' 个任务 · 展开管理';
-    el('train-task-selection').innerHTML = selected.map(data => '<button type="button" data-remove-task="' + esc(data.task) + '" aria-label="移除 Task ' + esc(data.task) + '">Task ' + esc(data.task) + ' ×</button>').join('') || '<span class="train-hint">勾选任务即可联合训练，无需按住 Ctrl。</span>';
+    el('train-task-selection-summary').textContent = '已选 ' + selected.length + ' 个任务';
+    el('train-task-selection').innerHTML = selected.map(data => '<button type="button" data-remove-task="' + esc(data.task) + '" aria-label="移除 Task ' + esc(data.task) + '">Task ' + esc(data.task) + ' ×</button>').join('') || '<span class="train-hint">尚未选择任务</span>';
     el('train-task-selection').querySelectorAll('[data-remove-task]').forEach(button => button.onclick = () =>
       selectTasks(data => selected.some(d => d.task === data.task) && String(data.task) !== button.dataset.removeTask));
     const selectedIds = new Set(selected.map(data => data.task));

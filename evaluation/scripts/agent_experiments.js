@@ -125,13 +125,13 @@
     const summary = lines.find(line => /^>\s*摘要[：:]/.test(line));
     const elements = [];
     if (heading) elements.push(text('h3', excerpt(heading.replace(/^#\s+/, ''))));
-    if (summary) elements.push(text('p', excerpt(summary).replace(/^摘要[：:]\s*/, '')));
+    if (summary) elements.push(text('p', compact(excerpt(summary).replace(/^摘要[：:]\s*/, ''),180)));
     else {
       const intro = lines.slice(heading ? lines.indexOf(heading) + 1 : 0);
       const paragraph = intro.slice(0, 16).find(line => line && !/^[#-*|>]/.test(line));
       if (paragraph) {
         const copy = excerpt(paragraph);
-        elements.push(text('p', copy.length > 220 ? copy.slice(0, 220) + '…' : copy));
+        elements.push(text('p', compact(copy,180)));
       }
     }
     pane.replaceChildren(...elements, sourceLabel(record), fullDocument(record, '查看完整任务安排'));
@@ -196,9 +196,11 @@
     return line ? excerpt(line.replace(pattern, '')) : '';
   }
 
+  function compact(value,limit=110){const s=String(value||'').trim();return s.length>limit?s.slice(0,limit)+'…':s;}
   function focusCard(label, body, classes) {
     const card = text('div', '', classes);
-    card.append(text('strong', label), text('p', body));
+    card.append(text('strong', label), text('p', compact(body)));
+    if(String(body||'').length>110){const more=document.createElement('details');more.append(text('summary','展开'),text('p',body));card.append(more);}
     return card;
   }
 
@@ -343,7 +345,8 @@
     function showNode(node) {
       workflowNode = node.id;
       for (const [id, card] of cards) card.setAttribute('aria-pressed', String(id === node.id));
-      detail.replaceChildren(text('strong', node.title), text('p', '验收条件 · ' + node.acceptance));
+      detail.replaceChildren(text('strong', node.title), text('p', compact('验收条件 · ' + node.acceptance,150)));
+      if(('验收条件 · '+node.acceptance).length>150){const acceptance=document.createElement('details');acceptance.append(text('summary','完整验收条件'),text('p',node.acceptance));detail.append(acceptance);}
       if (node.after.length) detail.append(text('p', '依赖 · ' + node.after.map(id => steps.find(step => step.id === id).title).join('、'), 'workflow-meta'));
       if (node.review_experiment) {
         const link = text('a', '查看实验 ' + Number(node.review_experiment.replace('experiment_', '')));
@@ -351,7 +354,7 @@
         detail.append(link);
       }
       if (!history && node.unmet.length && node.status === '等待前置') detail.append(text('p', '等待 · ' + node.unmet.join('、')));
-      if (!history) for (const evidence of node.evidence) detail.append(text('p', evidence));
+      if (!history && node.evidence.length){const evidence=document.createElement('details');evidence.append(text('summary','执行记录'),...node.evidence.map(value=>text('p',value)));detail.append(evidence);}
     }
     const mainIds = new Set(plan.mainline);
     for (let level = 0; level <= Math.max(...steps.map(step => step.level)); level++) {
@@ -386,7 +389,8 @@
       if (edits.length) notes.append(text('p', '新增或调整 · ' + edits.join('、')));
       if (removed.length) notes.append(text('p', '移除 · ' + removed.join('、')));
     }
-    pane.replaceChildren(heading, text('p', plan.goal, 'workflow-goal'), summary, graph, detail, notes,
+    const goal=text('details','','workflow-goal');goal.append(text('summary','实验目标'),text('p',plan.goal));
+    pane.replaceChildren(heading, summary, graph, detail, goal, notes,
       ...errors.map(error => text('p', error, 'subtle')));
     showNode(steps.find(step => step.id === workflowNode) || current[0] || steps[0]);
     workflowObserver = new ResizeObserver(() => drawWorkflowGraph(canvas, cards, steps, plan.mainline));
@@ -419,14 +423,13 @@
   function renderLinkedTraining(jobs){
     const panel=byId('agent-live-training');
     if(!panel)return;
-    panel.replaceChildren(text('h3','关联训练 · 工作台实际记录'));
-    if(!jobs.size)panel.append(text('p','暂无可关联训练记录；历史无规范身份的记录仅按明确绑定显示。','subtle'));
-    for(const [key,job] of jobs){
-      const who={agent:'Agent',user:'人工'}[job.initiator]||'来源未记录';
-      const details=[job.version||job.model_version,who,job.status,job.step==null?null:job.step+'/'+(job.max_steps??'—')+' 步',job.notes,key].filter(Boolean).join(' · ');
-      panel.append(focusCard(job.run,details,'agent-now'));
-    }
-    if(jobs.partial)panel.append(text('p','部分设备不可查；未将未知状态当作空闲或完成。','subtle'));
+    const old=panel.querySelector('details')?.open;
+    const fold=document.createElement('details');fold.open=old??[...jobs.values()].some(job=>['training','running','queued','starting','submitted','resuming'].includes(job.status));
+    fold.append(text('summary','关联训练 · '+jobs.size+' 条'+(jobs.partial?' · 部分设备不可查':'')));
+    const list=text('div','','linked-training-list');
+    if(!jobs.size)list.append(text('p','暂无关联训练','subtle'));
+    for(const [key,job] of jobs){const who={agent:'Agent',user:'人工'}[job.initiator]||'来源未记录';const row=text('div','','linked-training-row');row.append(text('strong',job.run),text('span',(jobStates[job.status]||job.status||'未知')+(job.step==null?'':' · '+job.step+'/'+(job.max_steps??'—')+' 步')),text('small',[who,job.version||job.model_version,compact(job.notes,65),key.split(':')[0]].filter(Boolean).join(' · '),'subtle'));if(job.notes)row.title=job.notes;list.append(row);}
+    fold.append(list);panel.replaceChildren(fold);
   }
 
   function renderLive(live) {
@@ -505,14 +508,12 @@
     const metadata = lines.filter(line => /^>\s*(Agent Session|机器|代码版本|配置)[：:]/i.test(line))
       .map(line => text('p', excerpt(line), 'subtle'));
     const full = fullDocument(record, '查看进度原文');
-    full.open = stages.length === 0;
+    full.open = false;
     const summary = stages.length ? [text('h3', '阶段进度'), counts, progress] : [];
     const archive = document.createElement('details');
     archive.append(text('summary', '查看阶段明细'), ...summary);
-    pane.replaceChildren(...(focus.childElementCount ? [focus] : []),
-      ...(hasPlan && summary.length ? [archive] : summary),
-      ...(origin ? [text('p', '记录依据 · ' + origin, 'subtle')] : []),
-      sourceLabel(record), ...metadata, full);
+    const meta=text('details','','agent-record-meta');meta.append(text('summary','记录来源与原文'),...(origin?[text('p','记录依据 · '+origin,'subtle')]:[]),sourceLabel(record),...metadata,full);
+    pane.replaceChildren(...(focus.childElementCount ? [focus] : []),...(summary.length?[archive]:[]),meta);
   }
 
   function resultTable(lines) {
@@ -545,7 +546,7 @@
     const limitation = quotedField(lines, '待验证');
     const table = resultTable(lines);
     const content = [text('h3', heading ? excerpt(heading.replace(/^#\s+/, '')) : '结果摘要')];
-    if (intro) content.push(text('p', intro.length > 300 ? intro.slice(0, 300) + '…' : intro, 'agent-result-intro'));
+    if (intro) content.push(text('p', compact(intro,180), 'agent-result-intro'));
     if (table) content.push(table);
     if (limitation) content.push(focusCard('待验证', limitation, 'agent-next'));
     content.push(sourceLabel(record));

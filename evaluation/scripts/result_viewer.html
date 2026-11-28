@@ -200,7 +200,18 @@
     .page-nav button[aria-selected="true"] { color:var(--green); background:var(--soft); border-color:#bfded0 }
     #registry-frame, #result-compare-frame { display:block; width:100%; border:0; min-height:120px }
     #result-compare-panel {grid-column:1/-1;min-width:0}
-    #result-compare-panel summary {cursor:pointer;padding:10px 12px}
+    #result-compare-panel summary {cursor:pointer;padding:10px 12px;font-weight:600}
+    #page-results:has(#result-compare-panel[open]) > section {display:none}
+    #result-compare-panel[open] {grid-column:1/-1}
+    #agent-board .agent-document > details {margin-top:10px}
+    #agent-board .workflow-goal {margin:0 0 8px}
+    #agent-board .agent-focus p {overflow-wrap:anywhere}
+    #agent-board .agent-record-meta p {white-space:pre-wrap;overflow-wrap:anywhere}
+    #agent-board .linked-training-list {display:grid;gap:6px}
+    #agent-board .linked-training-row {display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;padding:9px 0;border-bottom:1px solid var(--line)}
+    #agent-board .linked-training-row small {grid-column:1/-1;overflow-wrap:anywhere}
+    #agent-board .linked-training-row strong {overflow-wrap:anywhere}
+    @media(max-width:540px){#agent-board .linked-training-row {grid-template-columns:1fr}#agent-board .linked-training-row small{grid-column:auto}}
     body:has(#page-registry:not([hidden])) :is(.gpu-overview-panel,#bench-workspace) { display:none }
     .launch-fields { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px 16px; padding:14px 20px }
     .launch-fields label { font-size:12px; color:#5e7268; display:grid; gap:5px; min-width:0 }
@@ -428,7 +439,7 @@
   </style>
 </head>
 <body>
-  <header><div class="brand"><div class="brand-mark" aria-hidden="true">W</div><div><h1>4090 WYH工作台</h1><div id="caption" class="subtle" role="status">正在读取评估记录…</div></div></div><div class="header-actions"><span class="live-label">每 5 秒自动更新</span><button id="install-workbench" type="button" hidden>安装应用</button><button id="refresh" type="button" aria-label="手动刷新" title="手动刷新">↻</button></div></header>
+  <header><div class="brand"><div class="brand-mark" aria-hidden="true">W</div><div><h1>MemoryVLA 工作台</h1><div id="caption" class="subtle" role="status">正在读取评估记录…</div></div></div><div class="header-actions"><span class="live-label" title="每 5 秒自动更新">自动更新</span><button id="install-workbench" type="button" hidden>安装应用</button><button id="refresh" type="button" aria-label="手动刷新" title="手动刷新">↻</button></div></header>
   <nav class="page-nav" aria-label="训练评估工作台页面">
     <div class="page-tabs" role="tablist" aria-label="工作台">
       <button type="button" id="page-tab-training" role="tab" aria-label="启动训练" aria-controls="page-training" aria-selected="false" onclick="selectPage('training')"><span class="nav-label-full">模型训练</span><span class="nav-label-short">训练</span></button>
@@ -471,52 +482,52 @@
     </div>
     <div id="page-training" role="tabpanel" aria-labelledby="page-tab-training" hidden></div>
     <div id="page-launch" role="tabpanel" aria-labelledby="page-tab-launch" hidden>
-      <div class="page-intro"><div><h2>推理评估</h2></div></div>
+      
         <div class="start-config">
           <section id="model-config" aria-label="启动推理">
-            <details id="inference-panel" class="new-policy"><summary><span><span class="step-number">1</span>启动推理</span><small>可选，已有服务可跳过</small></summary>
+            <details id="inference-panel" class="new-policy"><summary><span><span class="step-number">1</span>启动推理</span><small>已有服务可跳过</small></summary>
               <form id="inference-form">
-                <div class="inline-heading"><span id="inference-host-label">A100 · 推理</span><button type="button" id="inference-reload">↻ 刷新权重与显存</button></div>
+                <div class="inline-heading"><span id="inference-host-label">A100 · 推理</span><button type="button" id="inference-reload">刷新</button></div>
                 <div class="launch-fields"><label class="wide">推理设备<select id="inference-device"><option value="a100">A100 · 多卡</option><option value="a6000">RTX 6000 Ada · GPU0</option></select></label></div>
                 <div class="launch-fields">
                   <label class="wide">模型版本<select id="inference-version"><option value="">全部版本</option></select></label>
-                  <label class="wide">模型权重<select id="inference-weight"><option value="">手动填写权重路径</option></select><small id="inference-catalog-hint">展开后读取可用权重。</small></label>
-                  <details id="inference-weight-path" class="compact-fold wide"><summary>权重完整路径 / 手动填写</summary><label>权重目录<input id="inference-checkpoint" list="inference-checkpoints" required placeholder="A100 checkpoint 绝对路径"><datalist id="inference-checkpoints"></datalist></label></details>
+                  <label class="wide">模型权重<select id="inference-weight"><option value="">手动填写权重路径</option></select><small id="inference-catalog-hint">读取权重中…</small></label>
+                  <details id="inference-weight-path" class="compact-fold wide"><summary>自定义权重路径</summary><label>权重目录<input id="inference-checkpoint" list="inference-checkpoints" required placeholder="A100 checkpoint 绝对路径"><datalist id="inference-checkpoints"></datalist></label></details>
                   <div id="inference-checkpoint-note" class="wide"></div>
                   <label>推理 GPU<select id="inference-gpu" required><option value="">选择GPU，查看显存占用</option></select></label>
                   <label>新服务端口<input id="inference-port" type="number" min="1" max="65535" value="5557" required></label>
                 </div>
-                <details class="compact-fold"><summary>推理高级设置 · 源码、环境与种子</summary><div class="launch-fields">
+                <details class="compact-fold"><summary>高级设置</summary><div class="launch-fields">
                   <label class="wide">模型源码<input id="inference-source" list="inference-sources" required><datalist id="inference-sources"></datalist><small id="inference-source-hint">与训练该权重使用的代码版本对应。</small></label>
                   <label class="wide">Python 环境<input id="inference-python" required></label>
                   <label>推理种子<input id="inference-seed" type="number" min="0" max="4294967295" value="42" required></label>
-                  <label>历史对照<select id="inference-history-mode"><option value="normal">正确历史 · 正常读取</option><option value="empty">无历史 · 关闭读取</option><option value="other_episode">错误历史 · 读取另一环境的历史</option></select><small>错误历史需要单卡双环境；当前观测和模型权重保持一致。</small></label>
+                  <label>历史对照<select id="inference-history-mode"><option value="normal">正确历史 · 正常读取</option><option value="empty">无历史 · 关闭读取</option><option value="other_episode">错误历史 · 读取另一环境的历史</option></select><small>错误历史需单卡双环境。</small></label>
                   <label id="inference-task40-setting" class="switch wide"><input id="inference-task40" type="checkbox">Task40 记忆诊断服务</label>
                   <small id="inference-task40-hint" class="wide" hidden>请选择包含 Task40 诊断入口的部署源码。采集作业管理每条轨迹的记忆与种子。</small>
                 </div></details>
                 <div class="launch-preview"><div id="inference-message" class="launch-message" role="status"></div><div id="inference-plan" hidden></div></div>
-                <div class="inline-actions"><span class="subtle">就绪后自动选用于本次评估</span><button type="button" id="inference-check">检查推理配置</button><button type="submit" id="inference-submit">启动推理</button></div>
+                <div class="inline-actions"><span class="subtle">就绪后自动关联</span><button type="button" id="inference-check">检查配置</button><button type="submit" id="inference-submit">启动推理</button></div>
               </form>
             </details>
-            <details id="inference-history" class="compact-fold" open hidden><summary>推理服务 · 管理与日志</summary><div id="inference-manage-message" class="policy-path" role="status"></div><div id="inference-jobs" class="launch-jobs-list"></div></details>
+            <details id="inference-history" class="compact-fold" open hidden><summary>推理服务</summary><div id="inference-manage-message" class="policy-path" role="status"></div><div id="inference-jobs" class="launch-jobs-list"></div></details>
           </section>
           <section id="eval-config" aria-label="启动评估">
             <div class="section-head"><h2><span class="step-number">2</span>启动评估</h2><select id="launch-kind" aria-label="运行模式"><option value="new">新建评估</option><option value="resume">续跑已有评估</option><optgroup label="历史开发工具（非正式评估）"><option value="restore">Task40 检查点恢复</option><option value="collect">Task40 轨迹采集 · Exp09</option><option value="forward">Task40 冻结前向 · Exp09</option></optgroup></select></div>
             <form id="launch-form">
-              <div id="launch-device-field" class="launch-fields"><label class="wide">评估设备<select id="launch-device"><option value="local">4090 · 本机双卡</option><option value="a6000">RTX 6000 Ada · 单卡 48GB</option><option value="a100" disabled>A100 · 训练 / 推理设备</option></select><small id="launch-device-hint">先选设备，再选 GPU。</small></label></div>
+              <div id="launch-device-field" class="launch-fields"><label class="wide">评估设备<select id="launch-device"><option value="local">4090 · 本机双卡</option><option value="a6000">RTX 6000 Ada · 单卡 48GB</option><option value="a100" disabled>A100 · 训练 / 推理设备</option></select><small id="launch-device-hint"></small></label></div>
               <fieldset id="launch-new">
                 <div class="launch-fields"><label class="wide">模型服务<select id="launch-service"><option value="">手动填写地址和端口</option></select><small id="launch-policy-summary">正在检查已有服务…</small></label></div>
                 <div id="launch-checkpoint-note"></div>
-                <details id="launch-endpoint" class="compact-fold"><summary>权重路径与连接设置</summary><div class="policy-path" id="launch-policy-details"></div><div class="launch-fields"><label>Policy 主机<input id="launch-host" value="172.28.62.17" required></label><label>Policy 端口<input id="launch-port" type="number" min="1" max="65535" value="5556" required></label></div></details>
+                <details id="launch-endpoint" class="compact-fold"><summary>连接设置</summary><div class="policy-path" id="launch-policy-details"></div><div class="launch-fields"><label>Policy 主机<input id="launch-host" value="172.28.62.17" required></label><label>Policy 端口<input id="launch-port" type="number" min="1" max="65535" value="5556" required></label></div></details>
                 <div class="form-block">
                 <div class="launch-fields task-fields">
                   <label class="wide">任务<select id="launch-task"><option value="21">Task21 · 收集儿童玩具</option></select></label>
                   <label>运行方式<select id="launch-mode"><option value="single1">单卡 · 1 环境</option><option value="single2">单卡 · 2 环境</option><option value="dual1">双卡 · 各 1 环境</option><option value="dual2">双卡 · 各 2 环境</option></select></label>
                   <label>评估 GPU<select id="launch-gpu"><option value="1">GPU 1</option><option value="0">GPU 0</option></select></label>
-                  <label>评估协议<select id="launch-preset"><option value="official-eval">正式评估 · 完整回合</option><option value="fast-debug">快速调试 · 不计正式成绩</option></select></label>
+                  <label>评估协议<select id="launch-preset"><option value="official-eval">正式评估</option><option value="fast-debug">快速调试（非正式）</option></select></label>
                   <label>环境种子<input id="launch-seed" value="0" required placeholder="整数或 random"></label>
                   <label id="launch-debug-field" hidden>调试动作步数上限<input id="launch-debug-steps" type="number" min="1" value="1200" disabled></label>
-                  <label>评估轮数<input id="launch-repetitions" type="number" min="1" step="1" value="1" required><small>默认每轮 10 回合，5 轮共 50 回合。</small></label>
+                  <label>评估轮数<input id="launch-repetitions" type="number" min="1" step="1" value="1" required><small>默认 10 回合/轮</small></label>
                   <div class="wide mode-note" id="launch-mode-hint">默认10集，保留原生任务判定与timeout。</div>
                 </div>
                 </div>
@@ -524,9 +535,9 @@
                   <label>结果版本<input id="launch-version" list="launch-versions" value="V_1" required pattern="[\w][\w.\-]*"><datalist id="launch-versions"></datalist></label>
                   <label>方法 / 结果分组<input id="launch-group" list="launch-groups" value="baseline" required pattern="[\w][\w.\-]*"><datalist id="launch-groups"><option value="baseline"><option value="memory"><option value="official"></datalist></label>
                 </div></div>
-                <details class="compact-fold"><summary>更多设置 · 录像、回合数、实例与复制配置</summary><div class="launch-fields">
+                <details class="compact-fold"><summary>高级设置</summary><div class="launch-fields">
                   <label class="wide">复制已有配置<select id="launch-template"><option value="">手动设置</option></select></label>
-                  <label>每轮每卡回合数<input id="launch-episodes" type="number" min="1" step="1" placeholder="单卡10，双卡各5"><small>可填写超过 10；总量再乘评估轮数。</small></label>
+                  <label>每轮每卡回合数<input id="launch-episodes" type="number" min="1" step="1" placeholder="单卡10，双卡各5"><small>总量 = 每卡回合 × 卡数 × 轮数</small></label>
                   <label>种子方式<select id="launch-seed-mode"><option value="sequence">逐集递增（默认）</option><option value="fixed">每集同一种子</option><option value="random">由基础种子派生</option></select></label>
                   <label>GPU0 实例<input id="launch-instances0" placeholder="留空自动分配"></label>
                   <label>GPU1 实例<input id="launch-instances1" placeholder="留空自动分配"></label>
@@ -539,7 +550,7 @@
                 </div></details>
               </fieldset>
               <fieldset id="launch-resume" class="launch-fields" hidden disabled>
-                <label class="wide">评估记录<select id="launch-resume-run"><option value="">选择已暂停或已完成的正式评估</option></select><small>继续使用原 checkpoint、实例池、种子序列和录像配置；保留已有回合。</small></label>
+                <label class="wide">评估记录<select id="launch-resume-run"><option value="">选择已暂停或已完成的正式评估</option></select><small>保留原配置与已有回合。</small></label>
                 <label>本次运行量<select id="launch-resume-budget"><option value="remaining">补完原计划剩余回合</option><option value="additional">本次再跑指定回合数</option></select></label>
                 <label id="launch-resume-count-field" hidden>本次再跑多少回合<input id="launch-resume-count" type="number" min="1" step="1" value="10" disabled></label>
                 <p id="launch-resume-summary" class="wide subtle" role="status"></p>
@@ -576,16 +587,16 @@
               <div class="launch-preview"><div id="launch-message" role="status" class="launch-message"></div><div id="launch-plan" hidden></div></div>
               <div class="launch-actions"><button type="button" id="launch-check">检查配置</button><button type="submit" id="launch-submit" class="primary-button">启动评估</button></div>
             </form>
-            <details id="launch-history" class="compact-fold" hidden><summary>评估启动状态与日志</summary><div id="launch-jobs" class="launch-jobs-list"></div></details>
+            <details id="launch-history" class="compact-fold" hidden><summary>评估作业</summary><div id="launch-jobs" class="launch-jobs-list"></div></details>
           </section>
         </div>
     </div>
     <div class="layout" id="page-results" role="tabpanel" aria-labelledby="page-tab-results">
-      <details id="result-compare-panel"><summary>多次评估对比 · 按任务浏览历史结果</summary><div id="result-compare-content"></div></details>
+      <details id="result-compare-panel"><summary>任务对比</summary><div id="result-compare-content"></div></details>
       <section class="run-browser" aria-label="选择评估记录"><div class="section-head"><h2>全部运行</h2><span id="run-count" class="subtle">0 条</span></div><div class="filters"><input id="run-search" type="search" placeholder="搜索版本、任务或运行名" aria-label="搜索评估记录"><select id="status-filter" aria-label="按运行状态筛选"><option value="">全部状态</option><option value="running">运行中</option><option value="complete">已完成</option><option value="failed">异常退出</option><option value="interrupted">已暂停 / 中断</option><option value="paused">已暂停</option><option value="cancelled">已暂停（历史停止）</option></select></div><div class="run-list" id="runs"></div><div id="empty" class="empty" hidden>还没有评估结果。</div></section>
       <section aria-label="选中运行详情">
-        <div class="detail-heading"><div><div id="detail-path" class="eyebrow">选择一次评估</div><h2 id="detail-title">运行详情</h2><div id="detail-subtitle" class="subtle">任务、进度与成绩集中显示在这里</div></div><div class="heading-status"><span id="detail-status"></span><span id="detail-mode" class="subtle"></span></div></div>
-        <div class="evaluation-actions"><button type="button" id="result-export-analysis">导出本次结果 JSON</button><div id="evaluation-actions"></div><span id="evaluation-action-message" class="evaluation-action-message" role="status"></span></div>
+        <div class="detail-heading"><div><div id="detail-path" class="eyebrow">选择一次评估</div><h2 id="detail-title">运行详情</h2><div id="detail-subtitle" class="subtle"></div></div><div class="heading-status"><span id="detail-status"></span><span id="detail-mode" class="subtle"></span></div></div>
+        <div class="evaluation-actions"><button type="button" id="result-export-analysis">导出 JSON</button><div id="evaluation-actions"></div><span id="evaluation-action-message" class="evaluation-action-message" role="status"></span></div>
         <details id="result-note-panel"><summary>Checkpoint 备注 <small id="result-note-preview"></small></summary><div id="result-checkpoint-note"></div></details>
         <div class="summary" id="summary"></div>
         <nav class="detail-tabs" role="tablist" aria-label="运行详情视图"><button type="button" id="tab-episodes" role="tab" aria-controls="pane-episodes" onclick="selectDetailTab('episodes')">回合成绩</button><button type="button" id="tab-media" role="tab" aria-controls="pane-media" onclick="selectDetailTab('media')">录像与相机</button><button type="button" id="tab-info" role="tab" aria-controls="pane-info" onclick="selectDetailTab('info')">日志与配置</button></nav>
@@ -621,7 +632,7 @@
       </section>
     </div>
     <section id="page-registry" role="tabpanel" aria-labelledby="page-tab-registry" hidden></section>
-    <div class="page-foot">MemoryVLA · 按模型底座与评估协议区分运行 · 调试记录不计正式成绩</div>
+    <div class="page-foot">调试结果不计正式成绩</div>
   </main>
 <script src="/checkpoint_notes.js"></script>
 <script>
