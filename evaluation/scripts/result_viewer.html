@@ -971,11 +971,13 @@
   $('close-device-dialog').onclick=()=>deviceDialog.close();
   deviceDialog.addEventListener('click',e=>{if(e.target===deviceDialog){const b=deviceDialog.getBoundingClientRect();if(e.clientX<b.left||e.clientX>b.right||e.clientY<b.top||e.clientY>b.bottom)deviceDialog.close();}});
   $('result-export-analysis').onclick=()=>{
-    if(!selected){$('evaluation-action-message').textContent='请先选择评估记录';return;}
-    const snapshot={schema:1,exported_at:new Date().toISOString(),note:'工作台评估记录快照；视频为索引，不含视频文件。缺失字段不补造。',run:selected};
+    const native=window.benchmarkWorkbench?.current()==='b1k2026';
+    const record=native?window.benchmarkWorkbench.nativeResultJob():selected;
+    if(!record){$('evaluation-action-message').textContent='请先选择评估记录';return;}
+    const snapshot={schema:1,benchmark:native?'b1k2026':'b1k',exported_at:new Date().toISOString(),note:'工作台评估记录快照；视频为索引，不含视频文件。缺失字段不补造。',run:record};
     const url=URL.createObjectURL(new Blob([JSON.stringify(snapshot,null,2)],{type:'application/json;charset=utf-8'}));
     const anchor=document.createElement('a');anchor.href=url;
-    anchor.download=String(selected._folder||'evaluation').replace(/[^A-Za-z0-9_.-]/g,'_')+'__analysis.json';
+    anchor.download=String(record._folder||record.folder||record.id||'evaluation').replace(/[^A-Za-z0-9_.-]/g,'_')+'__analysis.json';
     anchor.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
   };
   function selectPage(page, updateURL=true) {
@@ -1013,7 +1015,7 @@
     }else if(page==='launch'){
       void loadLaunchOptions();renderLaunchTemplates();void refreshLaunchJobs();void refreshInferenceJobs();void refreshAllInference();
       updateLaunchAvailability();
-      if(needsInference){$('launch-kind').value='new';updateLaunchForm();openInferencePanel();}
+      if(needsInference&&window.benchmarkWorkbench?.current()!=='b1k2026'){$('launch-kind').value='new';updateLaunchForm();openInferencePanel();}
     }
   }
   function selectLaunchView(view){launchView=view;$('launch-overview').hidden=view!=='overview';$('launch-create').hidden=view!=='new';$('launch-overview-tab').setAttribute('aria-pressed',String(view==='overview'));$('launch-new-tab').setAttribute('aria-pressed',String(view==='new'));}
@@ -2002,6 +2004,7 @@
     }
   }
   function selectDetailTab(name) {
+    if(window.benchmarkWorkbench?.current()==='b1k2026'){window.benchmarkWorkbench.nativeSetTab(name);return;}
     if(detailTab===name) return;
     detailTab=name;
     if(name!=='media'){stopPreview();$('video-player').pause();renderPreviewControl(selected);}
@@ -2130,6 +2133,8 @@
     return runs.filter(r=>(!status||r.status===status)&&(!search||`${r._folder} ${r.model_name} ${taskLabel(r)} ${r.configuration?.run_tag||""} ${r.policy_identity?.training_id||r.configuration?.policy_identity?.training_id||''} ${r.policy_identity?.checkpoint||''}`.toLowerCase().includes(search)));
   }
   function render() {
+    if(window.benchmarkWorkbench?.current()==='b1k2026'){window.benchmarkWorkbench.renderNativeResults();return;}
+    $('result-export-analysis').disabled=false;
     const body=$("runs"), visible=visibleRuns(), scroll=body.scrollTop; body.innerHTML="";
     if(!visible.includes(selected)) selected=visible[0]||null;
     $("run-count").textContent=`${visible.length} / ${runs.length} 条`;
