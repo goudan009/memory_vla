@@ -12,12 +12,12 @@ const assert=require('node:assert/strict');
  try{
   await page.goto(base+'/?page=registry');
   const frame=page.frameLocator('#registry-frame');
-  await frame.getByRole('button',{name:'数据权重',exact:true}).click();
+  await frame.getByRole('button',{name:'数据与权重',exact:true}).click();
   await frame.locator('#res-host').selectOption('4090');
-  await frame.locator('.storage-capacity > summary').click();
+  await frame.locator('.storage-capacity:not(#resource-download-panel) > summary').click();
   await frame.locator('#storage-disks .storage-disk:not(.stale)').filter({hasText:'实时查询'}).first().waitFor();
   assert.match(await frame.locator('#storage-capacity-summary').textContent(),/剩余/);
-  await frame.locator('.storage-capacity > summary').click();
+  await frame.locator('.storage-capacity:not(#resource-download-panel) > summary').click();
   const name='b1k2025_groot_task0_v1_200';
   await frame.locator('#res-q').fill(name);
   await frame.locator('#res-rows [data-resource]').filter({hasText:name}).click();
@@ -29,8 +29,8 @@ const assert=require('node:assert/strict');
   assert.match(await frame.locator('.storage-preview').textContent(),/total_episodes/);
   // Filtering the same selected resource and switching tabs must retain the open file.
   await frame.locator('#res-q').fill('task0_v1_200');
-  await frame.getByRole('button',{name:'实验记录',exact:true}).click();
-  await frame.getByRole('button',{name:'数据权重',exact:true}).click();
+  await frame.getByRole('button',{name:'历史任务对比',exact:true}).click();
+  await frame.getByRole('button',{name:'数据与权重',exact:true}).click();
   assert.match(await frame.locator('.storage-preview').textContent(),/total_episodes/);
   assert.equal(await frame.locator('.resource-info').evaluate(el=>el.open),false);
   if(process.env.SCREENSHOT_DIR)await page.screenshot({path:process.env.SCREENSHOT_DIR+'/storage-desktop.png',fullPage:true});

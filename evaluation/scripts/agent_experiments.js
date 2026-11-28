@@ -394,7 +394,7 @@
   }
 
   async function workflowTraining(record) {
-    if (!record?.workflow?.versions.length) return new Map();
+    if (!record?.path) return new Map();
     const lines = (record.progress?.markdown || '').split('\n').map(line => line.trim());
     const tracked = progressStages(lines, quotedField(lines, '当前动作')).flatMap(row => row.training ? [row.training] : []);
     const devices = new Set(['a100','a6000',...tracked.map(([device]) => device)]);

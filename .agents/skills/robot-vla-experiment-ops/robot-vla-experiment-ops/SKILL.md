@@ -73,3 +73,7 @@ description: 在 MemoryVLA / GR00T / B1K 仓库操作训练、推理、仿真评
 - 每批评估结束，确认无运行/排队/已安排续跑依赖后，经工作台释放本次推理服务；不停止归属不明服务。
 - 训练终态使用工作台自动生成的 `training_report.md`，必要时导出证据ZIP；核对归档步数、实际配置、训练/验证指标和闭环结果。缺失指标不编造，AI分析另存。
 - 按完成/部分完成/阻塞/未执行验收，报告真实计数、job ID、checkpoint、视频及证据路径。无有价值待办时结束，不为占用率生造实验。任务书见[模板](templates/experiment-task-template.md)。
+
+## Agent 新训练计划绑定
+
+经工作台 preview/start 提交新训练时传 `initiator=agent`、简短 `notes`、规范 `run_id`、`agent_plan: {"version":"实际最新计划版本","node":"真实节点ID"}`。版本与节点从实验 workflow 读取，不猜测。先通过后端预检；提交回执在 `outputs/workbench_agent_bindings/`。超时或 pending 时查 jobs，禁止换身份或去掉来源重试。严格恢复沿用原记录。

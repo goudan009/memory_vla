@@ -23,3 +23,5 @@
 ## 资源管理（强制）
 
 资源下载、登记、创建目录、回收、恢复前先读 [统一资源管理](docs/workbench/resource_management.md)。优先工作台 GUI/API/CLI 的 resource 入口；先查已有资源和磁盘，再选择登记配方、预检、启动、查询实际状态、校验并登记。缺少配方/环境或权限即报告阻塞，不临时换源、安装环境、curl/wget/git clone 或 rm 绕过工作台。已有下载不得擅自重启；训练 checkpoint 删除沿用受保护接口。
+
+Agent 新训练通过工作台 preview/start 时显式传 `initiator=agent`、`notes`、规范 `run_id` 和 `agent_plan`（`version` 为当前最新真实计划版本，`node` 为实际节点 ID）。工作台验证计划与前置实验；不得通过去掉 initiator、改 run_id 或直接调用训练脚本绕过。提交异常先核对 jobs 和 `outputs/workbench_agent_bindings/` 回执；旧记录和严格恢复保持不变。

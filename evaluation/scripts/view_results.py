@@ -37,6 +37,8 @@ from checkpoint_notes import CheckpointNotes
 EVALUATION_ROOT = Path(__file__).resolve().parents[1]
 REGISTRY_ANNOTATIONS = EVALUATION_ROOT.parent / "outputs" / "registry_annotations.json"
 REGISTRY_ANNOTATIONS_LOCK = threading.Lock()
+AGENT_BINDINGS_LOCK = threading.Lock()
+RESOURCE_START_LOCK = threading.RLock()
 CHECKPOINT_NOTES = CheckpointNotes(EVALUATION_ROOT.parent / 'outputs' / 'checkpoint_notes.json')
 TASK40_VIDEOS = Path("/nvme3/projects/memory_vla/outputs/overnight_memory_task40_20261114/verification/task40_vlm_blind_review/full_episodes")
 TASK40_ANNOTATIONS_FILE = EVALUATION_ROOT.parent / "outputs" / "task40_annotations.json"
@@ -411,7 +413,36 @@ class Handler(BaseHTTPRequestHandler):
             raise ValueError('资源操作请求应为 JSON 对象')
         if payload.get('action') not in ('register', 'mkdir', 'trash', 'restore'):
             raise ValueError('未知的资源操作')
-        return self._storage().request(payload.pop('host', '4090'), payload)
+        host = payload.pop('host','4090')
+        if payload['action']=='trash':
+            with RESOURCE_START_LOCK:
+                self._check_resource_trash(host)
+                return self._storage().request(host,payload)
+        return self._storage().request(host,payload)
+
+    def _check_resource_trash(self,host):
+        """Fail closed for generic resource deletion when exact live dependencies are unknown."""
+        device={'A100':'a100','A6000':'a6000','4090':'local'}.get(host)
+        if device is None:
+            raise ValueError('未核实的设备不能执行删除')
+        managers=[]
+        if device=='local':
+            managers.append(self.launch_manager)
+        else:
+            managers.append((self.training_devices or {}).get(device))
+            managers.append((self.inference_devices or {}).get(device))
+            if device=='a6000':
+                managers.append((self.evaluation_devices or {}).get(device))
+        terminal={'stopped','failed','exited','complete','completed','cancelled','paused','interrupted','deleted'}
+        for manager in managers:
+            if manager is None or getattr(manager,'error',None):
+                raise ValueError('无法确认该设备的依赖状态；保留资源')
+            snapshot=manager.snapshot()
+            rows=snapshot.get('jobs') if isinstance(snapshot,dict) else snapshot
+            if not isinstance(rows,list):
+                raise ValueError('无法确认该设备的作业清单；保留资源')
+            if any((row.get('state') or row.get('status')) not in terminal for row in rows):
+                raise ValueError('设备存在活动/排队作业，通用删除暂时禁止；训练 checkpoint 请用受保护的专用入口')
 
     def _agent_training_binding(self, request):
         """Validate an Agent's explicit plan reference, without changing scientific settings."""
@@ -464,6 +495,9 @@ class Handler(BaseHTTPRequestHandler):
         if manager is None:
             self._json({"error": "启动服务未初始化"}, 503)
             return
+        start_lock = RESOURCE_START_LOCK if route.endswith(('/start','/resume','/dataset')) else None
+        if start_lock is not None:
+            start_lock.acquire()
         try:
             if self.headers.get("Content-Type", "").split(";")[0] != "application/json":
                 raise ValueError("请使用 JSON 启动参数")
@@ -512,7 +546,7 @@ class Handler(BaseHTTPRequestHandler):
             elif route == '/api/training/checkpoint-delete':
                 value = self._delete_training_checkpoint(manager, request)
             elif binding and action == 'start':
-                with REGISTRY_ANNOTATIONS_LOCK:
+                with AGENT_BINDINGS_LOCK:
                     # Recheck the actual backend before creating a submission receipt.
                     manager.prepare(request)
                     self._record_agent_binding(binding,device)
@@ -525,6 +559,9 @@ class Handler(BaseHTTPRequestHandler):
         except (ValueError, OSError, subprocess.SubprocessError) as error:
             self._json({"error": str(error)}, 400)
             return
+        finally:
+            if start_lock is not None:
+                start_lock.release()
         self._json(value, 200 if route.endswith("/preview") else 202)
 
     def _delete_training_checkpoint(self, manager, request):

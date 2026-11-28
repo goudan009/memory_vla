@@ -12,8 +12,10 @@ const assert=require('node:assert/strict');
     assert.equal(response.status(),200);
     await page.waitForURL('**/?page=registry');
     const registry=page.frameLocator('#registry-frame');
+    await registry.locator('#view-res').waitFor({state:'visible'});
+    await registry.getByRole('button',{name:'历史任务对比'}).click();
     await registry.locator('#chains [aria-current="true"]').waitFor({state:'visible'});
-    assert.deepEqual(await registry.locator('#nav button').allTextContents(),['实验记录','数据权重']);
+    assert.deepEqual(await registry.locator('#nav button').allTextContents(),['数据与权重','历史任务对比']);
     let annotations;
     await page.route('**/api/registry/annotations',async route=>{
       const {key,hidden}=route.request().postDataJSON();
@@ -23,7 +25,7 @@ const assert=require('node:assert/strict');
       await route.fulfill({json:annotations});
     });
     const nav=page.getByRole('tablist',{name:'工作台',exact:true});
-    const registryTab=nav.getByRole('tab',{name:'实验台账'});
+    const registryTab=nav.getByRole('tab',{name:'资源管理'});
     assert.equal(await registryTab.getAttribute('aria-selected'),'true');
     await page.evaluate(()=>{window.workbenchTestMarker=true;});
     for(const [label,panel] of [['启动训练','training'],['推理评估','launch'],['评估结果','results']]){
@@ -95,7 +97,7 @@ const assert=require('node:assert/strict');
     await registry.getByRole('button',{name:'返回任务对比'}).click();
     assert.equal(await registry.locator('[data-compare-record]').count(),filteredCount);
     assert.equal(await registry.locator('#experiment-detail h3').textContent(),taskLabel);
-    await registry.getByRole('button',{name:'数据权重'}).click();
+    await registry.getByRole('button',{name:'数据与权重'}).click();
     assert.equal(await registry.locator('#view-res').isVisible(),true);
     const inventory=await (await page.request.get(base+'/api/registry')).json();
     const resourceTree=registry.getByRole('navigation',{name:'资源目录'});
@@ -148,7 +150,7 @@ const assert=require('node:assert/strict');
     assert.equal(await registry.locator('#res-count').textContent(),'0 项');
     await registry.locator('#res-q').clear();
     await weight.waitFor({state:'visible'});
-    for(const [label,view] of [['实验记录','exp'],['数据权重','res']]){
+    for(const [label,view] of [['历史任务对比','exp'],['数据与权重','res']]){
       await registry.getByRole('button',{name:label}).click();
       for(const width of [1440,780,390]){
         await page.setViewportSize({width,height:1000});
