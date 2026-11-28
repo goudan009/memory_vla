@@ -12,7 +12,7 @@ const read=name=>fs.readFileSync(path.join(dir,name),'utf8');
   const errors=[];page.on('pageerror',e=>errors.push(e.message));
   const checkpoint='/archive/step6000',job={run:'run1',arm:'baseline',version:'V_2_1',method:'baseline',task:40,training_id:'train1',train_number:1,status:'complete',parameter_summary:{learning_rate:0.00001},last:{loss:0.025}};
   const run={_folder:'V_2_1/baseline/eval1',version:'V_2_1',task_id:40,status:'complete',success_rate:.5,completed_episodes:2,policy_identity:{training_id:'train1',checkpoint,checkpoint_step:6000}};
-  const native={id:'radio',kind:'b1k2026_websocket',version:'V_1_2',task_id:'turning_on_radio',official:true,state:'complete',policy_identity:{checkpoint:'/official/radio'},native_metrics:[{success:false}]};
+  const native={id:'radio',kind:'b1k2026_websocket',version:'V_1_2',task_id:'turning_on_radio',official:true,state:'complete',policy_identity:{checkpoint:{path:'/official/radio'}},native_metrics:[{success:false}]};
   await page.route('**/*',async route=>{
    const u=new URL(route.request().url()),p=u.pathname;const json=data=>route.fulfill({json:data});
    if(p==='/workbench')return route.fulfill({contentType:'text/html',body:read('unified_workbench.html')});
@@ -24,6 +24,7 @@ const read=name=>fs.readFileSync(path.join(dir,name),'utf8');
    if(p==='/api/launch/jobs')return json({jobs:u.searchParams.has('benchmark')?[native]:[]});
    if(p==='/api/benchmarks/jobs')return json({jobs:[]});
    if(p==='/api/agent-experiments')return json({experiments:['experiment_01']});
+   if(p==='/registry')return route.fulfill({contentType:'text/html',body:'<!doctype html><div id="registry-fixture">资源管理</div><script>parent.postMessage({type:"memoryvla-resource",section:new URLSearchParams(location.search).get("section"),item:{name:"fixture dataset",kind:"dataset",host:"4090",path:"/data/fixture",size:"12G"}},location.origin)</script>'});
    if(p==='/')return route.fulfill({contentType:'text/html',body:'<!doctype html><div id="selected"></div><script>window.unifiedWorkbenchPanel={select:async t=>document.getElementById("selected").textContent=JSON.stringify(t)}</script>'});
    return route.fulfill({status:404,body:''});
   });
@@ -45,6 +46,15 @@ const read=name=>fs.readFileSync(path.join(dir,name),'utf8');
   await page.locator('#tree .pick').filter({hasText:'Radio ·'}).click();
   await page.locator('#nav [data-page="results"]').click();
   await page.frameLocator('#panel').locator('#selected').filter({hasText:'radio'}).waitFor();
+  await page.locator('#nav [data-page="registry"]').click();
+  await page.frameLocator('#panel').locator('#registry-fixture').waitFor();
+  await page.locator('#inspector').filter({hasText:'fixture dataset'}).waitFor();
+  assert.equal(await page.locator('#title').innerText(),'资源管理');
+  assert.equal(await page.locator('#actions button').count(),0);
+  assert.ok((await page.locator('#panel').getAttribute('src')).includes('/registry?embedded=1&section=datasets'));
+  await page.locator('#tabs [data-tab="weights"]').click();
+  await page.frameLocator('#panel').locator('#registry-fixture').waitFor();
+  assert.ok((await page.locator('#panel').getAttribute('src')).includes('section=weights'));
   for(const width of [1440,1024,768,390]){await page.setViewportSize({width,height:900});assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'layout overflow at '+width);}
   assert.deepEqual(errors,[]);
  }finally{await browser.close();}
