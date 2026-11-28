@@ -1,0 +1,19 @@
+{
+  "device": "local",
+  "benchmark": "b1k2026",
+  "version": "V_0_0",
+  "protocol": "b1k2026_websocket",
+  "task": "make_microwave_popcorn",
+  "model_role": "self_trained",
+  "engineering_only": true,
+  "checkpoint": "/nvme3/projects/memory_vla/training/b1k2026/v0_0__test04__exp01__run001/checkpoints/v0_0__test04__exp01__run001__step000004",
+  "checkpoint_sha256": "20e6ea6d2a322f6ca6b3c1de028d21a2b5063e47c0d309b87f5aa4928d53e286",
+  "instance": 0,
+  "attempt": 1,
+  "rollouts": 1,
+  "gpu_index": 1,
+  "policy_host": "127.0.0.1",
+  "policy_port": 8040,
+  "record_video": true,
+  "notes": "V0_0 / N1.7：2026 Task40 自训练工程权重，RTC off"
+}

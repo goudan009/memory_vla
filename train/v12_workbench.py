@@ -21,6 +21,7 @@ from v1_2_groot_baseline.contracts import (inspect_upstream, inspect_checkpoint,
                                          inspect_training_checkpoint, B1K2026_VERSION,
                                          B1K2026_DISPLAY_VERSION, B1K2026_FAMILY)
 from v1_2_groot_baseline.b1k2026_training_data import digest
+from v1_2_groot_baseline.b1k2026_capabilities import verified_engineering_run
 
 FINETUNE_REQUIRED = {'tune_llm', 'tune_visual', 'tune_projector', 'tune_diffusion_model',
     'state_dropout_prob', 'global_batch_size', 'gradient_accumulation_steps', 'dataloader_num_workers',
@@ -65,11 +66,14 @@ class V12TrainingManager:
         self.processes = {}
 
     def options(self):
+        verified = verified_engineering_run(self.root, self.upstream, self.python)
         return dict(device_id='local', device_label=self.label, benchmark='b1k2026',
             model_versions={}, registered_model_versions={B1K2026_VERSION: MODEL_VERSIONS[B1K2026_VERSION]},
             version=B1K2026_VERSION, display_version=B1K2026_DISPLAY_VERSION, method_family=B1K2026_FAMILY,
-            formal_training_available=False, engineering_training_verified=False,
-            reason='工程训练、保存重载、严格恢复及自训练闭环尚待真实验收；仅接受显式 engineering 请求',
+            formal_training_available=False, engineering_training_verified=bool(verified),
+            verified_engineering_run=verified['run_id'] if verified else None,
+            reason=('Task40 四步工程训练、严格恢复及自训练闭环已验收；正式训练未开放' if verified else
+                    '工程训练、保存重载、严格恢复及自训练闭环尚待真实验收；仅接受显式 engineering 请求'),
             python_path=str(self.python), upstream=str(self.upstream), gpus=gpu_info(),
             datasets=[dict(path='/nvme3/datasets/b1k2026-task0-task40', tasks=[0,40],
                            ready=False, reason='需显式 split、语言选择和独立 train-only statistics')])
