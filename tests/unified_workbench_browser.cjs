@@ -65,7 +65,7 @@ const read=name=>fs.readFileSync(path.join(dir,name),'utf8');
   await page.locator('#nav [data-page="results"]').click();
   await page.frameLocator('#panel').locator('#selected').filter({hasText:'radio'}).waitFor();
   await page.locator('#nav [data-page="registry"]').click();
-  await page.frameLocator('#panel').locator('[data-resource]').filter({hasText:'B1K-2026 Task0'}).waitFor();
+  await page.frameLocator('#panel').locator('[data-resource]').filter({hasText:'B1K-2026 Task0'}).click();
   await page.locator('#inspector').filter({hasText:'B1K-2026 Task0'}).waitFor();
   await page.frameLocator('#panel').locator('#resource-browser').filter({hasText:'config.json'}).waitFor();
   assert.equal(await page.locator('#title').innerText(),'资源管理');
