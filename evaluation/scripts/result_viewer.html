@@ -687,7 +687,7 @@
 </head>
 <body>
   <header><div class="brand"><div class="brand-mark" aria-hidden="true">M</div><div><h1>MemoryVLA</h1><div id="caption" class="sr-only" role="status"></div></div></div><nav class="page-nav" aria-label="训练评估工作台页面">
-    <a class="page-nav-link" id="unified-workbench-link" href="/workbench" aria-label="新版三栏工作台" title="新版三栏工作台">新版</a><a class="page-nav-link" id="page-tab-ai" href="/ai" aria-label="实验管理" title="实验管理"><span class="nav-label-full">实验管理</span><span class="nav-label-short">实验</span></a>
+    <a class="page-nav-link" id="page-tab-ai" href="/workbench" aria-label="实验管理" title="实验管理"><span class="nav-label-full">实验管理</span><span class="nav-label-short">实验</span></a>
     <div class="page-tabs" role="tablist" aria-label="工作台">
       <button type="button" id="page-tab-training" role="tab" aria-label="启动训练" aria-controls="page-training" aria-selected="false" onclick="selectPage('training')"><span class="nav-label-full">模型训练</span><span class="nav-label-short">训练</span></button>
       <button type="button" id="page-tab-launch" role="tab" aria-label="推理评估" aria-controls="page-launch" aria-selected="false" onclick="selectPage('launch')"><span class="nav-label-full">推理评估</span><span class="nav-label-short">推理</span></button>
@@ -2681,8 +2681,8 @@
   });
   $("refresh").onclick=refresh; refresh(); setInterval(refresh,5000);
 </script>
-<script src="/benchmarks.js?ui=2"></script>
-<script src="/training.js"></script>
+<script src="/benchmarks.js?ui=6"></script>
+<script src="/training.js?ui=6"></script>
 <script src="/agent_experiments.js"></script>
 <script>
   if(agentBoardPage){
@@ -2695,7 +2695,8 @@
   // Same-origin shell bridge. All real starts continue through the original forms.
   window.unifiedWorkbenchPanel = {
     async select(target){
-      if(!document.body.classList.contains('workbench-embedded'))throw Error('仅用于嵌入面板');
+      if(!document.body.classList.contains('workbench-embedded')&&!new URLSearchParams(location.search).has('lineage_target'))throw Error('缺少谱系跳转参数');
+      if(target.benchmark&&target.benchmark!==window.benchmarkWorkbench?.current())throw Error('Benchmark 不匹配');
       document.body.dataset.embedTarget=target.type;
       if(target.type==='launch-overview'){selectPage('launch');selectLaunchView('overview');return;}
       if(target.type==='experiment')return; // /ai?experiment= selects the recorded document.
@@ -2721,6 +2722,7 @@
           $('run-search').value='';$('status-filter').value='';selected=row;render();selectDetailTab('episodes');
         }
       }else if(target.type==='checkpoint'){
+        selectPage('training');
         if(target.benchmark!=='b1k')throw Error('当前权重未通过跨接口启动校验');
         await window.trainingDashboard.selectRun(target);
         const options=[...$('train-saved-checkpoint').options];
@@ -2733,6 +2735,13 @@
       }
     }
   };
+  const graphLink=$('page-tab-ai');
+  graphLink.addEventListener('click',()=>{const q=new URLSearchParams({benchmark:window.benchmarkWorkbench?.current()||'b1k'});const node=new URLSearchParams(location.search).get('lineage_node');if(node)q.set('node',node);graphLink.href='/workbench?'+q;});
+  const deepLink=new URLSearchParams(location.search).get('lineage_target');
+  if(deepLink&&!agentBoardPage){
+    const showError=error=>{const p=document.createElement('div');p.setAttribute('role','alert');p.style.cssText='padding:10px 14px;margin:8px 16px;color:#b42318;background:#fff4f2;border:1px solid #f1c8c5;border-radius:6px';p.textContent='无法定位谱系记录：'+error.message;document.querySelector('main').prepend(p);};
+    (async()=>{try{const target=JSON.parse(deepLink);if(!target||!['train','checkpoint','eval','new'].includes(target.type))throw Error('跳转参数无效');await window.unifiedWorkbenchPanel.select(target);}catch(error){showError(error);}finally{const url=new URL(location.href);url.searchParams.delete('lineage_target');history.replaceState(null,'',url);}})();
+  }
   const installButton = document.getElementById('install-workbench');
   window.addEventListener('beforeinstallprompt', event => {
     event.preventDefault();
