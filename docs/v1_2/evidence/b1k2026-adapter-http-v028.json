@@ -1,0 +1,126 @@
+{
+  "status": "PASS",
+  "recorded_at": "2026-11-28T16:43:54.566070+08:00",
+  "adapter_commit": "29434487f63f43975ae78d30e4f0c33b918f04c3",
+  "workbench": "http://127.0.0.1:8765",
+  "task_catalog_count": 100,
+  "enabled_tasks": [
+    "turning_on_radio"
+  ],
+  "capabilities": {
+    "official_inference": {
+      "available": true,
+      "reason": null
+    },
+    "official_evaluation": {
+      "available": true,
+      "reason": null
+    },
+    "training": {
+      "available": false,
+      "reason": "尚无已锁定的训练身份、划分和冻结配置；真实前后向及保存重载未验收"
+    },
+    "self_trained_inference": {
+      "available": false,
+      "reason": "尚无真实 B1K-2026 自训练 checkpoint 重载证据"
+    },
+    "self_trained_evaluation": {
+      "available": false,
+      "reason": "尚无自训练权重原生闭环证据"
+    },
+    "strict_training_resume": {
+      "available": false,
+      "reason": "optimizer、scheduler、RNG 和采样位置严格恢复未实跑"
+    },
+    "evaluation_resume": {
+      "available": false,
+      "reason": "原生回合暂停恢复未验收"
+    },
+    "multi_environment": {
+      "available": false,
+      "reason": "当前只验收单环境、单回合"
+    },
+    "live_camera": {
+      "available": false,
+      "reason": "没有实时采集端验收；现有视频为回合录像"
+    }
+  },
+  "jobs": [
+    {
+      "id": "3fc189e832d8",
+      "benchmark": "b1k2026",
+      "protocol": "b1k2026_websocket",
+      "state": "complete",
+      "notes": "V1.2 / N1.7 / B1K2026: radio task prompt, RTC off",
+      "checkpoint_sha256": "cd97a22ff74bd91838350e18fe94b48e1902d407f1256f5d48eb20befe277dc3",
+      "source_revision": "ace36d935b376fbf25cd56371e23877b95407c40",
+      "native_episode_keys": [
+        "json/turning_on_radio_319_0.json"
+      ],
+      "native_metrics": [
+        {
+          "instance_id": 319,
+          "steps": 3225,
+          "success": false,
+          "q_score": 0
+        }
+      ],
+      "annotations_http_status": 200,
+      "artifacts": [
+        {
+          "path": "json/turning_on_radio_319_0.json",
+          "http_status": 200,
+          "bytes": 519,
+          "sha256": "e2a9498583a375c35ce84271c3cdca72049f7821fcc4f15be1c8e6317a68e3aa"
+        },
+        {
+          "path": "videos/turning_on_radio_319_0.mp4",
+          "http_status": 200,
+          "bytes": 5838507,
+          "sha256": "df9335fd392f214c13c92680738ca0efcb4a47f971b1401f2171e50745be796a"
+        }
+      ]
+    },
+    {
+      "id": "97f45ef78924",
+      "benchmark": "b1k2026",
+      "protocol": "b1k2026_websocket",
+      "state": "complete",
+      "notes": "V1.2 / N1.7 / B1K2026: official radio, RTC off",
+      "checkpoint_sha256": "cd97a22ff74bd91838350e18fe94b48e1902d407f1256f5d48eb20befe277dc3",
+      "source_revision": "ace36d935b376fbf25cd56371e23877b95407c40",
+      "native_episode_keys": [
+        "json/turning_on_radio_319_0.json"
+      ],
+      "native_metrics": [
+        {
+          "instance_id": 319,
+          "steps": 3225,
+          "success": false,
+          "q_score": 0
+        }
+      ],
+      "annotations_http_status": 200,
+      "artifacts": [
+        {
+          "path": "json/turning_on_radio_319_0.json",
+          "http_status": 200,
+          "bytes": 518,
+          "sha256": "980f8baf685b206a4a748a93d7e281d691bea29506b709b342eee26c5d806d80"
+        },
+        {
+          "path": "videos/turning_on_radio_319_0.mp4",
+          "http_status": 200,
+          "bytes": 5710785,
+          "sha256": "dbeb8cadfb5b61279087bc0fd2cd9c609ab1f41820d7b05fbb487aa30c10c424"
+        }
+      ]
+    }
+  ],
+  "tests": {
+    "targeted_pytest_passed": 21,
+    "native_data_unittest_passed": 4
+  },
+  "training_submissions": 0,
+  "additional_rollouts": 0
+}

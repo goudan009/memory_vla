@@ -1,6 +1,8 @@
 {
   "plan_id": "v1_2_n17_b1k2026_adapter_v028",
-  "status": "in_progress",
+  "status": "complete",
+  "outcome": "Bounded CPU data/loader audit, evidence-backed backend capabilities and live 8765 native result contract verified. Full training/self-trained adapter acceptance remains partial and is not enabled.",
+  "evidence": ["docs/v1_2/evidence/b1k2026-data-v028.json", "docs/v1_2/evidence/b1k2026-adapter-http-v028.json", "docs/v1_2/adapter-acceptance-2026-11-28.md"],
   "supersedes": "v1_2_n17_b1k2026_task_language_v027",
   "change_reason": "Continue the local backend adapter task defined in docs/workbench/b1k2026_adapter_task.md; preserve the accepted radio evidence and verify the remaining data/loader prerequisites before any training.",
   "scope": "B1K-2026 backend and native data audit only. No frontend, other benchmark changes, resource download, formal training, extra rollout or V2.2.",
