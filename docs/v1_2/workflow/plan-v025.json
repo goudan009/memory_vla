@@ -1,0 +1,27 @@
+{
+  "plan_id": "v1_2_n17_b1k2026_transition_gate_v025",
+  "status": "in_progress",
+  "supersedes": "v1_2_n17_b1k2026_transition_gate_v024",
+  "change_reason": "The current real rollout passed Kit JIT and is writing video. Read-only inspection found the browser form still emits only legacy 2025 parameters, while 8765 has not loaded the 2026 backend. Complete the requested workbench integration with a native form/artifact view, then reload the primary workbench only after native rollout acceptance and legacy dependency checks.",
+  "scope": "Finish the fixed official N1.7/B1K-2026 rollout and native workbench UI, then activate 2026 on 8765 and retire confirmed legacy automatic workflows. Preserve historical resources/shared libraries and unrelated 8766. No formal training or V2.2.",
+  "method_version": "V_1_2",
+  "protocol": "b1k2026_websocket",
+  "checkpoint": "/nvme3/checkpoints/memory_vla/official-n17-radio/turning_on_radio_GR00T-checkpoint-150000",
+  "checkpoint_sha256": "cd97a22ff74bd91838350e18fe94b48e1902d407f1256f5d48eb20befe277dc3",
+  "source_revisions": {"groot": "ace36d935b376fbf25cd56371e23877b95407c40", "behavior_1k": "a8247a8cc1633fe1ca0cc66aa07243d46c64f155"},
+  "experiment_identity": null,
+  "notes": "V1.2 / N1.7 / B1K2026: official radio, RTC off",
+  "budget": {"training_steps": 0, "environments": 1, "rollouts": 1},
+  "current_attempt": {"job_id": "97f45ef78924", "instance": 18, "gpu": 0, "policy_port": 8032, "workbench": "http://127.0.0.1:8767"},
+  "mainline": [
+    {"node": "importer_boundary", "depends_on": [], "parallel_branches": ["native_ui"], "acceptance": "Verified real Kit startup, consistent Numba runtime and array-copy JIT; pinned upstream remains clean."},
+    {"node": "official_rollout", "depends_on": ["importer_boundary"], "parallel_branches": ["native_ui"], "acceptance": "Normal exit, native JSON, positive steps, boolean success, finite final Q-score and decodable video; model success reported separately."},
+    {"node": "legacy_shutdown_gate", "depends_on": ["official_rollout"], "parallel_branches": [], "acceptance": "Check live legacy jobs; disable only confirmed V2.1/Exp13 automatic workflows without active dependencies. Retain history, shared packages, archive service and unrelated 8766."},
+    {"node": "primary_workbench", "depends_on": ["legacy_shutdown_gate", "native_ui"], "parallel_branches": [], "acceptance": "Reload 8765 through its existing service manager, verify 2026 options and same-identity preview, and expose native JSON/video through browser job cards. No additional rollout or training is submitted."},
+    {"node": "archive", "depends_on": ["primary_workbench"], "parallel_branches": [], "acceptance": "Publish actual job, native metrics/video, service changes, zero formal training and remaining training-readiness limits to main."}
+  ],
+  "parallel_nodes": [
+    {"node": "native_ui", "depends_on": ["importer_boundary"], "parallel_branches": [], "acceptance": "Native radio form sends exact V_1_2/WebSocket fields with required short note, one rollout and local GPU; preview/result cards show native metrics and artifact links. Browser regression passes."}
+  ],
+  "migration_gate": {"on_fail": "Keep legacy runtime; preserve evidence and diagnose.", "on_pass": "Activate verified 2026 route on the primary workbench and disable only confirmed legacy auto-run workflows; preserve history and shared libraries."}
+}

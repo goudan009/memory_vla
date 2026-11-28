@@ -1,5 +1,11 @@
 # V1.2 Progress
 
+## 2026-11-28 - native_ui / primary_workbench
+
+- Latest plan: [workflow/plan-v025.json](workflow/plan-v025.json). Existing job `97f45ef78924` continues its fixed rollout; native video is growing and no new rollout is allocated.
+- Browser inspection found a genuine integration gap: the legacy form cannot emit the 2026 request and native artifact links are not rendered. Add a native radio form and native result/video links using the existing preview/start/jobs APIs. Keep old records accessible.
+- 8765 currently lacks `model_versions` in launch options because its process predates the native route; 8767 exposes V_1_2 as ready. After valid native acceptance and dependency checks, stop dedicated legacy timers and reload 8765 via its existing systemd service, then verify options and preview. The archive service, history, shared libraries and unrelated 8766 remain retained.
+
 ## 2026-11-28 - importer_boundary / retain Isaac namespaces
 
 - Status: `PARTIAL`; latest plan [workflow/plan-v024.json](workflow/plan-v024.json). Job `c3f412e1bde1` ended without native JSON/video: global FastFinder disable caused Isaac extension import errors and `lazy_isaacsim has no attribute core`. INVALID; legacy services retained.
@@ -7,6 +13,8 @@
 - Next attempt: fresh instance 18 / GPU0 / port 8032, unchanged official checkpoint, protocol, RTC and budget. Formal training submissions=0.
 - `importer_boundary` regression passed with the installed FastFinder class: mismatched Numba runtime is reproduced before the adapter and matching parent resolution passes after it; Isaac namespace handling remains delegated to Kit. Existing route/contract tests: 7 passed. Code commit `53976f6`.
 - `preview_instance_18` completed; `official_rollout` RUNNING: job `97f45ef78924`, PID `2738624`, started `2026-11-28 13:29:55`, GPU0, port 8032, output `evaluation/V_1_2/official/public_test_instance_18`, runner log `/nvme3/tmp/memory_vla/web_launch/97f45ef78924.log`. Original concise note is present in job.json. Next live check within one minute.
+- Real Kit startup passed: `import_boundary.json` records Numba 0.66.0 and its runtime from the same installed package, llvmlite 0.48.0, and successful array-copy JIT after Kit initialized. OmniGibson entered scene loading. Both pinned upstream checkouts remain clean; bootstrap SHA256 `c61b6c9fd14697aae805dc8fdb4173413546f1e89d31c33fd801ef5799ac2eb6`.
+- Legacy read-only audit during this rollout: 8765 evaluation list has 300 terminal records and no active job; A100 inference has 99 stopped + 5 failed records, and training has 9 completed + 6 cancelled + 1 paused records. Dedicated V2.1 and Exp13 timers remain active pending native acceptance. Keep the training archive service and historical UI; neither constitutes an active old training job.
 
 ## 2026-11-28 - importer_boundary / Kit FastFinder
 
