@@ -1058,7 +1058,7 @@ class Handler(BaseHTTPRequestHandler):
             run = query.get('run', [''])[0]
             path = query.get('path', [''])[0]
             outputs = []
-            if re.fullmatch(r'public_test_instance_\d{2}', run):
+            if re.fullmatch(r'public_test_instance_\d{2}(?:_attempt_\d{2})?', run):
                 from groot_web_launch import v12_artifacts
                 root = (self.launch_manager.evaluation / 'V_1_2' / 'official').resolve()
                 output = (root / run).resolve()

@@ -134,3 +134,29 @@ def test_completed_native_run_survives_primary_workbench_reload(tmp_path):
     assert jobs[0]["notes"] == plan["notes"]
     assert jobs[0]["native_metrics"] == [dict(instance_id=319, steps=120, success=False, q_score=0.5)]
     assert any(item["path"] == "json/radio.json" for item in jobs[0]["artifacts"])
+
+
+def test_same_instance_retry_artifact_is_readable_over_http(tmp_path):
+    import threading
+    import urllib.request
+    import view_results as viewer
+
+    manager = LaunchManager(tmp_path)
+    output = manager.evaluation / 'V_1_2/official/public_test_instance_18_attempt_02'
+    (output / 'json').mkdir(parents=True)
+    result = dict(instance_id=319, steps=3225, success=False, q_score=dict(final=0.0))
+    (output / 'json/radio.json').write_text(json.dumps(result))
+
+    class Handler(viewer.Handler):
+        launch_manager = manager
+
+    with viewer.ThreadingHTTPServer(('127.0.0.1', 0), Handler) as server:
+        thread = threading.Thread(target=server.serve_forever, daemon=True)
+        thread.start()
+        try:
+            url = f'http://127.0.0.1:{server.server_port}/api/launch/artifact?run={output.name}&path=json%2Fradio.json'
+            with urllib.request.urlopen(url, timeout=5) as response:
+                assert json.load(response) == result
+        finally:
+            server.shutdown()
+            thread.join(timeout=5)
