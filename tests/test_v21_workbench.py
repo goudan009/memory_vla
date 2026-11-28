@@ -354,3 +354,20 @@ def test_native_timing_retains_elapsed_segments_after_resume_and_stop_budget():
     assert summary['timing']['eta_seconds']==78*2.5
     assert rows[-1]['seconds']==2. and rows[-1]['decisions_per_second_end_to_end']==32.
     assert metric_summary(rows,launch,dict(status='paused',step=22),{})['timing']['eta_seconds'] is None
+
+
+def test_native_custom_configuration_preserves_locked_defaults():
+    from v21_workbench import native_options, NATIVE_TUNING
+    defaults=native_options({})
+    assert defaults['steps']==6000 and defaults['scheduler']=='cosine'
+    with pytest.raises(ValueError):
+        native_options({'steps':12000})
+    cfg=native_options({'custom_config':True,'steps':12000,'learning_rate':1e-5,
+                        'scheduler':'constant','warmup_ratio':0.,'microbatch':4,
+                        'accumulation':4,'native_tuning':dict(NATIVE_TUNING,tune_diffusion_model=False)})
+    assert cfg['steps']==12000 and cfg['learning_rate']==1e-5 and cfg['microbatch']==4
+    assert not cfg['native_tuning']['tune_diffusion_model']
+    with pytest.raises(ValueError):
+        native_options({'custom_config':True,'scheduler':'constant'})
+    with pytest.raises(ValueError):
+        native_options({'custom_config':True,'native_tuning':{k:0 if k=='tune_top_llm_layers' else False for k in NATIVE_TUNING}})

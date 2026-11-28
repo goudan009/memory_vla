@@ -151,3 +151,9 @@ def test_native_shard_cursor_resume():
             assert [locate(rebuilt,ends2,i,42) for i in range(cursor(step),160)]==full[cursor(step):]
         assert len({(o,j) for o,_,_,j in full})==160
     assert cursor(6000)==96000
+
+
+def test_custom_cursor():
+    assert cursor(12000,12000,4,4)==192000
+    with pytest.raises(ValueError):
+        cursor(12001,12000,4,4)

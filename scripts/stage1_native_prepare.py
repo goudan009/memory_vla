@@ -194,10 +194,10 @@ def fit(train, validation, modality, mode):
     return absolute, relative, audit
 
 
-def prepare(dataset, split_path, base, out, mode):
+def prepare(dataset, split_path, base, out, mode, *, tuning=None, allow_parent=False):
     dataset, base, out = map(lambda p: Path(p).resolve(), (dataset,base,out))
     # The registered base identity is enforced by the workbench before this function.
-    if (base/"v2_1_stage1.json").exists():
+    if (base/"v2_1_stage1.json").exists() and not allow_parent:
         raise ValueError("start from original generic GR00T-N1.6-3B, not Task40/B1K weights")
     cfg = read(base/"config.json")
     pc = read(base/"processor_config.json")["processor_kwargs"]
@@ -236,9 +236,10 @@ def prepare(dataset, split_path, base, out, mode):
             link(f,view_base/f.name)
     # Upstream pipeline doesn't override tune_top_llm_layers when loading.
     # Only change freeze flags on the private view; not original weights.
-    cfg.update(tune_llm=False,tune_visual=False,tune_top_llm_layers=0,
-               tune_projector=True,tune_diffusion_model=True,tune_vlln=True,
-               backbone_trainable_params_fp32=False)
+    flags = dict(tune_llm=False,tune_visual=False,tune_top_llm_layers=0,
+                 tune_projector=True,tune_diffusion_model=True,tune_vlln=True)
+    if tuning is not None:flags.update(tuning)
+    cfg.update(flags,backbone_trainable_params_fp32=bool(flags['tune_llm'] or flags['tune_visual'] or flags['tune_top_llm_layers']))
     write(view_base/"config.json",cfg)
     files = ["data_split.json","normalization_audit.json","generic_base/config.json"]
     for partition in ("train","validation"):

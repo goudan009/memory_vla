@@ -46,6 +46,55 @@ def finite(value):
     return type(value) in (int, float) and math.isfinite(value)
 
 
+
+# This is an explicit opt-in; historical recipes and immutable snapshots stay locked.
+NATIVE_TUNING = dict(tune_llm=False,tune_visual=False,tune_top_llm_layers=0,
+                     tune_projector=True,tune_diffusion_model=True,tune_vlln=True)
+NATIVE_DEFAULTS = dict(steps=6000,seed=42,microbatch=2,accumulation=8,learning_rate=1e-4,
+                       scheduler='cosine',warmup_ratio=.05,weight_decay=1e-5,max_grad_norm=1.,
+                       normalization='guarded',checkpoint_interval=1000,validation_interval=1000,
+                       native_tuning=NATIVE_TUNING,arm='baseline')
+
+
+def native_options(request):
+    custom=request.get('custom_config',False)
+    if type(custom) is not bool:raise ValueError('custom_config必须为开关')
+    values={k:request.get(k,v) for k,v in NATIVE_DEFAULTS.items()}
+    if not custom and any(type(values[k]) is bool or values[k]!=v for k,v in NATIVE_DEFAULTS.items()):
+        raise ValueError('原生Stage1已锁定参数；自定义实验须显式选择custom_config')
+    if values['seed']!=42 or values['arm']!='baseline':
+        raise ValueError('原生Stage1固定原180/20划分seed42、无记忆')
+    for key,lo,hi in (('steps',1000,1000000),('microbatch',1,16),('accumulation',1,64),
+                      ('checkpoint_interval',100,1000000),('validation_interval',100,1000000)):
+        v=values[key]
+        if type(v) is not int or not lo<=v<=hi:raise ValueError(key+'超出支持范围')
+    steps,save,validate=(values[k] for k in ('steps','checkpoint_interval','validation_interval'))
+    if steps%save or validate%save or validate>steps:
+        raise ValueError('总步数和验证间隔须为保存间隔的整数倍，验证间隔不超过预算')
+    for k,lo,hi in (('learning_rate',1e-9,.01),('warmup_ratio',0.,.5),
+                    ('weight_decay',0.,1.),('max_grad_norm',1e-6,100.)):
+        if not finite(values[k]) or not lo<=values[k]<=hi:raise ValueError(k+'超出支持范围')
+    if values['scheduler'] not in ('constant','constant_with_warmup','cosine','linear'):
+        raise ValueError('不支持的学习率调度器')
+    if values['scheduler']=='constant' and values['warmup_ratio']!=0:
+        raise ValueError('Constant不执行Warmup；请选择Constant with Warmup或设为0')
+    if values['normalization'] not in ('guarded','minmax'):
+        raise ValueError('仅支持Guarded/Min-Max，不能静默改变动作表示')
+    tuning=values['native_tuning']
+    if not isinstance(tuning,dict) or set(tuning)!=set(NATIVE_TUNING):
+        raise ValueError('必须提供完整原生组件训练配置')
+    for k in NATIVE_TUNING:
+        if k!='tune_top_llm_layers' and type(tuning[k]) is not bool:
+            raise ValueError(k+'必须为开关')
+    n=tuning['tune_top_llm_layers']
+    if type(n) is not int or not 0<=n<=36 or (tuning['tune_llm'] and n):
+        raise ValueError('LLM全量与最后N层不能同时选择')
+    if not any(tuning.values()):
+        raise ValueError('至少训练一个组件')
+    values['native_tuning']=dict(tuning)
+    return dict(values,custom_config=custom)
+
+
 def metric_rows(root, tail=False):
     path=root/'run/metrics.jsonl'
     if not path.is_file():return []
@@ -268,7 +317,9 @@ class Backend:
         allowed={'version','recipe','task','stage','run_id','dataset','checkpoint','split',
                  'official_root','gpus','steps','seed','microbatch','accumulation',
                  'learning_rate','preflight_only','accept_preflight','enqueue',
-                 'share_existing','notes','arm','video_backend','workers'}
+                 'share_existing','notes','arm','video_backend','workers','custom_config',
+                 'scheduler','warmup_ratio','weight_decay','max_grad_norm','normalization',
+                 'checkpoint_interval','validation_interval','native_tuning'}
         if set(request)-allowed:
             raise ValueError('不支持的原生Stage1参数: '+','.join(sorted(set(request)-allowed)))
         if canonical_version(request.get('version'))!=VERSION or request.get('task')!=40 or request.get('stage')!='stage1':
@@ -279,7 +330,7 @@ class Backend:
         if not isinstance(run,str) or not RUN.fullmatch(run):
             raise ValueError('必须显式提供规范run_id')
         identity=validate_run_identity(run,request['version'],preflight=pre)
-        if (identity['test_id'],identity['experiment_id'])!=('test02','exp01'):
+        if not request.get('custom_config',False) and (identity['test_id'],identity['experiment_id'])!=('test02','exp01'):
             raise ValueError('当前重训任务属于test02/exp01；不得猜测或迁移身份')
         if any(p.exists() or p.is_symlink() for p in
                (self.training/run,self.training/'.trash'/run,self.training/'.workbench-trash'/run,
@@ -291,8 +342,32 @@ class Backend:
                 raise ValueError(k+'必须为工作台已核对的目标设备绝对路径')
             return Path(value)
         dataset,base,split,upstream=(path(k) for k in ('dataset','checkpoint','split','official_root'))
+        fixed=native_options(request)
+        parent=None
         if base.resolve()!=Path(self.r['BASE_CHECKPOINT']).resolve():
-            raise ValueError('必须使用工作台登记的通用GR00T-N1.6-3B')
+            if not fixed['custom_config']:
+                raise ValueError('必须使用工作台登记的通用GR00T-N1.6-3B')
+            # Warm start is a new independent run, not HF resume. Only native
+            # Stage1 published checkpoints with known processor statistics.
+            base=base.resolve()
+            if len(base.parents)<4 or base.parents[3]!=self.training.resolve() or base.parent.name!='checkpoints' or base.parents[1].name!='run':
+                raise ValueError('仅可从本设备已发布的原生Stage1 checkpoint新建训练')
+            parent_root=base.parents[2]
+            parent_launch=read(parent_root/'config/web_launch.json',{})
+            marker=read(base/'COMPLETE.json',{})
+            if (parent_launch.get('recipe')!='native_random_v2' or parent_launch.get('preflight_only') or
+                marker.get('recipe')!='native_random_v2' or marker.get('run_id')!=parent_root.name or
+                type(marker.get('step')) is not int or base.name!=f"{parent_root.name}__step{marker['step']:06d}" or
+                not (base/'statistics.json').is_file()):
+                raise ValueError('父权重不是完整已发布原生Stage1')
+            for k,v in (('dataset',dataset),('split',split),('official_root',upstream)):
+                if Path(parent_launch.get(k,'')).resolve()!=v.resolve():
+                    raise ValueError('续训须继承父权重的'+k)
+            if fixed['normalization']!=parent_launch.get('normalization','guarded'):
+                raise ValueError('从已有权重继续训练须继承原归一化')
+            parent=dict(run_id=parent_root.name,checkpoint=str(base),step=marker['step'],
+                        cumulative_step=parent_launch.get('parent_cumulative_step',0)+marker['step'],
+                        optimizer_restored=False,scheduler_restored=False)
         if not all(p.is_file() for p in (dataset/'meta/episodes.jsonl',dataset/'meta/modality.json',
                 dataset/'meta/info.json',base/'config.json',base/'processor_config.json',
                 split,upstream/'gr00t/experiment/experiment.py',upstream/'gr00t/experiment/trainer.py',self.python)):
@@ -311,10 +386,6 @@ class Backend:
             data_split.get('seed')!=42 or len(tr)!=180 or len(va)!=20 or
             set(tr+va)!=data_ids or len(set(tr+va))!=200):
             raise ValueError('必须沿用原Task40 180/20 seed42划分')
-        fixed=dict(seed=42,microbatch=2,accumulation=8,learning_rate=1e-4,steps=6000,arm='baseline')
-        for k,v in fixed.items():
-            if request.get(k,v)!=v or isinstance(request.get(k),bool):
-                raise ValueError('原生Stage1已锁定参数: '+k)
         gpus=request.get('gpus')
         if not isinstance(gpus,list) or len(gpus)!=4 or any(type(g) is not int for g in gpus) or len(set(gpus))!=4:
             raise ValueError('必须选择四个不同A100 rank')
@@ -335,11 +406,11 @@ class Backend:
                   share_existing=request.get('share_existing',False),existing_pids=occupied,
                   dataset=str(dataset.resolve()),checkpoint=str(base.resolve()),split=str(split.resolve()),
                   official_root=str(upstream.resolve()),video_backend=video,workers=workers,
-                  global_decisions=64,train_episodes=180,validation_episodes=20,
+                  global_decisions=4*fixed['microbatch']*fixed['accumulation'],train_episodes=180,validation_episodes=20,
                   validation_enabled=True,asynchronous_validation=False,validation_gpu=None,
-                  checkpoint_interval=1000,preflight_steps=4 if pre else None,
-                  scheduler='cosine',warmup_ratio=.05,weight_decay=1e-5,
-                  normalization='guarded',naming_schema=NAMING_SCHEMA,
+                  preflight_steps=4 if pre else None,parent_checkpoint=parent,
+                  parent_cumulative_step=parent['cumulative_step'] if parent else 0,
+                  naming_schema=NAMING_SCHEMA,
                   output=str(self.training/run),checkpoint_root=str(self.training/run/'run/checkpoints'),
                   category='engineering_preflight' if pre else 'formal_training',**fixed)
         if not pre:
@@ -355,6 +426,8 @@ class Backend:
                 or gate_contract.get('dataset')!=str(dataset.resolve()) or gate_contract.get('split')!=data_split
                 or gate_contract.get('video_backend')!=video or gate_contract.get('workers')!=workers):
                 raise ValueError('预检数据、权重或运行配方不匹配')
+            if fixed['custom_config'] and gate_contract.get('native_options')!=fixed:
+                raise ValueError('自定义训练参数与预检不一致')
             if gate.resolve().is_relative_to(self.training/(evidence['run_id'])):
                 raise ValueError('先将预检证据独立归档再清理临时产物')
             plan['accept_preflight']=str(gate.resolve())
@@ -471,8 +544,8 @@ class Backend:
         return dict(available=allowed,reason='' if allowed else '需要已停止的正式作业与完整训练断点',
                     checkpoint=latest['path'] if latest else None,step=latest['step'] if latest else 0,
                     source=launch['source'],gpus=launch['gpus'],default_steps=launch['steps'],min_steps=launch['steps'],
-                    fixed_budget=True,validation_enabled=launch.get('validation_enabled',True),validation_gpu=None,checkpoint_interval=1000,
-                    default_checkpoint_interval=1000,checkpoint_interval_editable=False)
+                    fixed_budget=True,validation_enabled=launch.get('validation_enabled',True),validation_gpu=None,checkpoint_interval=launch.get('checkpoint_interval',1000),
+                    default_checkpoint_interval=launch.get('checkpoint_interval',1000),checkpoint_interval_editable=False)
 
     def jobs(self):
         result=[]
@@ -501,7 +574,7 @@ class Backend:
                  category=launch['category'],training_complete=status=='completed',validation={'status':'in_process' if not launch.get('recipe') else 'periodic_internal'},
                  can_delete=terminal,can_delete_files=terminal,can_stop=status in ('training','running','validating','submitted'),
                  can_cancel=status in ('queued','waiting_for_gpus'),resume=self.resume_info(root,launch,state),
-                 checkpoint_interval=1000,notes=launch.get('notes',''),queue=queue or None,
+                 checkpoint_interval=launch.get('checkpoint_interval',1000),notes=launch.get('notes',''),queue=queue or None,
                  delete_block_reason='' if terminal else '请等待作业停止',validation_enabled=launch.get('validation_enabled',True),last=last))
         return result
 
@@ -520,7 +593,10 @@ class Backend:
              checkpoints=self.checkpoints(root),checkpoint=str(root/'run/checkpoints'),
              metrics=metrics[-100:],preflight=read(root/'run/preflight.json'),
              log_tail=self.r['tail'](root/'logs/controller.log'),validation=validation,validation_scope='internal',
-             initial_weights=dict(checkpoint=launch['checkpoint'],label='V2_1 原始起点',mode='fresh'),
+             initial_weights=dict(checkpoint=launch['checkpoint'],
+                 label='父权重初始化（新优化器）' if launch.get('parent_checkpoint') else 'V2_1 原始起点',
+                 mode='warm_start' if launch.get('parent_checkpoint') else 'fresh',
+                 parent=launch.get('parent_checkpoint'),optimizer_restored=False),
              training_parameters=dict(values=launch,sources=[str(root/'config/web_launch.json')]),
              resume=self.resume_info(root,launch,read(root/launch['arm']/'status.json',{})))
 
@@ -530,7 +606,8 @@ class Backend:
         if state.get('status') in TERMINAL:raise ValueError('该作业已结束')
         current=state.get('step',0)
         target=request.get('step',current+1)
-        if request.get('next_checkpoint'):target=min((current//1000+1)*1000,launch['steps'])
+        interval=launch.get('checkpoint_interval',1000)
+        if request.get('next_checkpoint'):target=min((current//interval+1)*interval,launch['steps'])
         if type(target) is not int or not current<target<=launch['steps']:
             raise ValueError('停止点须为未来optimizer步且不超过预算')
         control=dict(stop_after_step=target,reason='Workbench V2_1 checkpoint-boundary pause',requested_at=now())

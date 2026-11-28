@@ -44,7 +44,7 @@ def workbench_layout(job_root):
     if type(preflight) is not bool:
         raise ValueError("workbench preflight identity required")
     fields = validate_run_identity(run, config["version"], preflight=preflight)
-    if fields["test_id"] != "test02" or fields["experiment_id"] != "exp01":
+    if not config.get("custom_config",False) and (fields["test_id"] != "test02" or fields["experiment_id"] != "exp01"):
         raise ValueError("recipe belongs to current Test02/Exp01 task; do not infer IDs")
     return root/"run", run
 
@@ -145,9 +145,9 @@ def locate(schedule,ends,index,seed):
     return occurrence,ds,shard,int(order[offset])
 
 
-def cursor(step):
-    if type(step) is not int or not 0<=step<=STEPS:raise ValueError("invalid optimizer step")
-    return step*MICROBATCH*ACCUM
+def cursor(step, steps=STEPS, microbatch=MICROBATCH, accumulation=ACCUM):
+    if type(step) is not int or not 0<=step<=steps:raise ValueError("invalid optimizer step")
+    return step*microbatch*accumulation
 
 
 def atomic(path,value):
@@ -196,13 +196,15 @@ def publish(job_root,native,step,contract,manifest):
     if any(not (source/f).is_file() for f in required):
         raise ValueError("missing native model/optimizer/scheduler/RNG files")
     cfg=read(source/"config.json")
-    if cfg.get("tune_llm") or cfg.get("tune_visual") or cfg.get("tune_top_llm_layers")!=0:
+    expected=contract.get("native_options",{}).get("native_tuning",dict(tune_llm=False,tune_visual=False,tune_top_llm_layers=0,tune_projector=True,tune_diffusion_model=True,tune_vlln=True))
+    if any(cfg.get(k)!=v for k,v in expected.items()):
         raise ValueError("checkpoint freeze contract")
+    saved_cursor=cursor(step,contract["steps"],contract["microbatch"],contract["accumulation"])
     # A small index references the real full HF optimizer/scheduler/RNG files.
     # The existing workbench sees this as a complete checkpoint, but resume
     # always routes to the native trainer, never the sequential trainer.
     torch.save(dict(format="native_hf_v2",step=step,world_size=GPU,
-                    per_rank_sample_cursor=cursor(step),contract=contract,
+                    per_rank_sample_cursor=saved_cursor,contract=contract,
                     optimizer_file="optimizer.pt",scheduler_file="scheduler.pt",
                     rng_files=[f"rng_state_{r}.pth" for r in range(GPU)]),
                source/"training_state.pt")
@@ -214,7 +216,7 @@ def publish(job_root,native,step,contract,manifest):
     files={f:sha(source/f) for f in required+["training_state.pt","v2_1_stage1.json","v2_1_run.json"]}
     write(source/"COMPLETE.json",dict(step=step,world_size=GPU,run_id=run,
             recipe="native_random_v2",source_digest=contract["source_digest"],
-            per_rank_sample_cursor=cursor(step),files=files))
+            per_rank_sample_cursor=saved_cursor,files=files))
     final.parent.mkdir(parents=True,exist_ok=True)
     source.rename(final) # same filesystem; publish only once fully saved
     atomic(final.parent/"latest.json",dict(step=step,path=str(final),world_size=GPU))
@@ -233,6 +235,11 @@ def worker(args):
     job_root=args.job_root.resolve()
     output,run=workbench_layout(job_root)
     job=read(job_root/"config/web_launch.json")
+    from v21_workbench import native_options
+    opts=native_options(job)
+    STEPS,MICROBATCH,ACCUM=(opts[k] for k in ("steps","microbatch","accumulation"))
+    batch=GPU*MICROBATCH*ACCUM
+    def sample_cursor(step):return cursor(step,STEPS,MICROBATCH,ACCUM)
     root=Path(job["official_root"]).resolve()
     source=Path(job["source"]).resolve()
     if Path(__file__).resolve().parent.parent!=source:
@@ -260,8 +267,13 @@ def worker(args):
     if rank==0:
         output.mkdir(parents=True,exist_ok=True)
         if not prepared.exists():
-            prepare(Path(job["dataset"]),Path(job["split"]),Path(job["checkpoint"]),prepared,"guarded")
+            prepare(Path(job["dataset"]),Path(job["split"]),Path(job["checkpoint"]),prepared,
+                    opts["normalization"],tuning=opts["native_tuning"],allow_parent=bool(job.get("parent_checkpoint")))
         manifest=verify_prepared(prepared)
+        if job.get("parent_checkpoint"):
+            # Guard against silent changes of action scale when warm-starting.
+            verify_checkpoint_files(Path(job["checkpoint"]))
+            assert_processor(Path(job["checkpoint"]),prepared)
         # Confirm the supplied split matches the original Stage1 seed42
         # permutation rather than simply being another 180/20 split.
         split=read(prepared/"data_split.json")
@@ -278,7 +290,10 @@ def worker(args):
                       split=read(prepared/"data_split.json"),statistics=manifest["hashes"],
                       world_size=GPU,microbatch=MICROBATCH,accumulation=ACCUM,
                       steps=STEPS,video_backend=job["video_backend"],workers=job["workers"],
-                      seed=42,lr=1e-4,scheduler="cosine",warmup_ratio=.05,weight_decay=1e-5)
+                      seed=42,lr=opts["learning_rate"],scheduler=opts["scheduler"],warmup_ratio=opts["warmup_ratio"],weight_decay=opts["weight_decay"])
+        if opts["custom_config"]:
+            contract["native_options"]=opts
+            contract["parent_checkpoint"]=job.get("parent_checkpoint")
         if not contract["base_weights"]:raise ValueError("generic weight shards missing")
         # Hash the numeric training and validation source, plus video identity
         # (path, size, mtime). No held-out stats used to fit train.
@@ -313,7 +328,7 @@ def worker(args):
         dist.barrier()
         saved=torch.load(resume/"training_state.pt",map_location="cpu",weights_only=False)
         resumed_step=saved["step"]
-        if saved["contract"]!=contract or saved["per_rank_sample_cursor"]!=cursor(resumed_step):
+        if saved["contract"]!=contract or saved["per_rank_sample_cursor"]!=sample_cursor(resumed_step):
             raise ValueError("resume contract/cursor mismatch")
     preflight=job["preflight_only"]
     # Use the same 6000-step scheduler in preflight; disposable run stops at
@@ -361,23 +376,23 @@ def worker(args):
     t.max_steps=steps
     # In this upstream revision global_batch_size is divided only by world size,
     # not by accumulation. Explicit batch_size override is mandatory.
-    t.global_batch_size=64
+    t.global_batch_size=batch
     t.batch_size=MICROBATCH
     t.gradient_accumulation_steps=ACCUM
     t.num_gpus=GPU
-    t.learning_rate=1e-4
-    t.weight_decay=1e-5
-    t.warmup_ratio=.05
+    t.learning_rate=opts["learning_rate"]
+    t.weight_decay=opts["weight_decay"]
+    t.warmup_ratio=opts["warmup_ratio"]
     t.warmup_steps=0
-    t.lr_scheduler_type="cosine"
+    t.lr_scheduler_type=opts["scheduler"]
     t.optim="adamw_torch_fused"
-    t.max_grad_norm=1.
+    t.max_grad_norm=opts["max_grad_norm"]
     t.fp16=False
     t.bf16=True
     t.use_ddp=True
     t.dataloader_num_workers=args.workers
     t.logging_steps=1 if args.preflight else 10
-    t.save_steps=1000
+    t.save_steps=opts["checkpoint_interval"]
     t.save_total_limit=7  # upstream typed config; actual HF rotation disabled by CheckedTrainer
     t.eval_strategy="no"  # Native sharded DatasetFactory asserts this.
     t.use_wandb=False
@@ -390,7 +405,7 @@ def worker(args):
     class IndexedShards(Dataset):
         def __init__(self,mixture):
             self.mixture=mixture
-            self.total=cursor(STEPS)
+            self.total=sample_cursor(STEPS)
             self.schedule,self.ends=rank_schedule(mixture,rank,GPU,self.total)
             self.cache=None;self.cached_occurrence=None
         def __len__(self):return self.total
@@ -498,14 +513,14 @@ def worker(args):
                 c.should_save=True;c.should_training_stop=True;c.should_log=True
             if rank==0:
                 atomic(output/"status.json",dict(status="training",step=step,total_steps=4 if preflight else STEPS,
-                    world_size=GPU,seen_samples=step*GPU*MICROBATCH*ACCUM))
+                    world_size=GPU,seen_samples=step*batch))
             return c
         def on_log(self,a,s,c,logs=None,**kw):
             if rank!=0 or not logs or "loss" not in logs:return
             if not math.isfinite(logs["loss"]) or not math.isfinite(logs.get("grad_norm",float("nan"))):
                 raise FloatingPointError("nonfinite native loss/gradient")
             row=dict(step=s.global_step,fm=logs["loss"],state=0.,grad_norm=logs["grad_norm"],
-                     lr=logs.get("learning_rate"),seen_samples=s.global_step*64,
+                     lr=logs.get("learning_rate"),seen_samples=s.global_step*batch,
                      elapsed_seconds=time.monotonic()-self.start,
                      gpu_peak_allocated=torch.cuda.max_memory_allocated(local),part_loss=self.trainer.part_latest)
             with (output/"metrics.jsonl").open("a") as f:f.write(json.dumps(row)+"\n")
@@ -517,7 +532,7 @@ def worker(args):
                     raise RuntimeError('preflight parameter update/freeze check failed')
                 if resume and not all(self.trainer.restore_checks.values()):
                     raise RuntimeError('strict resume checks incomplete')
-            if (not preflight and s.global_step%1000==0):
+            if (not preflight and (s.global_step%opts["validation_interval"]==0 or s.global_step==STEPS)):
                 heldout_loss(self.trainer.model,self.trainer.indexed.mixture.datasets[0].processor,s.global_step)
             if rank==0:publish(job_root,native,s.global_step,contract,manifest)
             dist.barrier()
@@ -526,12 +541,36 @@ def worker(args):
     class CheckedTrainer(NativeTrainer):
         def __init__(self,*a,**kw):
             model=kw['model']
-            if any(p.requires_grad for p in model.backbone.parameters()):raise RuntimeError('unexpected trainable Eagle')
-            model.backbone.bfloat16();model.action_head.float()
+            tuning=opts["native_tuning"]
+            expected_backbone=bool(tuning["tune_llm"] or tuning["tune_visual"] or tuning["tune_top_llm_layers"])
+            if any(p.requires_grad for p in model.backbone.parameters())!=expected_backbone:
+                raise RuntimeError('native Eagle freeze configuration did not take effect')
+            if expected_backbone:model.backbone.float()
+            else:model.backbone.bfloat16()
+            model.action_head.float()
             super().__init__(*a,**kw)
             model=self.model
-            if any(p.requires_grad for p in model.backbone.parameters()):
-                raise RuntimeError("unexpected trainable Eagle")
+            # Verify actual component requires_grad, not only the serialized flags.
+            modules={"llm":(model.backbone.model.language_model,bool(tuning["tune_llm"] or tuning["tune_top_llm_layers"])),
+                     "vision":(model.backbone.model.vision_model,tuning["tune_visual"]),
+                     "vision_projector":(model.backbone.model.mlp1,tuning["tune_visual"]),
+                     "action_dit":(model.action_head.model,tuning["tune_diffusion_model"]),
+                     "state_encoder":(model.action_head.state_encoder,tuning["tune_projector"]),
+                     "action_encoder":(model.action_head.action_encoder,tuning["tune_projector"]),
+                     "action_decoder":(model.action_head.action_decoder,tuning["tune_projector"]),
+                     "action_vlln":(model.action_head.vlln,tuning["tune_vlln"])}
+            counts={}
+            for name,(module,expected) in modules.items():
+                total=sum(p.numel() for p in module.parameters())
+                count=sum(p.numel() for p in module.parameters() if p.requires_grad)
+                if bool(count)!=expected and total:
+                    raise RuntimeError("native freeze mismatch: "+name)
+                counts[name]=dict(total=total,trainable=count)
+            if tuning["tune_top_llm_layers"]:
+                layers=model.backbone.model.language_model.model.layers
+                n=tuning["tune_top_llm_layers"]
+                if n>len(layers) or any(any(p.requires_grad for p in layer.parameters()) != (i>=len(layers)-n) for i,layer in enumerate(layers)):
+                    raise RuntimeError("native top LLM layer mismatch")
             trainable=[p for p in model.parameters() if p.requires_grad]
             if not trainable or any(p.dtype!=torch.float32 for p in trainable):
                 raise RuntimeError("expected FP32 trainable action expert")
@@ -551,12 +590,13 @@ def worker(args):
             if rank==0:
                 atomic(output/"native_runtime.json",dict(trainable=sum(p.numel() for p in trainable),
                     total=sum(p.numel() for p in model.parameters()),batch=MICROBATCH,accumulation=ACCUM,
-                    scheduler=str(self.args.lr_scheduler_type),optimizer=str(self.args.optim)))
+                    scheduler=str(self.args.lr_scheduler_type),optimizer=str(self.args.optim),
+                    components=counts,native_options=opts))
         def get_train_dataloader(self):
             # Explicit cursor, no reseed or replay of discarded batches.
             gen=torch.Generator().manual_seed(42+rank)
             return DataLoader(self.indexed,batch_size=MICROBATCH,
-                sampler=range(cursor(resumed_step),cursor(STEPS)),
+                sampler=range(sample_cursor(resumed_step),sample_cursor(STEPS)),
                 collate_fn=self.data_collator,num_workers=args.workers,
                 persistent_workers=True,pin_memory=True,generator=gen,
                 multiprocessing_context=self.multiprocessing_context,drop_last=True)
@@ -644,7 +684,7 @@ def worker(args):
                 raise ValueError("preflight did not establish finite nonzero gradients")
             atomic(output/"preflight.json",dict(passed=True,strict_resume=True,contract=contract,
                 run_id=run,resumed_from=resumed_step,step=step,checkpoint=final.name,
-                cursor=cursor(step),restore_checks={"model":True,"optimizer":True,"scheduler":True,"rng":True},rows=rows))
+                cursor=sample_cursor(step),restore_checks={"model":True,"optimizer":True,"scheduler":True,"rng":True},rows=rows))
         terminal="completed" if (step>=4 if preflight else step>=STEPS) else "paused"
         atomic(output/"status.json",dict(status=terminal,step=step,total_steps=4 if preflight else STEPS,
                     world_size=GPU,training_complete=terminal=="completed"))
