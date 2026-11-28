@@ -781,7 +781,8 @@ class LaunchManager:
                 "task_id": plan.get("task_id"), "gpus": sorted(job["gpus"]),
                 "version": plan.get("version"), "group": plan.get("group"),
                 "kind": plan.get("kind"), "seed": plan.get("seed"),
-                "policy_identity": plan.get("policy_identity"), "policy_port": self._policy_port(plan),
+                "policy_identity": plan.get("policy_identity"), "policy_host": plan.get("policy_host"), "policy_port": self._policy_port(plan),
+                "initiator": plan.get("initiator"),
                 "process_start": job.get('process_start'), "batch": plan.get('batch')}
         if plan.get('kind') == 'b1k2026_websocket':
             status['artifacts'] = v12_artifacts(output)

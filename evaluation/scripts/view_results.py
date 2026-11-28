@@ -1358,10 +1358,11 @@ class Handler(BaseHTTPRequestHandler):
                         manager=self._evaluation_for(query.get('device',['local'])[0])
                     value = manager.options() if route.endswith('/options') else manager.snapshot()
                     if not inference and route.endswith('/jobs'):
+                        value=[dict(job,device=job.get('device') or 'local') for job in value]
                         errors={}
                         for key,remote in (self.evaluation_devices or {}).items():
                             try:
-                                value.extend(remote.snapshot())
+                                value.extend(dict(job,device=job.get('device') or key) for job in remote.snapshot())
                                 if remote.error: errors[key]=remote.error
                             except (ValueError,OSError,subprocess.SubprocessError) as error: errors[key]=str(error)
                         self._json({'jobs':value,'device_errors':errors})

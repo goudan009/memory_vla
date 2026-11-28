@@ -15,6 +15,10 @@ const node=(id,title,after)=>({id,title,after,acceptance:'核对结果和保存�
 const plan={version:'v001',author:'Agent',created_at:'2026-11-28',goal:'验证任务状态记忆对阶段决策的影响',reason:'初始方案',nodes:[node('prepare','准备数据',[]),node('train','模型训练',['prepare']),node('eval','闭环评估',['train']),node('report','分析结果',['eval'])],mainline:['prepare','train','eval','report']};
 const agent={experiments:['experiment_01','experiment_02'],detail:{id:'experiment_01',name:'experiment_01',path:'Output/test_01/experiment_01',workflow:{versions:[plan],errors:[]},gates:{},task:{file:'task.md',markdown:'# 实验方案\n\n> 摘要：任务状态监督。'},progress:{file:'progress.md',markdown:'# 执行进度\n\n> 当前动作：训练模型。\n> 下一步：完成评估。\n\n| 阶段 | 状态 | 记录 |\n| --- | --- | --- |\n| 准备数据 | 已完成 | 数据已核验 |\n| 模型训练 | 进行中 | 训练 3000/6000 步 |'}},live:{jobs:[]}};
 const run={_folder:'V_2_1/baseline/task40/run001',version:'V_2_1',group:'baseline',method:'baseline',task_id:40,task_name:'microwave_popcorn',status:'complete',evaluation_mode:'official-eval',requested_episodes:10,completed_episodes:10,recorded_episodes:10,successful_episodes:6,success_rate:0.6,mean_task_progress:70,q_score_episodes:10,mean_q_score:0.65,elapsed_wall_s:3600,configuration:{},episodes:[],_videos:[]};
+const trainJob=(device,status,run,step)=>({run,arm:'baseline',version:'V_2_1',name:run,task:40,method:'baseline',status,gpus:device==='a100'?'0,1':'0',step,max_steps:6000,last:{loss:0.025},initiator:device==='a100'?'agent':'user',category:'research'});
+const liveEval={...run,_folder:'V_2_1/baseline/task40/run002',status:'running',completed_episodes:3,recorded_episodes:3,requested_episodes:10,policy_identity:{host:'172.28.62.17',port:5557}};
+const evalJobs=[{id:'e1',device:'local',folder:liveEval._folder,state:'running',version:'V_2_1',group:'baseline',task_id:40,gpus:[0],policy_host:'172.28.62.17',policy_port:5557,result_ready:true},{id:'e2',device:'a6000',folder:'pending',state:'queued',version:'V_2_1',group:'baseline',task_id:40,gpus:[0],policy_host:'172.28.62.17',policy_port:5557},{id:'e3',device:'local',folder:run._folder,state:'complete',version:'V_2_1',group:'baseline',task_id:40,gpus:[1],result_ready:true}];
+const inferenceJob=(d)=>({pid:44,state:'ready',host:d==='a100'?'172.28.62.17':'100.100.2.30',port:5557,gpu_index:0,checkpoint,label:d==='a100'?'A100 baseline':'Ada baseline',version:'V_2_1',start_ticks:123});
 async function routeAll(page){
  await page.route('**/*',async r=>{
   const u=new URL(r.request().url()), p=u.pathname, q=u.searchParams;
@@ -28,13 +32,15 @@ async function routeAll(page){
   if(p==='/training.js')return script('window.__grootTrainingPageHTML='+JSON.stringify(training('dashboard.html'))+';\n'+training('dashboard.js'));
   if(['/checkpoint_notes.js','/agent_experiments.js','/registry_storage.js','/resource_downloads.js','/task40_diagnostics.js'].includes(p))return script(evaluation(p.slice(1)));
   if(p==='/api/checkpoint-notes')return json({notes:{},devices:{a100:{label:'A100',host:'172.28.62.17'},a6000:{label:'RTX 6000 Ada',host:'100.100.2.30'}}});
-  if(p==='/api/results')return json({runs:[run],updated_at:'12:00'});
+  if(p==='/api/results')return json({runs:[run,liveEval],updated_at:'12:00'});
   if(p==='/api/services')return json({local:{ok:true,gpus:[gpu(0),gpu(1)],processes:[]},remote:{ok:true,gpus:[gpu(0),gpu(1),gpu(2),gpu(3)],processes:[]},a6000:{ok:true,gpus:[gpu(0)],processes:[]}});
   if(p==='/api/training/options')return json({datasets:[task,...[0,21,34].map(i=>({...task,task:i,task_name:'training_task_'+i}))],gpus:[0,1,2,3].map(gpu),checkpoints:[{path:checkpoint,label:'GR00T-N1.6-3B',training_profile:{kind:'base'}}],model_versions:{V_1:{backend:'v1',description:'Baseline',prefix:'v1'}},sync:{}});
-  if(p==='/api/training/jobs')return json({jobs:[],sync:{}});
+  if(p==='/api/training/jobs')return json({jobs:q.get('device')==='a6000'?[trainJob('a6000','training','v2_1__test02__exp01__run004',2000)]:[trainJob('a100','training','v2_1__test02__exp01__run003',3000),trainJob('a100','waiting_for_gpus','v2_1__test02__exp01__run005',0),trainJob('a100','complete','v2_1__test02__exp01__run002',6000)],sync:{}});
   if(p==='/api/launch/options')return json({ready:true,tasks:[{id:40,name:'microwave_popcorn'}],gpus:[gpu(0),gpu(1)],versions:{V_1:['baseline'],V_2_1:['baseline']}});
   if(p==='/api/inference/options')return json({host:'172.28.62.17',gpus:[gpu(0),gpu(1)],sources:['/deployments/groot'],source_dir:'/deployments/groot',python_path:'/env/bin/python',checkpoints:[{path:checkpoint,label:'GR00T-N1.6-3B'}]});
-  if(p==='/api/inference/jobs'||p==='/api/launch/jobs'||p==='/api/benchmarks/jobs')return json({jobs:[]});
+  if(p==='/api/inference/jobs')return json({jobs:[inferenceJob(q.get('device'))]});
+  if(p==='/api/launch/jobs')return json({jobs:evalJobs,device_errors:{}});
+  if(p==='/api/benchmarks/jobs')return json({jobs:[]});
   if(p==='/api/agent-experiments')return json(agent);
   if(p==='/api/registry')return json({items:resources,hosts,experiments:[],generated_at:'2026-11-28 12:00'});
   if(p==='/api/registry/annotations')return json({});
@@ -73,6 +79,10 @@ async function bounds(page,name,selector){
    await page.goto(base+'/?page=training');
    await page.locator('#train-overview-counts strong').first().waitFor({state:'visible'});
    assert.ok(await page.locator('#train-config').isHidden(),'overview is default');
+   await page.locator('#train-overview-list [data-live-train]').last().waitFor({state:'visible'});
+   assert.equal(await page.locator('#train-overview-list [data-live-train]').count(),3,'both devices plus queue');
+   assert.match(await page.locator('#train-overview-list').innerText(),/RTX 6000 Ada/);
+   if([1440,390].includes(width))await page.screenshot({path:output+'/training-overview-'+width+'.png',fullPage:true});
    await page.locator('#train-new').click();
    await page.locator('#train-task-list input').first().waitFor({state:'attached'});
    assert.equal(await page.locator('#page-tab-training').evaluate(e=>getComputedStyle(e).backgroundColor),'rgb(40, 95, 198)');
@@ -87,6 +97,14 @@ async function bounds(page,name,selector){
    await page.locator('#page-tab-launch').click();
    await page.locator('#launch-overview-counts strong').first().waitFor({state:'visible'});
    assert.ok(await page.locator('#launch-create').isHidden(),'launch overview is default');
+   await page.locator('#all-inference-jobs [data-manage-live]').last().waitFor({state:'visible'});
+   assert.equal(await page.locator('#all-inference-jobs [data-manage-live]').count(),2,'services from both devices');
+   assert.equal(await page.locator('#launch-active-jobs article').count(),2,'running and queued evaluations');
+   assert.equal(await page.locator('#launch-jobs article').count(),1,'completed in history only');
+   assert.match(await page.locator('#all-inference-jobs').innerText(),/关联评估 2 个/);
+   assert.ok(await page.locator('#launch-history').evaluate(e=>!e.open),'history collapsed');
+   await bounds(page,'launch overview','#page-launch');
+   if([1440,390].includes(width))await page.screenshot({path:output+'/launch-overview-'+width+'.png',fullPage:true});
    await page.locator('#launch-new-tab').click();
    await page.locator('#launch-task option[value="40"]').waitFor({state:'attached'});
    await page.locator('#inference-panel > summary').click();

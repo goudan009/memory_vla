@@ -640,6 +640,8 @@
     #result-compare-panel>summary{width:max-content;max-width:100%;background:white;border:1px solid var(--line);border-radius:6px;min-height:34px;padding:7px 12px}
     #result-compare-panel[open]>summary{margin-bottom:10px}
     #result-compare-panel[open]{border:1px solid var(--line);border-radius:8px;padding:8px;background:white}
+    .gpu-job-tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:6px}.gpu-job-tag{font-size:10px;padding:2px 5px;background:var(--soft);color:var(--accent);border-radius:4px}
+    .workbench-counts strong>small{font-size:10px;font-weight:400;line-height:1.2}
     @media(max-width:1220px){#launch-create{grid-template-columns:1fr}}
     @media(max-width:780px){.launch-nav{grid-template-columns:1fr 1fr}.launch-live-grid{grid-template-columns:1fr}.workbench-counts{grid-template-columns:repeat(2,minmax(0,1fr))}.workbench-live-list,.launch-live-grid{padding:10px}}
   </style>
@@ -848,7 +850,7 @@
   let inferenceOptions=null, inferenceLoading=false, inferenceBusy=false, launchServiceChoice=null;
   let pendingInference=null;
   let inferenceJobs=[];
-  let allInferenceJobs=[], allInferenceErrors={}, inferenceOverviewBusy=false, launchJobSnapshot=[], launchDeviceErrors={}, launchView='overview';
+  let allInferenceJobs=[], allInferenceErrors={}, inferenceOverviewBusy=false, launchJobSnapshot=[], launchDeviceErrors={}, launchView='overview', launchOverviewBusy=false, serviceSnapshot={};
   const launchActiveStates=new Set(['running','queued','starting','submitted','initializing','stopping','loading','resuming','waiting_for_gpus']);
   const inferenceActiveStates=new Set(['ready','loading','stopping']);
   let collectionPolicies=[];
@@ -1165,6 +1167,7 @@
     const endpoint=String(host)+':'+String(port), linked=new Map();
     for(const job of launchJobSnapshot.filter(j=>launchActiveStates.has(j.state)&&evalEndpoint(j)===endpoint))linked.set(job.folder||job.device+':'+job.id,job.folder||'作业 '+job.id);
     for(const run of runs.filter(r=>r.status==='running'&&evalEndpoint(r)===endpoint))linked.set(run._folder,run._folder);
+    for(const state of Object.values(serviceSnapshot))for(const process of state?.processes||[]){if(process.kind==='evaluation'&&evalEndpoint(process)===endpoint){const folder=process.run_directory?.split('/evaluation/').pop();if(folder&&linked.has(folder))continue;linked.set(folder||state.hostname+':'+process.pid,folder||'PID '+process.pid);}}
     return [...linked.values()];
   }
   function renderLaunchOverview(){
@@ -1172,7 +1175,8 @@
     const ready=allInferenceJobs.filter(j=>inferenceActiveStates.has(j.state));
     const queued=active.filter(j=>['queued','waiting_for_gpus'].includes(j.state));
     const external=runs.filter(r=>r.status==='running'&&!active.some(j=>j.folder===r._folder));
-    $('launch-overview-counts').innerHTML=[['评估运行',active.length-queued.length+external.length],['排队',queued.length],['推理服务',ready.length],['历史作业',launchJobSnapshot.length-active.length]].map(([k,v])=>'<div><small>'+k+'</small><strong>'+v+'</strong></div>').join('');
+    const partial=Object.keys(launchDeviceErrors).length||Object.keys(allInferenceErrors).length;
+    $('launch-overview-counts').innerHTML=[['评估运行',active.length-queued.length+external.length],['排队',queued.length],['推理服务',ready.length],['历史作业',launchJobSnapshot.length-active.length]].map(([k,v])=>'<div><small>'+k+'</small><strong>'+v+(partial?'<small>已读取设备</small>':'')+'</strong></div>').join('');
     $('launch-active-count').textContent=String(active.length+external.length);
     $('launch-history-count').textContent=String(launchJobSnapshot.length-active.length);
     $('launch-device-status').textContent=[...Object.keys(launchDeviceErrors).map(d=>d+' 评估不可查'),...Object.keys(allInferenceErrors).map(d=>d+' 推理不可查')].join(' · ');
@@ -1682,9 +1686,12 @@
       ${workerLog?logPanel(forward?'forward':'sim',forward?'前向日志':'仿真日志',workerLog):''}`;
   }
   async function refreshLaunchJobs() {
+    if(launchOverviewBusy)return;
+    launchOverviewBusy=true;
     try{
       const data=await launchAPI('jobs');
-      const jobs=data.jobs||[], list=$('launch-jobs'), live=$('launch-active-jobs');
+      if(!Array.isArray(data.jobs))throw Error('评估记录不可查');
+      const jobs=data.jobs, list=$('launch-jobs'), live=$('launch-active-jobs');
       launchJobSnapshot=jobs;launchDeviceErrors=data.device_errors||{};
       const openPanels=new Set([...$('launch-overview').querySelectorAll('details[open][data-log]')].map(panel=>panel.dataset.log));
       const active=jobs.filter(job=>launchActiveStates.has(job.state)), history=jobs.filter(job=>!launchActiveStates.has(job.state));
@@ -1702,7 +1709,7 @@
         return `<article class="launch-job" data-launch-job="${esc(job.id)}"><div class="launch-job-top"><strong>${esc(title)}</strong>${statusBadge(job.state)}</div>
           <div class="subtle">${device}${evalEndpoint(job)?' · 推理 '+esc(evalEndpoint(job)):''} · ${esc(({agent:'Agent',user:'用户'})[job.initiator]||'来源未记录')}</div>
           ${(()=>{const r=runs.find(r=>r._folder===job.folder);return r?`<div class="workbench-live-foot"><span>${esc(r.completed_episodes??r.recorded_episodes??0)} / ${esc(r.requested_episodes??'—')} 回合</span><span>成功率 ${pct(r.success_rate)}</span></div>`:'';})()}
-          <details><summary class="subtle">作业信息</summary><div class="subtle">PID ${esc(safe(job.pid))} · ${esc(safe(job.started_at))}<br>${esc(job.output||'')}</div></details>
+          <details data-log="${esc(job.id+':info')}"${openPanels.has(job.id+':info')?' open':''}><summary class="subtle">作业信息</summary><div class="subtle">PID ${esc(safe(job.pid))} · ${esc(safe(job.started_at))}<br>${esc(job.output||'')}</div></details>
           ${collect||forward?renderTask40Job(job,logPanel):''}
           ${restore&&job.state==='running'?`<button type="button" data-restore-stop="${esc(job.id)}">停止恢复任务</button>`:''}
           ${!collect&&!forward&&job.result_ready?`<button type="button" data-run="${esc(job.folder||'')}">评估结果 →</button>`:''}
@@ -1724,7 +1731,8 @@
         actions.innerHTML=evaluationButtons(runs.find(r=>r._folder===job.folder)||{_folder:job.folder,status:job.state,evaluation_mode:'official-eval'});
         panel.appendChild(actions);bindEvaluationButtons(actions);
       }
-    }catch(error){launchDeviceErrors={all:error.message};launchJobSnapshot=[];$('launch-active-jobs').textContent='评估状态不可查';renderLaunchOverview();}
+    }catch(error){launchDeviceErrors={all:error.message};launchJobSnapshot=[];$('launch-active-jobs').textContent='评估状态不可查';$('launch-jobs').textContent='历史状态不可查';renderLaunchOverview();}
+    finally{launchOverviewBusy=false;}
   }
   function evaluationButtons(r) {
     if(!r) return '';
@@ -1925,12 +1933,16 @@
       available.push(labels[side]+' '+gpus.length+' 卡');
       $(side+'-gpus').innerHTML=gpus.map(g=>{
         const percent=Math.max(0,Math.min(100,100*g.used_mb/g.total_mb));
-        return `<div class="gpu-reading${percent>=90?' busy':''}" title="${esc(g.name)}"><div class="gpu-reading-title"><span>GPU ${esc(g.index)}</span><strong>${(g.used_mb/1024).toFixed(1)} / ${(g.total_mb/1024).toFixed(0)} GiB</strong></div><div class="gpu-meter"><span style="width:${percent.toFixed(1)}%"></span></div><small>显存 ${percent.toFixed(0)}% · GPU 利用率 ${esc(g.utilization)}%</small></div>`;
+        const processes=(state.processes||[]).filter(p=>String(p.gpu??'').split(/[ ,]+/).map(v=>v.replace(/^cuda:/,'')).includes(String(g.index)));
+        const labels={training:'训练',inference:'推理',evaluation:'评估'};
+        const tags=processes.map(p=>`<span class="gpu-job-tag" title="${esc(p.label||p.run_directory||p.model||'')} · PID ${esc(p.pid)}">${esc(labels[p.kind]||p.kind)} · ${esc(p.pid)}</span>`).join('');
+        return `<div class="gpu-reading${percent>=90?' busy':''}" title="${esc(g.name)}"><div class="gpu-reading-title"><span>GPU ${esc(g.index)}</span><strong>${(g.used_mb/1024).toFixed(1)} / ${(g.total_mb/1024).toFixed(0)} GiB</strong></div><div class="gpu-meter"><span style="width:${percent.toFixed(1)}%"></span></div><small>显存 ${percent.toFixed(0)}% · 利用率 ${esc(g.utilization)}%</small><div class="gpu-job-tags">${tags||'<small>未匹配到已识别作业</small>'}</div></div>`;
       }).join('');
     }
     $('gpu-summary-status').textContent=available.join(' · ');
   }
   function renderServices(data) {
+    serviceSnapshot=data||{};
     renderGpuUsage(data);
     renderLaunchServices(data);
     const optional=data?.a6000, label='RTX 6000 Ada';
@@ -1952,22 +1964,24 @@
         body.textContent=state?.ok===false?`${state.error||"检查失败"} · ${state.checked_at||""}`:"正在检查服务…";
         continue;
       }
-      const local=side==="local", rows=(state.processes||[]).filter(p=>p.kind===(local?"evaluation":"inference"));
+      const local=side==="local", rows=state.processes||[];
       const ready=rows.filter(p=>p.listening_ports?.includes(Number(p.configured_port))).length;
-      count.textContent=local?`${rows.length} 个评估进程 · ${rows.reduce((n,p)=>n+(p.n_envs||1),0)} 个环境`:`${rows.length} 个推理进程 · ${ready} 个已监听`;
+      count.textContent=`${rows.length} 个进程`;
       $(side+'-service-summary').textContent=`${local?'4090':'A100'} · ${count.textContent}`;
       const lines=rows.map(p=>{
+        if(p.kind==='training')return `<div class="service-row"><strong>训练 · ${esc(p.label||p.run_directory||'')}</strong><div class="service-path">GPU ${esc(p.gpu??'?')} · PID ${esc(p.pid)}</div></div>`;
+        const isEval=p.kind==='evaluation';
         const gpu=p.gpu==null||p.gpu===""?"GPU 未知":`GPU ${p.gpu}`;
         const modelParts=(p.model||"未指定模型").split("/").filter(Boolean);
         const policy=inferenceJobs.find(j=>j.pid===p.pid) || inferenceOptions?.checkpoints?.find(c=>c.path===p.model);
         const modelLabel=policy?.label || modelParts.slice(modelParts.at(-2)==="checkpoints"?-4:-2).join("/");
-        const details=local?`${p.task_id==null?(p.env_name||"").split("/").pop():taskLabel(p)} · ${p.n_envs||1} 环境`:modelLabel;
+        const details=isEval?`${p.task_id==null?(p.env_name||"").split("/").pop():taskLabel(p)} · ${p.n_envs||1} 环境`:modelLabel;
         const runLabel=(p.run_directory||"").split("/evaluation/").pop();
-        const runLine=local&&p.run_directory?`<div class="service-path" title="${esc(p.run_directory)}">${esc(runLabel)}</div>`:"";
-        const ports=local?`推理 → ${p.policy_host||"-"}:${p.policy_port||"-"}`:p.listening_ports===null?"监听端口无法检查":p.listening_ports?.length?`监听端口：${p.listening_ports.join(", ")}`:`未监听 · 配置端口 ${p.configured_port||"-"}`;
+        const runLine=isEval&&p.run_directory?`<div class="service-path" title="${esc(p.run_directory)}">${esc(runLabel)}</div>`:"";
+        const ports=isEval?`推理 → ${p.policy_host||"-"}:${p.policy_port||"-"}`:p.listening_ports===null?"监听端口无法检查":p.listening_ports?.length?`监听端口：${p.listening_ports.join(", ")}`:`未监听 · 配置端口 ${p.configured_port||"-"}`;
         return `<div class="service-row" title="PID ${esc(p.pid)}"><div class="service-title"><span class="chip gpu">${esc(gpu)}</span><strong title="${esc(local?p.env_name||"":p.model||"")}">${esc(details)}</strong></div>${runLine}<div class="service-connection"><span class="chip port">${esc(ports)}</span></div></div>`;
       });
-      const empty=local?"当前没有正在运行的评估进程。":"当前没有 GR00T 推理服务进程。";
+      const empty='暂无已识别进程';
       body.innerHTML=(lines.join("")||`<div class="empty">${empty}</div>`)+`<div class="service-foot" title="${local?"按 rollout 主进程计数，评估进程本身不监听服务端口":"只读检查进程和监听端口，不发送推理请求"}"><span>${esc(state.host||state.hostname||"")}</span><span>更新于 ${esc(state.checked_at||"-")}</span></div>`;
       if(state.ports_error) body.innerHTML+='<div class="notice">无法检查监听端口</div>';
     }

@@ -82,7 +82,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
   const stateBadge = state => '<span class="status ' + (state === 'failed' ? 'failed' :
     ['complete','completed','cancelled','stopped'].includes(state) ? 'complete' : 'running') + '">' + esc(stateName(state)) + '</span>';
   let mounted = false, options = null, jobs = [], chosen = null, detail = null, busy = false, refreshing = false, view = 'overview', lastOptionsAt = 0, recommendation = null, jobActionBusy = false;
-  let trainingDevice = 'a100';
+  let trainingDevice = 'a100', refreshPromise=null, switchingDevice=false;
   const jobDevices=['a100','a6000'], jobSnapshots=new Map();
   const liveStates=new Set(['training','running','submitted','initializing','starting','validating','resuming','queued','waiting_for_gpus','waiting_for_four_runs','converting','syncing']);
   const queueStates=new Set(['queued','waiting_for_gpus','waiting_for_four_runs']);
@@ -573,7 +573,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
     busy = true; el('train-submit').disabled = el('train-check').disabled = true;
     try {
       const params = parameters();
-      message(start ? '检查 '+deviceLabel()+' 参数、同步源码并提交训练…' : '检查数据划分、GPU、权重和训练参数…');
+      message(start ? '提交训练…' : '检查配置…');
       const result = await api(start ? 'start' : 'preview', params);
       el('train-plan').hidden = false; el('train-plan').textContent = JSON.stringify(result,null,2);
       el('train-plan-details').hidden = false;
@@ -597,7 +597,8 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
     const all=jobDevices.flatMap(device=>(jobSnapshots.get(device)?.jobs||[]).map(job=>({device,job})));
     const live=all.filter(({job})=>liveStates.has(job.status));
     const queued=live.filter(({job})=>queueStates.has(job.status));
-    const count=(label,n)=>'<div><small>'+label+'</small><strong>'+n+'</strong></div>';
+    const partial=jobDevices.some(d=>!jobSnapshots.has(d)||jobSnapshots.get(d)?.error);
+    const count=(label,n)=>'<div><small>'+label+'</small><strong>'+n+(partial?'<small>已读取设备</small>':'')+'</strong></div>';
     el('train-active-count').textContent=String(live.length);
     el('train-overview-counts').innerHTML=count('运行中',live.length-queued.length)+count('排队',queued.length)+count('已完成',all.filter(({job})=>['complete','completed'].includes(job.status)).length)+count('异常 / 停止',all.filter(({job})=>['failed','stopped','paused'].includes(job.status)).length);
     el('train-overview-status').textContent=jobDevices.map(d=>deviceName(d)+(jobSnapshots.get(d)?.error?' · 不可查':jobSnapshots.has(d)?' · 已读取':' · 读取中')).join(' / ');
@@ -608,7 +609,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
       return '<button type="button" class="workbench-live-row" data-live-train="'+i+'"><div class="workbench-live-head"><strong>'+esc(jobVersion(job)+' · '+taskLabel(job)+' · '+methodLabel(jobMethod(job)))+'</strong>'+stateBadge(job.status)+'</div><div class="subtle">'+esc(job.run)+' · '+esc(deviceName(device))+' · GPU '+esc(job.gpus??'未知')+' · '+esc(({agent:'Agent',user:'用户'})[job.initiator]||'来源未记录')+'</div><div class="progress-track"><span style="width:'+pct+'%"></span></div><div class="workbench-live-foot"><span>'+esc(job.step??'—')+' / '+esc(job.max_steps??'—')+' 步</span><span>Loss '+fmt(job.last?.loss)+'</span><span>详情 →</span></div></button>';
     }).join(''):'<p class="empty">'+(jobDevices.some(d=>jobSnapshots.get(d)?.error)?'部分设备不可查':'暂无运行任务')+'</p>';
     list.querySelectorAll('[data-live-train]').forEach(button=>button.onclick=async()=>{
-      if(busy||jobActionBusy)return;
+      if(busy||jobActionBusy||switchingDevice)return;
       const {device,job}=cards[Number(button.dataset.liveTrain)];
       if(device!==trainingDevice){el('train-device').value=device;await el('train-device').onchange();}
       if(device!==trainingDevice)return;
@@ -621,10 +622,10 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
   function renderJobs() {
     const scroll = el('train-jobs').scrollTop;
     const search = (el('train-job-search').value || '').trim().toLowerCase().replace(/task\s+/g,'task');
-    const filter = el('train-job-filter').value || 'all', owner=el('train-job-owner').value||'all', category=el('train-job-category').value||'research', filtering = !!search || filter !== 'all'||owner!=='all'||category==='engineering';
+    const filter = el('train-job-filter').value || 'history', owner=el('train-job-owner').value||'all', category=el('train-job-category').value||'research', filtering = !!search || !['all','history'].includes(filter)||owner!=='all'||category==='engineering';
     const stateGroups = {active:['training','running','submitted','initializing','starting','validating','resuming'],
       queued:['queued','waiting_for_gpus','waiting_for_four_runs'],complete:['complete','completed'],failed:['failed','stopped','paused']};
-    const visible = jobs.map((job,i)=>({job,i})).filter(({job}) => (category==='all'||(category==='engineering'?job.category==='engineering_preflight':job.category!=='engineering_preflight'||chosen?.run===job.run))&&(owner==='all'||owner===(job.initiator||'unknown'))&&(!stateGroups[filter] || stateGroups[filter].includes(job.status)) &&
+    const visible = jobs.map((job,i)=>({job,i})).filter(({job}) => (category==='all'||(category==='engineering'?job.category==='engineering_preflight':job.category!=='engineering_preflight'||chosen?.run===job.run))&&(owner==='all'||owner===(job.initiator||'unknown'))&&(filter==='history'?(!liveStates.has(job.status)||(view==='detail'&&chosen?.run===job.run&&chosen?.arm===job.arm)):(!stateGroups[filter] || stateGroups[filter].includes(job.status))) &&
       (!search || [job.name,job.run,jobVersion(job),...jobTasks(job).map(task=>'task'+task),taskLabel(job),jobMethod(job),job.training_id,job.notes].join(' ').toLowerCase().includes(search)));
     el('train-count').textContent = visible.length + ' / ' + jobs.length;
     const versions = new Map();
@@ -1175,16 +1176,18 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
       option.textContent=option.dataset.baseLabel+checkpointNotes.brief(trainingDevice,option.value);
     }
   });
-  async function refresh() {
-    if (refreshing) return;
+  function refresh(){
+    if(refreshPromise)return refreshPromise;
+    refreshPromise=refreshImpl().finally(()=>{refreshPromise=null;});
+    return refreshPromise;
+  }
+  async function refreshImpl() {
     refreshing = true;
     try {
-      const current=trainingDevice;
       const settled=await Promise.allSettled(jobDevices.map(async device=>{const response=await fetch('/api/training/jobs?device='+device,{cache:'no-store'});const data=await response.json();if(!response.ok||!Array.isArray(data.jobs))throw Error(data.error||'记录不可查');return data;}));
       settled.forEach((r,i)=>jobSnapshots.set(jobDevices[i],r.status==='fulfilled'?r.value:{jobs:[],error:String(r.reason)}));
       renderOverview();
-      if(current!==trainingDevice)return;
-      const result=jobSnapshots.get(current);if(result.error){jobs=[];renderJobs();throw Error(deviceLabel()+' 不可查');}
+      const result=jobSnapshots.get(trainingDevice);if(result.error){jobs=[];renderJobs();throw Error(deviceLabel()+' 不可查');}
       jobs=result.jobs.filter(job=>job.status!=='cancelled');syncStatus(result.sync);
       if (chosen && !currentJob()) {
         chosen = null; detail = null;
@@ -1211,7 +1214,8 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
     el('train-next').onclick = () => { if (validateSetup(setupStep)) { message(''); showSetupStep(setupStep+1, true); } };
     showSetupStep(0);
     el('train-device').onchange = async () => {
-      if(busy || jobActionBusy){el('train-device').value=trainingDevice;return;}
+      if(busy || jobActionBusy || switchingDevice){el('train-device').value=trainingDevice;return;}
+      switchingDevice=true;el('train-device').disabled=true;
       trainingDevice=el('train-device').value;
       options=null;jobs=[];chosen=null;detail=null;lastOptionsAt=0;
       el('train-dataset').innerHTML='';el('train-task-list').innerHTML='';el('train-task-selection').innerHTML='';
@@ -1222,11 +1226,11 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
       el('train-validation-enabled').checked=trainingDevice==='a100';
       el('train-device-label').textContent=deviceLabel();
       el('train-device-hint').hidden=trainingDevice==='a100';
-      el('train-device-hint').textContent='单卡开发训练；先准备任务数据，训练后单独评估权重。设备离线时不会自动转到其他机器。';
+      el('train-device-hint').textContent='单卡训练 · 独立评估';
       selectView(view==='new'?'new':'overview');invalidatePlan();
-      try{await refresh();await loadOptions();}catch(error){
-        if(error.name!=='DeviceChanged') message(deviceLabel()+' 读取失败，设备可能离线：'+error.message,true);
-      }
+      try{await refresh();const result=jobSnapshots.get(trainingDevice);if(result&&!result.error){jobs=result.jobs.filter(j=>j.status!=='cancelled');renderJobs();}await loadOptions();}catch(error){
+        if(error.name!=='DeviceChanged') message(deviceLabel()+' 不可查：'+error.message,true);
+      }finally{switchingDevice=false;el('train-device').disabled=false;}
     };
     el('train-prepare-data').onclick = async () => {
       try {
