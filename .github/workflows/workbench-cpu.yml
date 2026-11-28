@@ -9,6 +9,7 @@ on:
       - 'tests/test_resource_downloads.py'
       - 'tests/test_workbench_resource_safety.py'
       - 'tests/workbench_download_ui.cjs'
+      - 'tests/workbench_layout_browser.cjs'
       - '.github/workflows/workbench-cpu.yml'
   workflow_dispatch:
 permissions:
@@ -41,3 +42,25 @@ jobs:
           node --check evaluation/scripts/agent_experiments.js
           node --check train/dashboard.js
           node -e 'const fs=require("fs");for(const p of ["evaluation/scripts/result_viewer.html","evaluation/scripts/registry_view.html","train/dashboard.html"]){for(const m of fs.readFileSync(p,"utf8").matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g)){if(m[1].trim())new Function(m[1]);}}'
+
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            evaluation/scripts
+            train
+            tests
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --no-save --package-lock=false playwright
+      - run: npx playwright install --with-deps chromium
+      - run: node tests/workbench_layout_browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: workbench-layout-screenshots
+          path: workbench-screenshots/
