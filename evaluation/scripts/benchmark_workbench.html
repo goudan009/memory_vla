@@ -37,6 +37,7 @@
 
 #bench-result-switch button[aria-pressed=true]{background:var(--soft);color:var(--accent);border-color:#c7d8f5}
 .bench-job[aria-selected=true]{background:var(--soft);box-shadow:none;border:1px solid #9abaf0}
+#bench-result-switch{margin-bottom:10px;gap:4px}#bench-result-switch button{padding:6px 10px;border-radius:6px}#bench-result-switch button[aria-pressed=true]{background:var(--soft);color:var(--accent);border-color:#c7d8f5}
 </style>
 <div id="benchmark-selector" class="benchmark-switch">
  <label for="benchmark-choice">Benchmark<select id="benchmark-choice" aria-label="Benchmark"><option value="b1k">BEHAVIOR-1K</option><option value="libero">LIBERO</option><option value="mikasa">MIKASA-Robo · 待接入</option><option value="simpler">SimplerEnv · 待接入</option></select></label>
@@ -106,8 +107,8 @@
   </div>
  </div>
 </div>
-<div id="bench-result-switch" hidden><span class="bench-subtle">BEHAVIOR-1K</span><button type="button" id="bench-policy-results" aria-pressed="true">策略评估</button><button type="button" id="bench-code-results" aria-pressed="false">开发快测</button></div>
-<details id="bench-code-checks" hidden><summary>训练前检查 <small>网络回归 / 真实动作短训练</small></summary>
+<div id="bench-result-switch" hidden><button type="button" id="bench-policy-results" aria-pressed="true">策略评估</button><button type="button" id="bench-code-results" aria-pressed="false">开发快测</button></div>
+<details id="bench-code-checks" hidden><summary>开发快测 <small>网络回归 / 短训练</small></summary>
  <form id="bench-code-form" class="bench-form">
   <div class="bench-wide bench-subtle">运行当前 V1 开发代码与固定 B1K 诊断样本，不评估训练表单选择的权重，也不保存正式训练模型。</div>
   <label>检查项目<select id="bench-code-kind"><option value="network">网络回归 · 约 1 分钟</option><option value="action">真实动作短训练 · 每组约 3 分钟</option></select></label><label>本机 GPU<select id="bench-code-gpu"></select></label>

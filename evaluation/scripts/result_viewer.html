@@ -644,32 +644,71 @@
     .workbench-counts strong>small{font-size:10px;font-weight:400;line-height:1.2}
     @media(max-width:1220px){#launch-create{grid-template-columns:1fr}}
     @media(max-width:780px){.launch-nav{grid-template-columns:1fr 1fr}.launch-live-grid{grid-template-columns:1fr}.workbench-counts{grid-template-columns:repeat(2,minmax(0,1fr))}.workbench-live-list,.launch-live-grid{padding:10px}}
+
+    /* Single navigation, no repeated page title or permanent status strip. */
+    .sr-only{position:absolute!important;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+    body>header{min-height:60px;padding-block:9px;gap:14px}
+    .page-nav-link{order:0}
+    .header-actions{gap:6px}
+    #refresh{width:34px;min-width:34px;height:34px;padding:0;font-size:19px}
+    #open-device-dialog{height:34px;padding:5px 11px;font-weight:550;color:#41546a;white-space:nowrap}
+    #device-alert-dot:not([hidden]){display:inline-block;width:6px;height:6px;border-radius:50%;background:#b77a30;margin-left:3px;vertical-align:middle}
+    #device-dialog{width:min(1080px,calc(100vw - 32px));max-width:calc(100vw - 32px);max-height:calc(100dvh - 48px);padding:0;border:1px solid var(--line);border-radius:12px;color:var(--ink);background:white;box-shadow:0 12px 48px #19283b24;overflow:auto}
+    #device-dialog::backdrop{background:#19283b55}
+    .device-dialog-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--line);position:sticky;top:0;background:white;z-index:1}
+    .device-dialog-head h2{font-size:18px;margin:0 0 3px}.device-dialog-head small{color:var(--muted);font-size:12px}
+    #close-device-dialog{width:34px;height:34px;padding:0;font-size:23px;border-color:transparent}
+    .device-dialog-body{padding:14px 18px}
+    #device-dialog #gpu-overview{margin:0;padding:0;background:none}
+    #device-dialog #service-overview{margin:12px 0 0;border:1px solid var(--line)}
+    #device-dialog #service-overview .services{margin:0}
+    main{padding-top:16px}
+    .page-foot[hidden]{display:none!important}
+    #result-compare-panel:not([open]){display:none}
+    #result-compare-open{padding:5px 10px;font-size:12px;min-height:30px}
+    #page-results>.run-browser>.section-head{flex-wrap:wrap;gap:6px}
+    #page-results>.run-browser>.section-head h2{flex:1}
+    .inline-notice:empty{display:none}
+    .inline-notice{font-size:12px;color:#91621e;background:#fff7e9;padding:9px 14px;border-bottom:1px solid var(--line);overflow-wrap:anywhere}
+    .launch-sidebar{min-height:0!important}
+    .launch-nav button{border-color:transparent}
+    .launch-nav button[aria-pressed=true]{border-color:transparent}
+    .launch-nav button#launch-new-tab{color:#285fc6}
+    .launch-nav button#launch-new-tab[aria-pressed=true]{background:#285fc6;color:white}
+    .workbench-counts{padding:12px;gap:0;background:white}
+    .workbench-counts>div{background:none;border-radius:0;border-right:1px solid var(--line);padding:4px 14px}
+    .workbench-counts>div:last-child{border-right:0}
+    .workbench-counts strong{font-size:24px}
+    .launch-live-grid h3 small{display:none}
+    .launch-live-grid .launch-job{margin-bottom:6px}
+    #launch-history>summary,#inference-history>summary{font-weight:550}
+    @media(max-width:780px){body>header{padding:9px 12px;gap:7px}main{padding-top:12px}.workbench-counts>div:nth-child(2){border-right:0}.workbench-counts>div{padding:6px 10px}.device-dialog-body{padding:12px}.device-dialog-head{padding:12px}}
   </style>
 </head>
 <body>
-  <header><div class="brand"><div class="brand-mark" aria-hidden="true">M</div><div><h1>MemoryVLA</h1><div id="caption" class="subtle" role="status">正在读取评估记录…</div></div></div><nav class="page-nav" aria-label="训练评估工作台页面">
+  <header><div class="brand"><div class="brand-mark" aria-hidden="true">M</div><div><h1>MemoryVLA</h1><div id="caption" class="sr-only" role="status"></div></div></div><nav class="page-nav" aria-label="训练评估工作台页面">
+    <a class="page-nav-link" id="page-tab-ai" href="/ai" aria-label="实验管理" title="实验管理"><span class="nav-label-full">实验管理</span><span class="nav-label-short">实验</span></a>
     <div class="page-tabs" role="tablist" aria-label="工作台">
       <button type="button" id="page-tab-training" role="tab" aria-label="启动训练" aria-controls="page-training" aria-selected="false" onclick="selectPage('training')"><span class="nav-label-full">模型训练</span><span class="nav-label-short">训练</span></button>
       <button type="button" id="page-tab-launch" role="tab" aria-label="推理评估" aria-controls="page-launch" aria-selected="false" onclick="selectPage('launch')"><span class="nav-label-full">推理评估</span><span class="nav-label-short">推理</span></button>
       <button type="button" id="page-tab-results" role="tab" aria-label="评估结果" aria-controls="page-results" aria-selected="true" onclick="selectPage('results')"><span class="nav-label-full">结果分析</span><span class="nav-label-short">结果</span></button>
       <button type="button" id="page-tab-registry" role="tab" aria-label="资源管理" aria-controls="page-registry" aria-selected="false" onclick="selectPage('registry')"><span class="nav-label-full">资源管理</span><span class="nav-label-short">资源</span></button>
     </div>
-    <a class="page-nav-link" id="page-tab-ai" href="/ai" aria-label="实验管理" title="实验管理"><span class="nav-label-full">实验管理</span><span class="nav-label-short">实验</span></a>
   </nav>
-    <div class="header-actions"><span class="live-label" title="每 5 秒自动更新">自动更新</span><button id="install-workbench" type="button" hidden>安装应用</button><button id="refresh" type="button" aria-label="手动刷新" title="手动刷新">↻ <span>刷新</span></button></div></header>
-  <main>
-    <div class="workspace-heading"><h2 id="workspace-title">结果分析</h2><details class="gpu-overview-panel" aria-label="运行概览"><summary><span>运行概览</span><small id="gpu-summary-status">读取设备…</small></summary><div id="gpu-overview" class="gpu-overview">
+    <div class="header-actions"><button id="open-device-dialog" type="button" aria-haspopup="dialog" aria-controls="device-dialog" title="设备与运行进程">设备 <span id="device-alert-dot" hidden aria-label="部分设备不可查"></span></button><button id="install-workbench" type="button" hidden>安装应用</button><button id="refresh" type="button" aria-label="手动刷新" title="手动刷新">↻</button></div></header>
+  <dialog id="device-dialog" aria-labelledby="device-dialog-title"><div class="device-dialog-head"><div><h2 id="device-dialog-title">设备与进程</h2><small id="gpu-summary-status">读取设备…</small></div><button id="close-device-dialog" type="button" aria-label="关闭设备窗口">×</button></div><div class="device-dialog-body"><div id="gpu-overview" class="gpu-overview">
       <div class="gpu-machine"><div class="gpu-machine-head"><strong>A100 · 训练 / 推理</strong><small id="remote-gpu-time">读取中…</small></div><div id="remote-gpus" class="gpu-cards"><div class="gpu-reading-error">正在读取 A100 显存…</div></div></div>
       <div class="gpu-machine"><div class="gpu-machine-head"><strong>4090 · 仿真评估</strong><small id="local-gpu-time">读取中…</small></div><div id="local-gpus" class="gpu-cards"><div class="gpu-reading-error">正在读取本机显存…</div></div></div>
       <div class="gpu-machine"><div class="gpu-machine-head"><strong>RTX 6000 Ada · 训练 / 评估</strong><small id="a6000-gpu-time">读取中…</small></div><div id="a6000-gpus" class="gpu-cards"><div class="gpu-reading-error">正在检查设备…</div></div></div>
     </div>
     <details id="service-overview" class="service-overview"><summary>服务状态 <span class="service-counts"><span id="local-service-summary">4090 · 检查中…</span><span id="remote-service-summary">A100 · 检查中…</span><span id="a6000-service-summary">RTX 6000 Ada · 检查中…</span></span></summary>
     <div class="services">
-      <section aria-label="4090本地评估服务"><div class="service-head"><h2>4090 <span class="subtle">/ 本地评估</span></h2><span id="local-service-count" class="subtle">检查中…</span></div><div id="local-services" class="service-body">正在检查本地进程…</div></section>
-      <section aria-label="A100推理服务"><div class="service-head"><h2>A100 <span class="subtle">/ 推理服务</span></h2><span id="remote-service-count" class="subtle">检查中…</span></div><div id="remote-services" class="service-body">正在检查远端进程和监听端口…</div></section>
-      <section aria-label="RTX 6000 Ada服务"><div class="service-head"><h2>RTX 6000 Ada <span class="subtle">/ 100.100.2.30</span></h2><span id="a6000-service-count" class="subtle">检查中…</span></div><div id="a6000-services" class="service-body">正在检查单卡设备…</div></section>
+      <section aria-label="4090本地评估服务"><div class="service-head"><h2>4090</h2><span id="local-service-count" class="subtle">检查中…</span></div><div id="local-services" class="service-body">正在检查本地进程…</div></section>
+      <section aria-label="A100推理服务"><div class="service-head"><h2>A100</h2><span id="remote-service-count" class="subtle">检查中…</span></div><div id="remote-services" class="service-body">正在检查远端进程和监听端口…</div></section>
+      <section aria-label="RTX 6000 Ada服务"><div class="service-head"><h2>RTX 6000 Ada</h2><span id="a6000-service-count" class="subtle">检查中…</span></div><div id="a6000-services" class="service-body">正在检查单卡设备…</div></section>
     </div>
-    </details></details></div>
+    </details></div></dialog>
+  <main>
     <div id="agent-board" class="layout" hidden>
       <section class="run-browser" aria-label="实验目录">
         <div class="section-head"><h2>实验目录</h2><span id="agent-experiment-count" class="subtle"></span></div><div class="filters"><input id="agent-experiment-search" type="search" placeholder="搜索测试号 / 实验号" aria-label="搜索实验目录"></div>
@@ -690,7 +729,7 @@
     </div>
     <div id="page-training" role="tabpanel" aria-labelledby="page-tab-training" hidden></div>
     <div id="page-launch" role="tabpanel" aria-labelledby="page-tab-launch" hidden>
-      <div class="layout launch-workspace"><section class="run-browser launch-sidebar" aria-label="推理评估导航"><div class="section-head"><h2>作业管理</h2></div><div class="launch-nav"><button type="button" id="launch-overview-tab" aria-pressed="true">运行总览</button><button type="button" id="launch-new-tab" aria-pressed="false">＋ 新建推理 / 评估</button></div></section><div class="launch-content"><section id="launch-overview"><div class="detail-heading"><h2>运行总览</h2><span id="launch-device-status" class="subtle"></span></div><div id="launch-overview-counts" class="workbench-counts"></div><div class="launch-live-grid"><div><h3>评估作业 <small id="launch-active-count"></small></h3><div id="launch-active-jobs"></div><details id="launch-history" class="compact-fold"><summary>历史评估 <small id="launch-history-count"></small></summary><div id="launch-jobs" class="launch-jobs-list"></div></details></div><div><h3>推理服务</h3><div id="all-inference-jobs"></div><details id="inference-history" class="compact-fold" hidden><summary>设备服务操作</summary><div id="inference-manage-message" class="policy-path" role="status"></div><div id="inference-jobs" class="launch-jobs-list"></div></details></div></div><div id="launch-overview-message" role="status" class="subtle"></div></section>
+      <div class="layout launch-workspace"><section class="run-browser launch-sidebar" aria-label="推理评估导航"><div class="section-head"><h2>作业管理</h2></div><div class="launch-nav"><button type="button" id="launch-overview-tab" aria-pressed="true">运行总览</button><button type="button" id="launch-new-tab" aria-pressed="false">＋ 新建推理 / 评估</button></div></section><div class="launch-content"><section id="launch-overview"><div id="launch-device-status" class="inline-notice" role="status"></div><div id="launch-overview-counts" class="workbench-counts"></div><div class="launch-live-grid"><div><h3>评估作业 <small id="launch-active-count"></small></h3><div id="launch-active-jobs"></div><details id="launch-history" class="compact-fold"><summary>历史评估 <small id="launch-history-count"></small></summary><div id="launch-jobs" class="launch-jobs-list"></div></details></div><div><h3>推理服务</h3><div id="all-inference-jobs"></div><details id="inference-history" class="compact-fold" hidden><summary>设备服务操作</summary><div id="inference-manage-message" class="policy-path" role="status"></div><div id="inference-jobs" class="launch-jobs-list"></div></details></div></div><div id="launch-overview-message" role="status" class="subtle"></div></section>
         <div class="start-config" id="launch-create" hidden>
           <section id="model-config" aria-label="启动推理">
             <details id="inference-panel" class="new-policy"><summary><span><span class="step-number">1</span>启动推理</span><small>已有服务可跳过</small></summary>
@@ -800,8 +839,8 @@
         </div></div></div>
     </div>
     <div class="layout" id="page-results" role="tabpanel" aria-labelledby="page-tab-results">
-      <details id="result-compare-panel"><summary>评估对比</summary><div id="result-compare-content"></div></details>
-      <section class="run-browser" aria-label="选择评估记录"><div class="section-head"><h2>评估记录</h2><span id="run-count" class="subtle">0 条</span></div><div class="filters"><input id="run-search" type="search" placeholder="搜索版本、任务或运行名" aria-label="搜索评估记录"><select id="status-filter" aria-label="按运行状态筛选"><option value="">全部状态</option><option value="running">运行中</option><option value="complete">已完成</option><option value="failed">异常退出</option><option value="interrupted">已暂停 / 中断</option><option value="paused">已暂停</option><option value="cancelled">已暂停（历史停止）</option></select></div><div class="run-list" id="runs"></div><div id="empty" class="empty" hidden>还没有评估结果。</div></section>
+      <details id="result-compare-panel"><summary>← 返回评估记录</summary><div id="result-compare-content"></div></details>
+      <section class="run-browser" aria-label="选择评估记录"><div class="section-head"><h2>评估记录</h2><span id="run-count" class="subtle">0 条</span><button id="result-compare-open" type="button">对比</button></div><div class="filters"><input id="run-search" type="search" placeholder="搜索版本、任务或运行名" aria-label="搜索评估记录"><select id="status-filter" aria-label="按运行状态筛选"><option value="">全部状态</option><option value="running">运行中</option><option value="complete">已完成</option><option value="failed">异常退出</option><option value="interrupted">已暂停 / 中断</option><option value="paused">已暂停</option><option value="cancelled">已暂停（历史停止）</option></select></div><div class="run-list" id="runs"></div><div id="empty" class="empty" hidden>还没有评估结果。</div></section>
       <section aria-label="选中运行详情">
         <div class="detail-heading"><div><div id="detail-path" class="eyebrow">选择一次评估</div><h2 id="detail-title">运行详情</h2><div id="detail-subtitle" class="subtle"></div></div><div class="heading-status"><span id="detail-status"></span><span id="detail-mode" class="subtle"></span></div></div>
         <div class="evaluation-actions"><button type="button" id="result-export-analysis">导出 JSON</button><div id="evaluation-actions"></div><span id="evaluation-action-message" class="evaluation-action-message" role="status"></span></div>
@@ -840,7 +879,7 @@
       </section>
     </div>
     <section id="page-registry" role="tabpanel" aria-labelledby="page-tab-registry" hidden></section>
-    <div class="page-foot">调试结果不计正式成绩</div>
+    <div class="page-foot" hidden>调试结果不计正式成绩</div>
   </main>
 <script src="/checkpoint_notes.js"></script>
 <script>
@@ -915,7 +954,12 @@
     });
     $('result-compare-content').append(frame);
   }
-  $('result-compare-panel').addEventListener('toggle',()=>{const panel=$('result-compare-panel');panel.querySelector('summary').textContent=panel.open?'返回单次结果':'任务对比';if(panel.open){stopPreview();$('video-player').pause();openResultComparison();}});
+  $('result-compare-panel').addEventListener('toggle',()=>{const panel=$('result-compare-panel');if(panel.open){stopPreview();$('video-player').pause();openResultComparison();}else if(activePage==='results')$('result-compare-open').focus({preventScroll:true});});
+  $('result-compare-open').onclick=()=>{$('result-compare-panel').open=true;};
+  const deviceDialog=$('device-dialog');
+  $('open-device-dialog').onclick=()=>{if(!deviceDialog.open)deviceDialog.showModal();void refreshServices();};
+  $('close-device-dialog').onclick=()=>deviceDialog.close();
+  deviceDialog.addEventListener('click',e=>{if(e.target===deviceDialog){const b=deviceDialog.getBoundingClientRect();if(e.clientX<b.left||e.clientX>b.right||e.clientY<b.top||e.clientY>b.bottom)deviceDialog.close();}});
   $('result-export-analysis').onclick=()=>{
     if(!selected){$('evaluation-action-message').textContent='请先选择评估记录';return;}
     const snapshot={schema:1,exported_at:new Date().toISOString(),note:'工作台评估记录快照；视频为索引，不含视频文件。缺失字段不补造。',run:selected};
@@ -934,7 +978,6 @@
       return;
     }
     activePage=page;
-    $('workspace-title').textContent=({training:'模型训练',launch:'推理评估',results:'结果分析',registry:'资源管理'})[page]||'工作台';
     if(updateURL && workbenchPageFromURL()!==page){
       const url=new URL(location.href);
       if(page==='results') url.searchParams.delete('page');
@@ -1176,10 +1219,11 @@
     const queued=active.filter(j=>['queued','waiting_for_gpus'].includes(j.state));
     const external=runs.filter(r=>r.status==='running'&&!active.some(j=>j.folder===r._folder));
     const partial=Object.keys(launchDeviceErrors).length||Object.keys(allInferenceErrors).length;
-    $('launch-overview-counts').innerHTML=[['评估运行',active.length-queued.length+external.length],['排队',queued.length],['推理服务',ready.length],['历史作业',launchJobSnapshot.length-active.length]].map(([k,v])=>'<div><small>'+k+'</small><strong>'+v+(partial?'<small>已读取设备</small>':'')+'</strong></div>').join('');
+    $('launch-overview-counts').innerHTML=[['评估运行',active.length-queued.length+external.length],['排队',queued.length],['推理服务',ready.length],['历史作业',launchJobSnapshot.length-active.length]].map(([k,v])=>'<div><small>'+k+'</small><strong>' +v+'</strong></div>').join('');
     $('launch-active-count').textContent=String(active.length+external.length);
     $('launch-history-count').textContent=String(launchJobSnapshot.length-active.length);
-    $('launch-device-status').textContent=[...Object.keys(launchDeviceErrors).map(d=>d+' 评估不可查'),...Object.keys(allInferenceErrors).map(d=>d+' 推理不可查')].join(' · ');
+    const names={local:'4090',a100:'A100',a6000:'RTX 6000 Ada',all:'全部设备'};
+    $('launch-device-status').textContent=[...new Set([...Object.keys(launchDeviceErrors),...Object.keys(allInferenceErrors)])].map(d=>(names[d]||d)+' 部分状态不可查').join(' · ');
     $('all-inference-jobs').innerHTML=ready.map((job,i)=>{
       const linked=linkedEvaluations(job.host,job.port);
       return '<article class="workbench-live-row"><div class="workbench-live-head"><strong>'+esc(job.label||shortModel(job.checkpoint))+'</strong>'+statusBadge(job.state)+'</div><div class="subtle">'+esc(job._device==='a100'?'A100':'RTX 6000 Ada')+' · GPU '+esc(job.gpu_index)+' · '+esc(job.host+':'+job.port)+'</div><div class="subtle" title="'+esc(linked.join('\n'))+'">'+(linked.length?'关联评估 '+linked.length+' 个':'未匹配到运行评估')+'</div><div class="workbench-live-foot">'+(job.state==='ready'?'<button type="button" data-use-live="'+i+'">用于评估</button>':'')+'<button type="button" data-manage-live="'+i+'">管理</button></div></article>';
@@ -1940,6 +1984,9 @@
       }).join('');
     }
     $('gpu-summary-status').textContent=available.join(' · ');
+    const unavailable=['remote','local','a6000'].some(side=>data?.[side]?.ok!==true||data?.[side]?.gpus_error);
+    $('device-alert-dot').hidden=!unavailable;
+    $('open-device-dialog').title=unavailable?'部分设备不可查，点击查看':'设备与运行进程';
   }
   function renderServices(data) {
     serviceSnapshot=data||{};
@@ -2533,7 +2580,6 @@
   if(agentBoardPage){
     document.body.classList.add('agent-board');
     $('agent-board').hidden=false;
-    $('workspace-title').textContent='实验管理';
     $('page-tab-ai').setAttribute('aria-current','page');
     $('page-tab-results').setAttribute('aria-selected','false');
   }

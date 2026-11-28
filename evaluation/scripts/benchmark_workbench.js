@@ -104,7 +104,7 @@ if(typeof module!=='undefined' && module.exports) module.exports={benchmarkMetri
     el('bench-policy-results').setAttribute('aria-pressed',String(resultMode==='policy'));
     el('bench-code-results').setAttribute('aria-pressed',String(resultMode==='code'));
     el('service-overview').hidden=false;
-    el('gpu-overview').hidden=benchmark==='mikasa'||benchmark==='simpler';
+    el('gpu-overview').hidden=false;
     if(!native){stopPreview();el('video-player').pause();}
     if(benchmark==='b1k' && !native){
       el('bench-results-title').textContent='BEHAVIOR-1K · 开发快测';
@@ -248,7 +248,7 @@ if(typeof module!=='undefined' && module.exports) module.exports={benchmarkMetri
   el('bench-job-list').onclick=e=>{const button=e.target.closest('[data-run]');if(button){selectedId=button.dataset.run;detail=null;renderList();renderDetail();void refresh();}};
   document.querySelectorAll('[data-bench-tab]').forEach(button=>button.onclick=()=>{tab=button.dataset.benchTab;if(tab!=='cameras')el('bench-pane-cameras').querySelector('video')?.pause();document.querySelectorAll('[data-bench-tab]').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.benchTab===tab)));for(const name of ['metrics','cameras','logs'])el('bench-pane-'+name).hidden=name!==tab;});
   el('bench-stop').onclick=async()=>{if(!detail)return;el('bench-stop').disabled=true;try{await api('stop',{run:detail.job.id});await refresh();}catch(e){message('bench-detail-message',e.message,true);el('bench-stop').disabled=false;}};
-  window.benchmarkWorkbench={route,isNative,refresh,run,loadOptions,options:()=>options,updateButtons:setButtons,trainingReady:()=>route(page)};
+  window.benchmarkWorkbench={route,isNative,refresh,run,loadOptions,options:()=>options,updateButtons:setButtons,trainingReady:()=>{const sidebar=el('page-training').querySelector('.run-browser');if(sidebar)sidebar.append(checks);return route(page);}};
   route(page);
   setInterval(()=>{if(!workspace.hidden||(!checks.hidden&&checks.open))void refresh();},4000);
 })();

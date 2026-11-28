@@ -76,7 +76,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
   };
   const stateLabels = {training:'训练中',running:'运行中',submitted:'已提交',initializing:'初始化中',resuming:'正在恢复',
     completed:'已完成',complete:'已完成',failed:'异常退出',stopped:'已停止',validating:'验证中',
-    queued:'排队中',cancelled:'已取消',waiting_for_four_runs:'等待前四组训练及验证',waiting_for_gpus:'等待GPU释放',
+    queued:'排队中',paused:'已暂停',cancelled:'已取消',waiting_for_four_runs:'等待前四组训练及验证',waiting_for_gpus:'等待GPU释放',
     converting:'转换中',syncing:'传输中',starting:'准备启动',not_prepared:'待准备'};
   const stateName = state => stateLabels[state] || state || '等待记录';
   const stateBadge = state => '<span class="status ' + (state === 'failed' ? 'failed' :
@@ -107,6 +107,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
     el('train-overview').hidden = next !== 'overview';
     el('train-overview-tab').setAttribute('aria-pressed',String(next==='overview'));
     el('train-config').hidden = next !== 'new';
+    (next==='new'?el('train-config-device-slot'):el('train-history-device-slot')).append(el('train-device-tools'));
     el('train-monitor').hidden = next !== 'detail';
     el('train-new').setAttribute('aria-pressed', String(next === 'new'));
     renderJobs();renderOverview();
@@ -598,15 +599,15 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
     const live=all.filter(({job})=>liveStates.has(job.status));
     const queued=live.filter(({job})=>queueStates.has(job.status));
     const partial=jobDevices.some(d=>!jobSnapshots.has(d)||jobSnapshots.get(d)?.error);
-    const count=(label,n)=>'<div><small>'+label+'</small><strong>'+n+(partial?'<small>已读取设备</small>':'')+'</strong></div>';
+    const count=(label,n)=>'<div><small>'+label+'</small><strong>' +n+'</strong></div>';
     el('train-active-count').textContent=String(live.length);
     el('train-overview-counts').innerHTML=count('运行中',live.length-queued.length)+count('排队',queued.length)+count('已完成',all.filter(({job})=>['complete','completed'].includes(job.status)).length)+count('异常 / 停止',all.filter(({job})=>['failed','stopped','paused'].includes(job.status)).length);
-    el('train-overview-status').textContent=jobDevices.map(d=>deviceName(d)+(jobSnapshots.get(d)?.error?' · 不可查':jobSnapshots.has(d)?' · 已读取':' · 读取中')).join(' / ');
+    el('train-overview-status').textContent=jobDevices.filter(d=>jobSnapshots.get(d)?.error).map(d=>deviceName(d)+' 不可查').join(' · ');
     const list=el('train-overview-list');
     const cards=live.sort((a,b)=>Number(queueStates.has(a.job.status))-Number(queueStates.has(b.job.status)));
     list.innerHTML=cards.length?cards.map(({device,job},i)=>{
       const pct=Math.max(0,Math.min(100,Number(job.step||0)/(Number(job.max_steps)||1)*100));
-      return '<button type="button" class="workbench-live-row" data-live-train="'+i+'"><div class="workbench-live-head"><strong>'+esc(jobVersion(job)+' · '+taskLabel(job)+' · '+methodLabel(jobMethod(job)))+'</strong>'+stateBadge(job.status)+'</div><div class="subtle">'+esc(job.run)+' · '+esc(deviceName(device))+' · GPU '+esc(job.gpus??'未知')+' · '+esc(({agent:'Agent',user:'用户'})[job.initiator]||'来源未记录')+'</div><div class="progress-track"><span style="width:'+pct+'%"></span></div><div class="workbench-live-foot"><span>'+esc(job.step??'—')+' / '+esc(job.max_steps??'—')+' 步</span><span>Loss '+fmt(job.last?.loss)+'</span><span>详情 →</span></div></button>';
+      return '<button type="button" class="workbench-live-row" data-live-train="'+i+'"><div class="workbench-live-head"><strong>'+esc(jobVersion(job)+' · '+taskLabel(job)+' · '+methodLabel(jobMethod(job)))+'</strong>'+stateBadge(job.status)+'</div><div class="subtle">'+esc(job.run)+' · '+esc(deviceName(device))+' · GPU '+esc(job.gpus??'未知')+' · '+esc(({agent:'Agent',user:'用户'})[job.initiator]||'未知来源')+'</div><div class="progress-track"><span style="width:'+pct+'%"></span></div><div class="workbench-live-foot"><span>'+esc(job.step??'—')+' / '+esc(job.max_steps??'—')+' 步</span><span>Loss '+fmt(job.last?.loss)+'</span><span>详情 →</span></div></button>';
     }).join(''):'<p class="empty">'+(jobDevices.some(d=>jobSnapshots.get(d)?.error)?'部分设备不可查':'暂无运行任务')+'</p>';
     list.querySelectorAll('[data-live-train]').forEach(button=>button.onclick=async()=>{
       if(busy||jobActionBusy||switchingDevice)return;
@@ -659,13 +660,13 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
       return '<button type="button" class="train-job run-card' + (selected ? ' selected' : '') +
         '" aria-pressed="' + selected + '" data-job="' + i + '" title="' + esc(job.name || job.run) + '">' +
         '<div class="run-card-top"><strong>' + esc(methodLabel(jobMethod(job))) + ' · 第 ' + esc(job.train_number || 1) + ' 次训练</strong></div>' +
-        '<div class="subtle">' + stateBadge(job.status) + ' · GPU ' + esc(job.gpus) + ' · '+esc(({user:'用户',agent:'Agent'})[job.initiator]||'来源未记录')+'</div>' +
+        '<div class="subtle">' + stateBadge(job.status) + ' · GPU ' + esc(job.gpus) + ' · '+esc(({user:'用户',agent:'Agent'})[job.initiator]||'未知来源')+'</div>' +
         (job.notes ? '<div class="train-job-note" title="' + esc(job.notes) + '">' + esc(job.notes) + '</div>' : '') +
         '<div class="progress-track"><span style="width:' + progress + '%"></span></div>' +
         '<div class="train-job-stats"><span>' + esc(job.step) + ' / ' + esc(job.max_steps ?? '?') + ' 步</span><span>Loss ' + fmt(job.last?.loss) + '</span></div></button>';
         }).join('') + '</div></details>';
         }).join('') + '</div></details>';
-    }).join('') : '<div class="empty">' + (filtering ? '没有符合条件的记录' : '暂无训练记录') + '</div>';
+    }).join('') : '<div class="empty">' + (filtering ? '无匹配记录' : '暂无历史记录') + '</div>';
     el('train-jobs').querySelectorAll('[data-train-version]').forEach(group => {
       group.ontoggle = () => { if (group.isConnected && !filtering) versionOpen.set(group.dataset.trainVersion, group.open); };
     });

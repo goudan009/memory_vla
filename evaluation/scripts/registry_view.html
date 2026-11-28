@@ -215,24 +215,25 @@
   @media(max-width:850px){.ledger-workspace{grid-template-columns:220px minmax(0,1fr)}}
   @media(max-width:700px){.ledger-workspace{grid-template-columns:1fr}.ledger-picker{max-height:240px}header h1{font-size:19px}}
   nav.tabs button[hidden]{display:none!important}
+  .registry-sr-only{position:absolute!important;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+  header.registry-header{height:0;min-height:0;padding:0;margin:0;border:0}
+  nav.tabs{margin:0 0 12px;align-items:center}
+  nav.tabs .registry-rescan{margin-left:auto;border:1px solid var(--line);background:white;color:var(--muted);border-radius:6px;font-size:12px}
+  .storage-toolbar{justify-content:flex-end;min-height:0;margin:0 0 10px}
+  .storage-toolbar>div.acts{margin-left:auto}
+  .storage-toolbar .acts button{font-size:12px}
+  @media(max-width:540px){nav.tabs{gap:3px}nav.tabs button{padding:7px 8px;font-size:11px}nav.tabs .registry-rescan{padding:6px 8px;font-size:11px}}
 </style>
 </head>
 <body>
-<header>
-  <div>
-    <h1>资源管理</h1>
-    <div class="sub" id="sub" role="status">读取中…</div>
-  </div>
-  <div class="acts">
-    <button type="button" id="rescan" class="primary">重新扫描</button>
-  </div>
-</header>
+<header class="registry-header"><h1 class="registry-sr-only">资源管理</h1><div class="sub registry-sr-only" id="sub" role="status">读取中…</div></header>
 
 <nav class="tabs" id="nav" aria-label="实验台账视图">
   <button data-v="res" aria-selected="true" aria-controls="resource-file-workspace">数据与权重</button>
   <button data-v="downloads" aria-selected="false" aria-controls="resource-download-panel">下载任务</button>
   <button data-v="disks" aria-selected="false" aria-controls="storage-disk-panel">磁盘空间</button>
   <button data-v="exp" aria-selected="false" aria-controls="view-exp" hidden>历史任务对比</button>
+  <button type="button" id="rescan" class="registry-rescan" title="重新扫描资源">↻ 扫描</button>
 </nav>
 
 <main>
@@ -253,7 +254,7 @@
   </section>
 
   <section id="view-res">
-    <div class="storage-toolbar" id="resource-toolbar"><div><strong id="resource-toolbar-title">资源文件</strong></div><div class="acts"><label>存放设备<select id="res-host" aria-label="存放位置"><option value="all">所有存放位置</option><option value="4090" selected>4090</option></select></label><button id="storage-register" type="button" class="primary">＋ 登记目录</button></div></div>
+    <div class="storage-toolbar" id="resource-toolbar"><div class="registry-sr-only"><strong id="resource-toolbar-title">资源文件</strong></div><div class="acts"><label>存放设备<select id="res-host" aria-label="存放位置"><option value="all">所有存放位置</option><option value="4090" selected>4090</option></select></label><button id="storage-register" type="button" class="primary">＋ 登记目录</button></div></div>
     <details id="storage-disk-panel" class="storage-capacity" hidden><summary>磁盘 · <span id="storage-capacity-summary" role="status">正在查询…</span></summary><div class="acts" style="padding:0 12px 10px"><button id="storage-refresh-disks" type="button">刷新磁盘</button><span id="disk-visible-status" class="hint" role="status"></span></div><div id="storage-disks" class="storage-disks" aria-label="磁盘容量" aria-live="polite"></div></details>
     <details id="resource-download-panel" class="storage-capacity" hidden>
       <summary>下载任务</summary>
@@ -551,7 +552,7 @@ async function load(force){
     sub.textContent = `更新失败：${e.message}`;
   }finally{scan.disabled=false;}
 }
-document.getElementById("nav").onclick = e => { const b = e.target.closest("button"); if(b) show(b.dataset.v); };
+document.getElementById("nav").onclick = e => { const b = e.target.closest("button"); if(b?.dataset.v) show(b.dataset.v); };
 document.getElementById("rescan").onclick = () => load(true);
 ["ledger-version","ledger-arm","ledger-task-filter","ledger-status"].forEach(id=>document.getElementById(id).addEventListener("change", renderExp));
 document.getElementById('ledger-archived').addEventListener('change',renderExp);

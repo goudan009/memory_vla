@@ -365,6 +365,32 @@
 #page-training #train-message:empty{display:none}
 #page-training .train-record-filters{gap:5px}
 @media(max-width:780px){#page-training .train-sidebar-actions{grid-template-columns:1fr 1fr}}
+
+#page-training .train-sidebar-actions button{height:36px;text-align:left;padding:7px 10px;font-size:13px}
+#page-training .train-sidebar-actions #train-overview-tab{border-color:transparent}
+#page-training .train-sidebar-actions #train-overview-tab[aria-pressed=true]{border-color:transparent}
+#page-training .train-sidebar-actions #train-new[aria-pressed=false]{background:white;color:var(--accent);border-color:transparent}
+#page-training .train-sidebar-actions #train-new[aria-pressed=true]{background:var(--accent);color:white}
+#page-training #train-config-device-slot{min-width:0}
+#page-training #train-config-device-slot .train-device-tools{margin:0;max-width:320px;gap:8px}
+#page-training #train-config-device-slot .train-device-tools label{font-size:13px}
+#page-training #train-config .detail-heading{padding:10px var(--panel-pad);min-height:0}
+#page-training #train-device-hint{display:none}
+#page-training #train-message{position:static;box-shadow:none;border-radius:6px;padding:7px 10px;margin-bottom:8px}
+#page-training .train-record-filters{padding-top:2px}
+#page-training .train-job .progress-track{display:none}
+#page-training .train-job .train-job-stats{margin-top:3px}
+#page-training .train-job .subtle{font-size:11px}
+#page-training .train-job{padding:8px}
+#page-training .train-summary-card{padding:12px}
+#page-training .train-summary-card h3{font-size:13px}
+#page-training .train-steps button small{max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#page-training .train-steps button>span:last-child{min-width:0}
+#page-training #bench-code-checks{margin:8px 10px;border-radius:6px;border:1px solid var(--line)}
+#page-training #bench-code-checks>summary{font-size:12px;padding:8px 10px}
+#page-training #bench-code-checks>summary small{display:none}
+#page-training #bench-code-checks .bench-form{padding:10px;display:grid;grid-template-columns:minmax(0,1fr);gap:6px}
+#page-training #bench-code-checks .bench-form>*{grid-column:1/-1;min-width:0}
 </style>
 
 <p id="train-device-hint" class="train-hint" hidden></p>
@@ -372,16 +398,16 @@
 <div class="layout">
  <section class="run-browser" aria-label="选择训练记录">
   <div class="section-head"><h2>训练记录</h2><span id="train-count" class="subtle">读取中…</span><button id="train-records-toggle" class="train-records-toggle" type="button" aria-expanded="false" aria-controls="train-records-content">展开记录</button></div>
-  <div class="train-sidebar-actions"><button id="train-new" type="button" aria-pressed="false">＋ 新建训练</button><button id="train-overview-tab" type="button" aria-pressed="true">运行总览 <small id="train-active-count"></small></button></div>
-  <div id="train-records-content" class="train-records-content"><div class="train-device-tools"><label>设备 <select id="train-device"><option value="a100">A100</option><option value="a6000">RTX 6000 Ada</option></select></label><button id="train-refresh" type="button" aria-label="刷新训练记录">↻</button></div>
+  <div class="train-sidebar-actions"><button id="train-overview-tab" type="button" aria-pressed="true">运行总览 <small id="train-active-count" hidden></small></button><button id="train-new" type="button" aria-pressed="false">＋ 新建训练</button></div>
+  <div id="train-records-content" class="train-records-content"><div id="train-history-device-slot"><div class="train-device-tools" id="train-device-tools"><label>设备 <select id="train-device"><option value="a100">A100</option><option value="a6000">RTX 6000 Ada</option></select></label><button id="train-refresh" type="button" aria-label="刷新训练记录">↻</button></div></div>
   <div class="train-record-filters"><input id="train-job-search" type="search" placeholder="任务、版本、备注…" aria-label="搜索训练记录或备注"><select id="train-job-filter" aria-label="训练状态筛选"><option value="history">历史记录</option><option value="all">全部状态</option><option value="active">运行中</option><option value="queued">排队中</option><option value="complete">已完成</option><option value="failed">异常/停止</option></select><select id="train-job-owner" aria-label="发起人筛选"><option value="all">全部来源</option><option value="user">用户</option><option value="agent">Agent</option><option value="unknown">未记录</option></select><select id="train-job-category" aria-label="训练用途筛选"><option value="research">研究训练</option><option value="engineering">工程预检</option><option value="all">全部用途</option></select></div>
   <div id="train-jobs" class="train-jobs"><div class="empty">读取 A100 记录中…</div></div>
   </div>
  </section>
  <div class="train-content">
-  <section id="train-overview" aria-label="训练总览"><div class="detail-heading"><h2>训练总览</h2><span id="train-overview-status" class="subtle">读取中</span></div><div id="train-overview-counts" class="workbench-counts"></div><div id="train-overview-list" class="workbench-live-list"><p class="empty">读取训练记录…</p></div></section>
+  <section id="train-overview" aria-label="训练总览"><div id="train-overview-status" class="inline-notice" role="status"></div><div id="train-overview-counts" class="workbench-counts"></div><div id="train-overview-list" class="workbench-live-list"><p class="empty">读取训练记录…</p></div></section>
   <section id="train-config" aria-label="训练配置" hidden>
-   <div class="detail-heading"><div><h2>新建训练</h2></div><span id="train-device-label" class="chip gpu">A100</span></div>
+   <div class="detail-heading"><div id="train-config-device-slot"></div><span id="train-device-label" class="chip gpu" hidden>A100</span></div>
    <form id="train-form" novalidate>
     <nav class="train-steps" aria-label="新建训练步骤">
      <button type="button" data-train-setup-step="0" aria-current="step" aria-controls="train-setup-0"><span class="train-step-number">1</span><span><strong>模型</strong><small id="train-step-summary-0">模型 / 权重</small></span></button>
