@@ -2,6 +2,8 @@
 
 > 2026-11-27 用户确认：V1.2 和后续 V2.2 全面使用 B1K-2026；取消新底座的 B1K-2025 适配路线。先下载资源、跑通官方无记忆基线，后续再确认正式训练方案。正在运行的 V2.1、N1.6/2025 环境、历史权重及结果保持不变。
 
+> 2026-11-28 授权更新：先测试 B1K-2026；官方闭环产出有效原生 JSON、视频、success/Q-score 且正常退出后，核对依赖并停用已确认的旧 B1K-2025/V2.1 运行服务。历史数据、权重、源码和结果保留。仍不启动正式训练、不开发 V2.2。最新执行计划见 [plan-v021.json](workflow/plan-v021.json)，实时证据见 [progress.md](progress.md)。
+
 此前已完成的2025 Task40实体检查和96项CPU回归结果保留在[本机预检记录](local-preflight-2026-11-27.md)，仅代表当时的检查结果，不代表2026已通过验收。旧2025候选代码（data_contract.py、training_contract.py中的 native_train_candidate、policy.py中的 b1k2025_policy）仅留存历史检查依据，不是本计划的启动入口。无需继续适配、转换或下载2025数据。尚未创建V1.2正式训练作业。
 
 ## 1. 先下载资源（本次授权范围）
@@ -46,6 +48,6 @@ V1.2正式训练只从核实的通用 N1.7-3B 开始，使用2026的 LeRobot v3�
 
 ## 4. 当前执行边界
 
-本次仅更新迁移计划并授权下载上述资源，不自动创建实验编号、正式训练或开发 V2.2。V_1_2 已登记但 launch_ready=False，2026 专用工作台后端尚未通过真实验收，旧2025入口继续拒绝 V1.2。后续正式实验使用已核实的 testNN/expNN/runNNN 与现有规范输出目录，按 AGENTS.md 和 robot-vla-experiment-ops Skill 执行。无需继续完成已取消的2025适配检查。
+V_1_2 原生路由已在独立工作台 `8767` 开放 preview/start，`8766` 属于其他项目。源码、官方 radio 权重、Cosmos、本机 Isaac Sim 5.1 和 2026 资产已进入实跑验收；路由就绪不代表闭环已通过。模型版本登记中的正式训练能力仍未开放，当前不创建训练编号或启动正式训练，也不开发 V2.2。旧服务依照上面的最新切换门槛处理。后续正式实验使用已核实的 testNN/expNN/runNNN 与现有规范输出目录，按 AGENTS.md 和 robot-vla-experiment-ops Skill 执行。无需继续完成已取消的2025适配检查。
 
 参考：[官方基线手册](https://behavior.stanford.edu/challenge/baselines)、[2026数据说明](https://behavior.stanford.edu/challenge/dataset)、[2026官方任务描述提交](https://huggingface.co/datasets/behavior-1k/2026-challenge-demos/commit/2add61313bac4f1a42363d00ad03bd45949941a8)。

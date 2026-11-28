@@ -6,6 +6,8 @@
 - Root cause: Isaac Kit adds its pip archive to the front of `sys.path`, selecting bundled `websockets==12.0`; pinned B1K-2026 requires `websockets>=15.0.1` and imports `websockets.asyncio.server`. A CPU reproduction fails with the Kit path first and passes when existing compatible `websockets==16.1` is preloaded before that path mutation. No download or package installation is required for this fix.
 - Stage `dependency_import`: implement a V1.2-only evaluator bootstrap that preloads the required WebSocket modules before OmniGibson initializes Kit. Then preview/start one fresh instance 15, GPU0, port 8029, original official checkpoint/protocol/budget and short note.
 - Legacy shutdown gate remains pending. No legacy service stopped, no historical artifact deleted, no formal training submitted, and unrelated BodyVLA/8766 is outside scope.
+- `dependency_import` completed: real Python 3.11 bootstrap imports `websockets==16.1` before Isaac; CPU path-mutation reproduction and Isaac import pass. Existing V1.2 contract/route checks: 7 passed. Code commit: `4e63a00`.
+- `preview_instance_15` completed through 8767 with exact checkpoint SHA256, pinned N1.7 revision, GPU0, port 8029, one rollout/video and original short note. `official_rollout` is RUNNING: job `758c76aa0780`, PID `2711003`, started `2026-11-28 13:11:05`, output `evaluation/V_1_2/official/public_test_instance_15`, log `/nvme3/tmp/memory_vla/web_launch/758c76aa0780.log`. No other active workbench evaluation was found at submission; unrelated local GPU jobs were retained.
 
 ## 2026-11-28 - B1K-2026 transition gate authorized
 
