@@ -214,6 +214,7 @@
   .download-summary>div{background:#f5f7fa}
   @media(max-width:850px){.ledger-workspace{grid-template-columns:220px minmax(0,1fr)}}
   @media(max-width:700px){.ledger-workspace{grid-template-columns:1fr}.ledger-picker{max-height:240px}header h1{font-size:19px}}
+  nav.tabs button[hidden]{display:none!important}
 </style>
 </head>
 <body>
@@ -231,7 +232,7 @@
   <button data-v="res" aria-selected="true" aria-controls="resource-file-workspace">数据与权重</button>
   <button data-v="downloads" aria-selected="false" aria-controls="resource-download-panel">下载任务</button>
   <button data-v="disks" aria-selected="false" aria-controls="storage-disk-panel">磁盘空间</button>
-  <button data-v="exp" aria-selected="false" aria-controls="view-exp">历史任务对比</button>
+  <button data-v="exp" aria-selected="false" aria-controls="view-exp" hidden>历史任务对比</button>
 </nav>
 
 <main>

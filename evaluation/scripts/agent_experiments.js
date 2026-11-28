@@ -425,10 +425,11 @@
     if(!panel)return;
     const old=panel.querySelector('details')?.open;
     const fold=document.createElement('details');fold.open=old??[...jobs.values()].some(job=>['training','running','queued','starting','submitted','resuming'].includes(job.status));
-    fold.append(text('summary','关联训练 · '+jobs.size+' 条'+(jobs.partial?' · 部分设备不可查':'')));
+    fold.append(text('summary','关联训练 '+jobs.size+(jobs.partial?' · 部分不可查':'')));
     const list=text('div','','linked-training-list');
-    if(!jobs.size)list.append(text('p','暂无关联训练','subtle'));
-    for(const [key,job] of jobs){const who={agent:'Agent',user:'人工'}[job.initiator]||'来源未记录';const row=text('div','','linked-training-row');row.append(text('strong',job.run),text('span',(jobStates[job.status]||job.status||'未知')+(job.step==null?'':' · '+job.step+'/'+(job.max_steps??'—')+' 步')),text('small',[who,job.version||job.model_version,compact(job.notes,65),key.split(':')[0]].filter(Boolean).join(' · '),'subtle'));if(job.notes)row.title=job.notes;list.append(row);}
+    if(!jobs.size&&!jobs.partial){panel.replaceChildren();return;}
+    if(!jobs.size)list.append(text('p','状态不可查','subtle'));
+    for(const [key,job] of [...jobs].sort((a,b)=>Number(!['training','running','queued','starting','submitted','resuming','validating','waiting_for_gpus'].includes(a[1].status))-Number(!['training','running','queued','starting','submitted','resuming','validating','waiting_for_gpus'].includes(b[1].status)))){const who={agent:'Agent',user:'人工'}[job.initiator]||'来源未记录';const row=text('div','','linked-training-row');row.append(text('strong',job.run),text('span',(jobStates[job.status]||job.status||'未知')+(job.step==null?'':' · '+job.step+'/'+(job.max_steps??'—')+' 步')),text('small',[who,job.version||job.model_version,compact(job.notes,65),key.split(':')[0]].filter(Boolean).join(' · '),'subtle'));if(job.notes)row.title=job.notes;list.append(row);}
     fold.append(list);panel.replaceChildren(fold);
   }
 

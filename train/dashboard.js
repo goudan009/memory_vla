@@ -81,8 +81,12 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
   const stateName = state => stateLabels[state] || state || '等待记录';
   const stateBadge = state => '<span class="status ' + (state === 'failed' ? 'failed' :
     ['complete','completed','cancelled','stopped'].includes(state) ? 'complete' : 'running') + '">' + esc(stateName(state)) + '</span>';
-  let mounted = false, options = null, jobs = [], chosen = null, detail = null, busy = false, refreshing = false, view = 'new', lastOptionsAt = 0, recommendation = null, jobActionBusy = false;
+  let mounted = false, options = null, jobs = [], chosen = null, detail = null, busy = false, refreshing = false, view = 'overview', lastOptionsAt = 0, recommendation = null, jobActionBusy = false;
   let trainingDevice = 'a100';
+  const jobDevices=['a100','a6000'], jobSnapshots=new Map();
+  const liveStates=new Set(['training','running','submitted','initializing','starting','validating','resuming','queued','waiting_for_gpus','waiting_for_four_runs','converting','syncing']);
+  const queueStates=new Set(['queued','waiting_for_gpus','waiting_for_four_runs']);
+  const deviceName=d=>d==='a100'?'A100':'RTX 6000 Ada';
   let setupStep = 0;
   const setupLabels = ['实验与模型','数据任务','GPU 与验证','参数与启动'];
   let deleteTarget = null;
@@ -100,10 +104,12 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
   const methodOrder = method => ({baseline:0,memory:1,official:2}[method] ?? 3);
   function selectView(next) {
     view = next;
+    el('train-overview').hidden = next !== 'overview';
+    el('train-overview-tab').setAttribute('aria-pressed',String(next==='overview'));
     el('train-config').hidden = next !== 'new';
     el('train-monitor').hidden = next !== 'detail';
     el('train-new').setAttribute('aria-pressed', String(next === 'new'));
-    renderJobs();
+    renderJobs();renderOverview();
   }
   function selectDetailTab(tab) {
     for (const name of detailTabs) {
@@ -587,6 +593,31 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
     } catch (error) { reportError(error); }
     finally { busy = false; el('train-submit').disabled = el('train-check').disabled = false; }
   }
+  function renderOverview(){
+    const all=jobDevices.flatMap(device=>(jobSnapshots.get(device)?.jobs||[]).map(job=>({device,job})));
+    const live=all.filter(({job})=>liveStates.has(job.status));
+    const queued=live.filter(({job})=>queueStates.has(job.status));
+    const count=(label,n)=>'<div><small>'+label+'</small><strong>'+n+'</strong></div>';
+    el('train-active-count').textContent=String(live.length);
+    el('train-overview-counts').innerHTML=count('运行中',live.length-queued.length)+count('排队',queued.length)+count('已完成',all.filter(({job})=>['complete','completed'].includes(job.status)).length)+count('异常 / 停止',all.filter(({job})=>['failed','stopped','paused'].includes(job.status)).length);
+    el('train-overview-status').textContent=jobDevices.map(d=>deviceName(d)+(jobSnapshots.get(d)?.error?' · 不可查':jobSnapshots.has(d)?' · 已读取':' · 读取中')).join(' / ');
+    const list=el('train-overview-list');
+    const cards=live.sort((a,b)=>Number(queueStates.has(a.job.status))-Number(queueStates.has(b.job.status)));
+    list.innerHTML=cards.length?cards.map(({device,job},i)=>{
+      const pct=Math.max(0,Math.min(100,Number(job.step||0)/(Number(job.max_steps)||1)*100));
+      return '<button type="button" class="workbench-live-row" data-live-train="'+i+'"><div class="workbench-live-head"><strong>'+esc(jobVersion(job)+' · '+taskLabel(job)+' · '+methodLabel(jobMethod(job)))+'</strong>'+stateBadge(job.status)+'</div><div class="subtle">'+esc(job.run)+' · '+esc(deviceName(device))+' · GPU '+esc(job.gpus??'未知')+' · '+esc(({agent:'Agent',user:'用户'})[job.initiator]||'来源未记录')+'</div><div class="progress-track"><span style="width:'+pct+'%"></span></div><div class="workbench-live-foot"><span>'+esc(job.step??'—')+' / '+esc(job.max_steps??'—')+' 步</span><span>Loss '+fmt(job.last?.loss)+'</span><span>详情 →</span></div></button>';
+    }).join(''):'<p class="empty">'+(jobDevices.some(d=>jobSnapshots.get(d)?.error)?'部分设备不可查':'暂无运行任务')+'</p>';
+    list.querySelectorAll('[data-live-train]').forEach(button=>button.onclick=async()=>{
+      if(busy||jobActionBusy)return;
+      const {device,job}=cards[Number(button.dataset.liveTrain)];
+      if(device!==trainingDevice){el('train-device').value=device;await el('train-device').onchange();}
+      if(device!==trainingDevice)return;
+      const found=jobs.find(j=>j.run===job.run&&j.arm===job.arm);
+      if(!found){message('记录已变化，请刷新。',true);return;}
+      chosen={run:found.run,arm:found.arm};showDetailLoading();selectView('detail');selectDetailTab('curve');
+      await loadDetail().catch(reportError);
+    });
+  }
   function renderJobs() {
     const scroll = el('train-jobs').scrollTop;
     const search = (el('train-job-search').value || '').trim().toLowerCase().replace(/task\s+/g,'task');
@@ -595,7 +626,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
       queued:['queued','waiting_for_gpus','waiting_for_four_runs'],complete:['complete','completed'],failed:['failed','stopped','paused']};
     const visible = jobs.map((job,i)=>({job,i})).filter(({job}) => (category==='all'||(category==='engineering'?job.category==='engineering_preflight':job.category!=='engineering_preflight'||chosen?.run===job.run))&&(owner==='all'||owner===(job.initiator||'unknown'))&&(!stateGroups[filter] || stateGroups[filter].includes(job.status)) &&
       (!search || [job.name,job.run,jobVersion(job),...jobTasks(job).map(task=>'task'+task),taskLabel(job),jobMethod(job),job.training_id,job.notes].join(' ').toLowerCase().includes(search)));
-    el('train-count').textContent = (filtering ? visible.length + ' / ' : '') + jobs.length + ' 条';
+    el('train-count').textContent = visible.length + ' / ' + jobs.length;
     const versions = new Map();
     visible.forEach(({job,i}) => {
       const version = jobVersion(job);
@@ -603,7 +634,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
       versions.get(version).push({job,i});
     });
     const groups = [...versions].sort(([a],[b]) => b.localeCompare(a,'zh-CN',{numeric:true}));
-    const currentVersion = chosen ? jobVersion(currentJob()) : groups[0]?.[0];
+    const currentVersion = view==='detail'&&chosen ? jobVersion(currentJob()) : null;
     el('train-jobs').innerHTML = groups.length ? groups.map(([version,entries]) => {
       const open = filtering || (versionOpen.get(version) ?? (version === currentVersion));
       const tasks = new Map();
@@ -1148,10 +1179,16 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
     if (refreshing) return;
     refreshing = true;
     try {
-      const result = await api('jobs'); jobs = result.jobs.filter(job => job.status !== 'cancelled'); syncStatus(result.sync);
+      const current=trainingDevice;
+      const settled=await Promise.allSettled(jobDevices.map(async device=>{const response=await fetch('/api/training/jobs?device='+device,{cache:'no-store'});const data=await response.json();if(!response.ok||!Array.isArray(data.jobs))throw Error(data.error||'记录不可查');return data;}));
+      settled.forEach((r,i)=>jobSnapshots.set(jobDevices[i],r.status==='fulfilled'?r.value:{jobs:[],error:String(r.reason)}));
+      renderOverview();
+      if(current!==trainingDevice)return;
+      const result=jobSnapshots.get(current);if(result.error){jobs=[];renderJobs();throw Error(deviceLabel()+' 不可查');}
+      jobs=result.jobs.filter(job=>job.status!=='cancelled');syncStatus(result.sync);
       if (chosen && !currentJob()) {
         chosen = null; detail = null;
-        selectView('new');
+        selectView('overview');
       }
       if (view === 'new' && Date.now() - lastOptionsAt > 30000) await loadOptions();
       if (!chosen && jobs.length) chosen = {run:jobs[0].run,arm:jobs[0].arm};
@@ -1186,8 +1223,8 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
       el('train-device-label').textContent=deviceLabel();
       el('train-device-hint').hidden=trainingDevice==='a100';
       el('train-device-hint').textContent='单卡开发训练；先准备任务数据，训练后单独评估权重。设备离线时不会自动转到其他机器。';
-      selectView('new');invalidatePlan();
-      try{await loadOptions();await refresh();}catch(error){
+      selectView(view==='new'?'new':'overview');invalidatePlan();
+      try{await refresh();await loadOptions();}catch(error){
         if(error.name!=='DeviceChanged') message(deviceLabel()+' 读取失败，设备可能离线：'+error.message,true);
       }
     };
@@ -1197,7 +1234,8 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
         renderTaskChoices();datasetHint();message('所选缺失数据已提交后台准备，完成后自动更新。');
       } catch(error) { reportError(error); }
     };
-    el('train-new').onclick = () => selectView('new');
+    el('train-overview-tab').onclick=()=>{selectView('overview');void refresh();};
+    el('train-new').onclick = () => {selectView('new');if(!options)void loadOptions().catch(reportError);};
     el('train-records-toggle').onclick = event => {
       const toggle = event.currentTarget;
       const expanded = toggle.getAttribute('aria-expanded') !== 'true';
@@ -1414,9 +1452,9 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
       if (!mounted) {
         if (typeof pageHTML !== 'string') throw Error('训练页面版本不匹配，请按 Ctrl+F5 重新加载工作台');
         el('page-training').innerHTML = pageHTML; mounted = true; bind();
-        window.benchmarkWorkbench?.trainingReady();
+        window.benchmarkWorkbench?.trainingReady();selectView('overview');
       }
-      await loadOptions(); await refresh();
+      await refresh(); await loadOptions();
     } catch(error) {
       if (mounted) reportError(error);
       else el('page-training').textContent = error.message;

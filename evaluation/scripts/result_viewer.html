@@ -599,6 +599,49 @@
     @media(max-width:850px){.start-config{grid-template-columns:1fr}}
     @media(max-width:780px){.layout{grid-template-columns:1fr}.workspace-heading{margin-bottom:12px}#workspace-title{font-size:20px}.detail-tabs{padding:8px var(--panel-pad);gap:4px}.detail-tabs button{font-size:12px;padding:7px 9px}}
     @media(max-width:540px){body>header{gap:8px;padding:10px 12px}.brand h1{font-size:16px}.brand #caption{max-width:170px}.page-nav button,.page-nav-link{padding:7px 9px;font-size:12px}#benchmark-selector select{min-width:120px;max-width:140px}#refresh{min-width:36px;padding:6px 9px}#refresh span{display:none}.workspace-heading{display:block}#workspace-title{font-size:19px}.workspace-heading .gpu-overview-panel{margin-top:6px}.workspace-heading .gpu-overview-panel>summary{font-size:11px}}
+
+    /* Shared active-job layout; no expanded configuration until requested. */
+    .workbench-counts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;padding:12px 16px;border-bottom:1px solid var(--line)}
+    .workbench-counts>div{background:#f5f7fa;border-radius:7px;padding:10px 12px;min-width:0}
+    .workbench-counts small{display:block;color:var(--muted);font-size:12px}
+    .workbench-counts strong{display:block;font-size:23px;color:var(--ink);font-variant-numeric:tabular-nums;line-height:1.4}
+    .workbench-live-list{padding:12px 16px;display:grid;gap:8px}
+    .workbench-live-row{display:block;width:100%;text-align:left;min-width:0;border:1px solid var(--line);border-radius:8px;background:white;padding:12px;margin-bottom:8px;overflow-wrap:anywhere}
+    button.workbench-live-row:hover{background:#f5f8ff;border-color:#9abaf0}
+    .workbench-live-head,.workbench-live-foot{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px 12px}
+    .workbench-live-head{margin-bottom:5px}.workbench-live-head strong{font-size:14px;min-width:0}
+    .workbench-live-foot{font-size:12px;color:var(--muted);margin-top:8px}
+    .workbench-live-row .progress-track{margin:9px 0 0}
+    .launch-sidebar{min-height:160px!important}
+    .launch-nav{padding:10px;display:grid;gap:6px}
+    .launch-nav button{text-align:left;background:#fff;border-color:var(--line);padding:10px 12px;font-weight:600}
+    .launch-nav button[aria-pressed=true]{color:var(--accent);background:var(--soft);border-color:#c7d8f5}
+    .launch-content{min-width:0}
+    #launch-overview{background:white;border:1px solid var(--line);border-radius:10px;min-width:0}
+    .launch-live-grid{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:14px;padding:14px 16px}
+    .launch-live-grid>div{min-width:0}
+    .launch-live-grid h3{margin:0 0 10px;font-size:14px}
+    .launch-live-grid h3 small{color:var(--muted);font-weight:400;margin-left:5px}
+    .launch-live-grid .launch-job{border:1px solid var(--line);border-radius:7px;padding:10px;margin-bottom:8px;background:white;overflow-wrap:anywhere}
+    .launch-live-grid .launch-job-top{flex-wrap:wrap}
+    .launch-live-grid .launch-job details{margin-top:4px}
+    .launch-live-grid .launch-job .inline-actions{padding:6px 0 0;gap:6px}
+    .launch-live-grid .compact-fold{margin-top:10px}
+    #launch-overview-message:not(:empty){padding:0 16px 12px}
+    #launch-create{grid-template-columns:minmax(270px,35%) minmax(0,1fr)}
+    .workspace-heading .gpu-overview-panel[open]{padding:10px 12px}
+    .workspace-heading .gpu-overview-panel #service-overview{margin:8px 0 0;border:1px solid var(--line)}
+    .workspace-heading .gpu-overview-panel #service-overview .services{margin:0}
+    .workspace-heading .gpu-overview-panel #gpu-summary-status{font-size:11px}
+    body:has(#page-registry:not([hidden])) .workspace-heading{display:flex}
+    body:has(#page-registry:not([hidden])) #workspace-title{display:none}
+    body:has(#page-registry:not([hidden])) .workspace-heading{justify-content:flex-end}
+    #result-compare-panel{border:0;background:transparent;border-radius:0}
+    #result-compare-panel>summary{width:max-content;max-width:100%;background:white;border:1px solid var(--line);border-radius:6px;min-height:34px;padding:7px 12px}
+    #result-compare-panel[open]>summary{margin-bottom:10px}
+    #result-compare-panel[open]{border:1px solid var(--line);border-radius:8px;padding:8px;background:white}
+    @media(max-width:1220px){#launch-create{grid-template-columns:1fr}}
+    @media(max-width:780px){.launch-nav{grid-template-columns:1fr 1fr}.launch-live-grid{grid-template-columns:1fr}.workbench-counts{grid-template-columns:repeat(2,minmax(0,1fr))}.workbench-live-list,.launch-live-grid{padding:10px}}
   </style>
 </head>
 <body>
@@ -613,18 +656,18 @@
   </nav>
     <div class="header-actions"><span class="live-label" title="每 5 秒自动更新">自动更新</span><button id="install-workbench" type="button" hidden>安装应用</button><button id="refresh" type="button" aria-label="手动刷新" title="手动刷新">↻ <span>刷新</span></button></div></header>
   <main>
-    <div class="workspace-heading"><h2 id="workspace-title">结果分析</h2><details class="gpu-overview-panel" aria-label="各设备实时显存占用"><summary><span>设备资源</span><small id="gpu-summary-status">正在读取 A100、4090 与 RTX 6000 Ada 状态</small></summary><div id="gpu-overview" class="gpu-overview">
+    <div class="workspace-heading"><h2 id="workspace-title">结果分析</h2><details class="gpu-overview-panel" aria-label="运行概览"><summary><span>运行概览</span><small id="gpu-summary-status">读取设备…</small></summary><div id="gpu-overview" class="gpu-overview">
       <div class="gpu-machine"><div class="gpu-machine-head"><strong>A100 · 训练 / 推理</strong><small id="remote-gpu-time">读取中…</small></div><div id="remote-gpus" class="gpu-cards"><div class="gpu-reading-error">正在读取 A100 显存…</div></div></div>
       <div class="gpu-machine"><div class="gpu-machine-head"><strong>4090 · 仿真评估</strong><small id="local-gpu-time">读取中…</small></div><div id="local-gpus" class="gpu-cards"><div class="gpu-reading-error">正在读取本机显存…</div></div></div>
       <div class="gpu-machine"><div class="gpu-machine-head"><strong>RTX 6000 Ada · 训练 / 评估</strong><small id="a6000-gpu-time">读取中…</small></div><div id="a6000-gpus" class="gpu-cards"><div class="gpu-reading-error">正在检查设备…</div></div></div>
-    </div></details></div>
+    </div>
     <details id="service-overview" class="service-overview"><summary>服务状态 <span class="service-counts"><span id="local-service-summary">4090 · 检查中…</span><span id="remote-service-summary">A100 · 检查中…</span><span id="a6000-service-summary">RTX 6000 Ada · 检查中…</span></span></summary>
     <div class="services">
       <section aria-label="4090本地评估服务"><div class="service-head"><h2>4090 <span class="subtle">/ 本地评估</span></h2><span id="local-service-count" class="subtle">检查中…</span></div><div id="local-services" class="service-body">正在检查本地进程…</div></section>
       <section aria-label="A100推理服务"><div class="service-head"><h2>A100 <span class="subtle">/ 推理服务</span></h2><span id="remote-service-count" class="subtle">检查中…</span></div><div id="remote-services" class="service-body">正在检查远端进程和监听端口…</div></section>
       <section aria-label="RTX 6000 Ada服务"><div class="service-head"><h2>RTX 6000 Ada <span class="subtle">/ 100.100.2.30</span></h2><span id="a6000-service-count" class="subtle">检查中…</span></div><div id="a6000-services" class="service-body">正在检查单卡设备…</div></section>
     </div>
-    </details>
+    </details></details></div>
     <div id="agent-board" class="layout" hidden>
       <section class="run-browser" aria-label="实验目录">
         <div class="section-head"><h2>实验目录</h2><span id="agent-experiment-count" class="subtle"></span></div><div class="filters"><input id="agent-experiment-search" type="search" placeholder="搜索测试号 / 实验号" aria-label="搜索实验目录"></div>
@@ -645,8 +688,8 @@
     </div>
     <div id="page-training" role="tabpanel" aria-labelledby="page-tab-training" hidden></div>
     <div id="page-launch" role="tabpanel" aria-labelledby="page-tab-launch" hidden>
-      <div class="page-intro"><h2>推理评估</h2></div>
-        <div class="start-config">
+      <div class="layout launch-workspace"><section class="run-browser launch-sidebar" aria-label="推理评估导航"><div class="section-head"><h2>作业管理</h2></div><div class="launch-nav"><button type="button" id="launch-overview-tab" aria-pressed="true">运行总览</button><button type="button" id="launch-new-tab" aria-pressed="false">＋ 新建推理 / 评估</button></div></section><div class="launch-content"><section id="launch-overview"><div class="detail-heading"><h2>运行总览</h2><span id="launch-device-status" class="subtle"></span></div><div id="launch-overview-counts" class="workbench-counts"></div><div class="launch-live-grid"><div><h3>评估作业 <small id="launch-active-count"></small></h3><div id="launch-active-jobs"></div><details id="launch-history" class="compact-fold"><summary>历史评估 <small id="launch-history-count"></small></summary><div id="launch-jobs" class="launch-jobs-list"></div></details></div><div><h3>推理服务</h3><div id="all-inference-jobs"></div><details id="inference-history" class="compact-fold" hidden><summary>设备服务操作</summary><div id="inference-manage-message" class="policy-path" role="status"></div><div id="inference-jobs" class="launch-jobs-list"></div></details></div></div><div id="launch-overview-message" role="status" class="subtle"></div></section>
+        <div class="start-config" id="launch-create" hidden>
           <section id="model-config" aria-label="启动推理">
             <details id="inference-panel" class="new-policy"><summary><span><span class="step-number">1</span>启动推理</span><small>已有服务可跳过</small></summary>
               <form id="inference-form">
@@ -672,7 +715,7 @@
                 <div class="inline-actions"><span class="subtle">就绪后自动关联</span><button type="button" id="inference-check">检查配置</button><button type="submit" id="inference-submit" class="primary-button">启动推理</button></div>
               </form>
             </details>
-            <details id="inference-history" class="compact-fold" open hidden><summary>推理服务</summary><div id="inference-manage-message" class="policy-path" role="status"></div><div id="inference-jobs" class="launch-jobs-list"></div></details>
+
           </section>
           <section id="eval-config" aria-label="启动评估">
             <div class="section-head"><h2><span class="step-number">2</span>启动评估</h2><select id="launch-kind" aria-label="运行模式"><option value="new">新建评估</option><option value="resume">续跑已有评估</option><optgroup label="历史开发工具（非正式评估）"><option value="restore">Task40 检查点恢复</option><option value="collect">Task40 轨迹采集 · Exp09</option><option value="forward">Task40 冻结前向 · Exp09</option></optgroup></select></div>
@@ -750,13 +793,13 @@
               <div class="launch-preview"><div id="launch-message" role="status" class="launch-message"></div><div id="launch-plan" hidden></div></div>
               <div class="launch-actions"><button type="button" id="launch-check">检查配置</button><button type="submit" id="launch-submit" class="primary-button">启动评估</button></div>
             </form>
-            <details id="launch-history" class="compact-fold" hidden><summary>评估作业</summary><div id="launch-jobs" class="launch-jobs-list"></div></details>
+
           </section>
-        </div>
+        </div></div></div>
     </div>
     <div class="layout" id="page-results" role="tabpanel" aria-labelledby="page-tab-results">
-      <details id="result-compare-panel"><summary>任务对比</summary><div id="result-compare-content"></div></details>
-      <section class="run-browser" aria-label="选择评估记录"><div class="section-head"><h2>全部运行</h2><span id="run-count" class="subtle">0 条</span></div><div class="filters"><input id="run-search" type="search" placeholder="搜索版本、任务或运行名" aria-label="搜索评估记录"><select id="status-filter" aria-label="按运行状态筛选"><option value="">全部状态</option><option value="running">运行中</option><option value="complete">已完成</option><option value="failed">异常退出</option><option value="interrupted">已暂停 / 中断</option><option value="paused">已暂停</option><option value="cancelled">已暂停（历史停止）</option></select></div><div class="run-list" id="runs"></div><div id="empty" class="empty" hidden>还没有评估结果。</div></section>
+      <details id="result-compare-panel"><summary>评估对比</summary><div id="result-compare-content"></div></details>
+      <section class="run-browser" aria-label="选择评估记录"><div class="section-head"><h2>评估记录</h2><span id="run-count" class="subtle">0 条</span></div><div class="filters"><input id="run-search" type="search" placeholder="搜索版本、任务或运行名" aria-label="搜索评估记录"><select id="status-filter" aria-label="按运行状态筛选"><option value="">全部状态</option><option value="running">运行中</option><option value="complete">已完成</option><option value="failed">异常退出</option><option value="interrupted">已暂停 / 中断</option><option value="paused">已暂停</option><option value="cancelled">已暂停（历史停止）</option></select></div><div class="run-list" id="runs"></div><div id="empty" class="empty" hidden>还没有评估结果。</div></section>
       <section aria-label="选中运行详情">
         <div class="detail-heading"><div><div id="detail-path" class="eyebrow">选择一次评估</div><h2 id="detail-title">运行详情</h2><div id="detail-subtitle" class="subtle"></div></div><div class="heading-status"><span id="detail-status"></span><span id="detail-mode" class="subtle"></span></div></div>
         <div class="evaluation-actions"><button type="button" id="result-export-analysis">导出 JSON</button><div id="evaluation-actions"></div><span id="evaluation-action-message" class="evaluation-action-message" role="status"></span></div>
@@ -805,6 +848,9 @@
   let inferenceOptions=null, inferenceLoading=false, inferenceBusy=false, launchServiceChoice=null;
   let pendingInference=null;
   let inferenceJobs=[];
+  let allInferenceJobs=[], allInferenceErrors={}, inferenceOverviewBusy=false, launchJobSnapshot=[], launchDeviceErrors={}, launchView='overview';
+  const launchActiveStates=new Set(['running','queued','starting','submitted','initializing','stopping','loading','resuming','waiting_for_gpus']);
+  const inferenceActiveStates=new Set(['ready','loading','stopping']);
   let collectionPolicies=[];
   let inferenceStopTarget=null;
   let evaluationActionBusy=false;
@@ -897,7 +943,7 @@
       $('page-'+name).hidden=name!==page;
       $('page-tab-'+name).setAttribute('aria-selected',String(name===page));
     }
-    $('service-overview').hidden=page!=='results';
+    $('service-overview').hidden=false;
     if(page!=='results'){
       stopPreview();$('video-player').pause();renderPreviewControl(selected);
     }
@@ -910,13 +956,16 @@
     if(page==='training'){
       void window.trainingDashboard?.open();
     }else if(page==='launch'){
-      void loadLaunchOptions();renderLaunchTemplates();void refreshLaunchJobs();void refreshInferenceJobs();
+      void loadLaunchOptions();renderLaunchTemplates();void refreshLaunchJobs();void refreshInferenceJobs();void refreshAllInference();
       updateLaunchAvailability();
       if(needsInference){$('launch-kind').value='new';updateLaunchForm();openInferencePanel();}
     }
   }
+  function selectLaunchView(view){launchView=view;$('launch-overview').hidden=view!=='overview';$('launch-create').hidden=view!=='new';$('launch-overview-tab').setAttribute('aria-pressed',String(view==='overview'));$('launch-new-tab').setAttribute('aria-pressed',String(view==='new'));}
+  $('launch-overview-tab').onclick=()=>{selectLaunchView('overview');void refreshLaunchJobs();void refreshAllInference();};
+  $('launch-new-tab').onclick=()=>selectLaunchView('new');
   function openInferencePanel() {
-    $('inference-panel').open=true;void loadInferenceOptions();
+    selectLaunchView('new');$('inference-panel').open=true;void loadInferenceOptions();
   }
   function shortModel(path) {
     const parts=(path||'未知模型').split('/').filter(p=>p && p!=='checkpoints');
@@ -1106,9 +1155,55 @@
       $('inference-history').hidden=false;$('inference-jobs').textContent='无法检查：'+error.message;
     }
   }
+  function evalEndpoint(job){
+    const p=job.policy_identity||job.configuration?.policy_identity||{};
+    const host=job.policy_host||p.host||job.configuration?.policy_host;
+    const port=job.policy_port??p.port??job.configuration?.policy_port;
+    return host&&port?String(host)+':'+String(port):'';
+  }
+  function linkedEvaluations(host,port){
+    const endpoint=String(host)+':'+String(port), linked=new Map();
+    for(const job of launchJobSnapshot.filter(j=>launchActiveStates.has(j.state)&&evalEndpoint(j)===endpoint))linked.set(job.folder||job.device+':'+job.id,job.folder||'作业 '+job.id);
+    for(const run of runs.filter(r=>r.status==='running'&&evalEndpoint(r)===endpoint))linked.set(run._folder,run._folder);
+    return [...linked.values()];
+  }
+  function renderLaunchOverview(){
+    const active=launchJobSnapshot.filter(j=>launchActiveStates.has(j.state));
+    const ready=allInferenceJobs.filter(j=>inferenceActiveStates.has(j.state));
+    const queued=active.filter(j=>['queued','waiting_for_gpus'].includes(j.state));
+    const external=runs.filter(r=>r.status==='running'&&!active.some(j=>j.folder===r._folder));
+    $('launch-overview-counts').innerHTML=[['评估运行',active.length-queued.length+external.length],['排队',queued.length],['推理服务',ready.length],['历史作业',launchJobSnapshot.length-active.length]].map(([k,v])=>'<div><small>'+k+'</small><strong>'+v+'</strong></div>').join('');
+    $('launch-active-count').textContent=String(active.length+external.length);
+    $('launch-history-count').textContent=String(launchJobSnapshot.length-active.length);
+    $('launch-device-status').textContent=[...Object.keys(launchDeviceErrors).map(d=>d+' 评估不可查'),...Object.keys(allInferenceErrors).map(d=>d+' 推理不可查')].join(' · ');
+    $('all-inference-jobs').innerHTML=ready.map((job,i)=>{
+      const linked=linkedEvaluations(job.host,job.port);
+      return '<article class="workbench-live-row"><div class="workbench-live-head"><strong>'+esc(job.label||shortModel(job.checkpoint))+'</strong>'+statusBadge(job.state)+'</div><div class="subtle">'+esc(job._device==='a100'?'A100':'RTX 6000 Ada')+' · GPU '+esc(job.gpu_index)+' · '+esc(job.host+':'+job.port)+'</div><div class="subtle" title="'+esc(linked.join('\n'))+'">'+(linked.length?'关联评估 '+linked.length+' 个':'未匹配到运行评估')+'</div><div class="workbench-live-foot">'+(job.state==='ready'?'<button type="button" data-use-live="'+i+'">用于评估</button>':'')+'<button type="button" data-manage-live="'+i+'">管理</button></div></article>';
+    }).join('')||'<p class="empty">'+(Object.keys(allInferenceErrors).length?'服务状态不完整':'暂无推理服务')+'</p>';
+    $('all-inference-jobs').querySelectorAll('[data-use-live],[data-manage-live]').forEach(b=>b.onclick=async()=>{
+      if(inferenceBusy||launchBusy)return;
+      const job=ready[Number(b.dataset.useLive??b.dataset.manageLive)];if(!job)return;
+      if($('inference-device').value!==job._device)await selectInferenceDevice(job._device);
+      if($('inference-device').value!==job._device)return;
+      if(b.hasAttribute('data-use-live')){await refreshInferenceJobs();if(!inferenceJobs.some(j=>j.host===job.host&&Number(j.port)===Number(job.port)&&j.state==='ready')){$('launch-overview-message').textContent='服务状态已变化';return;}useInferenceService(job.host,Number(job.port));selectLaunchView('new');}
+      else{await refreshInferenceJobs();$('inference-history').open=true;$('inference-history').scrollIntoView({block:'nearest'});}
+    });
+  }
+  async function refreshAllInference(){
+    if(inferenceOverviewBusy)return;
+    inferenceOverviewBusy=true;
+    try{
+      const devices=['a100','a6000'];
+      const replies=await Promise.allSettled(devices.map(device=>inferenceAPI('jobs',undefined,device)));
+      allInferenceJobs=[];allInferenceErrors={};
+      replies.forEach((r,i)=>{if(r.status==='fulfilled'&&Array.isArray(r.value.jobs))allInferenceJobs.push(...r.value.jobs.map(j=>({...j,_device:devices[i]})));else allInferenceErrors[devices[i]]=true;});
+      renderLaunchOverview();
+    }finally{inferenceOverviewBusy=false;}
+  }
   function renderInferenceJobs() {
     const visibleJobs=inferenceJobs.filter(job=>['ready','loading','stopping'].includes(job.state));
     $('inference-history').hidden=!visibleJobs.length;
+    $('inference-history').querySelector('summary').textContent='服务操作 · '+($('inference-device').value==='a100'?'A100':'RTX 6000 Ada');
     const groups=new Map();
     for(const job of visibleJobs){
       const version=job.version||policyVersion(job.checkpoint);
@@ -1139,8 +1234,8 @@
   async function stopInference(pid) {
     const job=inferenceJobs.find(j=>j.pid===pid);
     if(!job || inferenceStopping.has(pid)) return;
-    if(!window.confirm('关闭推理服务？\n'+(job.label||shortModel(job.checkpoint))+'\nGPU '+job.gpu_index+' · '+job.host+':'+job.port+
-       '\n正在使用此服务的评估会中断。')) return;
+    const linked=linkedEvaluations(job.host,job.port);
+    if(!window.confirm('关闭推理服务？\n'+(job.label||shortModel(job.checkpoint))+'\nGPU '+job.gpu_index+' · '+job.host+':'+job.port+'\n'+(linked.length?'关联运行评估：\n'+linked.join('\n'):'未匹配到运行评估')+'\n使用此服务的评估会中断。')) return;
     inferenceStopping.add(pid);renderInferenceJobs();bindInferenceButtons($('inference-jobs'));
     const message=$('inference-manage-message');message.textContent='正在关闭端口 '+job.port+' 的推理服务…';
     try{
@@ -1159,6 +1254,7 @@
       useInferenceService(button.dataset.policyHost,Number(button.dataset.policyPort)));
   }
   function useInferenceService(host,port) {
+    selectLaunchView('new');
     const job=inferenceJobs.find(job=>job.host===host&&Number(job.port)===port&&job.task40_diagnostics);
     if(job){
       if($('launch-kind').value!=='forward'||!job.task40_trace) $('launch-kind').value='collect';
@@ -1550,7 +1646,7 @@
         '已提交后台启动。下方可查看启动状态，结果生成后点击“评估结果”。'):
         '配置检查通过。尚未启动评估；最终目录编号由脚本自动分配。';
       $('launch-message').className='launch-message good';
-      if(start){$('launch-history').open=true;await refreshLaunchJobs();await refresh();}
+      if(start){selectLaunchView('overview');await refreshLaunchJobs();await refresh();}
     }catch(error){$('launch-message').textContent=(start?'提交未确认，请先核对评估作业列表，勿直接重试：':'配置检查失败：')+error.message;$('launch-message').className='launch-message error';}
     finally{launchBusy=false;$('launch-kind').disabled=false;updateLaunchForm();}
   }
@@ -1588,10 +1684,11 @@
   async function refreshLaunchJobs() {
     try{
       const data=await launchAPI('jobs');
-      const jobs=data.jobs||[], list=$('launch-jobs');
-      const openPanels=new Set([...list.querySelectorAll('details[open][data-log]')].map(panel=>panel.dataset.log));
-      $('launch-history').hidden=!jobs.length;
-      list.innerHTML=jobs.map(job=>{
+      const jobs=data.jobs||[], list=$('launch-jobs'), live=$('launch-active-jobs');
+      launchJobSnapshot=jobs;launchDeviceErrors=data.device_errors||{};
+      const openPanels=new Set([...$('launch-overview').querySelectorAll('details[open][data-log]')].map(panel=>panel.dataset.log));
+      const active=jobs.filter(job=>launchActiveStates.has(job.state)), history=jobs.filter(job=>!launchActiveStates.has(job.state));
+      const card=job=>{
         const collect=job.kind==='task40_collect', restore=job.kind==='task40_restore', forward=job.kind==='task40_forward';
         const experiment=job.group==='experiment_10'?'Exp10':'Exp09';
         const collectTitle={controlled_reclosure:'受控重关',directed_restore:'定向恢复',renderer_probe:'固定动作恢复'}[job.phase]||'轨迹采集';
@@ -1603,25 +1700,31 @@
           return `<details data-log="${esc(key)}"${openPanels.has(key)?' open':''}><summary class="subtle">${esc(label)}</summary><pre class="log">${esc(tail)}</pre></details>`;
         };
         return `<article class="launch-job" data-launch-job="${esc(job.id)}"><div class="launch-job-top"><strong>${esc(title)}</strong>${statusBadge(job.state)}</div>
-          <div>${device} · PID ${esc(safe(job.pid))} · ${esc(safe(job.started_at))}</div>
-          <div class="subtle">${esc(job.output||'')}</div>
+          <div class="subtle">${device}${evalEndpoint(job)?' · 推理 '+esc(evalEndpoint(job)):''} · ${esc(({agent:'Agent',user:'用户'})[job.initiator]||'来源未记录')}</div>
+          ${(()=>{const r=runs.find(r=>r._folder===job.folder);return r?`<div class="workbench-live-foot"><span>${esc(r.completed_episodes??r.recorded_episodes??0)} / ${esc(r.requested_episodes??'—')} 回合</span><span>成功率 ${pct(r.success_rate)}</span></div>`:'';})()}
+          <details><summary class="subtle">作业信息</summary><div class="subtle">PID ${esc(safe(job.pid))} · ${esc(safe(job.started_at))}<br>${esc(job.output||'')}</div></details>
           ${collect||forward?renderTask40Job(job,logPanel):''}
           ${restore&&job.state==='running'?`<button type="button" data-restore-stop="${esc(job.id)}">停止恢复任务</button>`:''}
           ${!collect&&!forward&&job.result_ready?`<button type="button" data-run="${esc(job.folder||'')}">评估结果 →</button>`:''}
           ${logPanel('launch','启动日志'+(job.returncode==null?'':` · 退出码 ${job.returncode}`),job.log_tail||'等待启动脚本输出…')}</article>`;
-      }).join('')||'<div class="empty">尚未从网页启动评估。</div>';
-      $('launch-jobs').querySelectorAll('button[data-run]').forEach(button=>button.onclick=()=>void openLaunchResult(button.dataset.run));
-      $('launch-jobs').querySelectorAll('button[data-restore-stop]').forEach(button=>button.onclick=async()=>{
+      };
+      const unmanaged=runs.filter(r=>r.status==='running'&&!active.some(job=>job.folder===r._folder));
+      live.innerHTML=active.map(card).join('')+unmanaged.map(r=>`<article class="launch-job"><div class="launch-job-top"><strong>${esc(r.version||'')} · Task${esc(r.task_id)}</strong>${statusBadge(r.status)}</div><div class="subtle">${esc(r._folder)}</div><div class="workbench-live-foot"><span>${esc(r.completed_episodes??r.recorded_episodes??0)} / ${esc(r.requested_episodes??'—')} 回合</span><span>成功率 ${pct(r.success_rate)}</span></div><button type="button" data-run="${esc(r._folder)}">详情 →</button></article>`).join('');
+      if(!live.innerHTML)live.innerHTML='<p class="empty">暂无运行评估</p>';
+      list.innerHTML=history.map(card).join('')||'<p class="empty">暂无历史作业</p>';
+      renderLaunchOverview();
+      $('launch-overview').querySelectorAll('button[data-run]').forEach(button=>button.onclick=()=>void openLaunchResult(button.dataset.run));
+      $('launch-overview').querySelectorAll('button[data-restore-stop]').forEach(button=>button.onclick=async()=>{
         button.disabled=true;try{await launchAPI('restore-stop',{job:button.dataset.restoreStop});await refreshLaunchJobs();}
         catch(error){button.disabled=false;button.title=error.message;}
       });
-      for(const [index,job] of jobs.entries()){
+      for(const [group,entries] of [[live,active],[list,history]])for(const [index,job] of entries.entries()){
         if(['task40_collect','task40_forward'].includes(job.kind)||!job.folder||!job.result_ready) continue;
-        const panel=$('launch-jobs').children[index],actions=document.createElement('div');actions.className='inline-actions';
+        const panel=group.children[index],actions=document.createElement('div');actions.className='inline-actions';
         actions.innerHTML=evaluationButtons(runs.find(r=>r._folder===job.folder)||{_folder:job.folder,status:job.state,evaluation_mode:'official-eval'});
         panel.appendChild(actions);bindEvaluationButtons(actions);
       }
-    }catch(error){$('launch-history').hidden=false;$('launch-jobs').textContent=error.message;}
+    }catch(error){launchDeviceErrors={all:error.message};launchJobSnapshot=[];$('launch-active-jobs').textContent='评估状态不可查';renderLaunchOverview();}
   }
   function evaluationButtons(r) {
     if(!r) return '';
@@ -1646,7 +1749,7 @@
   async function evaluationAction(action,folder) {
     if(evaluationActionBusy) return;
     if(action==='resume'){
-      selectPage('launch');renderLaunchTemplates();$('launch-kind').value='resume';
+      selectPage('launch');selectLaunchView('new');renderLaunchTemplates();$('launch-kind').value='resume';
       $('launch-resume-run').value=folder;$('launch-resume-budget').value='additional';updateLaunchForm();
       $('launch-message').textContent='请选择本次再跑多少回合，或补完原计划。已有结果和备注保留，尚未启动。';return;
     }
@@ -1668,7 +1771,7 @@
   async function openLaunchResult(folder) {
     await refresh();
     const run=runs.find(r=>r._folder===folder);
-    if(!run){$('launch-message').textContent='结果目录尚未就绪，请稍后刷新。';return;}
+    if(!run){$('launch-overview-message').textContent='结果尚未就绪';return;}
     selectResultRun(run);
   }
   function openRegistryResult(folder) {
@@ -2334,8 +2437,8 @@
       const res=await fetch("/api/results",{cache:"no-store"}); const data=await res.json();
       if(typeof window!=='undefined' && window.benchmarkWorkbench && !window.benchmarkWorkbench.isNative())return;
       const old=selected?._folder; runs=data.runs||[]; selected=runs.find(r=>r._folder===old)||runs[0]||null;
-      $("caption").textContent=`自动刷新 · 最近更新 ${data.updated_at} · ${runs.length} 次评估`;
-      render();if(activePage==='launch'){renderLaunchTemplates();void refreshLaunchJobs();void refreshInferenceJobs();}
+      $("caption").textContent=`更新 ${data.updated_at}`;
+      render();if(activePage==='launch'){renderLaunchTemplates();void refreshLaunchJobs();void refreshInferenceJobs();void refreshAllInference();}
     } catch(e){$("caption").textContent=`读取失败：${e.message}`;}
     finally{refreshInFlight=false;}
   }

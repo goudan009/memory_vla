@@ -71,6 +71,9 @@ async function bounds(page,name,selector){
    const errors=[];page.on('pageerror',e=>errors.push(e.stack||e.message));
    await routeAll(page);
    await page.goto(base+'/?page=training');
+   await page.locator('#train-overview-counts strong').first().waitFor({state:'visible'});
+   assert.ok(await page.locator('#train-config').isHidden(),'overview is default');
+   await page.locator('#train-new').click();
    await page.locator('#train-task-list input').first().waitFor({state:'attached'});
    assert.equal(await page.locator('#page-tab-training').evaluate(e=>getComputedStyle(e).backgroundColor),'rgb(40, 95, 198)');
    assert.equal(await page.locator('#page-tab-training').evaluate(e=>getComputedStyle(e).boxShadow),'none');
@@ -82,6 +85,9 @@ async function bounds(page,name,selector){
     if([1440,390].includes(width)&&[0,3].includes(i))await page.screenshot({path:output+'/training-'+i+'-'+width+'.png',fullPage:true});
    }
    await page.locator('#page-tab-launch').click();
+   await page.locator('#launch-overview-counts strong').first().waitFor({state:'visible'});
+   assert.ok(await page.locator('#launch-create').isHidden(),'launch overview is default');
+   await page.locator('#launch-new-tab').click();
    await page.locator('#launch-task option[value="40"]').waitFor({state:'attached'});
    await page.locator('#inference-panel > summary').click();
    await page.locator('#inference-gpu option[value="0"]').waitFor({state:'attached'});

@@ -103,7 +103,7 @@ if(typeof module!=='undefined' && module.exports) module.exports={benchmarkMetri
     resultSwitch.hidden=!(benchmark==='b1k' && page==='results');
     el('bench-policy-results').setAttribute('aria-pressed',String(resultMode==='policy'));
     el('bench-code-results').setAttribute('aria-pressed',String(resultMode==='code'));
-    el('service-overview').hidden=!(native && page==='results');
+    el('service-overview').hidden=false;
     el('gpu-overview').hidden=benchmark==='mikasa'||benchmark==='simpler';
     if(!native){stopPreview();el('video-player').pause();}
     if(benchmark==='b1k' && !native){
