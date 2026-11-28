@@ -1,0 +1,20 @@
+{
+  "plan_id": "v1_2_n17_b1k2026_task_language_v027",
+  "status": "in_progress",
+  "supersedes": "v1_2_n17_b1k2026_transition_gate_v026",
+  "change_reason": "User asked to continue completing acceptance after the documented language mismatch. Add an explicit, recorded task-language adapter without editing pinned upstream; repeat the same public instance in a fresh attempt directory. The original official-default failure remains unchanged.",
+  "scope": "One task-language corrected radio acceptance through the primary workbench, followed by native output verification and a migration decision. No formal training, V2.2, historical deletion or B1K-2025 adaptation.",
+  "method_version": "V_1_2",
+  "protocol": "b1k2026_websocket",
+  "checkpoint_sha256": "cd97a22ff74bd91838350e18fe94b48e1902d407f1256f5d48eb20befe277dc3",
+  "experiment_identity": null,
+  "notes": "V1.2 / N1.7 / B1K2026: radio task prompt, RTC off",
+  "configuration": {"task": "turning_on_radio", "instance": 18, "attempt": 2, "gpu_index": 0, "policy_port": 8033, "language_mode": "task_description", "text_prompt": "Turn on the radio receiver that's on the table in the living room.", "control_mode": "temporal_ensemble", "rtc": false, "seed": "native default, not a paired deterministic comparison"},
+  "budget": {"training_steps": 0, "environments": 1, "additional_rollouts": 1, "step_limit": "unchanged native task timeout"},
+  "mainline": [
+    {"node": "task_language", "depends_on": [], "parallel_branches": [], "acceptance": "Explicit task-language mode binds the verified Task0 description, persists it in preview/job/runner, and passes a regression proving the upstream wrapper receives it. Official-default mode remains available and pinned upstream stays clean."},
+    {"node": "repeat_rollout", "depends_on": ["task_language"], "parallel_branches": [], "acceptance": "Preview/start the same instance in attempt 2 via 8765; verify actual job, short notes, checkpoint, source, GPU and output. Preserve attempt 1."},
+    {"node": "migration_gate", "depends_on": ["repeat_rollout"], "parallel_branches": [], "acceptance": "Verify native terminal JSON/video and task outcome. If semantic or runtime problems remain, retain old automation; otherwise stop only confirmed old dedicated auto-run units after live dependency checks. Report the scope of acceptance without claiming all tasks or training passed."},
+    {"node": "archive", "depends_on": ["migration_gate"], "parallel_branches": [], "acceptance": "Commit/push exact results, video hashes, retained/stopped services and zero training to main. Keep native training launch disabled until separate training-readiness acceptance."}
+  ]
+}

@@ -1,5 +1,10 @@
 # V1.2 Progress
 
+## 2026-11-28 - task_language / primary_workbench
+
+- User requested continued completion. Latest plan: [workflow/plan-v027.json](workflow/plan-v027.json). Correct the verified language-wiring defect through an explicit adapter and repeat public index 18 in attempt 2; preserve the original default-prompt test. This is a labeled input correction, not a claim of reproducing unchanged official serving or a deterministic paired comparison.
+- 8765 was reloaded through `memory-vla-web-8765.service` after confirming zero active evaluations. Its native options are ready and job `97f45ef78924` is recovered with its original note and actual metrics (3225 / false / 0.0). Artifact endpoint does not implement HEAD; validate with normal GET rather than modifying the server for that optional method. Legacy timers remain enabled. No new rollout has started yet.
+
 ## 2026-11-28 - official_rollout / semantic_review / legacy_shutdown_gate
 
 - Latest plan: [workflow/plan-v026.json](workflow/plan-v026.json). Job `97f45ef78924` is COMPLETE, returncode 0. Public index 18 / native instance 319 finished at 3225 steps: `success=false`, `q_score.final=0.0`. One complete official-default trial; preceding startup failures are excluded. This passes execution/output acceptance, not task-performance or full-transition acceptance.
