@@ -682,9 +682,14 @@ def worker(args):
             if not all(any(r["step"]==i and r["grad_norm"]>0 and math.isfinite(r["fm"]) for r in rows)
                        for i in range(1,step+1)):
                 raise ValueError("preflight did not establish finite nonzero gradients")
-            atomic(output/"preflight.json",dict(passed=True,strict_resume=True,contract=contract,
+            evidence=dict(passed=True,strict_resume=True,contract=contract,
                 run_id=run,resumed_from=resumed_step,step=step,checkpoint=final.name,
-                cursor=sample_cursor(step),restore_checks={"model":True,"optimizer":True,"scheduler":True,"rng":True},rows=rows))
+                cursor=sample_cursor(step),restore_checks={"model":True,"optimizer":True,"scheduler":True,"rng":True},rows=rows)
+            atomic(output/"preflight.json",evidence)
+            if opts["custom_config"]:
+                # Independent durable proof remains available even if the
+                # disposable preflight is later cleaned through the workbench.
+                atomic(job_root.parent/"preflight_evidence"/(run+".json"),evidence)
         terminal="completed" if (step>=4 if preflight else step>=STEPS) else "paused"
         atomic(output/"status.json",dict(status=terminal,step=step,total_steps=4 if preflight else STEPS,
                     world_size=GPU,training_complete=terminal=="completed"))

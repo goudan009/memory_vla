@@ -179,9 +179,45 @@ def catalog():
         task=read_json(root/'config/data_split.json',{}).get('task')
         checkpoints.append(dict(path=str(file.parent), label=display_name(root,arm,task)+' / '+file.parent.name,
             training_profile=checkpoint_training_profile(file.parent)))
+    # Native configuration context is sourced from actual recorded jobs,
+    # not hardcoded host paths or a guessed split. Expose only valid parents.
+    native_context=None
+    native_contexts={}
+    if _device.get('device_id','a100')=='a100':
+        for file in sorted(TRAINING.glob('*/config/web_launch.json'),key=lambda p:p.stat().st_mtime,reverse=True):
+            launch=read_json(file,{})
+            if launch.get('recipe')!='native_random_v2' or launch.get('task')!=40:
+                continue
+            if not all(isinstance(launch.get(k),str) and Path(launch[k]).is_absolute() for k in ('dataset','split','official_root')):
+                continue
+            if not all(p.is_file() for p in (Path(launch['split']),
+                    Path(launch['dataset'])/'meta/episodes.jsonl',
+                    Path(launch['official_root'])/'gr00t/experiment/experiment.py')):
+                continue
+            context={k:launch[k] for k in ('dataset','split','official_root')}
+            context.update(video_backend=launch.get('video_backend','torchcodec'),
+                           normalization=launch.get('normalization','guarded'),
+                           proof_directory=str(TRAINING/'preflight_evidence'))
+            if native_context is None:
+                native_context=dict(context,base_checkpoint=str(BASE_CHECKPOINT))
+                if 40 not in datasets:
+                    datasets[40]=dict(task=40,dataset=context['dataset'],split=context['split'],train_episodes=180,validation_episodes=20)
+            if not launch.get('preflight_only'):
+                native_contexts[file.parents[1].name]=context
+        for point in checkpoints:
+            path=Path(point['path'])
+            if path==BASE_CHECKPOINT:
+                point['native_stage1']=True
+                continue
+            if len(path.parents)<4:continue
+            context=native_contexts.get(path.parents[2].name)
+            marker=read_json(path/'COMPLETE.json',{})
+            if context and marker.get('recipe')=='native_random_v2' and marker.get('run_id')==path.parents[2].name:
+                point['native_stage1']=True
+                point['native_context']=dict(context,parent_step=marker.get('step'))
     for source in datasets.values():
         source['training_profile'] = dataset_training_profile(source)
-    return dict(model_versions={k:v for k,v in MODEL_VERSIONS.items() if v.get('launch_ready',True)},
+    return dict(native_stage1_context=native_context,model_versions={k:v for k,v in MODEL_VERSIONS.items() if v.get('launch_ready',True)},
                 registered_model_versions=MODEL_VERSIONS, naming_schema=NAMING_SCHEMA,
                 datasets=[datasets[key] for key in sorted(datasets)], checkpoints=checkpoints, gpus=gpu_info(),
                 python_path=str(PYTHON), live_source=str(LIVE))

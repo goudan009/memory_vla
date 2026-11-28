@@ -138,6 +138,126 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
   function selectedDatasets() {
     return [...el('train-dataset').selectedOptions].map(option => options?.datasets[Number(option.value)]).filter(Boolean);
   }
+
+  function nativeMode() { return el('train-version').value === 'V_2_1'; }
+  let wasNative = false;
+  const nativeFields=['scheduler','warmup','accum','wd','clip','normalization','save','validation','phase','attempt','llm','top','vision','dit','projector','vlln'];
+  function nativePoint() { return options?.checkpoints?.find(p=>p.path===el('train-checkpoint').value.trim()); }
+  function nativeContext() { return nativePoint()?.native_context || options?.native_stage1_context; }
+  function nativePreset(mode) {
+    if (!nativeMode() || mode==='custom') return;
+    const all=mode==='full';
+    for(const k of ['llm','vision'])el('train-native-'+k).checked=all;
+    for(const k of ['dit','projector','vlln'])el('train-native-'+k).checked=true;
+    el('train-native-top').value='0';
+  }
+  function updateNativeMode() {
+    const active=nativeMode(), panel=el('train-native-config');
+    panel.hidden=!active;
+    for (const k of nativeFields) el('train-native-'+k).disabled=!active;
+    const windows=el('train-windows');
+    windows.disabled=active; windows.closest('label').hidden=active;
+    el('train-arm').querySelector('option[value="memory_v1"]').disabled=active;
+    el('train-fine-tuning').querySelector('option[value="lora"]').disabled=active;
+    for (const id of ['train-tuning-details','train-advanced','train-memory-details','train-validation-details']) {
+      const section=el(id);
+      if(active)section.hidden=true;
+      else if(id==='train-tuning-details'||id==='train-advanced')section.hidden=false;
+      section.querySelectorAll('input,select').forEach(node=>{node.disabled=active;});
+    }
+    el('train-auto-recommend').disabled=active;
+    el('train-restore-recommendation').disabled=active;
+    el('train-validation-enabled').disabled=active || !!options?.single_gpu;
+    if(active) {
+      el('train-validation-enabled').checked=true;
+      el('train-arm').value='baseline';
+      if(!wasNative) {
+        el('train-auto-recommend').checked=false;
+        el('train-steps').value='6000';el('train-lr').value='0.0001';el('train-microbatch').value='2';
+        el('train-fine-tuning').value='action_full';nativePreset('action_full');
+        const context=options?.native_stage1_context;
+        if(!nativePoint()?.native_stage1 && context)el('train-checkpoint').value=context.base_checkpoint;
+        renderCheckpointChoices();
+      }
+      el('train-validation-gpu-field').hidden=true;
+      el('train-validation-percent-field').hidden=true;
+      el('train-validation-gpu').disabled=true;
+      el('train-validation-percent').disabled=true;
+      el('train-recommendation-status').textContent='原生训练 · 手动配置';
+      el('train-recommendation-summary').textContent='保留当前输入；默认值来自已核对的原生配方。';
+      el('train-recommendation-details').hidden=true;
+    } else if(wasNative) {
+      el('train-auto-recommend').checked=true;
+      el('train-validation-enabled').checked=!options?.single_gpu;
+      renderCheckpointChoices();
+    }
+    wasNative=active;
+  }
+  function updateNativePreview() {
+    if(!nativeMode())return;
+    const p=nativePoint(), context=nativeContext();
+    if(p?.native_context) {
+      el('train-native-normalization').value=p.native_context.normalization;
+      el('train-native-normalization').disabled=true;
+    } else el('train-native-normalization').disabled=false;
+    const sched=el('train-native-scheduler').value;
+    if(sched==='constant')el('train-native-warmup').value='0';
+    el('train-native-warmup').disabled=sched==='constant';
+    if(el('train-native-llm').checked)el('train-native-top').value='0';
+    el('train-native-top').disabled=el('train-native-llm').checked;
+    const count=selectedGPUs().length,batch=count*Number(el('train-microbatch').value)*Number(el('train-native-accum').value);
+    const steps=Number(el('train-steps').value),lr=Number(el('train-lr').value),w=Math.max(0,Math.min(.5,Number(el('train-native-warmup').value)/100||0));
+    const baseStep=p?.native_context?.parent_step;
+    el('train-native-context').textContent=(context?'原始数据划分已由历史任务核实。':'未找到可用的原生训练数据/源码上下文。')+
+      ' 有效Batch '+batch+'（需要4张A100）；'+(baseStep!=null?'父 checkpoint step '+baseStep+'；本次新增 '+steps+' 步，重置优化器及Scheduler，继承归一化。':'从通用权重独立训练。');
+    const svg=el('train-native-lr-chart');
+    const curve=Array.from({length:101},(_,i)=>{
+      const t=i/100,f=sched==='constant'?1:(w&&t<w)?t/w:sched==='constant_with_warmup'?1:sched==='cosine'?(1+Math.cos(Math.PI*(t-w)/(1-w)))/2:1-(t-w)/(1-w);
+      return (i?'L':'M')+(50+t*295).toFixed(2)+' '+(95-75*f).toFixed(2);
+    }).join(' ');
+    svg.innerHTML='<path d="M50 10 V95 H345" fill="none" stroke="currentColor" opacity=".3"/><path d="'+curve+'" fill="none" stroke="#5685a8" stroke-width="2"/>'+
+      '<text x="45" y="22" text-anchor="end" font-size="10" fill="currentColor">'+esc(Number.isFinite(lr)?lr.toExponential(1):'—')+'</text><text x="45" y="97" text-anchor="end" font-size="10" fill="currentColor">0</text>'+
+      '<text x="50" y="112" font-size="10" fill="currentColor">0</text><text x="345" y="112" font-size="10" text-anchor="end" fill="currentColor">'+esc(steps)+'</text>';
+  }
+  function nativeParameters(runId) {
+    const data=selectedDatasets(), point=nativePoint(), context=nativeContext();
+    if(data.length!==1||data[0].task!==40||!data[0].ready)throw Error('原生V2_1仅支持已登记Task40原180/20划分');
+    if(!context||!point?.native_stage1)throw Error('请选择工作台登记的通用权重或已发布的原生Stage1父权重');
+    if(selectedGPUs().length!==4)throw Error('原生V2_1需要四张A100');
+    const preflight=el('train-native-phase').value==='preflight';
+    const suffix='__preflight'+String(Number(el('train-native-attempt').value)).padStart(3,'0');
+    const tuning={tune_llm:el('train-native-llm').checked,tune_top_llm_layers:Number(el('train-native-top').value),
+      tune_visual:el('train-native-vision').checked,tune_projector:el('train-native-projector').checked,
+      tune_diffusion_model:el('train-native-dit').checked,tune_vlln:el('train-native-vlln').checked};
+    return {version:'V_2_1',recipe:'native_random_v2',stage:'stage1',task:40,arm:'baseline',custom_config:true,
+      run_id:runId+(preflight?suffix:''),dataset:context.dataset,split:context.split,official_root:context.official_root,
+      checkpoint:point.path,video_backend:context.video_backend,gpus:selectedGPUs(),seed:42,
+      steps:Number(el('train-steps').value),learning_rate:Number(el('train-lr').value),microbatch:Number(el('train-microbatch').value),
+      accumulation:Number(el('train-native-accum').value),scheduler:el('train-native-scheduler').value,
+      warmup_ratio:Number(el('train-native-warmup').value)/100,weight_decay:Number(el('train-native-wd').value),
+      max_grad_norm:Number(el('train-native-clip').value),normalization:el('train-native-normalization').value,
+      checkpoint_interval:Number(el('train-native-save').value),validation_interval:Number(el('train-native-validation').value),
+      native_tuning:tuning,preflight_only:preflight,...(preflight?{}:{accept_preflight:context.proof_directory+'/'+runId+suffix+'.json'}),
+      enqueue:el('train-enqueue').checked,share_existing:el('train-share').checked,notes:el('train-notes').value.trim()};
+  }
+  function drawDiagnosticCurve(){
+    const panel=el('train-diagnostic-curves');
+    panel.hidden=!detail?.diagnostic_series;
+    if(panel.hidden)return;
+    const key=el('train-diagnostic-metric').value;
+    const points=(key==='validation'?(detail.validation||[]).map(r=>[r.step,r.validation_loss]):detail.diagnostic_series[key]||[])
+      .filter(p=>Number.isFinite(p[0])&&Number.isFinite(p[1]));
+    const svg=el('train-diagnostic-chart');
+    if(!points.length){svg.innerHTML='';el('train-diagnostic-hint').textContent='此指标未记录';return;}
+    const maxX=Math.max(1,...points.map(p=>p[0])),maxY=Math.max(1e-12,...points.map(p=>p[1]));
+    const x=v=>65+800*v/maxX,y=v=>205-180*v/maxY;
+    svg.innerHTML='<path d="M65 20 V205 H865" stroke="currentColor" opacity=".3" fill="none"/>'+
+      '<path d="'+points.map((p,i)=>(i?'L':'M')+x(p[0]).toFixed(2)+' '+y(p[1]).toFixed(2)).join(' ')+'" stroke="#5685a8" fill="none" stroke-width="2"/>'+
+      '<text x="60" y="28" text-anchor="end" fill="currentColor" font-size="11">'+esc(maxY.toExponential(2))+'</text>'+
+      '<text x="60" y="209" text-anchor="end" fill="currentColor" font-size="11">0</text><text x="865" y="225" text-anchor="end" fill="currentColor" font-size="11">'+esc(maxX)+'</text>';
+    el('train-diagnostic-hint').textContent='记录数 '+points.length+' · 最近 step '+points.at(-1)[0]+'：'+fmt(points.at(-1)[1])+'；未记录的步不补零。';
+  }
+
   const recommendedFields = {
     steps:'train-steps', learning_rate:'train-lr', global_windows_per_step:'train-windows', microbatch:'train-microbatch',
     memory_length:'train-memory-length', memory_conditioning:'train-memory-conditioning',
@@ -146,6 +266,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
     seed:'train-seed', validation_interval:'train-validation-interval', disable_early_stopping:'train-early-stopping'
   };
   function updateRecommendation() {
+    if(nativeMode()){updateNativePreview();updateBatch();return;}
     const automatic = el('train-auto-recommend').checked, selected = selectedGPUs();
     const result = recommendTraining({datasets:selectedDatasets(), gpus:(options?.gpus || []).filter(gpu => selected.includes(gpu.index)),
       checkpoint:options?.checkpoints.find(point => point.path === el('train-checkpoint').value.trim()),
@@ -177,6 +298,10 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
   }
   function updateBatch() {
     const windows = Number(el('train-windows').value), count = selectedGPUs().length;
+    if(nativeMode()){
+      el('train-batch').textContent='有效 Batch = '+count+' × '+el('train-microbatch').value+' × '+el('train-native-accum').value+' = '+count*Number(el('train-microbatch').value)*Number(el('train-native-accum').value);
+      updateNativePreview();updateSummary();return;
+    }
     el('train-batch').textContent = '最多 ' + windows * 32 + ' 决策 / 步 · 种子 ' + el('train-seed').value +
       (count && windows % count ? ' · 全局窗口数须能被训练卡数整除' : '');
     updateSummary();
@@ -201,13 +326,13 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
       ['初始权重',el('train-checkpoint').value || '尚未选择'],
       ['训练数据',el('train-step-summary-1').textContent],
       ['运行资源',deviceLabel() + ' · ' + (gpus.length ? '训练 GPU '+gpus.join('、') : '未选训练 GPU') +
-        (el('train-validation-enabled').checked ? ' · 验证 GPU '+el('train-validation-gpu').value+' / '+el('train-validation-percent').value+'%' : ' · 不启用验证')],
+        (nativeMode()?' · 原生内部验证20条':el('train-validation-enabled').checked ? ' · 验证 GPU '+el('train-validation-gpu').value+' / '+el('train-validation-percent').value+'%' : ' · 不启用验证')],
       ['预算与启动',el('train-step-summary-3').textContent]
     ];
     el('train-review').innerHTML = rows.map(([label,value])=>'<div><dt>'+esc(label)+'</dt><dd>'+esc(value)+'</dd></div>').join('');
-    el('train-memory-details').hidden = el('train-arm').value !== 'memory_v1';
-    el('train-validation-details').hidden = !el('train-validation-enabled').checked;
-    el('train-validation-interval').disabled = !el('train-validation-enabled').checked;
+    el('train-memory-details').hidden = nativeMode() || el('train-arm').value !== 'memory_v1';
+    el('train-validation-details').hidden = nativeMode() || !el('train-validation-enabled').checked;
+    el('train-validation-interval').disabled = nativeMode() || !el('train-validation-enabled').checked;
     el('train-lora-fields').querySelectorAll('input').forEach(input => {
       input.disabled = el('train-fine-tuning').value !== 'lora';
     });
@@ -307,13 +432,13 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
     el('train-sync-state').className = 'train-info' + (state.error ? ' train-error' : '');
   }
   function renderCheckpointChoices() {
-    const points = options?.checkpoints || [], selected = el('train-checkpoint').value;
+    const points = (options?.checkpoints || []).filter(p=>!nativeMode()||p.native_stage1), selected = el('train-checkpoint').value;
     const official = point => ['GR00T-N1.6-3B','GR00T-N1.6-BEHAVIOR1k'].includes(point.path.split('/').at(-1));
     const group = (label, values) => values.length ? '<optgroup label="' + label + '">' + values.map(point =>
       '<option value="' + esc(point.path) + '">' + esc(point.label) + '</option>').join('') + '</optgroup>' : '';
     el('train-checkpoint-choice').innerHTML = group('官方初始权重', points.filter(official)) + group('本项目已训练权重', points.filter(p=>!official(p))) +
-      '<option value="custom">自定义设备权重路径…</option>';
-    el('train-checkpoint-choice').value = points.some(point=>point.path===selected) ? selected : 'custom';
+      (nativeMode()?'':'<option value="custom">自定义设备权重路径…</option>');
+    el('train-checkpoint-choice').value = points.some(point=>point.path===selected) ? selected : nativeMode()?(options?.native_stage1_context?.base_checkpoint||''):'custom';
     updateCheckpointChoice();
   }
   function updateCheckpointChoice() {
@@ -331,8 +456,9 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
     el('train-split').textContent=selected.length ? selected.length+' 个任务 · 共 '+selected.length*(200-validation)+' 集训练 / '+selected.length*validation+' 集验证'+
       ' · 每任务 '+(200-validation)+' / '+validation+' 集 · '+(enabled?'按 Episode 隔离':'全部200集用于训练，不启动验证') : '请选择训练任务';
     el('train-split').title=selected.map(data=>data.dataset || '').join('\n');
-    el('train-validation-gpu-field').hidden=el('train-validation-percent-field').hidden=!enabled;
-    el('train-validation-gpu').disabled=el('train-validation-percent').disabled=!enabled;
+    el('train-validation-gpu-field').hidden=el('train-validation-percent-field').hidden=nativeMode()||!enabled;
+    el('train-validation-gpu').disabled=el('train-validation-percent').disabled=nativeMode()||!enabled;
+    if(nativeMode())el('train-split').textContent='原生 Stage1：固定 Task40，180条训练 / 20条验证，使用训练卡内部验证。';
     el('train-prepare-data').disabled=!selected.some(data=>!data.ready && data.can_prepare && !['queued','starting','converting','syncing'].includes(data.preparation?.status));
     el('train-prepare-data').hidden=!selected.some(data=>!data.ready);
     el('train-task-count').textContent = '已选 ' + selected.length + ' 个';
@@ -355,12 +481,13 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
     if (options.model_versions) {
       const previousVersion = el('train-version').value;
       el('train-version').innerHTML = Object.entries(options.model_versions)
-        .filter(([,entry]) => entry.backend === 'v1')
+        .filter(([,entry]) => entry.backend === 'v1' || (entry.backend==='v2_1' && options.native_stage1_context))
         .map(([version,entry]) => '<option value="' + esc(version) + '">' + esc(version + ' · ' + entry.description) + '</option>').join('');
       if ([...el('train-version').options].some(option => option.value === previousVersion)) el('train-version').value = previousVersion;
     }
     el('train-device-label').textContent=deviceLabel();
-    el('train-validation-enabled').disabled=!!options.single_gpu;
+    updateNativeMode();
+    el('train-validation-enabled').disabled=nativeMode()||!!options.single_gpu;
     if(options.single_gpu) el('train-validation-enabled').checked=false;
     el('train-dataset').innerHTML = options.datasets.map((data,i) => '<option value="' + i + '">Task ' + data.task + ' · ' + esc(data.task_name) + ' · ' + (data.ready ? deviceLabel()+' 已就绪' : ['queued','starting','converting','syncing'].includes(data.preparation?.status) ? stateName(data.preparation.status) : data.can_prepare ? '待准备到当前设备' : '本机数据未齐') + '</option>').join('');
     for (const option of el('train-dataset').options) option.selected=hadOptions?previous.has(options.datasets[Number(option.value)].task):Number(option.value)===0;
@@ -388,6 +515,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
       throw Error('请分别填写测试编号、实验编号和独立训练次数；暂停续训请使用原作业');
     const prefix = options?.model_versions?.[version]?.prefix || version.replace(/^V_/, 'v');
     const runId = prefix + '__test' + String(test).padStart(2,'0') + '__exp' + String(experiment).padStart(2,'0') + '__run' + String(run).padStart(3,'0');
+    if(nativeMode())return nativeParameters(runId);
     const data=selectedDatasets();
     if (!data.length) throw Error('请至少选择一个任务');
     if (data.some(d=>!d.ready)) throw Error('请先准备全部所选任务数据，完成后刷新再启动训练');
@@ -526,6 +654,10 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
     el('train-resume-open').hidden = !['complete','completed','stopped','failed'].includes(job?.status);
     el('train-resume-open').disabled = jobActionBusy || !resume?.available;
     el('train-resume-open').title = resume?.reason || '恢复最新完整断点，继续当前训练记录';
+    el('train-warm-start').hidden=jobVersion(job)!=='V_2_1'||detail?.config?.recipe!=='native_random_v2'||detail?.config?.preflight_only===true;
+    el('train-warm-start').disabled=jobActionBusy||!el('train-saved-checkpoint').value||!['complete','completed','stopped','paused','failed'].includes(job?.status);
+    el('train-download-report').disabled=!detail?.analysis_report?.text;
+    el('train-download-report').title=detail?.analysis_report?'已归档 step '+detail.analysis_report.step+' · '+detail.analysis_report.status:'尚未生成报告；终态归档服务完成后自动可用';
     const resumeKey = job?.run + '/' + job?.arm + '/' + resume?.step;
     if (el('train-resume-panel').dataset.key !== resumeKey) {
       el('train-resume-panel').dataset.key = resumeKey;
@@ -822,7 +954,8 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
     const tuningModes = {action_full:'动作头 / 记忆全参数微调',full:'全模型微调',lora:'LoRA 微调',custom:'自定义组件冻结'};
     el('train-recorded-params').innerHTML = parameterGroups([
       ['训练设置', [
-        ['训练总步数',steps(p.steps)],['学习率',p.learning_rate],['训练 GPU',p.gpus],
+        ['训练总步数',steps(p.steps)],['学习率',p.learning_rate],['调度器',p.scheduler],['Warmup比例',p.warmup_ratio],['训练 GPU',p.gpus],
+        ['梯度累积',p.accumulation??p.gradient_accumulation_steps],['有效Batch',p.global_decisions],['父checkpoint',p.parent_checkpoint?.checkpoint,true],['父累计步数',p.parent_cumulative_step],
         ['全局 Batch',p.global_windows_per_step == null ? null : p.global_windows_per_step + ' 窗口 / 优化步' +
           (p.global_decisions_max == null ? '' : '（最多 '+p.global_decisions_max+' 决策）')],
         ['Microbatch / GPU',p.microbatch == null ? null : p.microbatch + ' 决策 / 次前向'],
@@ -838,12 +971,18 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
       action_projector:'状态 / 动作投影',action_vlln:'动作输入 LayerNorm',memory:'记忆模块'};
     el('train-advanced-recorded-params').innerHTML = parameterGroups([
       ['优化器与训练策略', [
-        ['Weight decay',p.weight_decay],['AdamW epsilon',p.optimizer_eps],['梯度裁剪',p.max_grad_norm],
+        ['Weight decay',p.weight_decay],['AdamW epsilon',p.optimizer_eps],['梯度裁剪',p.max_grad_norm],['归一化',p.normalization],
         ['梯度检查点',flag(p.gradient_checkpointing)],['图像增强',flag(p.image_augmentation)],
         ['自动早停',p.disable_early_stopping == null ? null : flag(!p.disable_early_stopping)],['训练协议',p.training_protocol]]],
       ['组件冻结', [
         ...Object.entries(components).filter(([key]) => key !== 'memory' || chosen.arm === 'memory_v1')
-          .map(([key,label]) => [label,p['freeze_'+key] == null ? null : p['freeze_'+key] ? '冻结' : '训练']),
+          .map(([key,label]) => {
+            const actual=detail.runtime?.components?.[key];
+            if(actual)return [label,actual.trainable+' / '+actual.total+' 可训练参数'];
+            const map={llm:'tune_llm',vision:'tune_visual',vision_projector:'tune_visual',action_dit:'tune_diffusion_model',action_projector:'tune_projector',action_vlln:'tune_vlln'};
+            if(p.native_tuning&&map[key])return [label,key==='llm'&&p.native_tuning.tune_top_llm_layers?'最后 '+p.native_tuning.tune_top_llm_layers+' 层':p.native_tuning[map[key]]?'训练':'冻结'];
+            return [label,p['freeze_'+key] == null ? null : p['freeze_'+key] ? '冻结' : '训练'];
+          }),
         ['冻结 Eagle',flag(p.frozen_eagle)],
         ['LLM 最后 N 层',p.llm_last_n_layers === 0 ? '全部所选层' : p.llm_last_n_layers]]],
       ...(p.fine_tuning_mode === 'lora' ? [['LoRA', [
@@ -911,6 +1050,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
     const result = await api('detail?run=' + encodeURIComponent(requested.run) + '&arm=' + encodeURIComponent(requested.arm));
     if (chosen !== requested) return;
     detail = result;
+    drawDiagnosticCurve();
     const job = currentJob();
     const notes = detail.notes || job?.notes || '';
     el('train-detail-notes').textContent = notes ? '备注：' + notes : '';
@@ -1063,12 +1203,43 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
     el('train-task-ready').onchange = renderTaskChoices;
     el('train-checkpoint-choice').onchange = () => { updateCheckpointChoice(); invalidatePlan(); updateRecommendation(); };
     el('train-auto-recommend').onchange = () => { invalidatePlan(); updateRecommendation(); };
+    el('train-version').onchange=()=>{updateNativeMode();datasetHint();invalidatePlan();};
+    el('train-diagnostic-metric').onchange=drawDiagnosticCurve;
+    el('train-download-report').onclick=()=>{
+      const report=detail?.analysis_report;
+      if(!report?.text)return;
+      const url=URL.createObjectURL(new Blob([report.text],{type:'text/markdown;charset=utf-8'}));
+      const anchor=document.createElement('a');anchor.href=url;anchor.download=chosen.run+'__training_report.md';anchor.click();
+      setTimeout(()=>URL.revokeObjectURL(url),1000);
+    };
+    el('train-warm-start').onclick=async()=>{
+      const parent=el('train-saved-checkpoint').value,job=currentJob();
+      if(!parent||!job)return;
+      try {
+        await loadOptions();
+        if(!options.checkpoints.some(p=>p.path===parent&&p.native_stage1))throw Error('该权重未通过原生Stage1目录核查');
+        el('train-version').value='V_2_1';updateNativeMode();
+        el('train-checkpoint').value=parent;renderCheckpointChoices();
+        selectTasks(d=>d.task===40);
+        const id=job.run.match(/__test(\d+)__exp(\d+)__run(\d+)/);
+        if(id){el('train-test-id').value=Number(id[1]);el('train-experiment-id').value=Number(id[2]);}
+        el('train-run-number').value='';
+        el('train-native-phase').value='preflight';el('train-native-attempt').value='1';
+        el('train-steps').value='6000';el('train-lr').value='0.00001';el('train-native-scheduler').value='constant';el('train-native-warmup').value='0';
+        el('train-notes').value='从 '+job.run+' checkpoint 继续训练（新优化器）';
+        selectView('new');showSetupStep(0,true);invalidatePlan();updateBatch();
+        message('已继承选定权重；请填写未使用的新run编号，核对资源和参数后预检。');
+      }catch(error){reportError(error);}
+    };
     el('train-restore-recommendation').onclick = () => {
       el('train-auto-recommend').checked = true; invalidatePlan(); updateRecommendation();
     };
     for (const id of ['train-arm','train-fine-tuning','train-checkpoint']) el(id).onchange = () => {
       if (el('train-lora-fields')) el('train-lora-fields').hidden = el('train-fine-tuning').value !== 'lora';
-      if (id === 'train-fine-tuning') el('train-tuning-details').open = ['lora','custom'].includes(el(id).value);
+      if (id === 'train-fine-tuning') {
+        if(nativeMode())nativePreset(el(id).value);
+        else el('train-tuning-details').open = ['lora','custom'].includes(el(id).value);
+      }
       updateRecommendation();
     };
     el('train-select-ready').onclick = () => selectTasks(data=>data.ready);
@@ -1107,6 +1278,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
     el('train-check').onclick = () => void submit(false);
     el('train-form').oninput = event => {
       invalidatePlan();
+      if(nativeMode()&&['train-native-llm','train-native-top','train-native-vision','train-native-dit','train-native-projector','train-native-vlln'].includes(event.target.id))el('train-fine-tuning').value='custom';
       if (Object.values(recommendedFields).includes(event.target.id)) {
         el('train-auto-recommend').checked = false;
         updateRecommendation();

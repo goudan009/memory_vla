@@ -281,7 +281,25 @@ class TrainingManager:
         return dict(self._remote('jobs'),sync=self.sync_state())
 
     def detail(self, request):
-        return self._remote('detail',request)
+        result=self._remote('detail',request)
+        # The remote detail API verifies the job identity first. Only read the
+        # matching local archive; never read an arbitrary user-supplied path.
+        import re
+        run,arm=result.get('run'),result.get('arm')
+        if all(isinstance(x,str) and re.fullmatch(r'[A-Za-z0-9_.-]+',x) and x not in ('.','..') for x in (run,arm,self.device_id)):
+            root=(self.root/'reports/training/runs').resolve()
+            directory=root/self.device_id/run/arm
+            path=directory/'training_report.md'
+            latest=directory/'latest.json'
+            if path.resolve().is_relative_to(root) and latest.resolve().is_relative_to(root) and path.is_file() and latest.is_file():
+                try:
+                    record=json.loads(latest.read_text())
+                    if record.get('run')==run and record.get('arm')==arm and record.get('device')==self.device_id:
+                        result['analysis_report']=dict(text=path.read_text(),event=record.get('event'),
+                            step=record.get('job',{}).get('step'),status=record.get('job',{}).get('status'))
+                except (OSError,ValueError):
+                    pass
+        return result
 
     def stop(self, request):
         return self._remote('stop',request)

@@ -232,6 +232,10 @@ def prepare(dataset, split_path, base, out, mode, *, tuning=None, allow_parent=F
     view_base = out/"generic_base"
     view_base.mkdir()
     for f in base.iterdir():
+        if allow_parent and (f.name.startswith("rng_state") or f.name in
+                ("optimizer.pt","scheduler.pt","training_state.pt","trainer_state.json",
+                 "training_args.bin","COMPLETE.json","v2_1_stage1.json","v2_1_run.json")):
+            continue
         if f.name not in ("config.json",) and f.is_file():
             link(f,view_base/f.name)
     # Upstream pipeline doesn't override tune_top_llm_layers when loading.

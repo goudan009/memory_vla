@@ -85,3 +85,14 @@ Exp13关闭验证的训练可在「续跑训练」中编辑「检查点保存间
 临时训练自检结束并记录验证证据后，在训练页选中对应终态作业，使用现有「删除」操作清理记录。确认作业的输出目录专用于该次自检且没有依赖后，勾选永久删除输出目录。删除后复查训练列表。
 
 V2 本机短测接在现有 BenchmarkManager：`kind=v2_training_smoke`，`gpu` 为本机编号，`steps` 为 1–100（默认3）。它使用已同步的 Exp11 V1 6000步权重、两条官方示教各三帧经当前主干新编码的特征/动作和明确标注的人工状态测试值，只验收训练链路。HTTP 沿用 `/api/benchmarks/preview`、`start`、`jobs`、`detail`、`stop`。终态详情归档为当前实验的 `evidence/4090-<job_id>.json` 后，通过 `/api/benchmarks/delete` 删除专属临时记录和产物。已有工作台进程尚未载入新入口时，可直接调用同一 `BenchmarkManager.prepare/start/detail/delete`；作业仍使用相同 worker、GPU 检查、记录目录和 HTTP 查询，不需重启服务或另建调度器。
+
+
+## V2_1 原生Stage1可配置训练与报告
+
+工作台选择 V_2_1 后，仅在 A100 存在已核对的原生 Task40 历史任务上下文时开放入口。固定 Task40 180/20、seed42、随机分片、四卡；支持总步数、LR、Constant / Constant with Warmup / Cosine / Linear、Warmup、microbatch、accumulation、weight decay、梯度裁剪、Guarded/Min-Max、保存/验证间隔及原生组件训练 flags。视觉编码器与视觉投影在该上游实现中是一个开关；暂不开放原生LoRA、独立视觉投影、记忆训练或N1.7未验收能力。
+
+- 旧 `native_random_v2` 默认配方保持锁定。新自定义请求显式带 `custom_config:true`，固定 recipe、stage、task、arm；使用相同 preview/start。
+- 预检选4步（2步自动暂停），从训练记录严格恢复到4步。通过后独立证据写到训练根的 `preflight_evidence/<run>__preflightNNN.json`。原生正式训练必须匹配同谱系、相同配置及源码的证据；保留表单参数，将运行阶段切为正式训练后再次检查配置、提交。若配置/源码改变，增加预检序号，不能复用原证据。预检大文件按现有清理规范处理。
+- 「调整配置后继续训练」从已发布原生Stage1 checkpoint 发起**新 run**，训练步数为本次新增更新数；父步数另记。重置优化器与scheduler，继承原归一化（真实 processor 检查必须通过）。严格恢复仍保留原 run、预算和优化器状态。不得从旧V2_1顺序训练权重或B1K冠军权重走这个尚未验收的原生续训入口。
+- 终态自动归档生成每run的 `reports/training/runs/<device>/<run>/<arm>/training_report.md`，原始证据与不可变报告版本继续保留。训练详情可下载最近归档报告（显示归档步数，不把暂停报告当作实时结果）。后续评估归档自动补入同run报告。报告由程序生成；AI分析另存。
+- 本次改造需本地CPU回归和真实四卡预检，不以源码提交冒充GPU验收。历史训练源码快照、作业及报告不改写。

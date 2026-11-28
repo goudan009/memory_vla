@@ -589,7 +589,14 @@ class Backend:
         for path in sorted((root/'run').glob('validation-*.json')):
             row=read(path,{})
             validation.append(dict(row,validation_loss=row.get('fm')))
+        series={}
+        for key,source in (('learning_rate','lr'),('gradient_norm','grad_norm')):
+            series[key]=[[r['step'],r.get(source,r.get(key))] for r in metrics if finite(r.get(source,r.get(key)))]
+        for name in ('base','torso','left_arm','right_arm','left_gripper','right_gripper'):
+            series[name]=[[r['step'],(r.get('part_loss') or r.get('body_flow_mse') or {}).get(name)]
+                          for r in metrics if finite((r.get('part_loss') or r.get('body_flow_mse') or {}).get(name))]
         return dict(run=root.name,arm=launch['arm'],config=launch,state=state,**summary,
+             diagnostic_series=series, runtime=read(root/'run/native_runtime.json',{}),
              checkpoints=self.checkpoints(root),checkpoint=str(root/'run/checkpoints'),
              metrics=metrics[-100:],preflight=read(root/'run/preflight.json'),
              log_tail=self.r['tail'](root/'logs/controller.log'),validation=validation,validation_scope='internal',
