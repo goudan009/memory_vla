@@ -1,5 +1,11 @@
 # V1.2 Progress
 
+## 2026-11-28 - dependency_import / CFFI ABI boundary
+
+- Status: `PARTIAL`; latest plan [workflow/plan-v022.json](workflow/plan-v022.json). Job `758c76aa0780` passed WebSocket policy load and connected to the official N1.7 server, then failed at the first control step with evaluator return code 1. Native episodes=0, videos=0; INVALID, excluded from success denominator.
+- Root cause: Numba lazily imports the CFFI 1.17.1 Python package from Isaac Kit while `_cffi_backend==2.1.0` is already loaded from the shared package directory. Pinned B1K-2026 explicitly requires `cffi==1.17.1`. CPU reproduction confirms the exact mismatch; preloading the matched installed Isaac 1.17.1 pair passes FFI construction and first Numba JIT without installation or source/physics changes.
+- Extend the same V1.2 evaluator startup boundary, then preview/start fresh instance 16 / GPU0 / port 8030, one rollout with video and original note. Preserve failed instance 15 and legacy services. The evaluator reuses installed shared libraries under a directory named `b1k2025-policy`; stopping old services does not authorize deleting those library directories.
+
 ## 2026-11-28 - dependency_import / policy transport precedence
 
 - Status: `PARTIAL`; latest plan [workflow/plan-v021.json](workflow/plan-v021.json). Job `16a3f83f97c8` failed with return code 245 after loading public instance 315 (index 14), scene 0 and R1Pro. Warp 1.12.0 initialized correctly. Native episodes=0, videos=0; this attempt is INVALID and excluded from any success denominator.

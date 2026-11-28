@@ -1,0 +1,25 @@
+{
+  "plan_id": "v1_2_n17_b1k2026_transition_gate_v022",
+  "status": "in_progress",
+  "supersedes": "v1_2_n17_b1k2026_transition_gate_v021",
+  "change_reason": "Job 758c76aa0780 passed policy loading and connected to N1.7, but the first control step selected cffi Python 1.17.1 with an already imported 2.1.0 binary backend. CPU reproduction confirms the mismatch and confirms a matched Isaac-bundled 1.17.1 pair can run Numba JIT. Extend the existing startup dependency boundary, without changing physics, policy or training settings.",
+  "scope": "Accept one native GR00T N1.7/B1K-2026 official radio rollout, then conditionally retire verified legacy runtime. Preserve historical assets and shared library directories; no formal training or V2.2.",
+  "method_version": "V_1_2",
+  "protocol": "b1k2026_websocket",
+  "checkpoint": "/nvme3/checkpoints/memory_vla/official-n17-radio/turning_on_radio_GR00T-checkpoint-150000",
+  "checkpoint_sha256": "cd97a22ff74bd91838350e18fe94b48e1902d407f1256f5d48eb20befe277dc3",
+  "source_revisions": {"groot": "ace36d935b376fbf25cd56371e23877b95407c40", "behavior_1k": "a8247a8cc1633fe1ca0cc66aa07243d46c64f155"},
+  "experiment_identity": null,
+  "notes": "V1.2 / N1.7 / B1K2026: official radio, RTC off",
+  "budget": {"training_steps": 0, "environments": 1, "rollouts": 1},
+  "next_attempt": {"instance": 16, "gpu": 0, "policy_port": 8030, "workbench": "http://127.0.0.1:8767"},
+  "mainline": [
+    {"node": "dependency_import", "depends_on": [], "parallel_branches": [], "acceptance": "Reproduce cffi ABI mismatch on CPU, preload the matched official 1.17.1 pair and existing compatible WebSocket modules, and verify first Numba JIT with Kit path precedence."},
+    {"node": "preview_instance_16", "depends_on": ["dependency_import"], "parallel_branches": [], "acceptance": "8767 preview confirms original official identities, one rollout/video and short note; current GPU capacity and free port verified."},
+    {"node": "official_rollout", "depends_on": ["preview_instance_16"], "parallel_branches": [], "acceptance": "Native evaluator exits normally and produces valid episode JSON, video, success and Q-score. Report model success separately from infrastructure acceptance."},
+    {"node": "legacy_shutdown_gate", "depends_on": ["official_rollout"], "parallel_branches": [], "acceptance": "Only after native acceptance, check live 2025/V2.1 jobs and dependencies; stop confirmed legacy runtime and its dedicated supervisors through supported controls, preserving history and unrelated 8766."},
+    {"node": "archive", "depends_on": ["legacy_shutdown_gate"], "parallel_branches": [], "acceptance": "Record native result/video, job, zero formal training, training-readiness limits and exact services stopped or retained; publish main."}
+  ],
+  "latest_failed_attempt": {"job_id": "758c76aa0780", "instance": 15, "returncode": 1, "native_episodes": 0, "videos": 0, "reason": "CFFI 1.17.1 Python / 2.1.0 backend mismatch in Numba at first controller step."},
+  "migration_gate": {"on_fail": "Keep legacy runtime and diagnose preserved evidence.", "on_pass": "Stop only confirmed legacy runtime with no active dependent jobs; retain shared Python library paths and all historical artifacts."}
+}

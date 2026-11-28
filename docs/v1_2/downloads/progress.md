@@ -1,5 +1,12 @@
 # V1.2 资源下载进度
 
+## 2026-11-28 最新复核
+
+- 主下载状态文件为 `complete`，`466/466` 项已校验，合计 `44,015,017,653` bytes；下方早期超时/缺失记录为历史状态。
+- Cosmos 已由用户补齐并核验：`/nvme3/models/Cosmos-Reason2-2B`，revision `9ce19a195e423419c349abfc86fd07178b230561`，权重 `4,877,470,304` bytes，SHA256 `fa5a6e6ef4fce40216b185cc48a3b24d31637ac3e2ba69c107ed1f389c1e6ede`。官方 policy 已从本机缓存实际加载，无需再次下载；不记录 token 值。
+- 本轮只读核对 2026 metadata：Task0 和 Task40 各 200 条 episode、200 条技能标注。对应 2/3 个数据 parquet 和 10/14 个 RGB 文件的引用均存在，无缺失。状态 61 维、动作 23 维，LeRobot v3.0；原生 `deploy_modality.py --dry-run` 格式检查 `failed=0`。
+- 资源齐全不代表训练已验收。合并下载缓存尚无 `meta/modality.json`，正式训练仍需独立任务/划分视图、训练集统计和原生工作台训练/保存恢复验证；未修改原始下载数据，未启动正式训练。官方闭环测试见 [../progress.md](../progress.md)。
+
 计划：[plan-v001.json](workflow/plan-v001.json)。本阶段为基础设施准备，无训练/评估实验编号，无 GPU 作业。源码、权重和数据独立存储；不修改 V2.1 环境及仿真软链接。
 
 ## inventory
