@@ -759,9 +759,17 @@
 
           </section>
           <section id="eval-config" aria-label="启动评估">
-            <div class="section-head"><h2><span class="step-number">2</span>启动评估</h2><select id="launch-kind" aria-label="运行模式"><option value="new">新建评估</option><option value="resume">续跑已有评估</option><optgroup label="历史开发工具（非正式评估）"><option value="restore">Task40 检查点恢复</option><option value="collect">Task40 轨迹采集 · Exp09</option><option value="forward">Task40 冻结前向 · Exp09</option></optgroup></select></div>
+            <div class="section-head"><h2><span class="step-number">2</span>启动评估</h2><select id="launch-kind" aria-label="运行模式"><option value="new">B1K-2025 历史评估</option><option value="n17">V1.2 / N1.7 / B1K-2026</option><option value="resume">续跑已有评估</option><optgroup label="历史开发工具（非正式评估）"><option value="restore">Task40 检查点恢复</option><option value="collect">Task40 轨迹采集 · Exp09</option><option value="forward">Task40 冻结前向 · Exp09</option></optgroup></select></div>
             <form id="launch-form">
               <div id="launch-device-field" class="launch-fields"><label class="wide">评估设备<select id="launch-device"><option value="local">4090 · 本机双卡</option><option value="a6000">RTX 6000 Ada · 单卡 48GB</option><option value="a100" disabled>A100 · 训练 / 推理设备</option></select><small id="launch-device-hint"></small></label></div>
+              <fieldset id="launch-n17" class="launch-fields" hidden disabled>
+                <p class="wide mode-note">GR00T N1.7 官方 radio 权重 · turning_on_radio · 本机 4090 · 一环境一回合 · RTC 关闭。推理随评估启动，结束后释放。</p>
+                <label>评估 GPU<select id="n17-gpu" required></select></label>
+                <label>公共测试实例<input id="n17-instance" type="number" min="0" max="19" step="1" value="0" required></label>
+                <label>策略端口<input id="n17-port" type="number" min="1024" max="65535" value="8033" required></label>
+                <label class="wide">运行备注<input id="n17-notes" value="V1.2 / N1.7 / B1K2026: official radio, RTC off" maxlength="200" required></label>
+                <label class="switch"><input id="n17-video" type="checkbox" checked>保存原生录像</label>
+              </fieldset>
               <fieldset id="launch-new">
                 <div class="launch-fields"><label class="wide">模型服务<select id="launch-service"><option value="">手动填写地址和端口</option></select><small id="launch-policy-summary">正在检查已有服务…</small></label></div>
                 <div id="launch-checkpoint-note"></div>
@@ -1075,8 +1083,9 @@
   function updateLaunchAvailability() {
     const blocked=pendingPolicyBlocks();
     const kind=$('launch-kind').value;
-    const collect=kind==='collect', forward=kind==='forward', usesDevice=kind==='new'||collect;
-    const unavailable=((collect||forward)&&!$('collect-policy').value)||(collect&&!$('collect-gpu').value);
+    const native=kind==='n17', collect=kind==='collect', forward=kind==='forward', usesDevice=kind==='new'||collect||native;
+    const unavailable=((collect||forward)&&!$('collect-policy').value)||(collect&&!$('collect-gpu').value)||
+      (native&&(!launchOptions?.model_versions?.V_1_2?.launch_ready||!$('n17-gpu').value));
     $('launch-submit').disabled=launchBusy||Boolean(blocked)||unavailable||(usesDevice&&(launchDeviceLoading||!launchDeviceReady));
     $('launch-check').disabled=launchBusy||unavailable||(collect&&(launchDeviceLoading||!launchDeviceReady));
     $('launch-submit').textContent=blocked?(pendingInference.state==='failed' || pendingInference.state==='stopped'?'推理未就绪':'等待推理就绪'):
@@ -1327,7 +1336,7 @@
     updateLaunchGroups();
   }
   async function launchAPI(path, payload) {
-    const device=payload?.task40_restore||payload?.task40_forward?'local':$('launch-device').value;
+    const device=payload?.version==='V_1_2'||payload?.task40_restore||payload?.task40_forward?'local':$('launch-device').value;
     const response=await fetch('/api/launch/'+path+(path==='options'?'?device='+encodeURIComponent(device):''),payload===undefined?{cache:'no-store'}:
       {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...payload,device})});
     const result=await response.json();
@@ -1346,12 +1355,16 @@
       const gpus=loaded.gpus||[];
       const previous=$('launch-gpu').value;
       $('launch-gpu').innerHTML=gpus.map(g=>`<option value="${Number(g.index)}">GPU ${Number(g.index)} · ${esc(g.name)} · 空闲 ${((g.total_mb-g.used_mb)/1024).toFixed(1)} GiB</option>`).join('');
+      const nativeGPU=$('n17-gpu').value;
+      $('n17-gpu').innerHTML=$('launch-gpu').innerHTML;
+      if(gpus.some(g=>String(g.index)===nativeGPU)) $('n17-gpu').value=nativeGPU;
       if(gpus.some(g=>String(g.index)===previous)) $('launch-gpu').value=previous;
       $('launch-device-hint').textContent=launchDeviceReady?'在线 · 请选择该设备上的 GPU。推理服务可继续使用 A100。':'在线 · 仿真环境 / 资产正在准备，暂不可启动。';
       const task=$('launch-task').value||'21';
       $('launch-task').innerHTML=launchOptions.tasks.map(t=>`<option value="${t.id}">Task${t.id} · ${esc(t.name.replace(/_/g,' '))}</option>`).join('');
       $('launch-task').value=loaded.tasks.some(t=>String(t.id)===task)?task:String(loaded.tasks[0]?.id??'');
       $('launch-versions').innerHTML=Object.keys(launchOptions.versions).sort((a,b)=>b.localeCompare(a,undefined,{numeric:true})).map(v=>`<option value="${esc(v)}">`).join('');
+      if(device==='local'&&loaded.model_versions?.V_1_2?.launch_ready&&$('launch-kind').value==='new') $('launch-kind').value='n17';
       updateLaunchGroups();updateLaunchForm();
     }catch(error){if(device!==$('launch-device').value) return;launchDeviceReady=false;$('launch-device-hint').textContent='设备暂不可用：'+error.message;launchOptions=null;updateCollectionDevice();}
     finally{if(device===$('launch-device').value){launchDeviceLoading=false;updateLaunchAvailability();}}
@@ -1458,18 +1471,19 @@
     const singleDevice=$('launch-device').value==='a6000';
     for(const option of $('launch-mode').options) option.disabled=singleDevice&&option.value.startsWith('dual');
     if(singleDevice&&$('launch-mode').value.startsWith('dual')) $('launch-mode').value='single1';
-    const kind=$('launch-kind').value, resume=kind==='resume', restore=kind==='restore', collect=kind==='collect', forward=kind==='forward';
+    const kind=$('launch-kind').value, native=kind==='n17', resume=kind==='resume', restore=kind==='restore', collect=kind==='collect', forward=kind==='forward';
     const dual=$('launch-mode').value.startsWith('dual'), debug=$('launch-preset').value==='fast-debug';
     $('launch-new').hidden=kind!=='new';$('launch-new').disabled=kind!=='new';
+    $('launch-n17').hidden=!native;$('launch-n17').disabled=!native;
     $('launch-resume').hidden=!resume;$('launch-resume').disabled=!resume;
     $('launch-restore').hidden=!restore;$('launch-restore').disabled=!restore;
     $('launch-collect').hidden=!(collect||forward);$('launch-collect').disabled=!(collect||forward);
     $('collect-settings').hidden=!collect;$('collect-settings').disabled=!collect;
     $('forward-batch-field').hidden=!forward;$('forward-batch').disabled=!forward;
     $('collect-policy-label').textContent=forward?'A100 Task40 Trace 服务':'A100 Task40 诊断服务';
-    $('model-config').hidden=resume||restore;
-    $('launch-device-field').hidden=resume||restore||forward;
-    $('launch-device').disabled=resume||restore||forward||launchBusy;
+    $('model-config').hidden=resume||restore||native;
+    $('launch-device-field').hidden=resume||restore||forward||native;
+    $('launch-device').disabled=resume||restore||forward||native||launchBusy;
     $('launch-host').disabled=resume||restore;$('launch-port').disabled=resume||restore;
     $('launch-gpu').disabled=dual;
     $('launch-debug-field').hidden=!debug;$('launch-debug-steps').disabled=!debug;
@@ -1484,6 +1498,16 @@
     updateLaunchAvailability();
   }
   function collectLaunchRequest() {
+    if($('launch-kind').value==='n17'){
+      const instance=Number($('n17-instance').value), port=Number($('n17-port').value);
+      const notes=$('n17-notes').value.trim(), gpu=$('n17-gpu').value;
+      if(!Number.isInteger(instance)||instance<0||instance>19||!$('n17-instance').value) throw Error('公共测试实例须为 0–19 的整数');
+      if(!Number.isInteger(port)||port<1024||port>65535) throw Error('策略端口须为 1024–65535 的整数');
+      if(!notes||!gpu) throw Error('请选择 GPU 并填写简短版本备注');
+      return {version:'V_1_2',protocol:'b1k2026_websocket',task:'turning_on_radio',instance,
+        rollouts:1,gpu_index:Number(gpu),policy_host:'127.0.0.1',policy_port:port,
+        record_video:$('n17-video').checked,notes};
+    }
     if($('launch-kind').value==='forward'){
       const policy=selectedCollectionPolicy();
       if(!policy) throw Error('请选择已就绪且启用 Task40 trace 的 A100 服务');
@@ -1681,7 +1705,8 @@
       const collect=request.task40_collect;
       const forward=request.task40_forward;
       const endpoint=`推理 ${esc(request.policy_host)}:${esc(request.policy_port)} · ${esc(plan?.policy_identity?.checkpoint||'')}`;
-      const info=plan&&forward?`批次 ${esc(request.batch)} · 本地控制器<br>${endpoint}`:
+      const info=plan?.kind==='b1k2026_websocket'?`V1.2 / N1.7 / B1K-2026 · 实例 ${esc(plan.instance)} · 1 回合 · RTC 关闭<br>${esc(plan.notes)}<br>权重 SHA256 ${esc(plan.checkpoint_sha256)}`:
+        plan&&forward?`批次 ${esc(request.batch)} · 本地控制器<br>${endpoint}`:
         plan&&request.restore_checkpoint?`仿真 GPU ${esc(request.sim_gpu)} · 恢复 ${esc(request.restore_checkpoint)} · 重复 ${esc(request.restore_repeats)} 次 · 每次最多 ${esc(request.cycles)} 次决策<br>${endpoint}`:
         plan&&collect?`${request.controlled_reclosure?'受控重关 · ':''}仿真 GPU ${esc(request.sim_gpu)} · 实例 ${esc(request.instances.join(', '))} · 每实例 ${esc(request.repetitions||1)} 次 · 基础种子 ${esc(request.seed)} · 每条最多 ${esc(request.cycles)} 次决策<br>${endpoint}`:
         plan?.kind==='task40_restore'?'GPU 仿真/策略：'+esc(JSON.stringify(plan.instances))+' · 决策 '+esc(plan.cycles)+' · '+esc(plan.memory_mode):
@@ -1729,6 +1754,17 @@
       ${job.artifact_sync_error?`<div class="launch-message error">产物同步失败：${esc(job.artifact_sync_error)}</div>`:''}
       ${workerLog?logPanel(forward?'forward':'sim',forward?'前向日志':'仿真日志',workerLog):''}`;
   }
+  function renderNativeJob(job) {
+    const links=(job.artifacts||[]).map(artifact=>{
+      let url;
+      try{url=new URL(artifact.url,location.origin);}catch{return '';}
+      if(url.origin!==location.origin||!['http:','https:'].includes(url.protocol)) return '';
+      return `<a href="${esc(url.href)}" target="_blank" rel="noopener">${esc(artifact.label||artifact.path)}</a>`;
+    }).join(' · ');
+    const metrics=(job.native_metrics||[]).map(m=>
+      `<div>实例 ${esc(m.instance_id)} · ${esc(m.steps)} 步 · ${m.success===true?'成功':m.success===false?'未成功':'待确认'} · Q-score ${esc(m.q_score)}</div>`).join('');
+    return `<div class="subtle">${esc(job.notes||'V1.2 / N1.7 / B1K2026')}</div>${metrics}<div class="launch-job-artifacts">${links||'等待原生产物'}</div>`;
+  }
   async function refreshLaunchJobs() {
     if(launchOverviewBusy)return;
     launchOverviewBusy=true;
@@ -1740,10 +1776,10 @@
       const openPanels=new Set([...$('launch-overview').querySelectorAll('details[open][data-log]')].map(panel=>panel.dataset.log));
       const active=jobs.filter(job=>launchActiveStates.has(job.state)), history=jobs.filter(job=>!launchActiveStates.has(job.state));
       const card=job=>{
-        const collect=job.kind==='task40_collect', restore=job.kind==='task40_restore', forward=job.kind==='task40_forward';
+        const native=job.kind==='b1k2026_websocket', collect=job.kind==='task40_collect', restore=job.kind==='task40_restore', forward=job.kind==='task40_forward';
         const experiment=job.group==='experiment_10'?'Exp10':'Exp09';
         const collectTitle={controlled_reclosure:'受控重关',directed_restore:'定向恢复',renderer_probe:'固定动作恢复'}[job.phase]||'轨迹采集';
-        const title=forward?'Task40 冻结前向 · '+experiment:collect?`Task40 ${collectTitle} · ${experiment}`:restore?'Task40 检查点恢复 · '+safe(job.seed):
+        const title=native?'V1.2 / N1.7 / B1K-2026 · turning_on_radio':forward?'Task40 冻结前向 · '+experiment:collect?`Task40 ${collectTitle} · ${experiment}`:restore?'Task40 检查点恢复 · '+safe(job.seed):
           `${job.version||''} / ${job.group||''} · Task${job.task_id}`;
         const device=forward?'本地控制器':`${job.device==='a6000'?'RTX 6000 Ada · ':job.device==='local'?'4090 · ':''}GPU ${esc((job.gpus||[]).join(', '))}`;
         const logPanel=(kind,label,tail)=>{
@@ -1755,8 +1791,9 @@
           ${(()=>{const r=runs.find(r=>r._folder===job.folder);return r?`<div class="workbench-live-foot"><span>${esc(r.completed_episodes??r.recorded_episodes??0)} / ${esc(r.requested_episodes??'—')} 回合</span><span>成功率 ${pct(r.success_rate)}</span></div>`:'';})()}
           <details data-log="${esc(job.id+':info')}"${openPanels.has(job.id+':info')?' open':''}><summary class="subtle">作业信息</summary><div class="subtle">PID ${esc(safe(job.pid))} · ${esc(safe(job.started_at))}<br>${esc(job.output||'')}</div></details>
           ${collect||forward?renderTask40Job(job,logPanel):''}
+          ${native?renderNativeJob(job):''}
           ${restore&&job.state==='running'?`<button type="button" data-restore-stop="${esc(job.id)}">停止恢复任务</button>`:''}
-          ${!collect&&!forward&&job.result_ready?`<button type="button" data-run="${esc(job.folder||'')}">评估结果 →</button>`:''}
+          ${!native&&!collect&&!forward&&job.result_ready?`<button type="button" data-run="${esc(job.folder||'')}">评估结果 →</button>`:''}
           ${logPanel('launch','启动日志'+(job.returncode==null?'':` · 退出码 ${job.returncode}`),job.log_tail||'等待启动脚本输出…')}</article>`;
       };
       const unmanaged=runs.filter(r=>r.status==='running'&&!active.some(job=>job.folder===r._folder));
@@ -1770,7 +1807,7 @@
         catch(error){button.disabled=false;button.title=error.message;}
       });
       for(const [group,entries] of [[live,active],[list,history]])for(const [index,job] of entries.entries()){
-        if(['task40_collect','task40_forward'].includes(job.kind)||!job.folder||!job.result_ready) continue;
+        if(['b1k2026_websocket','task40_collect','task40_forward'].includes(job.kind)||!job.folder||!job.result_ready) continue;
         const panel=group.children[index],actions=document.createElement('div');actions.className='inline-actions';
         actions.innerHTML=evaluationButtons(runs.find(r=>r._folder===job.folder)||{_folder:job.folder,status:job.state,evaluation_mode:'official-eval'});
         panel.appendChild(actions);bindEvaluationButtons(actions);
@@ -2506,6 +2543,9 @@
   $("run-search").oninput=render; $("status-filter").onchange=render;
   $('preview-toggle').onchange=togglePreview;
   $('launch-kind').onchange=()=>{
+    if($('launch-kind').value==='n17'&&$('launch-device').value!=='local'){
+      $('launch-device').value='local';launchOptions=null;void loadLaunchOptions();
+    }
     updateLaunchForm();
     const kind=$('launch-kind').value;
     if(kind==='collect'||kind==='forward'){

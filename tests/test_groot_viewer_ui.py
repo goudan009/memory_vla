@@ -24,6 +24,8 @@ def run_viewer(assertions):
 const assert = require('node:assert/strict');
 const elements = {};
 global.setInterval=()=>0;
+global.window={addEventListener() {}};
+global.checkpointNotes={bind() {}, brief() { return ''; }};
 global.location=new URL('http://localhost/');
 global.history={pushState(_state, _title, url) { global.location=new URL(url); }};
 function element() {
@@ -37,6 +39,7 @@ function element() {
     appendChild(node) { this.children.push(node); },
     querySelector(selector) { return queried[selector] ||= element(); },
     querySelectorAll() { return []; },
+    addEventListener(name, handler) { this['on'+name] = handler; },
     setAttribute(name, value) { this[name] = value; },
     removeAttribute(name) { this[name] = ''; },
     getAttribute(name) { return this[name] || null; }
@@ -72,6 +75,25 @@ assert.match(player.src, /experiment_1/);
 renderVideos(null);
 assert.equal(player.src, '');
 assert.equal(player.hidden, true);
+""")
+
+
+def test_native_2026_form_and_artifacts_use_the_native_contract():
+    run_viewer("""
+$('launch-kind').value='n17';$('n17-instance').value='18';$('n17-port').value='8032';
+$('n17-gpu').value='0';$('n17-notes').value='V1.2 / N1.7 / B1K2026: official radio, RTC off';
+$('n17-video').checked=true;
+const request=collectLaunchRequest();
+assert.equal(request.version,'V_1_2');assert.equal(request.protocol,'b1k2026_websocket');
+assert.equal(request.instance,18);assert.equal(request.rollouts,1);assert.equal(request.gpu_index,0);
+assert.equal(request.task,'turning_on_radio');assert.ok(request.notes);assert.equal(request.record_video,true);
+assert.equal(request.run_tag,undefined);assert.equal(request.seed_mode,undefined);
+$('n17-instance').value='20';assert.throws(()=>collectLaunchRequest(),/0–19/);
+$('n17-instance').value='18';$('n17-notes').value='';assert.throws(()=>collectLaunchRequest(),/备注/);
+const card=renderNativeJob({notes:'native baseline',native_metrics:[{instance_id:319,steps:100,success:false,q_score:0.5}],
+ artifacts:[{path:'json/radio.json',url:'/api/launch/artifact?run=radio&path=json/radio.json',label:'native rollout JSON'},
+ {url:'javascript:alert(1)',label:'bad'}]});
+assert.match(card,/未成功/);assert.match(card,/0.5/);assert.match(card,/native rollout JSON/);assert.ok(!card.includes('javascript:'));
 """)
 
 

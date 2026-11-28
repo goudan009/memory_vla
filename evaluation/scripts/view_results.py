@@ -10,6 +10,7 @@ import json
 import os
 from pathlib import Path
 import re
+import shlex
 import subprocess
 import sys
 import threading
@@ -81,7 +82,27 @@ def restore_evaluation_jobs(manager, records):
         manager.jobs.append(dict(id=row['id'],process=DetachedEvaluation(row),gpus=set(row['gpus']),
             log_path=Path(row['log']),command=row['command'],started_at=row['started_at'],
             process_start=row.get('process_start'),
-            plan={k:row.get(k) for k in ['output','task_id','version','group','kind','seed','policy_identity','policy_port','batch']}))
+            plan={k:row.get(k) for k in ['output','task_id','version','group','kind','seed','policy_identity','policy_port','batch','notes']}))
+    # The isolated 2026 commissioning service has its own in-memory jobs.
+    # Recover completed native runs from their original metadata when the
+    # primary dashboard loads, without rewriting native results or history.
+    known = {job['id'] for job in manager.jobs}
+    for path in sorted((manager.evaluation / 'V_1_2' / 'official').glob('*/job.json')):
+        runner_path = path.with_name('runner.json')
+        if not runner_path.is_file():
+            continue
+        plan = json.loads(path.read_text())
+        runner = json.loads(runner_path.read_text())
+        if runner.get('state') != 'complete' or plan.get('job_id') in known:
+            continue
+        job_id = plan['job_id']
+        manager.jobs.append(dict(
+            id=job_id, process=DetachedEvaluation(dict(pid=0, output=str(path.parent), returncode=0)),
+            gpus=set(plan['gpus']), log_path=manager.log_root / f'{job_id}.log',
+            command=shlex.join(runner['evaluator_argv']), started_at=plan['started_at'],
+            process_start=None, plan=plan,
+        ))
+        known.add(job_id)
 
 
 def video_files(run_dir: Path) -> dict[str, Path]:

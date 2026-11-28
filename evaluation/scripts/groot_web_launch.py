@@ -65,7 +65,7 @@ def v12_artifacts(output):
     for path in sorted(output.glob("videos/*")):
         if path.is_file():
             files[path.relative_to(output).as_posix()] = "native rollout video"
-    for name in ("job.json", "runner.json", "server.log", "evaluator.log"):
+    for name in ("job.json", "runner.json", "import_boundary.json", "server.log", "evaluator.log"):
         if (output / name).is_file():
             files[name] = "V1.2 run metadata" if name in ("job.json", "runner.json") else "V1.2 process log"
     return [{'path': relative, 'label': label,
@@ -790,6 +790,17 @@ class LaunchManager:
             status['result_ready'] = bool(native_json)
             status['native_results'] = [str(path.relative_to(output)) for path in native_json]
             status['videos'] = [str(path.relative_to(output)) for path in sorted(output.glob('videos/*')) if path.is_file()]
+            status['notes'] = plan.get('notes')
+            status['native_metrics'] = []
+            for path in native_json:
+                try:
+                    result = json.loads(path.read_text())
+                except (OSError, ValueError):
+                    continue
+                status['native_metrics'].append({
+                    'instance_id': result.get('instance_id'), 'steps': result.get('steps'),
+                    'success': result.get('success'), 'q_score': result.get('q_score', {}).get('final'),
+                })
         if plan.get('kind') in TASK40_EXPERIMENT_KINDS:
             if plan.get('kind') == 'task40_collect' and 'phase' not in plan:
                 # Restored workbench records contain a reduced plan.

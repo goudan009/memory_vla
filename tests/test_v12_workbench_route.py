@@ -72,3 +72,30 @@ def test_v12_preview_binds_native_route(tmp_path, monkeypatch):
     assert "serve_b1k.py" in json.dumps(plan["policy_identity"])
     with pytest.raises(ValueError, match="B1K-2026"):
         manager.prepare({**request, "protocol": c.B1K2025})
+
+
+def test_completed_native_run_survives_primary_workbench_reload(tmp_path):
+    from view_results import restore_evaluation_jobs
+
+    manager = LaunchManager(tmp_path, log_root=tmp_path / "logs")
+    manager.log_root.mkdir()
+    (manager.log_root / "native-radio.log").write_text("native evaluator finished\n")
+    output = manager.evaluation / "V_1_2/official/public_test_instance_18"
+    output.mkdir(parents=True)
+    plan = dict(job_id="native-radio", output=str(output), kind=c.B1K2026,
+                version="V_1_2", task_id="turning_on_radio", gpus=[0],
+                started_at="2026-11-28 13:29:55", notes="V1.2 / N1.7 / B1K2026: RTC off")
+    (output / "job.json").write_text(json.dumps(plan))
+    (output / "runner.json").write_text(json.dumps(dict(
+        state="complete", evaluator_returncode=0, evaluator_argv=["python", "evaluator.py"])))
+    (output / "json").mkdir()
+    (output / "json/radio.json").write_text(json.dumps(dict(
+        instance_id=319, steps=120, success=False, q_score=dict(final=0.5))))
+    restore_evaluation_jobs(manager, [])
+    restore_evaluation_jobs(manager, [])
+    jobs = manager.snapshot()
+    assert len(jobs) == 1
+    assert jobs[0]["state"] == "complete"
+    assert jobs[0]["notes"] == plan["notes"]
+    assert jobs[0]["native_metrics"] == [dict(instance_id=319, steps=120, success=False, q_score=0.5)]
+    assert any(item["path"] == "json/radio.json" for item in jobs[0]["artifacts"])
