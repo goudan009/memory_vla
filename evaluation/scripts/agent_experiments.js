@@ -261,7 +261,7 @@
       const y1 = source.bottom - bounds.top;
       const y2 = target.top - bounds.top;
       const primary = mainline[mainline.indexOf(step.id) - 1] === dependency;
-      context.strokeStyle = primary ? '#529180' : '#9caea7';
+      context.strokeStyle = primary ? '#6c91d5' : '#a8b7cc';
       context.lineWidth = primary ? 2.1 : 1.2;
       context.beginPath();
       context.moveTo(x1, y1);

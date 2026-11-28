@@ -1,28 +1,28 @@
 <style>
-.benchmark-switch{background:#f5f9f7;border-bottom:1px solid var(--line);padding:14px max(24px,calc((100vw - 1488px)/2));display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.benchmark-switch{background:#f5f7fa;border-bottom:1px solid var(--line);padding:14px max(24px,calc((100vw - 1488px)/2));display:flex;align-items:center;gap:20px;flex-wrap:wrap}
 .benchmark-switch label{display:flex;gap:12px;align-items:center;font-size:12px;font-weight:600;color:var(--muted)}
-.benchmark-switch select{font-family:inherit;font-size:14px;font-weight:600;border:1px solid #bfd7c9;border-radius:8px;background:white;padding:9px 34px 9px 12px;min-width:210px}
+.benchmark-switch select{font-family:inherit;font-size:14px;font-weight:600;border:1px solid #c7d8f5;border-radius:8px;background:white;padding:9px 34px 9px 12px;min-width:210px}
 .benchmark-switch p{margin:0;font-size:12px;color:var(--muted)}
 .benchmark-switch strong{color:var(--ink);font-size:13px;display:block;margin-bottom:4px}
 .bench-layout{display:grid;grid-template-columns:300px minmax(0,1fr);gap:20px;align-items:start}
-.bench-body{padding:20px}.bench-subtle{color:var(--muted);font-size:12px;line-height:1.7}.bench-status{font-size:11px;border-radius:5px;padding:3px 7px;background:#eef2ef;color:#53665a;white-space:nowrap}
-.bench-status.complete{background:#e8f5ef;color:#087f68}.bench-status.failed,.bench-status.interrupted{background:#fceceb;color:#a63730}.bench-status.running,.bench-status.starting{background:#fff3df;color:#9a651b}
+.bench-body{padding:20px}.bench-subtle{color:var(--muted);font-size:12px;line-height:1.7}.bench-status{font-size:11px;border-radius:5px;padding:3px 7px;background:#eef2f6;color:#63748b;white-space:nowrap}
+.bench-status.complete{background:#eaf1ff;color:#285fc6}.bench-status.failed,.bench-status.interrupted{background:#fceceb;color:#a63730}.bench-status.running,.bench-status.starting{background:#fff3df;color:#9a651b}
 .bench-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;padding:20px}
 .bench-form label{display:grid;gap:7px;font-size:12px;color:var(--muted)}
 .bench-form input,.bench-form select,.bench-search{border:1px solid var(--line);border-radius:7px;padding:9px 10px;font:inherit;min-width:0;width:100%;box-sizing:border-box;background:#fafcfb;color:var(--ink)}
 .bench-wide{grid-column:1/-1}.bench-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.bench-actions .bench-subtle{margin-right:auto}
 .bench-message{white-space:pre-wrap;line-height:1.7;font-size:12px;color:var(--green);overflow-wrap:anywhere}.bench-message.error{color:var(--red)}
 .bench-jobs{max-height:620px;overflow:auto}.bench-job{width:100%;text-align:left;border:0;border-bottom:1px solid var(--line);border-radius:0;background:white;padding:14px;display:grid;gap:7px}
-.bench-job[aria-selected=true]{background:#edf6f1;box-shadow:inset 3px 0 #087f68}.bench-job-top{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:12px}
+.bench-job[aria-selected=true]{background:#eaf1ff;box-shadow:inset 3px 0 #285fc6}.bench-job-top{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:12px}
 .bench-job small{font-size:11px;color:var(--muted)}.bench-empty{padding:32px 20px;color:var(--muted);text-align:center;font-size:13px;line-height:1.8}
 .bench-note{border-left:3px solid #e3c27b;background:#fffaf0;padding:12px 15px;font-size:12px;line-height:1.7;color:#806129;margin:0 0 18px}
 .bench-table{width:100%;border-collapse:collapse;font-size:12px}.bench-table th,.bench-table td{text-align:left;padding:11px 10px;border-bottom:1px solid var(--line)}.bench-table th{color:var(--muted);font-weight:500}.bench-table-scroll{overflow-x:auto}
 .bench-kpis{display:flex;gap:28px;flex-wrap:wrap;margin:0 0 18px}.bench-kpis small{color:var(--muted);display:block;font-size:11px}.bench-kpis strong{font-size:22px;font-weight:600;line-height:1.7}
 .bench-chart{width:100%;height:180px;display:block;background:#fafcfb;border-radius:7px}.bench-legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11px;margin:10px 0 18px}
-.bench-camera-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.bench-camera-grid figure{margin:0;border:1px solid var(--line);border-radius:8px;overflow:hidden}.bench-camera-grid img{width:100%;max-height:300px;object-fit:contain;background:#17251e;display:block}.bench-camera-grid figcaption{padding:8px;font-size:11px;color:var(--muted)}
-.bench-progress{width:100%;height:7px;accent-color:#087f68;margin:10px 0}.bench-configuration{white-space:pre-wrap;overflow-wrap:anywhere;font-size:11px;background:#f5f7f6;padding:12px;max-height:380px;overflow:auto}
+.bench-camera-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.bench-camera-grid figure{margin:0;border:1px solid var(--line);border-radius:8px;overflow:hidden}.bench-camera-grid img{width:100%;max-height:300px;object-fit:contain;background:#19283b;display:block}.bench-camera-grid figcaption{padding:8px;font-size:11px;color:var(--muted)}
+.bench-progress{width:100%;height:7px;accent-color:#285fc6;margin:10px 0}.bench-configuration{white-space:pre-wrap;overflow-wrap:anywhere;font-size:11px;background:#f5f7f6;padding:12px;max-height:380px;overflow:auto}
 .bench-next{display:flex;gap:12px;align-items:center;justify-content:space-between;border-top:1px solid var(--line);padding:16px 20px;font-size:12px;color:var(--muted)}
-#bench-result-switch{display:flex;gap:8px;align-items:center;margin-bottom:16px;flex-wrap:wrap}#bench-result-switch button[aria-pressed=true]{background:var(--soft);color:var(--green);border-color:#bfded0}
+#bench-result-switch{display:flex;gap:8px;align-items:center;margin-bottom:16px;flex-wrap:wrap}#bench-result-switch button[aria-pressed=true]{background:var(--soft);color:var(--green);border-color:#ccdafa}
 #bench-code-checks{margin-bottom:18px;background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden}#bench-code-checks>summary{padding:15px 20px;cursor:pointer;font-size:13px;font-weight:600}#bench-code-checks>summary small{font-weight:400;color:var(--muted);margin-left:10px}
 #bench-code-checks .bench-form{border-top:1px solid var(--line)}#bench-tasks{min-height:112px}
 .benchmark-switch>*,.benchmark-switch label,.bench-form>*,.bench-job-top>*,.bench-actions>*,.bench-kpis>*,.bench-camera-grid figure,.bench-next>*{min-width:0}
@@ -34,6 +34,9 @@
 .bench-form>details.bench-wide>summary{padding:10px 14px;cursor:pointer}
 @media(max-width:800px){.benchmark-switch{padding:12px 16px;gap:10px}.bench-layout{grid-template-columns:1fr}.bench-jobs{max-height:230px}.bench-form{padding:16px}.bench-body{padding:16px}}
 @media(max-width:520px){.benchmark-switch label{width:100%}.benchmark-switch select{flex:1;min-width:0}.bench-form{grid-template-columns:1fr}.bench-camera-grid{grid-template-columns:1fr}.bench-next{flex-direction:column;align-items:flex-start}}
+
+#bench-result-switch button[aria-pressed=true]{background:var(--soft);color:var(--accent);border-color:#c7d8f5}
+.bench-job[aria-selected=true]{background:var(--soft);box-shadow:none;border:1px solid #9abaf0}
 </style>
 <div id="benchmark-selector" class="benchmark-switch">
  <label for="benchmark-choice">Benchmark<select id="benchmark-choice" aria-label="Benchmark"><option value="b1k">BEHAVIOR-1K</option><option value="libero">LIBERO</option><option value="mikasa">MIKASA-Robo · 待接入</option><option value="simpler">SimplerEnv · 待接入</option></select></label>

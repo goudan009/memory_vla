@@ -322,6 +322,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
     el('train-step-summary-1').textContent = data.length ? '已选 ' + data.length + ' 个 · ' + data.filter(d=>d.ready).length + ' 个就绪' : '待选择任务';
     el('train-step-summary-2').textContent = gpus.length ? '训练 GPU ' + gpus.join('、') + (el('train-validation-enabled').checked ? ' · 启用验证' : ' · 关闭验证') : '待选择训练 GPU';
     el('train-step-summary-3').textContent = el('train-steps').value ? el('train-steps').value + ' 步 · ' + (el('train-enqueue').checked ? '排队启动' : '立即启动') : '待设置训练预算';
+    const batch = nativeMode() ? gpus.length * Number(el('train-microbatch').value) * Number(el('train-native-accum').value) : Number(el('train-windows').value) * 32;
     const rows = [
       ['实验身份',el('train-step-summary-0').textContent],
       ['方法与微调',method + ' · ' + (el('train-fine-tuning').selectedOptions?.[0]?.textContent || el('train-fine-tuning').value)],
@@ -329,6 +330,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
       ['训练数据',el('train-step-summary-1').textContent],
       ['运行资源',deviceLabel() + ' · ' + (gpus.length ? '训练 GPU '+gpus.join('、') : '未选训练 GPU') +
         (nativeMode()?' · 原生内部验证20条':el('train-validation-enabled').checked ? ' · 验证 GPU '+el('train-validation-gpu').value+' / '+el('train-validation-percent').value+'%' : ' · 不启用验证')],
+      [nativeMode()?'有效 Batch':'决策 / 步上限',gpus.length&&batch>0?String(batch):'待配置'],
       ['预算与启动',el('train-step-summary-3').textContent]
     ];
     el('train-review').innerHTML = rows.map(([label,value,full])=>'<div><dt>'+esc(label)+'</dt><dd'+(full?' title="'+esc(full)+'"':'')+'>'+esc(value)+'</dd></div>').join('');
@@ -910,7 +912,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
         '<text x="76" y="' + (yy+4) + '" text-anchor="end" font-size="12" fill="#667">' + value.toPrecision(4) + '</text>' +
         '<text x="' + xx + '" y="274" text-anchor="middle" font-size="12" fill="#667">' + Math.round(maxX*i/4) + '</text>';
     }
-    const color = chosen.arm === 'baseline' ? '#087f68' : '#c57626';
+    const color = chosen.arm === 'baseline' ? '#285fc6' : '#c57626';
     el('train-curve-legend').style.setProperty('--curve-color', color);
     const line = (values, raw) => '<polyline data-loss-series="' + (raw ? 'raw' : 'trend') + '" fill="none" stroke="' + color +
       '" stroke-opacity="' + (raw ? '.22' : '1') + '" stroke-width="' + (raw ? '1' : '2') +
@@ -918,7 +920,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
     if (showRaw && weight > 0) svg += line(points, true);
     svg += line(trend, false);
     if (points.length === 1) svg += '<circle cx="' + x(points[0][0]) + '" cy="' + y(points[0][1]) + '" r="3" fill="' + color + '"/>';
-    svg += '<g id="train-curve-cursor" visibility="hidden" pointer-events="none"><line y1="25" y2="250" stroke="#82958d" stroke-dasharray="3 4"/><circle r="4" fill="' + color + '" stroke="white" stroke-width="2"/></g>';
+    svg += '<g id="train-curve-cursor" visibility="hidden" pointer-events="none"><line y1="25" y2="250" stroke="#8190a2" stroke-dasharray="3 4"/><circle r="4" fill="' + color + '" stroke="white" stroke-width="2"/></g>';
     chart.innerHTML = svg;
     const cursor = el('train-curve-cursor');
     const readout = index => '优化步 ' + points[index][0] + ' · ' + sourceLabel + ' ' + fmt(points[index][1]) +

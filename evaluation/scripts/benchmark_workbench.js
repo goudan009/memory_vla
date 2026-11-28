@@ -19,12 +19,12 @@ function benchmarkMetrics(reports) {
     html += '<h3>前 8 个动作 MAE · 越低越好</h3>'+benchmarkTable(['训练分支','诊断条件','训练前','训练后'],rows);
     const gradients=actions.filter(r=>r.data.arm==='memory').flatMap(r=>r.data.training || []).map(r=>r.cognitive_q_gradient).filter(v=>v!=null);
     if(gradients.length) html += '<p class="bench-subtle">认知 Q 最小梯度 '+benchmarkNumber(Math.min(...gradients))+' · '+gradients.length+' 个优化步有记录。</p>';
-    const series=actions.map((r,i)=>({name:labels[r.data.arm]||r.data.arm, points:r.data.training||[],color:['#087f68','#c57626','#4866b5'][i]}));
+    const series=actions.map((r,i)=>({name:labels[r.data.arm]||r.data.arm, points:r.data.training||[],color:['#285fc6','#c57626','#4866b5'][i]}));
     if(series.some(s=>s.points.length)) {
       const all=series.flatMap(s=>s.points), maxStep=Math.max(1,...all.map(p=>p.step)), maxLoss=Math.max(.001,...all.map(p=>p.loss));
       html += '<h3>短训练 Loss</h3><svg class="bench-chart" viewBox="0 0 660 180" role="img" aria-label="各分支短训练 Loss 曲线">'+
-        '<line x1="45" y1="150" x2="640" y2="150" stroke="#cbd7ce"/><text x="7" y="20" font-size="11" fill="#63786b">'+maxLoss.toPrecision(3)+'</text><text x="12" y="153" font-size="11" fill="#63786b">0</text>'+series.map(s=>'<polyline fill="none" stroke="'+s.color+'" stroke-width="1.6" points="'+s.points.map(p=>(45+595*p.step/maxStep).toFixed(1)+','+(150-135*p.loss/maxLoss).toFixed(1)).join(' ')+'"/>').join('')+
-        '<text x="570" y="172" font-size="11" fill="#63786b">'+maxStep+' steps</text></svg><div class="bench-legend">'+series.map(s=>'<span style="color:'+s.color+'">● '+benchmarkEscape(s.name)+'</span>').join('')+'</div>';
+        '<line x1="45" y1="150" x2="640" y2="150" stroke="#dbe3ed"/><text x="7" y="20" font-size="11" fill="#63748b">'+maxLoss.toPrecision(3)+'</text><text x="12" y="153" font-size="11" fill="#63748b">0</text>'+series.map(s=>'<polyline fill="none" stroke="'+s.color+'" stroke-width="1.6" points="'+s.points.map(p=>(45+595*p.step/maxStep).toFixed(1)+','+(150-135*p.loss/maxLoss).toFixed(1)).join(' ')+'"/>').join('')+
+        '<text x="570" y="172" font-size="11" fill="#63748b">'+maxStep+' steps</text></svg><div class="bench-legend">'+series.map(s=>'<span style="color:'+s.color+'">● '+benchmarkEscape(s.name)+'</span>').join('')+'</div>';
     }
   }
   for(const {data:d} of reports) {

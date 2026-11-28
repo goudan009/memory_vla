@@ -1,6 +1,6 @@
 <style>
 #page-training .train-sidebar-actions{padding:12px 14px}
-#page-training .train-sidebar-actions button{width:100%;color:var(--green);background:var(--soft);border-color:#bfded0}
+#page-training .train-sidebar-actions button{width:100%;color:var(--green);background:var(--soft);border-color:#ccdafa}
 #page-training .train-records-toggle{display:none}
 #page-training .train-jobs{display:grid;gap:8px;padding:0 10px 10px;max-height:max(180px,calc(100vh - 220px));overflow:auto;scrollbar-gutter:stable}
 #page-training .train-job{font-size:12px}
@@ -20,13 +20,13 @@
 #page-training .train-job-stats{display:flex;justify-content:space-between;gap:8px;font-variant-numeric:tabular-nums}
 #page-training .train-content{min-width:0}
 #page-training #train-config{overflow:visible}
-#page-training .train-form-body{display:grid;gap:12px;padding:16px;background:#f5f8f6}
+#page-training .train-form-body{display:grid;gap:12px;padding:16px;background:#f5f7fa}
 #page-training .train-form-section,#page-training .train-form-extras{min-width:0;border:1px solid var(--line);border-radius:10px;background:#fff}
 #page-training .train-device-tools{display:flex;align-items:center;gap:8px;font-size:12px}
 #page-training .train-device-tools label{display:flex;align-items:center;gap:8px;min-width:0;white-space:nowrap}
 #page-training .train-device-tools button{white-space:nowrap}
 #page-training .train-config-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 16px;padding:14px 20px}
-#page-training .train-config-fields label{font-size:12px;color:#5e7268;display:grid;gap:5px;min-width:0;align-content:start}
+#page-training .train-config-fields label{font-size:12px;color:#63748b;display:grid;gap:5px;min-width:0;align-content:start}
 #page-training #train-validation-gpu,#page-training #train-validation-percent{height:38px}
 #page-training input:not([type=checkbox]),#page-training select,#page-training textarea{width:100%;min-width:0;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:#fafcfb;color:var(--ink);font:inherit}
 #page-training textarea{resize:vertical;min-height:70px;line-height:1.6}
@@ -36,13 +36,13 @@
 #page-training .train-command-fields input,#page-training .train-command-fields button{height:38px}
 #page-training .train-command-fields .train-actions{min-height:38px;align-self:end}
 #page-training #train-monitor .detail-tabs{flex-wrap:wrap}
-#page-training .train-inspect{padding:16px 20px 20px;background:#f5f8f6}
+#page-training .train-inspect{padding:16px 20px 20px;background:#f5f7fa}
 #page-training .train-param-groups{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 #page-training .train-param-group{min-width:0;border:1px solid var(--line);border-radius:9px;padding:12px 14px;background:#fff}
 #page-training .train-param-group h3{font-size:13px;margin:0 0 9px}
 #page-training .train-param-list{margin:0}
 #page-training .train-param-list > div{display:grid;grid-template-columns:minmax(94px,1fr) minmax(0,2fr);gap:8px 12px;padding:6px 0;font-size:12px;line-height:1.6}
-#page-training .train-param-list > div + div{border-top:1px solid #edf1ef}
+#page-training .train-param-list > div + div{border-top:1px solid #edf1f6}
 #page-training .train-param-list dt{color:var(--muted)}
 #page-training .train-param-list dd{margin:0;overflow-wrap:anywhere;white-space:pre-wrap;font-variant-numeric:tabular-nums}
 #page-training .train-param-list dd.train-missing{color:var(--muted)}
@@ -56,9 +56,9 @@
 #page-training .train-log-panel{border:1px solid var(--line);border-radius:9px;background:#fff;overflow:hidden}
 #page-training .train-log-toolbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;padding:12px 14px}
 #page-training .train-log-toolbar button{padding:5px 9px;font-size:12px}
-#page-training .train-log-sources{display:flex;flex-wrap:wrap;gap:4px;padding:3px;border:1px solid var(--line);border-radius:9px;background:#f5f8f6}
+#page-training .train-log-sources{display:flex;flex-wrap:wrap;gap:4px;padding:3px;border:1px solid var(--line);border-radius:9px;background:#f5f7fa}
 #page-training .train-log-sources button{border-color:transparent;background:transparent}
-#page-training .train-log-sources button[aria-pressed="true"]{background:#fff;border-color:#bfded0;color:var(--green)}
+#page-training .train-log-sources button[aria-pressed="true"]{background:#fff;border-color:#ccdafa;color:var(--green)}
 #page-training .train-log-panel .log{min-height:160px;max-height:min(480px,55vh);padding:14px;font-size:12px;line-height:1.6;overflow-anchor:none}
 #page-training .train-log-footer{display:flex;justify-content:space-between;flex-wrap:wrap;gap:4px 10px;padding:8px 14px}
 #page-training #train-log-feedback{color:var(--green)}
@@ -68,7 +68,7 @@
 #page-training input[type=checkbox]{accent-color:var(--green)}
 #page-training .train-gpus{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
 #page-training label.train-gpu{display:flex;align-items:center;gap:9px;padding:9px 12px;border:1px solid var(--line);border-radius:8px;cursor:pointer;background:#fafcfb}
-#page-training .train-gpu:has(input:checked){background:var(--soft);border-color:#9bcab8}
+#page-training .train-gpu:has(input:checked){background:var(--soft);border-color:#9abaf0}
 #page-training .train-gpu strong{font-size:12px;font-weight:600;color:var(--ink)}
 #page-training .train-gpu small{display:block;color:var(--muted);font-size:10px}
 #page-training .train-toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 20px}
@@ -112,7 +112,7 @@
 #page-training .train-steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;padding:16px;border-bottom:1px solid var(--line)}
 #page-training .train-steps button{display:flex;gap:9px;align-items:flex-start;text-align:left;min-width:0;padding:12px 10px;background:#fafcfb;white-space:normal}
 #page-training .train-steps button[aria-current="step"]{background:var(--soft);border-color:var(--green);color:var(--green)}
-#page-training .train-step-number{display:grid;place-items:center;flex-shrink:0;width:24px;height:24px;border-radius:50%;background:#e9efec;font-size:12px}
+#page-training .train-step-number{display:grid;place-items:center;flex-shrink:0;width:24px;height:24px;border-radius:50%;background:#e7ecf3;font-size:12px}
 #page-training [aria-current="step"] .train-step-number{background:var(--green);color:white}
 #page-training .train-steps button>span:last-child{min-width:0;overflow-wrap:anywhere}
 #page-training .train-steps strong{display:block;font-size:12px}
@@ -120,10 +120,10 @@
 #page-training .train-setup-panel{display:grid;gap:12px;min-width:0}
 #page-training .train-step-intro{margin:0;padding:0 4px;font-size:12px;color:var(--muted);line-height:1.7}
 #page-training .train-review{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:0;padding:14px 20px}
-#page-training .train-review>div{min-width:0;padding:10px 12px;background:#f5f8f6;border-radius:8px}
+#page-training .train-review>div{min-width:0;padding:10px 12px;background:#f5f7fa;border-radius:8px}
 #page-training .train-review dt{color:var(--muted);font-size:11px;margin-bottom:5px}
 #page-training .train-review dd{margin:0;font-size:12px;line-height:1.7;overflow-wrap:anywhere}
-#page-training .train-preview-result{padding:14px 20px;border:1px solid #bfded0;border-radius:10px;background:var(--soft);font-size:12px;line-height:1.8;overflow-wrap:anywhere}
+#page-training .train-preview-result{padding:14px 20px;border:1px solid #ccdafa;border-radius:10px;background:var(--soft);font-size:12px;line-height:1.8;overflow-wrap:anywhere}
 #page-training #train-form > .launch-actions{position:static;flex-wrap:wrap;box-shadow:none}
 #page-training .train-step-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:flex-end}
 #page-training #train-config [hidden]{display:none!important}
@@ -133,21 +133,21 @@
 #page-training .train-notes{padding:0 20px 14px}
 #page-training .train-notes label{display:grid;gap:5px;color:var(--muted);font-size:12px}
 #page-training .train-form-extras .compact-fold .train-config-fields{padding-top:4px}
-#page-training #train-form > .launch-actions{border-radius:0 0 13px 13px;box-shadow:0 -4px 16px #213e2f0a}
+#page-training #train-form > .launch-actions{border-radius:0 0 13px 13px;box-shadow:0 -4px 16px #2330440a}
 #page-training .train-task-picker{padding:12px 20px 14px}
 #page-training .train-task-tools{display:flex;gap:8px;align-items:center}
 #page-training .train-task-tools input{flex:1;font-size:12px}
 #page-training .train-task-tools label{display:flex;align-items:center;gap:4px;white-space:nowrap;font-size:11px;color:var(--muted)}
 #page-training .train-task-list{display:grid;gap:5px;max-height:182px;overflow:auto;margin:9px 0;scrollbar-gutter:stable}
 #page-training .train-task-choice{display:flex;align-items:center;gap:8px;padding:7px 9px;border:1px solid var(--line);border-radius:7px;cursor:pointer;background:#fafcfb;font-size:12px;min-width:0}
-#page-training .train-task-choice:has(input:checked){border-color:#9bcab8;background:var(--soft)}
+#page-training .train-task-choice:has(input:checked){border-color:#9abaf0;background:var(--soft)}
 #page-training .train-task-choice>span{flex:1;min-width:0}
 #page-training .train-task-choice strong{font-size:12px;font-weight:600}
 #page-training .train-task-choice .train-task-name{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted);font-size:10px}
 #page-training .train-data-badge{font-size:10px;color:var(--amber);white-space:nowrap}
 #page-training .train-data-badge.ready{color:var(--green)}
 #page-training .train-task-selection{display:flex;flex-wrap:wrap;gap:5px;align-items:center;min-height:24px;margin-bottom:7px}
-#page-training .train-task-selection button{padding:2px 7px;border-radius:5px;font-size:11px;background:var(--soft);border-color:#c4dfd3;color:var(--green)}
+#page-training .train-task-selection button{padding:2px 7px;border-radius:5px;font-size:11px;background:var(--soft);border-color:#c7d8f5;color:var(--green)}
 #page-training .train-selected-tasks{min-width:0;margin:8px 0}
 #page-training .train-selected-tasks>summary{cursor:pointer;font-size:11px;color:var(--green);overflow-wrap:anywhere}
 #page-training .train-task-selection{max-height:140px;overflow:auto;padding:6px 2px;align-content:start}
@@ -162,17 +162,17 @@
 #page-training .train-config-fields .train-check input{flex-shrink:0}
 #page-training .train-submit-summary{margin-right:auto;min-width:0;flex:1 1 240px;font-size:11px;color:var(--muted);overflow-wrap:anywhere}
 #page-training .train-submit-summary strong{color:var(--ink);display:block;font-size:12px}
-#page-training .train-runtime-note{padding:10px 20px;border-bottom:1px solid var(--line);background:#f5f9f7;color:#536e62;font-size:12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+#page-training .train-runtime-note{padding:10px 20px;border-bottom:1px solid var(--line);background:#f5f7fa;color:#63748b;font-size:12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 #page-training .train-runtime-note span{flex:1;min-width:180px;overflow-wrap:anywhere}
 #page-training .train-runtime-note button{padding:5px 9px;font-size:11px}
 #page-training .train-job-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:12px 20px;border-bottom:1px solid var(--line)}
 #page-training .train-job-actions .train-hint{flex:1;min-width:180px}
 #page-training #train-delete{color:var(--red)}
-#page-training .train-delete-dialog{box-sizing:border-box;width:min(440px,calc(100% - 32px));padding:0;border:1px solid var(--line);border-radius:14px;color:var(--ink);box-shadow:0 14px 40px #213e2f30}
-#page-training .train-delete-dialog::backdrop{background:#122b2255}
+#page-training .train-delete-dialog{box-sizing:border-box;width:min(440px,calc(100% - 32px));padding:0;border:1px solid var(--line);border-radius:14px;color:var(--ink);box-shadow:0 14px 40px #23304430}
+#page-training .train-delete-dialog::backdrop{background:#19283b55}
 #page-training .train-delete-body{padding:16px 20px;display:grid;gap:10px}
 #page-training .train-delete-body p{margin:0;overflow-wrap:anywhere}
-#page-training .train-delete-target{padding:10px 12px;background:#f5f8f6;border-radius:8px}
+#page-training .train-delete-target{padding:10px 12px;background:#f5f7fa;border-radius:8px}
 #page-training .train-delete-target strong{display:block;font-size:13px;overflow-wrap:anywhere}
 #page-training #train-delete-error{color:var(--red)}
 #page-training #train-delete-error:empty{display:none}
@@ -189,8 +189,8 @@
 #page-training .train-timing small{display:block;font-size:10px;color:var(--muted)}
 #page-training .train-hyperparameters{grid-template-columns:repeat(4,minmax(0,1fr))}
 #page-training #train-checkpoint-note{color:var(--muted);font-size:11px;overflow-wrap:anywhere}
-#page-training #train-message{position:sticky;top:8px;z-index:3;box-shadow:0 4px 16px #213e2f12}
-#page-training .train-recommendation{margin:12px 20px 0;padding:10px 12px;background:var(--soft);border:1px solid #c4dfd3;border-radius:8px}
+#page-training #train-message{position:sticky;top:8px;z-index:3;box-shadow:0 4px 16px #23304412}
+#page-training .train-recommendation{margin:12px 20px 0;padding:10px 12px;background:var(--soft);border:1px solid #c7d8f5;border-radius:8px}
 #page-training .train-recommendation .train-actions{gap:8px;margin-bottom:4px}
 #page-training .train-recommendation .train-actions label{min-width:0}
 #page-training .train-recommendation button{padding:5px 8px;font-size:11px}
@@ -248,7 +248,7 @@
  #page-training .train-submit-summary{flex-basis:100%}
 }
   #page-training .train-step-intro{font-size:12px;margin:0 0 8px}#page-training .train-form-extras{display:grid;gap:6px}#page-training .train-form-extras details{margin:0}#page-training .train-notes textarea{min-height:44px}#page-training .train-job-actions{gap:6px}#page-training .train-job-actions button{white-space:normal}#page-training .train-recommendation p{margin:5px 0}#page-training .train-timing small{font-size:11px}
-  #page-training .train-more-actions{position:relative;min-width:0}#page-training .train-more-actions>summary{cursor:pointer;border:1px solid var(--line);border-radius:7px;padding:7px 11px;background:#fff;font-size:13px}#page-training .train-more-actions>div{display:grid;gap:5px;padding:8px;border:1px solid var(--line);border-radius:8px;background:#fff;min-width:150px}#page-training .train-more-actions button[hidden]{display:none!important}#page-training #train-action-hint{flex-basis:100%;margin:0}#page-training #train-native-components-summary{margin-left:6px;color:#64746b;font-weight:400}#page-training #train-native-config>details{margin:8px 0}#page-training #train-review-details{margin-bottom:10px}
+  #page-training .train-more-actions{position:relative;min-width:0}#page-training .train-more-actions>summary{cursor:pointer;border:1px solid var(--line);border-radius:7px;padding:7px 11px;background:#fff;font-size:13px}#page-training .train-more-actions>div{display:grid;gap:5px;padding:8px;border:1px solid var(--line);border-radius:8px;background:#fff;min-width:150px}#page-training .train-more-actions button[hidden]{display:none!important}#page-training #train-action-hint{flex-basis:100%;margin:0}#page-training #train-native-components-summary{margin-left:6px;color:#63748b;font-weight:400}#page-training #train-native-config>details{margin:8px 0}#page-training #train-review-details{margin-bottom:10px}
 
 #page-training .page-intro{margin:0 0 12px}
 #page-training .train-content{container-type:inline-size}
@@ -268,7 +268,7 @@
 #page-training .train-setup-panel{gap:14px}
 #page-training .train-steps{padding:12px var(--panel-pad);gap:6px;background:#f7f9fb}
 #page-training .train-steps button{padding:10px 8px;align-items:center;border-radius:7px;border-color:transparent;background:transparent}
-#page-training .train-steps button[aria-current=step]{background:#fff;border-color:#a9cfca;box-shadow:0 1px 2px #20334009}
+#page-training .train-steps button[aria-current=step]{background:#fff;border-color:#9abaf0;box-shadow:0 1px 2px #20334009}
 #page-training .train-step-number{width:24px;height:24px;background:#e3e9ef;color:#546575}
 #page-training .train-steps small{font-size:11px;line-height:1.4;margin-top:2px}
 #page-training .train-steps strong{font-size:13px}
@@ -293,7 +293,7 @@
 #page-training .train-gpu:has(input:checked){background:var(--soft)}
 #page-training .train-gpu strong{font-size:13px}
 #page-training .train-gpu small{font-size:11px}
-#page-training .train-recommendation{margin:0 0 14px;padding:12px;background:#f3f8f7;border-color:#d5e6e2}
+#page-training .train-recommendation{margin:0 0 14px;padding:12px;background:#f3f6fb;border-color:#dbe3ed}
 #page-training .train-notes{padding:14px 0 0}
 #page-training .train-notes textarea{min-height:54px;border-radius:6px;background:white}
 #page-training .train-form-extras>details>summary{font-size:13px;padding:11px 14px}
@@ -312,6 +312,40 @@
 #page-training #train-resume-panel .train-config-fields{padding:12px 0}
 @container(max-width:620px){#page-training .train-steps{grid-template-columns:repeat(2,minmax(0,1fr))}#page-training .train-task-list{grid-template-columns:1fr}}
 @container(max-width:380px){#page-training .train-steps button{padding:8px 5px;gap:5px}#page-training .train-steps strong{font-size:12px}#page-training .train-steps small{font-size:10px}#page-training .train-gpus{grid-template-columns:1fr}#page-training .train-step-actions{width:100%;justify-content:flex-end}}
+
+/* A2 right-hand live summary: does not duplicate or relocate any form input. */
+#page-training .train-form-body{grid-template-columns:minmax(0,1fr) minmax(200px,26%);align-items:start;gap:20px;padding:18px 20px 24px;min-height:380px}
+#page-training .train-setup-panel{min-width:0;align-content:start}
+#page-training .train-summary-card{position:sticky;top:16px;min-width:0;padding:14px 15px;background:#f5f7fa;border:1px solid var(--line);border-radius:8px}
+#page-training .train-summary-card h3{font-size:14px;margin:0;padding-bottom:10px;border-bottom:1px solid var(--line)}
+#page-training #train-review-details{border:1px solid var(--line);margin:0;border-radius:8px}
+#page-training .train-summary-card .train-review{display:grid;grid-template-columns:minmax(0,1fr);padding:8px 0 10px;gap:0}
+#page-training .train-summary-card .train-review>div{display:grid;grid-template-columns:minmax(58px,0.8fr) minmax(0,1.2fr);align-items:baseline;gap:8px;background:none;padding:7px 0;border-radius:0}
+#page-training .train-summary-card dt{font-size:12px;margin:0;color:var(--muted)}
+#page-training .train-summary-card dd{font-size:12px;line-height:1.5;font-weight:600;text-align:right;color:var(--ink);overflow-wrap:anywhere}
+#page-training .train-preview-state{display:inline-block;font-size:11px;font-weight:600;padding:5px 9px;border-radius:5px}
+#page-training .train-preview-state.pending{background:#fff1dc;color:#91621e}
+#page-training .train-preview-state.checked{display:none;background:var(--soft);color:var(--accent)}
+#page-training #train-form:has(#train-preview-result:not([hidden])) .train-preview-state.pending{display:none}
+#page-training #train-form:has(#train-preview-result:not([hidden])) .train-preview-state.checked{display:inline-block}
+#page-training .train-steps{background:white;padding:12px 16px;gap:8px}
+#page-training .train-steps button{background:#f5f7fa;border-color:transparent;box-shadow:none;min-height:56px}
+#page-training .train-steps button[aria-current=step]{background:#e8effe;color:var(--accent);border-color:transparent;box-shadow:none}
+#page-training .train-steps button[aria-current=step] .train-step-number{background:var(--accent);color:white}
+#page-training .train-hyperparameters{grid-template-columns:repeat(2,minmax(0,1fr))}
+#page-training .train-form-extras>details>summary,#page-training #train-native-config>details>summary{background:#f5f7fa;border-radius:6px}
+#page-training .train-form-extras>details[open]>summary,#page-training #train-native-config>details[open]>summary{border-radius:6px 6px 0 0}
+#page-training .train-form-extras{border:0;gap:7px}
+#page-training .train-form-extras>details{border:1px solid var(--line)!important;border-radius:7px}
+#page-training .train-record-filters input{background:#f5f7fa}
+#page-training .train-sidebar-actions button{background:var(--accent);border-color:var(--accent)}
+#page-training .train-job{border:1px solid var(--line);border-radius:7px;background:white}
+#page-training .train-job.selected{border-color:#7399eb;box-shadow:none;background:var(--soft)}
+#page-training #train-form>.launch-actions{background:white;padding:12px 20px;min-height:60px}
+#page-training .train-recommendation{background:#f5f7fa;border-color:var(--line)}
+#page-training .train-setup-grid{grid-template-columns:1fr}
+@container(max-width:780px){#page-training .train-form-body{grid-template-columns:minmax(0,1fr);gap:14px;min-height:0;padding:14px var(--panel-pad)}#page-training .train-summary-card{position:static}#page-training .train-summary-card .train-review{grid-template-columns:repeat(2,minmax(0,1fr));gap:0 15px}}
+@container(max-width:460px){#page-training .train-summary-card .train-review{grid-template-columns:minmax(0,1fr)}#page-training .train-hyperparameters{grid-template-columns:minmax(0,1fr)}#page-training .train-steps{padding:10px;gap:6px}}
 </style>
 <div class="page-intro"><h2>启动训练</h2><div class="train-device-tools"><label>训练设备 <select id="train-device"><option value="a100">A100 · 多卡训练</option><option value="a6000">RTX 6000 Ada · 单卡 48GB</option></select></label><button id="train-refresh" type="button">↻ 刷新</button></div></div>
 <p id="train-device-hint" class="train-hint" hidden></p>
@@ -330,10 +364,10 @@
    <div class="detail-heading"><div><h2>新建训练</h2></div><span id="train-device-label" class="chip gpu">A100</span></div>
    <form id="train-form" novalidate>
     <nav class="train-steps" aria-label="新建训练步骤">
-     <button type="button" data-train-setup-step="0" aria-current="step" aria-controls="train-setup-0"><span class="train-step-number">1</span><span><strong>实验与模型</strong><small id="train-step-summary-0">模型 / 权重</small></span></button>
-     <button type="button" data-train-setup-step="1" aria-controls="train-setup-1"><span class="train-step-number">2</span><span><strong>数据任务</strong><small id="train-step-summary-1">任务</small></span></button>
-     <button type="button" data-train-setup-step="2" aria-controls="train-setup-2"><span class="train-step-number">3</span><span><strong>GPU 与验证</strong><small id="train-step-summary-2">资源</small></span></button>
-     <button type="button" data-train-setup-step="3" aria-controls="train-setup-3"><span class="train-step-number">4</span><span><strong>参数与启动</strong><small id="train-step-summary-3">参数</small></span></button>
+     <button type="button" data-train-setup-step="0" aria-current="step" aria-controls="train-setup-0"><span class="train-step-number">1</span><span><strong>模型</strong><small id="train-step-summary-0">模型 / 权重</small></span></button>
+     <button type="button" data-train-setup-step="1" aria-controls="train-setup-1"><span class="train-step-number">2</span><span><strong>数据</strong><small id="train-step-summary-1">任务</small></span></button>
+     <button type="button" data-train-setup-step="2" aria-controls="train-setup-2"><span class="train-step-number">3</span><span><strong>资源</strong><small id="train-step-summary-2">资源</small></span></button>
+     <button type="button" data-train-setup-step="3" aria-controls="train-setup-3"><span class="train-step-number">4</span><span><strong>参数</strong><small id="train-step-summary-3">参数</small></span></button>
     </nav>
     <div class="train-form-body">
     <div id="train-setup-0" class="train-setup-panel" data-train-setup-panel="0">
@@ -387,7 +421,7 @@
     </div>
     <div id="train-setup-3" class="train-setup-panel" data-train-setup-panel="3" hidden>
     <p class="train-step-intro" tabindex="-1">核对参数</p>
-    <details class="compact-fold" id="train-review-details"><summary>核对本次配置</summary><dl id="train-review" class="train-review"></dl></details>
+    
     <div class="train-form-section">
     <h3 class="train-form-heading">训练参数</h3>
     <div class="train-recommendation" aria-label="训练参数推荐">
@@ -491,6 +525,7 @@
     <div id="train-preview-result" class="train-preview-result" role="status" hidden></div>
     <details id="train-plan-details" class="train-form-extras compact-fold" hidden><summary>完整预检记录</summary><pre id="train-plan" class="log" hidden></pre></details>
     </div>
+    <aside id="train-review-details" class="train-summary-card" aria-label="本次训练摘要"><h3>本次训练摘要</h3><dl id="train-review" class="train-review"></dl><span class="train-preview-state pending">待配置检查</span><span class="train-preview-state checked">配置检查通过</span></aside>
     </div>
     <div class="launch-actions"><div id="train-submit-summary" class="train-submit-summary" aria-live="polite"></div><div class="train-step-actions"><button id="train-previous" type="button" hidden>上一步</button><button id="train-next" class="primary-button" type="button">下一步：数据任务</button><button id="train-check" type="button" hidden>检查配置</button><button id="train-submit" class="primary-button" type="submit" hidden>启动训练</button></div></div>
    </form>
