@@ -1,0 +1,78 @@
+{
+  "goal": "B1K-2026 / V0_0: Task40 only, generic N1.7 real training → save/pause → same-run resume → exact checkpoint native closed loop",
+  "created_at": "2026-11-28",
+  "author": "Codex / root session",
+  "reason": "User approved V0_0 within V0, Task40-only training and duplicate-checked experiment allocation; adopts the prior four-step engineering recipe with Task0 removed.",
+  "benchmark": "b1k2026",
+  "method_family": "V0",
+  "version": "V_0_0",
+  "run_id": "v0_0__test04__exp01__run001",
+  "budget": {
+    "formal_steps": 0,
+    "optimizer_steps": 4,
+    "pause_after": 2,
+    "evaluation_rollouts": 1
+  },
+  "mainline": [
+    "identity",
+    "dataset",
+    "train",
+    "resume",
+    "evaluate",
+    "archive"
+  ],
+  "nodes": [
+    {
+      "id": "identity",
+      "title": "身份与配置锁定",
+      "after": [],
+      "parallel_branches": [],
+      "acceptance": "User authorization recorded; unique test04/exp01/run001; V0 family / V0_0; Task40-only recipe, source and base digest fixed."
+    },
+    {
+      "id": "dataset",
+      "title": "Task40 数据物化",
+      "after": [
+        "identity"
+      ],
+      "parallel_branches": [],
+      "acceptance": "Workbench resource allocation and dataset preview/start; episodes8000..8179 train /8180..8199 validation; tasks=[40], no instance overlap; train-only official statistics and physical loader verified."
+    },
+    {
+      "id": "train",
+      "title": "Task40 真实训练",
+      "after": [
+        "dataset"
+      ],
+      "parallel_branches": [],
+      "acceptance": "Same workbench preview/start, initiator=agent + notes + latest agent_plan; real finite gradients/parameter update; optimizer step2 complete checkpoint and paused worker releases GPU."
+    },
+    {
+      "id": "resume",
+      "title": "同 run 严格恢复",
+      "after": [
+        "train"
+      ],
+      "parallel_branches": [],
+      "acceptance": "Resume preview/start original run with model/optimizer/scheduler/RNG/cursor from step2; optimizer advances to4, saves complete canonical checkpoint."
+    },
+    {
+      "id": "evaluate",
+      "title": "Task40 自训练闭环",
+      "after": [
+        "resume"
+      ],
+      "parallel_branches": [],
+      "acceptance": "Exact step4 weight hash and processor, Task40 index0, single environment/rollout, task language, WebSocket temporal ensemble RTCoff; native JSON/MP4 and genuine success/Qscore."
+    },
+    {
+      "id": "archive",
+      "title": "验收与归档",
+      "after": [
+        "evaluate"
+      ],
+      "parallel_branches": [],
+      "acceptance": "Record actual jobs, batch1 recipe, gradients/updates, optimizer/cursor resume, environment/resource measurements, checkpoint/video hashes. Capabilities only accepted with real evidence. Preserve checkpoints/results and other workloads."
+    }
+  ]
+}

@@ -1,0 +1,71 @@
+{
+  "plan_id": "b1k2026_v0_0_task40_training_chain_v031",
+  "status": "in_progress",
+  "supersedes": "b1k2026_v0_0_identity_v030",
+  "change_reason": "User approved V0_0 within V0, restricted training to Task40 and authorized duplicate-checked experiment allocation. Prior four-step engineering proposal adopted with Task0 excluded.",
+  "benchmark": "b1k2026",
+  "method_family": "V0",
+  "method_version": "V0_0",
+  "canonical_version": "V_0_0",
+  "experiment_identity": {
+    "test_id": "test04",
+    "experiment_id": "exp01",
+    "run_id": "v0_0__test04__exp01__run001",
+    "task": "Output/test_04/experiment_01/task.md",
+    "workflow": "Output/test_04/experiment_01/workflow/plan-v001.json"
+  },
+  "budget": {
+    "formal_training_steps": 0,
+    "engineering_optimizer_steps": 4,
+    "pause_after_steps": 2,
+    "closed_loop_rollouts": 1
+  },
+  "mainline": [
+    {
+      "node": "identity",
+      "depends_on": [],
+      "parallel_branches": [],
+      "acceptance": "User-approved Task40 recipe and duplicate-checked V0_0/test04/exp01/run001 recorded."
+    },
+    {
+      "node": "dataset",
+      "depends_on": [
+        "identity"
+      ],
+      "parallel_branches": [],
+      "acceptance": "Task40-only180/20 physical split via existing workbench, train-only statistics and metadata."
+    },
+    {
+      "node": "train",
+      "depends_on": [
+        "dataset"
+      ],
+      "parallel_branches": [],
+      "acceptance": "Existing workbench preview/start, actual parameter updates and safe pause at2."
+    },
+    {
+      "node": "resume",
+      "depends_on": [
+        "train"
+      ],
+      "parallel_branches": [],
+      "acceptance": "Same-run full-state resume and further updates to4."
+    },
+    {
+      "node": "evaluate",
+      "depends_on": [
+        "resume"
+      ],
+      "parallel_branches": [],
+      "acceptance": "Exact step4 Task40 public index0 one native rollout, JSON/MP4 and real metrics."
+    },
+    {
+      "node": "archive",
+      "depends_on": [
+        "evaluate"
+      ],
+      "parallel_branches": [],
+      "acceptance": "All evidence retained and capability state limited to real verification."
+    }
+  ]
+}

@@ -1,5 +1,11 @@
 # V1.2 Progress
 
+## 2026-11-28 - identity / dataset / train / resume / evaluate / archive (v031)
+
+- User approved V0_0 within V0, Task40-only engineering training and duplicate-checked identity allocation. Allocated test04/exp01/run001 after observing test01/02 here and historical test03 in separate V3 checkouts. Canonical run `v0_0__test04__exp01__run001`; no 2025 experiment is reused.
+- Actual task and execution plan: [Task04/Exp01 task](../../Output/test_04/experiment_01/task.md), [plan-v001](../../Output/test_04/experiment_01/workflow/plan-v001.json); migration plan [v031](workflow/plan-v031.json). Recipe: generic N1.7, Task40 episodes8000..8179 train /8180..8199 validation, frozen LLM/visual, projector+diffusion trainable, effectiveBatch1,4 optimizer steps with pause2/resume4, final Task40 index0 one native rollout. Task0 excluded. Formal training budget remains0.
+- Identity locked; dataset materialization pending. Real GPU updates0/4, new closed-loop0/1. Continue without requesting authorization again for this approved recipe or routine engineering fixes.
+
 ## 2026-11-28 - register_identity / separate_native_routes / verify_and_activate (v030)
 
 - User-confirmed identity: `benchmark=b1k2026`, baseline family `V0`, concrete version `V0_0` (API `V_0_0`, run prefix `v0_0`). V0 minor versions may distinguish code and training-parameter tests, but are not allocated automatically. Replaced the unfinished V_0 registration with V_0_0; V0 alone cannot identify a training run.
