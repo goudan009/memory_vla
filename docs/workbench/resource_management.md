@@ -1,0 +1,17 @@
+# 统一资源管理（人 / Agent 共用）
+
+资源管理是唯一日常资源入口。已有训练、推理、评估不受页面更名影响。历史任务对比暂留，避免丢失旧记录。
+
+## 执行顺序
+
+1. 查询 `memory-workbench resource hosts`、`resource disks --host A100` 和已有目录；优先复用已有权重/数据，核对版本、设备、完整性和实际路径。
+2. 下载只使用管理员配置的配方：`resource download-options` → `resource download-status ID` → `resource download-preview ID` → `resource download-start ID`。未配置或预检失败即报告阻塞，不擅自 curl/wget/git clone、创建环境、换源、改变版本或下载目录。
+3. 后台作业在目标设备指定 Python 中执行；固定 HF revision 和文件清单，逐文件大小与 SHA-256/Git blob SHA-1 校验，先暂存，再完成发布。锁防止同目标并行下载。状态持久化，服务重启后可查询；提交超时先查 status。失败重试同配方，保留已校验文件。完成后使用 register 登记。
+4. 目录登记、创建、回收、恢复都使用统一 resource API/CLI。删除前核对依赖、数据价值及用户授权；不直接 rm，训练 checkpoint 使用训练详情受保护接口。回收不释放磁盘。未接入的永久清理、外部传输和非 HF 来源应报告阻塞，不自行绕过。
+5. 下载不占用 GPU 作为训练任务，不为下载修改模型配置。正在运行的旧下载不要接管或重启；核对原任务后登记完整资源。
+
+## 部署
+
+复制 `configs/workbench_downloads.example.json` 为本地 `configs/workbench_downloads.json`（Git 忽略）。管理员填写实际 host、已存在的资源根目录、专用目标目录、实际下载 Python（可导入 huggingface_hub）、仓库内固定清单及 resource 名称。示例目标与旧 N1.7 目标不同，避免冲突；不要把示例 Python 当实际环境。未配置时 UI/CLI 显示无配方，不执行任何下载。远程 SSH 复用现有设备配置。每个配方只允许一个明确目标；目标存在拒绝覆盖。当前仅支持带完整文件摘要的 Hugging Face 配方，其他下载来源需要显式接入。目标根目录必须为真实绝对路径，禁止软链接。检查磁盘保守预留完整清单+1 GiB；空间不足时先人工检查，禁止自动删除。
+
+API: GET /api/resources/downloads?action=options 或 action=status&recipe_id=ID；POST 同路径 JSON action=preview|start、recipe_id=ID。既有 /api/registry/storage 支持 hosts/disks/browse/stat/size/register/mkdir/trash/restore。CLI `memory-workbench resource --help`。下载任务状态以真实校验字节为准，不把下载开始当作完成。

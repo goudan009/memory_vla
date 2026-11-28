@@ -26,3 +26,16 @@ memory-workbench eval jobs
 ```
 
 在部署了 MemoryVLA 项目的主机上，可以从仓库根目录执行 `memory-workbench serve` 启动服务，也可用 `--repo` 指定仓库。当前已有工作台服务时，直接使用查询和提交命令。任务配置、资源规则和 API 字段见 [工作台执行手册](../docs/workbench/agent.md)。
+
+## 资源管理
+
+```sh
+memory-workbench resource hosts
+memory-workbench resource disks --host A100
+memory-workbench resource download-options
+memory-workbench resource download-status RECIPE_ID
+memory-workbench resource download-preview RECIPE_ID
+memory-workbench resource download-start RECIPE_ID
+memory-workbench resource register --host A100 --path /actual/resource --kind weights
+```
+配方与执行规则见 [资源管理](../docs/workbench/resource_management.md)。Agent 不得绕开下载预检及回收保护。

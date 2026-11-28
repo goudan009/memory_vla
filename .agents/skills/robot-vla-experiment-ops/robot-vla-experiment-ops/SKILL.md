@@ -17,6 +17,10 @@ description: 在 MemoryVLA / GR00T / B1K 仓库操作训练、推理、仿真评
 - 推理、闭环、结果验收：[评估与报告](references/evaluation-reporting.md)。
 - 历史方法差异只在目标属于对应任务时，按[身份与命名参考中的历史上下文](references/checkpoint-naming.md#已有方法上下文)核对，再读取对应 `task.md`、计划和实际配置；不得把历史选择推广到新实验。
 
+## 资源管理（下载、登记、删除、恢复）
+
+先读 [统一资源管理](../../../../docs/workbench/resource_management.md)。GUI 与 Agent 使用同一资源 API；先 hosts/disks/browse，再复用已存在资源。下载按 download-options → status → preview → start → status → register；仅管理员登记的固定 revision/清单、目标设备及环境。未配置、预检失败、目标已存在或响应不明时先查状态，不绕过工作台、不自行安装环境/切换下载源。回收前核对授权和依赖；训练 checkpoint 走受保护入口，不直接 rm。已运行的旧下载保留，不擅自接管。
+
 ## 授权与研究选择
 
 1. 用户明确指令（含已确认的长期要求）优先于任务书和 Skill 默认流程。任务书不能覆盖用户要求。已确认方案内的工程修复、排队和续跑继续执行，不重复索取许可。

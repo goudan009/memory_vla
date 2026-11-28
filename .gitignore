@@ -124,3 +124,6 @@ references/upstream/
 !/reports/training/**/*.toml
 !/reports/training/**/*.yaml
 !/reports/training/**/*.yml
+
+# Local resource download environments and target paths
+/configs/workbench_downloads.json

@@ -7,3 +7,5 @@
 - [研究控制台原型](ai_human_console.md) 保留早期设计和演示。
 - [工作台方案](ai_research_workbench_plan.md)：角色、数据模型和分阶段建设计划。
 - [架构解释版](ai_workbench_preview.md)：保留的 v2 原型及验证方式。
+
+- [统一资源管理](resource_management.md)：下载、目录登记、回收、恢复；人和 Agent 使用同一接口。
