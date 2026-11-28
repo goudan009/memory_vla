@@ -143,7 +143,7 @@ if(typeof module!=='undefined' && module.exports) module.exports={benchmarkMetri
     comparison.hidden=false;
     comparisonBody.innerHTML=benchmarkTable(['运行','已判定回合','成功率','平均 Q'],matches.map(j=>{
       const ms=nativeMetrics(j),known=ms.filter(m=>typeof m.success==='boolean'),qs=ms.filter(m=>typeof m.q_score==='number'&&Number.isFinite(m.q_score));
-      return [(j.folder||j.id).split('/').pop(),known.length,known.length?(100*known.filter(m=>m.success).length/known.length).toFixed(1)+'%':'—',qs.length?(qs.reduce((sum,m)=>sum+m.q_score,0)/qs.length).toFixed(3):'—'];
+      return [nativeTitle(j)+' · '+nativeRTC(j)+(j.attempt!=null?' · 尝试 '+j.attempt:''),known.length,known.length?(100*known.filter(m=>m.success).length/known.length).toFixed(1)+'%':'—',qs.length?(qs.reduce((sum,m)=>sum+m.q_score,0)/qs.length).toFixed(3):'—'];
     }))+'<p class="subtle">仅显示同任务记录；跨权重结论需核对实例、指令及评估协议一致性。</p>';
   }
   function exportRecord(record,kind){
@@ -249,6 +249,13 @@ if(typeof module!=='undefined' && module.exports) module.exports={benchmarkMetri
     renderList();renderDetail();
     if(isNative())void window.refresh();
   }
+  const nativeLanguage=job=>({official_default:'官方默认指令',task_description:'任务原文指令'})[job?.language?.mode]||'指令模式未记录';
+  const nativeWeight=job=>job?.official===true||job?.policy_identity?.method==='official'?'官方权重':job?.policy_identity?.training_id?'自训练权重':'权重来源未核对';
+  const nativeRTC=job=>job?.rtc===false?'RTC 关闭':job?.rtc===true?'RTC 开启':'RTC 未记录';
+  const nativeTitle=job=>[nativeWeight(job),job.task_id==='turning_on_radio'?'打开收音机':job.task_id||'任务未记录',nativeLanguage(job)].join(' · ');
+  function nativeTags(job){
+    return [nativeWeight(job),nativeLanguage(job),nativeRTC(job),job?.attempt!=null?'尝试 '+job.attempt:null,job?.instance!=null?'测试实例 '+job.instance:null].filter(Boolean);
+  }
   function nativeStatus(job){
     return ({complete:'回合完成',failed:'运行失败',running:'运行中',starting:'启动中',stopped:'已停止',interrupted:'运行中断'})[job.state]||job.state||'未知';
   }
@@ -275,7 +282,7 @@ if(typeof module!=='undefined' && module.exports) module.exports={benchmarkMetri
   function renderNativeResults(){
     if(benchmark!=='b1k2026'||page!=='results')return;
     const search=el('run-search').value.trim().toLowerCase(), filter=el('status-filter').value;
-    const visible=nativeJobs.filter(j=>(!filter||j.state===filter)&&(!search||[j.id,j.folder,j.task_id,j.notes,j.state,'V1.2 N1.7 V_1_2'].join(' ').toLowerCase().includes(search)));
+    const visible=nativeJobs.filter(j=>(!filter||j.state===filter)&&(!search||[j.id,j.folder,j.task_id,j.notes,j.state,j.policy_identity?.training_id,j.checkpoint_sha256,...nativeTags(j),'V1.2 N1.7 V_1_2'].join(' ').toLowerCase().includes(search)));
     if(!visible.some(j=>j.id===nativeSelected)){nativeSelected=visible[0]?.id||null;nativeEpisode=0;nativeTab='episodes';}
     el('run-count').textContent=visible.length+' / '+nativeJobs.length+' 条';
     el('empty').hidden=visible.length>0;
@@ -285,7 +292,7 @@ if(typeof module!=='undefined' && module.exports) module.exports={benchmarkMetri
     for(const job of visible){const task=job.task_id||'未记录任务';if(!groups.has(task))groups.set(task,[]);groups.get(task).push(job);}
     const card=job=>{
       const ms=nativeMetrics(job), known=ms.filter(m=>typeof m.success==='boolean'), qs=ms.filter(m=>typeof m.q_score==='number'&&Number.isFinite(m.q_score));
-      return '<button type="button" class="run-card'+(job.id===nativeSelected?' selected':'')+'" data-native-job="'+escape(job.id)+'" aria-pressed="'+String(job.id===nativeSelected)+'"><div class="run-card-top"><div class="run-group">'+escape(job.task_id||'原生评估')+'</div>'+statusBadge(job.state)+'</div><div class="run-name">'+escape((job.folder||job.id).split('/').pop())+'</div><div class="run-numbers"><div><span>平均 Q</span>'+escape(qs.length?(qs.reduce((s,m)=>s+m.q_score,0)/qs.length).toFixed(3):'—')+'</div><div><span>成功率</span>'+escape(known.length?(100*known.filter(m=>m.success).length/known.length).toFixed(0)+'%':'—')+'</div><div><span>有效回合</span>'+ms.length+'</div></div><div class="run-card-bottom"><span>'+escape(job.started_at||'')+'</span></div></button>';
+      return '<button type="button" class="run-card'+(job.id===nativeSelected?' selected':'')+'" data-native-job="'+escape(job.id)+'" aria-pressed="'+String(job.id===nativeSelected)+'"><div class="run-card-top"><div class="run-group">'+escape(job.task_id||'原生评估')+'</div>'+statusBadge(job.state)+'</div><div class="run-name">'+escape(nativeTitle(job))+'</div><div class="subtle">'+escape([nativeRTC(job),job.attempt!=null?'尝试 '+job.attempt:null].filter(Boolean).join(' · '))+'</div><div class="run-numbers"><div><span>平均 Q</span>'+escape(qs.length?(qs.reduce((s,m)=>s+m.q_score,0)/qs.length).toFixed(3):'—')+'</div><div><span>成功率</span>'+escape(known.length?(100*known.filter(m=>m.success).length/known.length).toFixed(0)+'%':'—')+'</div><div><span>有效回合</span>'+ms.length+'</div></div><div class="run-card-bottom"><span>'+escape(job.started_at||'')+'</span></div></button>';
     };
     const filtering=Boolean(search||filter);
     list.innerHTML=visible.length?'<details class="version-group" data-native-group="version"'+(filtering||nativeGroupOpen.get('version')!==false?' open':'')+'><summary>V1.2 · N1.7 <small>'+visible.length+' 次</small></summary><div class="version-runs">'+[...groups].map(([task,entries])=>'<details class="result-task-group" data-native-group="'+escape('task:'+task)+'"'+(filtering||nativeGroupOpen.get('task:'+task)!==false?' open':'')+'><summary>'+escape(task)+'<small>'+entries.length+' 次</small></summary><div class="result-task-runs">'+entries.map(card).join('')+'</div></details>').join('')+'</div></details>':'';
@@ -295,8 +302,8 @@ if(typeof module!=='undefined' && module.exports) module.exports={benchmarkMetri
     const job=nativeResultJob(), ms=nativeMetrics(job), known=ms.filter(m=>typeof m.success==='boolean'), qs=ms.filter(m=>typeof m.q_score==='number'&&Number.isFinite(m.q_score)), successes=known.filter(m=>m.success).length;
     if(nativeEpisode>=ms.length)nativeEpisode=0;
     el('detail-path').textContent=job?'V1.2 / N1.7 · B1K-2026':'选择一次评估';
-    el('detail-title').textContent=job?(job.folder||job.id).split('/').pop():'运行详情';
-    el('detail-subtitle').textContent=job?[job.task_id,job.started_at,job.notes].filter(Boolean).join(' · '):'';
+    el('detail-title').textContent=job?nativeTitle(job):'运行详情';
+    el('detail-subtitle').textContent=job?[job.started_at,nativeRTC(job),job.attempt!=null?'尝试 '+job.attempt:null,job.notes].filter(Boolean).join(' · '):'';
     el('detail-status').innerHTML=job?statusBadge(job.state):'';
     el('detail-mode').textContent=job?'原生评估 · '+nativeStatus(job):'';
     el('result-export-analysis').disabled=!job;
@@ -320,7 +327,7 @@ if(typeof module!=='undefined' && module.exports) module.exports={benchmarkMetri
     player.hidden=!source;
     el('video-empty').textContent=source?'原生完整录像':'暂无对应回合录像';
     el('video-location').textContent=video?.path||'';
-    const facts=[['任务指令',job?.language?.text_prompt],['运行备注',job?.notes],['归档目录',job?.folder],['作业 ID',job?.id],['状态',job?nativeStatus(job):null]];
+    const facts=[['权重来源',job?nativeWeight(job):null],['Checkpoint',job?.policy_identity?.checkpoint],['权重 SHA256',job?.checkpoint_sha256||job?.policy_identity?.checkpoint_sha256],['源码版本',job?.source_revision||job?.policy_identity?.source?.revision],['所属训练',job?.policy_identity?.training_id],['指令模式',job?nativeLanguage(job):null],['任务指令',job?.language?.text_prompt],['RTC',job?nativeRTC(job):null],['公共测试实例序号',job?.instance],['尝试编号',job?.attempt],['评估协议',job?.protocol],['运行备注',job?.notes],['归档目录',job?.folder],['作业 ID',job?.id],['状态',job?nativeStatus(job):null]];
     el('configuration-details').innerHTML=job?'<div class="facts">'+facts.map(([k,v])=>'<div class="fact"><label>'+escape(k)+'</label><strong>'+escape(v??'—')+'</strong></div>').join('')+'</div><div class="launch-job-artifacts">'+artifacts.filter(a=>!a.path?.endsWith('.mp4')).map(a=>'<a target="_blank" rel="noopener" href="'+escape(nativeArtifact(a))+'">'+escape(a.label||a.path)+'</a>').join(' · ')+'</div>':'';
     el('log').textContent=job?.log_tail||'暂无内联日志；可在配置中打开原生记录与日志。';
     const episodeKey=job?.native_episode_keys?.[nativeEpisode];

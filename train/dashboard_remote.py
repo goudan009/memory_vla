@@ -1283,7 +1283,9 @@ def jobs():
             validation = read_json(root/arm/'validation_status.json',{})
             can_delete = (status in TERMINAL_TRAINING_STATES
                           and validation.get('status') in TERMINAL_TRAINING_STATES | {None, 'disabled'})
-            result.append(dict(run=root.name, name=display_name(root,arm,split.get('task')), arm=arm, task=split.get('task'), status=status,
+            recorded = training_parameters(root, arm, read_json(root/arm/'config/ddp.json',{}))['values']
+            summary_keys = ('fine_tuning_mode','learning_rate','scheduler','warmup_steps','microbatch','gradient_accumulation_steps','global_decisions_max','global_windows_per_step','train_episodes','validation_episodes','checkpoint','frozen_eagle','memory_length','seed','training_protocol')
+            result.append(dict(parameter_summary={k: recorded[k] for k in summary_keys if recorded.get(k) is not None}, run=root.name, name=display_name(root,arm,split.get('task')), arm=arm, task=split.get('task'), status=status,
                 **training_identity(root,arm,split.get('task')),
                 step=state.get('step', (last or {}).get('step',0)), max_steps=stop.get('stop_after_step',state.get('total_steps',plan.get('steps_each'))),
                 checkpoint_interval=plan.get('checkpoint_interval', 1000),
