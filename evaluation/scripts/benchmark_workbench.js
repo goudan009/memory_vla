@@ -86,6 +86,7 @@ if(typeof module!=='undefined' && module.exports) module.exports={benchmarkMetri
   let benchmark=Object.hasOwn(titles,requestedBenchmark)?requestedBenchmark:'b1k2026';
   let page=new URL(location.href).searchParams.get('page')||'results', resultMode='policy', selectedId=null, detail=null;
   let nativeJobs=[], nativeSelected=null, nativeRefresh=null, nativeVideo='', nativeEpisode=0, nativeTab='episodes';
+  const nativeGroupOpen=new Map();
   let options=null, jobs=[], busy=false, refreshing=false, tab='metrics', optionsAt=0;
   const selection={};
   const running=s=>['starting','running','stopping'].includes(s);
@@ -148,7 +149,7 @@ if(typeof module!=='undefined' && module.exports) module.exports={benchmarkMetri
     const previousBenchmark=benchmark;
     benchmark=el('benchmark-choice').value;
     if(initial || previousBenchmark!==benchmark){
-      el('run-search').value='';el('status-filter').value='';
+      el('run-search').value='';el('status-filter').value='';el('evaluation-action-message').textContent='';
       if(previousBenchmark==='b1k2026'||benchmark==='b1k2026'){
         const player=el('video-player');stopPreview();player.pause();player.removeAttribute('src');player.load();
         nativeVideo='';videoRun=null;videoFile=null;nativeTab='episodes';
@@ -221,7 +222,9 @@ if(typeof module!=='undefined' && module.exports) module.exports={benchmarkMetri
       const ms=nativeMetrics(job), known=ms.filter(m=>typeof m.success==='boolean'), qs=ms.filter(m=>typeof m.q_score==='number'&&Number.isFinite(m.q_score));
       return '<button type="button" class="run-card'+(job.id===nativeSelected?' selected':'')+'" data-native-job="'+escape(job.id)+'" aria-pressed="'+String(job.id===nativeSelected)+'"><div class="run-card-top"><div class="run-group">'+escape(job.task_id||'原生评估')+'</div>'+statusBadge(job.state)+'</div><div class="run-name">'+escape((job.folder||job.id).split('/').pop())+'</div><div class="run-numbers"><div><span>平均 Q</span>'+escape(qs.length?(qs.reduce((s,m)=>s+m.q_score,0)/qs.length).toFixed(3):'—')+'</div><div><span>成功率</span>'+escape(known.length?(100*known.filter(m=>m.success).length/known.length).toFixed(0)+'%':'—')+'</div><div><span>有效回合</span>'+ms.length+'</div></div><div class="run-card-bottom"><span>'+escape(job.started_at||'')+'</span></div></button>';
     };
-    list.innerHTML=visible.length?'<details class="version-group" open><summary>V1.2 · N1.7 <small>'+visible.length+' 次</small></summary><div class="version-runs">'+[...groups].map(([task,entries])=>'<details class="result-task-group" open><summary>'+escape(task)+'<small>'+entries.length+' 次</small></summary><div class="result-task-runs">'+entries.map(card).join('')+'</div></details>').join('')+'</div></details>':'';
+    const filtering=Boolean(search||filter);
+    list.innerHTML=visible.length?'<details class="version-group" data-native-group="version"'+(filtering||nativeGroupOpen.get('version')!==false?' open':'')+'><summary>V1.2 · N1.7 <small>'+visible.length+' 次</small></summary><div class="version-runs">'+[...groups].map(([task,entries])=>'<details class="result-task-group" data-native-group="'+escape('task:'+task)+'"'+(filtering||nativeGroupOpen.get('task:'+task)!==false?' open':'')+'><summary>'+escape(task)+'<small>'+entries.length+' 次</small></summary><div class="result-task-runs">'+entries.map(card).join('')+'</div></details>').join('')+'</div></details>':'';
+    list.querySelectorAll('[data-native-group]').forEach(group=>group.ontoggle=()=>{if(!filtering&&group.isConnected)nativeGroupOpen.set(group.dataset.nativeGroup,group.open);});
     list.scrollTop=scroll;
     list.querySelectorAll('[data-native-job]').forEach(button=>button.onclick=()=>{nativeSelected=button.dataset.nativeJob;nativeEpisode=0;nativeTab='episodes';renderNativeResults();});
     const job=nativeResultJob(), ms=nativeMetrics(job), known=ms.filter(m=>typeof m.success==='boolean'), qs=ms.filter(m=>typeof m.q_score==='number'&&Number.isFinite(m.q_score)), successes=known.filter(m=>m.success).length;

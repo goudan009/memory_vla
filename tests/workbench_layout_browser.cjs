@@ -147,6 +147,12 @@ async function bounds(page,name,selector){
    assert.match(await page.locator('#details').innerText(),/尚无原生回合/);
    await page.fill('#run-search','');
    await bounds(page,'2026 results','#page-results');
+   await page.locator('#page-tab-launch').click();
+   await page.locator('#launch-new-tab').click();
+   assert.ok(await page.locator('#model-config').isHidden(),'2026 uses native self-starting policy');
+   assert.equal(await page.inputValue('#launch-kind'),'n17');
+   await bounds(page,'2026 launch','#page-launch');
+   await page.locator('#page-tab-results').click();
    await page.selectOption('#benchmark-choice','b1k');
    await page.locator('#runs .run-card').first().waitFor({state:'visible'});
    await page.waitForFunction(()=>!document.querySelector('#runs [data-native-job]'));
