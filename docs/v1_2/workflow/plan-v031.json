@@ -1,6 +1,9 @@
 {
   "plan_id": "b1k2026_v0_0_task40_training_chain_v031",
-  "status": "in_progress",
+  "status": "complete",
+  "completion_scope": "Approved Task40 four-step engineering chain only; success0/1 and Q-score0, no formal training or task-performance acceptance",
+  "evidence": "docs/v1_2/evidence/training-acceptance-v031.json",
+  "http_acceptance": "docs/v1_2/evidence/b1k2026-training-http-v031.json",
   "supersedes": "b1k2026_v0_0_identity_v030",
   "change_reason": "User approved V0_0 within V0, restricted training to Task40 and authorized duplicate-checked experiment allocation. Prior four-step engineering proposal adopted with Task0 excluded.",
   "benchmark": "b1k2026",

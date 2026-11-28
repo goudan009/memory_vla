@@ -76,3 +76,9 @@ baseline没有在线阶段预测头，本次未新增逐物理步真值/接触�
 自动训练报告保留在 `training/b1k2026/v0_0__test04__exp01__run001/training_report.md`。工作台导出的 [训练证据ZIP](evidence/v0_0__test04__exp01__run001-evidence.zip) SHA256 `c8896f832c699d636eb55a911c6111672bc23814a8dd0555febd5e6a2426becc`，含13份实际配置、日志、指标、状态、恢复和检查点索引。最终闭环验收记录在 `docs/v1_2/evidence/training-acceptance-v031.json`；能力读取器实测匹配当前训练记录、恢复状态、源码、权重身份及原生回合，仅开放Task40四步工程训练、严格恢复及自训练推理/评估。
 
 本次仅验收V0_0 Task40四步工程链路，不能据此判断训练收敛、模型泛化、任务成功率或其他任务兼容性。现有历史实验、权重及结果保留，没有开发V2.2或修改其他Benchmark运行链路。
+
+## 主工作台验收
+
+工程证据与报告已在main提交 `e0756ea`。重载前读取303条评估、1条本机训练、16条A100训练、104条A100推理、36条Benchmark记录，未发现活动工作台作业；Ada离线，未对其作业做停止操作。仅重启现有 `memory-vla-web-8765.service` HTTP服务，重载后PID3049461。
+
+实测 `/api/training/options?device=local` 的 `engineering_training_verified=true`，绑定本run，`formal_training_available=false`。原生launch capabilities中Task40工程训练、严格训练恢复、自训练推理/评估为available；评估恢复、多环境、实时相机保持false，task_performance_accepted=false。全部三条历史/本次原生job仍complete，六份原生JSON/MP4经HTTP读取与本地完全一致，回合标注持久化且保留原生episode key。详细验收：`docs/v1_2/evidence/b1k2026-training-http-v031.json`。刷新没有新增训练或评估作业。

@@ -1,0 +1,243 @@
+{
+  "checked_at": "2026-11-28T19:53:43+08:00",
+  "code_commit": "e0756eaebbaf31c8547bd48e8f779d8c9c2481d6",
+  "service": "memory-vla-web-8765.service",
+  "service_pid": 3049461,
+  "base_url": "http://127.0.0.1:8765",
+  "benchmark": "b1k2026",
+  "version": "V_0_0",
+  "pre_reload_counts": {
+    "evaluation": 303,
+    "local_training": 1,
+    "a100_training": 16,
+    "a100_inference": 104,
+    "benchmark": 36,
+    "active_managed_jobs": 0,
+    "ada": "offline; existing services retained"
+  },
+  "training_options": {
+    "engineering_training_verified": true,
+    "verified_engineering_run": "v0_0__test04__exp01__run001",
+    "formal_training_available": false
+  },
+  "capabilities": {
+    "official_inference": {
+      "available": true,
+      "reason": null
+    },
+    "official_evaluation": {
+      "available": true,
+      "reason": null
+    },
+    "training": {
+      "available": true,
+      "engineering_only": true,
+      "tasks": [
+        "make_microwave_popcorn"
+      ],
+      "run_id": "v0_0__test04__exp01__run001",
+      "optimizer_steps": 4,
+      "evaluation_job_id": "076b8962918c",
+      "reason": "Task40 四步工程链路已实跑；正式训练未开放"
+    },
+    "self_trained_inference": {
+      "available": true,
+      "engineering_only": true,
+      "tasks": [
+        "make_microwave_popcorn"
+      ],
+      "run_id": "v0_0__test04__exp01__run001",
+      "optimizer_steps": 4,
+      "evaluation_job_id": "076b8962918c",
+      "reason": "Task40 四步工程链路已实跑；正式训练未开放"
+    },
+    "self_trained_evaluation": {
+      "available": true,
+      "engineering_only": true,
+      "tasks": [
+        "make_microwave_popcorn"
+      ],
+      "run_id": "v0_0__test04__exp01__run001",
+      "optimizer_steps": 4,
+      "evaluation_job_id": "076b8962918c",
+      "reason": "Task40 四步工程链路已实跑；正式训练未开放"
+    },
+    "strict_training_resume": {
+      "available": true,
+      "engineering_only": true,
+      "tasks": [
+        "make_microwave_popcorn"
+      ],
+      "run_id": "v0_0__test04__exp01__run001",
+      "optimizer_steps": 4,
+      "evaluation_job_id": "076b8962918c",
+      "reason": "Task40 四步工程链路已实跑；正式训练未开放"
+    },
+    "evaluation_resume": {
+      "available": false,
+      "reason": "原生回合暂停恢复未验收"
+    },
+    "multi_environment": {
+      "available": false,
+      "reason": "当前只验收单环境、单回合"
+    },
+    "live_camera": {
+      "available": false,
+      "reason": "没有实时采集端验收；现有视频为回合录像"
+    }
+  },
+  "checkpoint_whitelist": [
+    {
+      "path": "/nvme3/checkpoints/memory_vla/official-n17-radio/turning_on_radio_GR00T-checkpoint-150000",
+      "sha256": "cd97a22ff74bd91838350e18fe94b48e1902d407f1256f5d48eb20befe277dc3",
+      "tasks": [
+        "turning_on_radio"
+      ],
+      "model_role": "official",
+      "runtime_verified": true
+    },
+    {
+      "path": "/nvme3/projects/memory_vla/training/b1k2026/v0_0__test04__exp01__run001/checkpoints/v0_0__test04__exp01__run001__step000004",
+      "sha256": "20e6ea6d2a322f6ca6b3c1de028d21a2b5063e47c0d309b87f5aa4928d53e286",
+      "tasks": [
+        "make_microwave_popcorn"
+      ],
+      "model_role": "self_trained",
+      "engineering_only": true,
+      "runtime_verified": true
+    }
+  ],
+  "task40_catalog": [
+    {
+      "id": "make_microwave_popcorn",
+      "name": "Make Microwave Popcorn",
+      "instruction": "In the kitchen, take the popcorn bag from the countertop, put it into the microwave, and heat it until the popcorn is cooked so the cooked popcorn ends up inside the bag.",
+      "launch_ready": true,
+      "reason": null,
+      "model_roles": [
+        "self_trained"
+      ],
+      "engineering_only": true
+    }
+  ],
+  "task_performance_accepted": false,
+  "retained_jobs": [
+    {
+      "id": "076b8962918c",
+      "state": "complete",
+      "returncode": 0,
+      "version": "V_0_0",
+      "native_metrics": [
+        {
+          "instance_id": 301,
+          "steps": 4857,
+          "success": false,
+          "q_score": 0
+        }
+      ],
+      "native_episode_keys": [
+        "json/make_microwave_popcorn_301_0.json"
+      ],
+      "notes": "V0_0 / N1.7：2026 Task40 自训练工程权重，RTC off"
+    },
+    {
+      "id": "3fc189e832d8",
+      "state": "complete",
+      "returncode": 0,
+      "version": "V_1_2",
+      "native_metrics": [
+        {
+          "instance_id": 319,
+          "steps": 3225,
+          "success": false,
+          "q_score": 0
+        }
+      ],
+      "native_episode_keys": [
+        "json/turning_on_radio_319_0.json"
+      ],
+      "notes": "V1.2 / N1.7 / B1K2026: radio task prompt, RTC off"
+    },
+    {
+      "id": "97f45ef78924",
+      "state": "complete",
+      "returncode": 0,
+      "version": "V_1_2",
+      "native_metrics": [
+        {
+          "instance_id": 319,
+          "steps": 3225,
+          "success": false,
+          "q_score": 0
+        }
+      ],
+      "native_episode_keys": [
+        "json/turning_on_radio_319_0.json"
+      ],
+      "notes": "V1.2 / N1.7 / B1K2026: official radio, RTC off"
+    }
+  ],
+  "artifacts": [
+    {
+      "job_id": "076b8962918c",
+      "path": "json/make_microwave_popcorn_301_0.json",
+      "status": 200,
+      "bytes": 529,
+      "sha256": "675a761e640809e1635c0a657dd5dba3fb3bb5171c2b5a24c591d5598b705302",
+      "matches_local": true
+    },
+    {
+      "job_id": "076b8962918c",
+      "path": "videos/make_microwave_popcorn_301_0.mp4",
+      "status": 200,
+      "bytes": 25437478,
+      "sha256": "deb77f069b70d5e2ce48208a0655c1fb0951d5a44245dafd687acf4ebc2febdf",
+      "matches_local": true
+    },
+    {
+      "job_id": "3fc189e832d8",
+      "path": "json/turning_on_radio_319_0.json",
+      "status": 200,
+      "bytes": 519,
+      "sha256": "e2a9498583a375c35ce84271c3cdca72049f7821fcc4f15be1c8e6317a68e3aa",
+      "matches_local": true
+    },
+    {
+      "job_id": "3fc189e832d8",
+      "path": "videos/turning_on_radio_319_0.mp4",
+      "status": 200,
+      "bytes": 5838507,
+      "sha256": "df9335fd392f214c13c92680738ca0efcb4a47f971b1401f2171e50745be796a",
+      "matches_local": true
+    },
+    {
+      "job_id": "97f45ef78924",
+      "path": "json/turning_on_radio_319_0.json",
+      "status": 200,
+      "bytes": 518,
+      "sha256": "980f8baf685b206a4a748a93d7e281d691bea29506b709b342eee26c5d806d80",
+      "matches_local": true
+    },
+    {
+      "job_id": "97f45ef78924",
+      "path": "videos/turning_on_radio_319_0.mp4",
+      "status": 200,
+      "bytes": 5710785,
+      "sha256": "dbeb8cadfb5b61279087bc0fd2cd9c609ab1f41820d7b05fbb487aa30c10c424",
+      "matches_local": true
+    }
+  ],
+  "annotation": {
+    "annotations": {
+      "json/make_microwave_popcorn_301_0.json": {
+        "notes": "V0_0 / N1.7：4步工程权重，原生回合未成功，Q-score 0",
+        "stage": "未判定",
+        "cause": "未完成任务",
+        "reason": "原生JSON为4857步、success=false、Q-score=0；视频抽样未确认完整加热事件。",
+        "updated_at": "2026-11-28T11:50:05.407327+00:00"
+      }
+    }
+  },
+  "new_training_submissions": 0,
+  "new_evaluation_submissions": 0
+}
