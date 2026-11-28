@@ -809,6 +809,7 @@ class LaunchManager:
                 "initiator": plan.get("initiator"),
                 "process_start": job.get('process_start'), "batch": plan.get('batch')}
         if plan.get('kind') == 'b1k2026_websocket':
+            status['benchmark'] = 'b1k2026'
             try:
                 archived = json.loads((output/'job.json').read_text(encoding='utf-8'))
             except (OSError, ValueError):
