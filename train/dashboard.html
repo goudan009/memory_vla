@@ -248,6 +248,7 @@
  #page-training .train-submit-summary{flex-basis:100%}
 }
   #page-training .train-step-intro{font-size:12px;margin:0 0 8px}#page-training .train-form-extras{display:grid;gap:6px}#page-training .train-form-extras details{margin:0}#page-training .train-notes textarea{min-height:44px}#page-training .train-job-actions{gap:6px}#page-training .train-job-actions button{white-space:normal}#page-training .train-recommendation p{margin:5px 0}#page-training .train-timing small{font-size:11px}
+  #page-training .train-more-actions{position:relative;min-width:0}#page-training .train-more-actions>summary{cursor:pointer;border:1px solid var(--line);border-radius:7px;padding:7px 11px;background:#fff;font-size:13px}#page-training .train-more-actions>div{display:grid;gap:5px;padding:8px;border:1px solid var(--line);border-radius:8px;background:#fff;min-width:150px}#page-training .train-more-actions button[hidden]{display:none!important}#page-training #train-action-hint{flex-basis:100%;margin:0}#page-training #train-native-components-summary{margin-left:6px;color:#64746b;font-weight:400}#page-training #train-native-config>details{margin:8px 0}#page-training #train-review-details{margin-bottom:10px}
 </style>
 <div class="page-intro"><h2>启动训练</h2><div class="train-device-tools"><label>训练设备 <select id="train-device"><option value="a100">A100 · 多卡训练</option><option value="a6000">RTX 6000 Ada · 单卡 48GB</option></select></label><button id="train-refresh" type="button">↻ 刷新</button></div></div>
 <p id="train-device-hint" class="train-hint" hidden></p>
@@ -323,7 +324,7 @@
     </div>
     <div id="train-setup-3" class="train-setup-panel" data-train-setup-panel="3" hidden>
     <p class="train-step-intro" tabindex="-1">核对参数</p>
-    <div class="train-form-section"><h3 class="train-form-heading">本次训练</h3><dl id="train-review" class="train-review"></dl></div>
+    <details class="compact-fold" id="train-review-details"><summary>核对本次配置</summary><dl id="train-review" class="train-review"></dl></details>
     <div class="train-form-section">
     <h3 class="train-form-heading">训练参数</h3>
     <div class="train-recommendation" aria-label="训练参数推荐">
@@ -346,16 +347,17 @@
       <label>学习率调度<select id="train-native-scheduler"><option value="cosine">Cosine</option><option value="constant">Constant</option><option value="constant_with_warmup">Constant + Warmup</option><option value="linear">Linear</option></select></label>
       <label>Warmup (%)<input id="train-native-warmup" type="number" min="0" max="50" step="0.1" value="5" required></label>
       <label>梯度累积 / GPU<input id="train-native-accum" type="number" min="1" max="64" value="8" required></label>
+      <div class="train-wide train-hint" id="train-native-context"></div>
+      <div class="train-wide"><svg id="train-native-lr-chart" viewBox="0 0 360 120" width="100%" height="140" role="img" aria-label="预计学习率曲线"></svg></div>
+     </div>
+     <details class="compact-fold" id="train-native-advanced"><summary>优化器、归一化与保存</summary><div class="train-config-fields">
       <label>Weight decay<input id="train-native-wd" type="number" min="0" max="1" step="any" value="0.00001" required></label>
       <label>梯度裁剪<input id="train-native-clip" type="number" min="0.000001" max="100" step="any" value="1" required></label>
       <label>动作归一化<select id="train-native-normalization"><option value="guarded">Guarded Min-Max</option><option value="minmax">原始 Min-Max</option></select></label>
       <label>保存间隔（步）<input id="train-native-save" type="number" min="100" step="100" value="1000" required></label>
       <label>内部验证间隔（步）<input id="train-native-validation" type="number" min="100" step="100" value="1000" required></label>
-      <div class="train-wide train-hint" id="train-native-context"></div>
-      <div class="train-wide"><svg id="train-native-lr-chart" viewBox="0 0 360 120" width="100%" height="140" role="img" aria-label="预计学习率曲线"></svg></div>
-     </div>
-     <h3 class="train-form-heading">组件训练范围（勾选为训练）</h3>
-     <div class="train-config-fields">
+     </div></details>
+     <details class="compact-fold" id="train-native-components"><summary>组件训练范围 <small id="train-native-components-summary"></small></summary><div class="train-config-fields">
       <label class="train-check"><input id="train-native-llm" type="checkbox">整个 LLM</label>
       <label>LLM 最后 N 层（0=不启用）<input id="train-native-top" type="number" min="0" max="36" value="0" required></label>
       <label class="train-check"><input id="train-native-vision" type="checkbox">视觉编码器 + 视觉投影</label>
@@ -363,7 +365,7 @@
       <label class="train-check"><input id="train-native-projector" type="checkbox" checked>状态 / 动作投影及解码</label>
       <label class="train-check"><input id="train-native-vlln" type="checkbox" checked>动作 VLLN</label>
       <div class="train-wide train-hint">固定 Task40 · 180/20 · seed42 · 4 卡。暂不支持 LoRA。</div>
-     </div>
+     </div></details>
     </div>
     <div class="train-notes"><label>训练备注（可选）<textarea id="train-notes" rows="2" maxlength="2000" placeholder="记录训练目的或本次调整"></textarea></label></div>
     </div>
@@ -436,7 +438,7 @@
    <p id="train-detail-notes" hidden></p>
    <div id="train-detail-loading" class="empty" role="status" hidden>正在读取训练详情…</div>
    <div id="train-monitor-body">
-   <div class="train-job-actions" aria-label="训练任务操作"><button id="train-stop-next" type="button" hidden>保存后停止</button><button id="train-resume-open" type="button" hidden>续跑训练</button><button id="train-cancel-top" type="button" hidden>取消排队</button><span id="train-action-hint" class="train-hint"></span><button id="train-warm-start" type="button" hidden>调整配置后继续训练</button><button id="train-copy-config" type="button" hidden>复制训练配置</button><button id="train-formal-from-preflight" type="button" hidden>预检转正式训练</button><button id="train-download-report" type="button" disabled>下载训练报告</button><button id="train-download-evidence" type="button" disabled>下载证据包</button><button id="train-delete" type="button" disabled>删除记录</button></div>
+   <div class="train-job-actions" aria-label="训练任务操作"><button id="train-stop-next" type="button" hidden>保存后停止</button><button id="train-resume-open" type="button" hidden>续跑训练</button><button id="train-cancel-top" type="button" hidden>取消排队</button><button id="train-formal-from-preflight" type="button" hidden>转正式训练</button><button id="train-download-report" type="button" disabled>下载报告</button><details id="train-more-actions" class="train-more-actions"><summary>更多操作</summary><div><button id="train-warm-start" type="button" hidden>继承权重 · 新训练</button><button id="train-copy-config" type="button" hidden>复制配置</button><button id="train-download-evidence" type="button" disabled>下载证据包</button><button id="train-delete" type="button" disabled>删除记录</button></div></details><span id="train-action-hint" class="train-hint"></span></div>
    <form id="train-resume-panel" class="details" hidden>
     <h3>断点续训</h3><p id="train-resume-summary" class="train-info"></p>
     <div class="train-config-fields train-command-fields"><label>训练总步数<input id="train-resume-steps" type="number" min="1000" step="1000" required></label><label id="train-resume-checkpoint-field" hidden>检查点保存间隔（步）<input id="train-resume-checkpoint-interval" type="number" min="1000" step="1000" value="1000" required disabled></label><div class="train-actions"><button id="train-resume-submit" type="submit">确认续跑</button><button id="train-resume-close" type="button">收起</button></div></div>

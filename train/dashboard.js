@@ -208,8 +208,10 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
     const count=selectedGPUs().length,batch=count*Number(el('train-microbatch').value)*Number(el('train-native-accum').value);
     const steps=Number(el('train-steps').value),lr=Number(el('train-lr').value),w=Math.max(0,Math.min(.5,Number(el('train-native-warmup').value)/100||0));
     const baseStep=p?.native_context?.parent_step;
-    el('train-native-context').textContent=(context?'原始数据划分已由历史任务核实。':'未找到可用的原生训练数据/源码上下文。')+
-      ' 有效Batch '+batch+'（需要4张A100）；'+(baseStep!=null?'父 checkpoint step '+baseStep+'；本次新增 '+steps+' 步，重置优化器及Scheduler，继承归一化。':'从通用权重独立训练。');
+    el('train-native-context').textContent=(context?'':'缺少原生训练上下文 · ')+'Batch '+batch+' · '+count+'/4 卡'+(baseStep!=null?' · 父权重 '+baseStep+' 步 · 新优化器':' · 独立训练');
+    const parts=[['llm','LLM'],['vision','视觉'],['dit','DiT'],['projector','投影'],['vlln','VLLN']].filter(([key])=>el('train-native-'+key).checked).map(([,label])=>label);
+    if(Number(el('train-native-top').value)>0&&!el('train-native-llm').checked)parts.unshift('LLM 末 '+el('train-native-top').value+' 层');
+    el('train-native-components-summary').textContent=parts.length?'训练 '+parts.join(' / '):'未选训练组件';
     const svg=el('train-native-lr-chart');
     const curve=Array.from({length:101},(_,i)=>{
       const t=i/100,f=sched==='constant'?1:(w&&t<w)?t/w:sched==='constant_with_warmup'?1:sched==='cosine'?(1+Math.cos(Math.PI*(t-w)/(1-w)))/2:1-(t-w)/(1-w);
@@ -323,13 +325,13 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
     const rows = [
       ['实验身份',el('train-step-summary-0').textContent],
       ['方法与微调',method + ' · ' + (el('train-fine-tuning').selectedOptions?.[0]?.textContent || el('train-fine-tuning').value)],
-      ['初始权重',el('train-checkpoint').value || '尚未选择'],
+      ['初始权重',el('train-checkpoint').value.split('/').filter(Boolean).at(-1)||'尚未选择',el('train-checkpoint').value],
       ['训练数据',el('train-step-summary-1').textContent],
       ['运行资源',deviceLabel() + ' · ' + (gpus.length ? '训练 GPU '+gpus.join('、') : '未选训练 GPU') +
         (nativeMode()?' · 原生内部验证20条':el('train-validation-enabled').checked ? ' · 验证 GPU '+el('train-validation-gpu').value+' / '+el('train-validation-percent').value+'%' : ' · 不启用验证')],
       ['预算与启动',el('train-step-summary-3').textContent]
     ];
-    el('train-review').innerHTML = rows.map(([label,value])=>'<div><dt>'+esc(label)+'</dt><dd>'+esc(value)+'</dd></div>').join('');
+    el('train-review').innerHTML = rows.map(([label,value,full])=>'<div><dt>'+esc(label)+'</dt><dd'+(full?' title="'+esc(full)+'"':'')+'>'+esc(value)+'</dd></div>').join('');
     el('train-memory-details').hidden = nativeMode() || el('train-arm').value !== 'memory_v1';
     el('train-validation-details').hidden = nativeMode() || !el('train-validation-enabled').checked;
     el('train-validation-interval').disabled = nativeMode() || !el('train-validation-enabled').checked;
@@ -689,9 +691,9 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
     el('train-checkpoint-delete').disabled = jobActionBusy || !el('train-saved-checkpoint').value;
     el('train-delete').title = job?.can_delete ? '删除训练记录，可选择是否保留输出目录' : job?.delete_block_reason || '请先结束训练和验证';
     el('train-action-hint').textContent = job?.can_stop ?
-      (job.stop_after_step ? '已设定第 ' + job.stop_after_step + ' 步保存后停止。' : '在下一个计划保存点停止，权重与日志保留。') :
-      job?.can_cancel ? '取消尚未开始的本组排队。' :
-      resume?.available ? '可从第 ' + resume.step + ' 步恢复；续跑沿用当前训练记录。' :
+      (job.stop_after_step ? '将在第 ' + job.stop_after_step + ' 步保存后停止' : '停止时保留权重和日志') :
+      job?.can_cancel ? '当前等待 GPU' :
+      resume?.available ? '可从 '+resume.step+' 步断点续训' :
       job?.can_delete ? (resume?.reason || '删除记录仅从列表移除，保留权重与日志。') : job?.delete_block_reason || '当前任务暂不支持停止，请查看日志与配置。';
     if (job?.can_stop && Number(el('train-stop-step').value) <= job.step) {
       const interval = job.checkpoint_interval ?? 1000;

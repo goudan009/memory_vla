@@ -704,7 +704,7 @@
     });
     $('result-compare-content').append(frame);
   }
-  $('result-compare-panel').addEventListener('toggle',()=>{if($('result-compare-panel').open)openResultComparison();});
+  $('result-compare-panel').addEventListener('toggle',()=>{const panel=$('result-compare-panel');panel.querySelector('summary').textContent=panel.open?'返回单次结果':'任务对比';if(panel.open){stopPreview();$('video-player').pause();openResultComparison();}});
   $('result-export-analysis').onclick=()=>{
     if(!selected){$('evaluation-action-message').textContent='请先选择评估记录';return;}
     const snapshot={schema:1,exported_at:new Date().toISOString(),note:'工作台评估记录快照；视频为索引，不含视频文件。缺失字段不补造。',run:selected};
@@ -1167,10 +1167,9 @@
     $('launch-debug-field').hidden=!debug;$('launch-debug-steps').disabled=!debug;
     const rounds=Number($('launch-repetitions').value)||1;
     const perGPU=Number($('launch-episodes').value)||(debug?Number($('launch-mode').value.at(-1)):dual?5:10);
-    $('launch-mode-hint').textContent=`${rounds} 轮 × 每卡每轮 ${perGPU} 回合 × ${dual?2:1} 张卡 = 共 ${rounds*perGPU*(dual?2:1)} 回合。`+
-      (debug?'快速调试不计正式成绩。':'场景循环运行，保留原生任务判定与 timeout。')+
-      ($('launch-seed-mode').value==='fixed'?'固定种子的重复不视为独立随机样本。':'同一场景后续回合使用新的种子。');
-    $('launch-mode-hint').textContent+=' 共卡准入：每卡空闲显存须大于 '+($('launch-mode').value.endsWith('2')?'24':'10')+' GiB。';
+    const total=rounds*perGPU*(dual?2:1),minimum=$('launch-mode').value.endsWith('2')?'24':'10';
+    $('launch-mode-hint').textContent='共 '+total+' 回合 · 每卡空闲显存 > '+minimum+' GiB'+(debug?' · 非正式':'')+($('launch-seed-mode').value==='fixed'?' · 固定种子':'');
+    $('launch-mode-hint').title=rounds+' 轮 × '+perGPU+' 回合/卡 × '+(dual?2:1)+' 卡。'+(debug?'调试不计正式成绩。':'使用原生任务判定与 timeout。')+($('launch-seed-mode').value==='fixed'?'固定种子重复不视为独立随机样本。':'后续回合按所选种子方式执行。');
     $('launch-video-steps').disabled=!$('launch-video').checked;
     if(collect) updateCollectionDevice();
     if(collect||forward) renderCollectionPolicies();
@@ -1662,7 +1661,7 @@
         return `<div class="gpu-reading${percent>=90?' busy':''}" title="${esc(g.name)}"><div class="gpu-reading-title"><span>GPU ${esc(g.index)}</span><strong>${(g.used_mb/1024).toFixed(1)} / ${(g.total_mb/1024).toFixed(0)} GiB</strong></div><div class="gpu-meter"><span style="width:${percent.toFixed(1)}%"></span></div><small>显存 ${percent.toFixed(0)}% · GPU 利用率 ${esc(g.utilization)}%</small></div>`;
       }).join('');
     }
-    $('gpu-summary-status').textContent=available.join(' · ')+' · 每 5 秒更新';
+    $('gpu-summary-status').textContent=available.join(' · ');
   }
   function renderServices(data) {
     renderGpuUsage(data);

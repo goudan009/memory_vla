@@ -40,7 +40,7 @@ const assert=require('node:assert/strict');
   const row=page.locator('[data-job][title="'+job.run+'"]');
   await row.waitFor({state:'attached'});
   await row.evaluate(el=>{for(let p=el.parentElement;p;p=p.parentElement)if(p.tagName==='DETAILS')p.open=true;});
-  await row.click();await page.locator('#train-delete:not([disabled])').waitFor();
+  await row.click();await page.locator('#train-more-actions > summary').click();await page.locator('#train-delete:not([disabled])').waitFor();
   await page.locator('#train-delete').click();
   const files=page.locator('#train-delete-files');assert.equal(await files.isChecked(),false);
   assert.match(await page.locator('#train-delete-description').textContent(),/保留权重和日志/);

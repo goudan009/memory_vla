@@ -389,7 +389,7 @@
       if (edits.length) notes.append(text('p', '新增或调整 · ' + edits.join('、')));
       if (removed.length) notes.append(text('p', '移除 · ' + removed.join('、')));
     }
-    const goal=text('details','','workflow-goal');goal.append(text('summary','实验目标'),text('p',plan.goal));
+    const goal=text('details','','workflow-goal');goal.open=pane.querySelector('.workflow-goal')?.open||false;goal.append(text('summary','实验目标'),text('p',plan.goal));
     pane.replaceChildren(heading, summary, graph, detail, goal, notes,
       ...errors.map(error => text('p', error, 'subtle')));
     showNode(steps.find(step => step.id === workflowNode) || current[0] || steps[0]);
@@ -575,11 +575,14 @@
   function display(record) {
     const signature = JSON.stringify(record);
     if (displayed === signature) return;
+    const same=byId('agent-experiment-path').textContent===record?.path;
+    const openSections=same?new Set([...byId('agent-progress-record').querySelectorAll('details[open] > summary')].map(e=>e.textContent)):new Set();
     displayed = signature;
     byId('agent-experiment-path').textContent = record?.path || 'Output';
     byId('agent-experiment-title').textContent = record?.name || '未发现实验目录';
     renderTask(record?.task);
     renderProgress(record?.progress, record?.workflow?.versions.length > 0);
+    for(const summary of byId('agent-progress-record').querySelectorAll('details > summary'))if(openSections.has(summary.textContent))summary.parentElement.open=true;
     renderResults(record?.result, record?.report);
   }
 
