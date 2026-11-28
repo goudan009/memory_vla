@@ -1,0 +1,20 @@
+{
+  "plan_id": "v1_2_n17_b1k2026_training_chain_v029",
+  "status": "in_progress",
+  "supersedes": "v1_2_n17_b1k2026_adapter_v028",
+  "change_reason": "User explicitly requests completing the entire training chain, including engineering training, checkpoint reload/resume and self-trained evaluation. Prior data-only acceptance did not complete that responsibility.",
+  "method_version": "V_1_2",
+  "scope": "Implement B1K-2026 backend training/data/checkpoint interfaces in existing workbench. Preserve all existing jobs and resources; no frontend, other benchmark changes, formal training or V2.2.",
+  "experiment_identity": null,
+  "budget": {"formal_training_steps": 0, "engineering_training_max_steps": 100, "approved_exact_training_recipe": null, "additional_rollout_budget": null},
+  "mainline": [
+    {"node": "native_contract", "depends_on": [], "parallel_branches": [], "acceptance": "Inspect pinned native trainer, sampling/resume semantics and existing training API; retain all live jobs."},
+    {"node": "dataset_preparation", "depends_on": ["native_contract"], "parallel_branches": ["training_controller"], "acceptance": "Implement explicit episode split materialization for v3 aggregate files, independent video spans and train-only native statistics; verify real-format fixtures without adopting unapproved scientific splits."},
+    {"node": "training_controller", "depends_on": ["native_contract"], "parallel_branches": ["dataset_preparation"], "acceptance": "Existing training API provides V1.2 preview/start/status/detail/pause/resume with canonical identity, source/weight/data hashes and notes; unknown/unsupported recipes rejected."},
+    {"node": "launch_gate", "depends_on": ["dataset_preparation", "training_controller"], "parallel_branches": [], "acceptance": "Lock explicit test/experiment/run identity and exact engineering recipe before workbench submission; do not infer scientific settings from old 2025 experiments."},
+    {"node": "real_training", "depends_on": ["launch_gate"], "parallel_branches": [], "acceptance": "Workbench preview/start a <=100-step engineering job from generic N1.7; prove finite real loss/gradients/parameter updates and complete canonical checkpoint."},
+    {"node": "strict_resume", "depends_on": ["real_training"], "parallel_branches": [], "acceptance": "Pause at optimizer boundary, release resources and continue same run with optimizer/scheduler/RNG/data cursor; verify checkpoint reload and further updates."},
+    {"node": "self_trained_evaluation", "depends_on": ["strict_resume"], "parallel_branches": [], "acceptance": "Existing evaluation API loads exact self-trained checkpoint and processor, retains task whitelist and writes native JSON/video; report task success separately from runtime completion."},
+    {"node": "archive", "depends_on": ["self_trained_evaluation"], "parallel_branches": [], "acceptance": "Archive actual jobs/configuration/weights/resume evidence and closed-loop results; enable only capabilities with real evidence."}
+  ]
+}
