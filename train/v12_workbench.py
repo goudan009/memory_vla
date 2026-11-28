@@ -250,6 +250,8 @@ class V12TrainingManager:
         with self.lock:
             job, plan = self._job(request)
             status = next(row for row in self.snapshot()['jobs'] if row['run'] == plan['run_id'])
+            if request.get('retry_failed') is True:
+                return self._retry_failed(job, plan, status, request)
             if status['state'] != 'paused' or status['worker_alive']:
                 raise ValueError('resume requires an optimizer-boundary paused checkpoint')
             checkpoint = Path(json.loads((job / 'checkpoint_index.json').read_text())['checkpoint']).resolve(strict=True)
@@ -270,6 +272,43 @@ class V12TrainingManager:
             if (job / 'pause.request').exists():
                 (job / 'pause.request').rename(job / f'pause-event-{datetime.datetime.now().strftime("%Y%m%d%H%M%S%f")}.json')
             return self._spawn(job, plan, checkpoint)
+
+    def _retry_failed(self, job, plan, status, request):
+        """Retry a failed initialization, preserving its run and original error.
+
+        A run with any training evidence must use its full checkpoint instead.
+        Engineering source changes are pinned in the preview and archived.
+        """
+        if status['state'] != 'failed' or status['worker_alive']:
+            raise ValueError('initialization retry requires a failed, exited worker')
+        if (status.get('step', 0) != 0 or any((job / name).exists() for name in
+                ('metrics.jsonl', 'loss.jsonl', 'checkpoint_index.json'))
+                or any((job / 'native').glob('checkpoint-*'))):
+            raise ValueError('run has training state; use its complete checkpoint, not initialization retry')
+        if not isinstance(request.get('reason'), str) or not request['reason'].strip():
+            raise ValueError('initialization retry requires an engineering reason')
+        current = {name:digest(self.root / name) for name in ADAPTER_FILES}
+        if request.get('expected_adapter_source_sha256') != current:
+            raise ValueError('retry adapter source differs from the previewed engineering revision')
+        gpu = next(g for g in gpu_info() if g['index'] == plan['request']['gpu_index'])
+        if gpu['total_mb'] - gpu['used_mb'] < plan['request']['minimum_free_mib']:
+            raise ValueError('retry GPU capacity unavailable; retain failed job')
+        if request.get('preview') is True:
+            return dict(state='preview', action='retry_failed', run=plan['run_id'],
+                optimizer_step=0, previous_error=status.get('error'), gpu=gpu,
+                adapter_source_sha256=current, notes=plan['request']['notes'])
+        if request.get('preview') is not False:
+            raise ValueError('retry requires explicit boolean preview')
+        record = job / 'retry_events.jsonl'
+        attempt = len(record.read_text().splitlines()) + 2 if record.exists() else 2
+        with record.open('a') as stream:
+            stream.write(json.dumps(dict(attempt=attempt, reason=request['reason'],
+                previous_state=status, previous_adapter_source_sha256=plan['adapter_source_sha256'],
+                adapter_source_sha256=current, run_id=plan['run_id'],
+                recipe_sha256=plan['recipe_sha256'], recorded_at=datetime.datetime.now().isoformat())) + '\n')
+        plan = dict(plan, adapter_source_sha256=current)
+        atomic(job / 'job.json', plan)
+        return dict(self._spawn(job, plan), attempt=attempt)
 
     def prepare_dataset(self, request):
         with self.lock:

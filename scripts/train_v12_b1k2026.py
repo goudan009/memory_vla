@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Workbench worker for the bounded native N1.7 training acceptance."""
 import argparse
+from contextlib import contextmanager
 import hashlib
 import importlib.metadata
 import json
@@ -18,6 +19,23 @@ def write_json(path, value):
     temporary = path.with_suffix('.pending')
     temporary.write_text(json.dumps(value, indent=2))
     temporary.replace(path)
+
+
+@contextmanager
+def single_gpu_unwrap():
+    """Avoid importing the unused DeepSpeed engine in this single-GPU worker.
+
+    Accelerate probes installed DeepSpeed while unwrapping any model; that
+    optional import requires nvcc even though this recipe uses plain AdamW.
+    Restrict the change to this worker and restore the helper afterwards.
+    """
+    import accelerate.utils.other as other
+    original = other.is_deepspeed_available
+    other.is_deepspeed_available = lambda: False
+    try:
+        yield
+    finally:
+        other.is_deepspeed_available = original
 
 
 def native_config(job, plan, manifest, resume_checkpoint=None):
@@ -232,7 +250,8 @@ def train(job, resume_checkpoint=None):
     experiment.Gr00tTrainer = CursorTrainer
     experiment.CheckpointFormatCallback = PublishCheckpoint
     config.save(job / 'effective_config.yaml')
-    experiment.run(config)
+    with single_gpu_unwrap():
+        experiment.run(config)
     index = json.loads((job / 'checkpoint_index.json').read_text())
     if not index['parameter_update_verified']:
         raise RuntimeError('no measured parameter update; training is not accepted')

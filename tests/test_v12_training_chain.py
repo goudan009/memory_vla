@@ -87,6 +87,18 @@ class CursorTest(unittest.TestCase):
         self.assertEqual(config.data.datasets[0].embodiment_tag,'new_embodiment')
         self.assertEqual(config.data.modality_configs['new_embodiment']['action'].delta_indices,list(range(16)))
 
+    def test_single_gpu_unwrap_does_not_import_unused_deepspeed(self):
+        import importlib.util
+        import torch
+        import accelerate.utils.other as other
+        spec=importlib.util.spec_from_file_location('v12_worker',ROOT/'scripts/train_v12_b1k2026.py')
+        worker=importlib.util.module_from_spec(spec);spec.loader.exec_module(worker)
+        original=other.is_deepspeed_available
+        model=torch.nn.Linear(2,2)
+        with worker.single_gpu_unwrap():
+            self.assertIs(other.extract_model_from_parallel(model),model)
+        self.assertIs(other.is_deepspeed_available,original)
+
 
 class SplitTest(unittest.TestCase):
     def setUp(self):
@@ -171,6 +183,27 @@ class SplitTest(unittest.TestCase):
 
 
 class ManagerTest(unittest.TestCase):
+    def test_initialization_retry_preserves_failed_evidence_and_refuses_training_state(self):
+        from v12_workbench import V12TrainingManager, atomic
+        with tempfile.TemporaryDirectory() as directory:
+            manager=V12TrainingManager(directory)
+            run='v0_0__test99__exp99__run999'
+            job=manager.training/run;job.mkdir(parents=True)
+            plan=dict(run_id=run,adapter_source_sha256={'old':'hash'},recipe_sha256='same-recipe',
+                      request=dict(gpu_index=1,minimum_free_mib=30000,notes='V0_0 engineering'))
+            status=dict(state='failed',worker_alive=False,error='CUDA_HOME missing')
+            request=dict(preview=True,reason='single-GPU optional import fix',expected_adapter_source_sha256={})
+            with patch('v12_workbench.ADAPTER_FILES',()),patch('v12_workbench.gpu_info',return_value=[dict(index=1,total_mb=49140,used_mb=6000)]),patch.object(manager,'_spawn',return_value=dict(run_id=run)):
+                self.assertEqual(manager._retry_failed(job,plan,status,request)['optimizer_step'],0)
+                result=manager._retry_failed(job,plan,status,dict(request,preview=False))
+                self.assertEqual(result['run_id'],run)
+                event=json.loads((job/'retry_events.jsonl').read_text())
+                self.assertEqual(event['previous_state']['error'],'CUDA_HOME missing')
+                self.assertEqual(json.loads((job/'job.json').read_text())['recipe_sha256'],'same-recipe')
+                (job/'metrics.jsonl').write_text('{"step":1}\n')
+                with self.assertRaisesRegex(ValueError,'training state'):
+                    manager._retry_failed(job,plan,status,request)
+
     def test_current_training_identity_rejects_other_benchmarks_before_resource_checks(self):
         from v12_workbench import V12TrainingManager
         with tempfile.TemporaryDirectory() as directory:
