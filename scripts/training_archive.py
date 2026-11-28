@@ -23,7 +23,7 @@ from urllib.request import ProxyHandler, build_opener
 ROOT = Path(__file__).resolve().parents[1]
 REPORT = Path('reports/training')
 STATE = Path('outputs/shared/training_archive/state.json')
-TERMINAL = {'complete', 'completed', 'stopped', 'failed', 'cancelled'}
+TERMINAL = {'complete', 'completed', 'stopped', 'paused', 'failed', 'cancelled'}
 EVALUATION_TERMINAL = TERMINAL | {'finished', 'interrupted', 'aborted', 'canceled'}
 
 
@@ -173,7 +173,7 @@ def archive(root, device_id, device, job, detail):
     event_id = fingerprint(job)+'-'+sha(encoded(origins))[:12]
     event = directory/'events'/event_id
     payload = dict(job=job, detail=detail, statistics=stats)
-    for name in ('curve', 'loss_series', 'metrics'):
+    for name in ('curve', 'loss_series', 'metrics','diagnostic_series','analysis_report'):
         payload['detail'] = {k:v for k,v in payload['detail'].items() if k != name}
     files['workbench.json'] = encoded(payload)
     origins['workbench.json'] = dict(path='workbench training/jobs and training/detail', selection='JSON snapshot')
@@ -327,7 +327,7 @@ def render_run_report(root, directory, record):
     for k,v in stats.get('epochs',{}).items():
         lines.append('| '+' | '.join(fmt(x) for x in (k,v.get('records'),v.get('mean_loss')))+' |')
     lines += ['', '### 验证指标（独立于训练记录）', '', '| step | FM Loss | 样本数 |','| ---: | ---: | ---: |']
-    validation = {r.get('step'):r for r in detail.get('validation',[]) if isinstance(r,dict)}
+    validation = {r.get('step'):r for r in (detail.get('validation') or []) if isinstance(r,dict)}
     for p in sorted(rec.glob('validation-*.json')):
         v = load(p,{})
         validation[v.get('step')] = v
@@ -522,7 +522,8 @@ def scan(args):
                 # reconnects later must backfill, so jobs finished offline count.
                 first_device_scan = not state['initialized']
                 requested_backfill = job['run'] in args.backfill and not (root/REPORT/'runs'/device_id/job['run']/job['arm']/'latest.json').exists()
-                if terminal and (previous != current or requested_backfill) and (not first_device_scan or requested_backfill):
+                requested_refresh = job['run'] in getattr(args,'refresh_run',[])
+                if terminal and (previous != current or requested_backfill or requested_refresh) and (not first_device_scan or requested_backfill or requested_refresh):
                     try:
                         detail = api(args.workbench, 'training/detail', device=device_id, run=job['run'], arm=job['arm'])
                         archive(root, device_id, devices[device_id], job, detail)
@@ -569,6 +570,7 @@ def main():
     parser.add_argument('--workbench', default='http://127.0.0.1:8765')
     parser.add_argument('--devices', nargs='+', default=['a100', 'a6000'])
     parser.add_argument('--backfill', action='append', default=[])
+    parser.add_argument('--refresh-run', action='append', default=[], help='Recollect an explicitly selected terminal run with new evidence fields')
     parser.add_argument('--publish', action='store_true')
     args = parser.parse_args()
     if args.verify_only:

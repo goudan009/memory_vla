@@ -238,7 +238,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
       max_grad_norm:Number(el('train-native-clip').value),normalization:el('train-native-normalization').value,
       checkpoint_interval:Number(el('train-native-save').value),validation_interval:Number(el('train-native-validation').value),
       native_tuning:tuning,preflight_only:preflight,...(preflight?{}:{accept_preflight:context.proof_directory+'/'+runId+suffix+'.json'}),
-      enqueue:el('train-enqueue').checked,share_existing:el('train-share').checked,notes:el('train-notes').value.trim()};
+      enqueue:el('train-enqueue').checked,share_existing:el('train-share').checked,initiator:'user',notes:el('train-notes').value.trim()};
   }
   function drawDiagnosticCurve(){
     const panel=el('train-diagnostic-curves');
@@ -528,7 +528,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
       const value = el('train-freeze-' + name.replaceAll('_','-'))?.value || 'auto';
       if (value !== 'auto') tuning['freeze_' + name] = value === 'true';
     }
-    return {version, run_id:runId, notes:el('train-notes').value.trim(), tasks:data.map(d=>d.task),
+    return {version, run_id:runId, initiator:'user', notes:el('train-notes').value.trim(), tasks:data.map(d=>d.task),
       checkpoint:el('train-checkpoint').value.trim(), gpus:selectedGPUs(), validation_enabled:enabled,
       ...(enabled?{validation_gpu:Number(el('train-validation-gpu').value),validation_percent:Number(el('train-validation-percent').value)}:{}),
       enqueue:el('train-enqueue').checked,
@@ -586,10 +586,10 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
   function renderJobs() {
     const scroll = el('train-jobs').scrollTop;
     const search = (el('train-job-search').value || '').trim().toLowerCase().replace(/task\s+/g,'task');
-    const filter = el('train-job-filter').value || 'all', filtering = !!search || filter !== 'all';
+    const filter = el('train-job-filter').value || 'all', owner=el('train-job-owner').value||'all', filtering = !!search || filter !== 'all'||owner!=='all';
     const stateGroups = {active:['training','running','submitted','initializing','starting','validating','resuming'],
-      queued:['queued','waiting_for_gpus','waiting_for_four_runs'],complete:['complete','completed'],failed:['failed','stopped']};
-    const visible = jobs.map((job,i)=>({job,i})).filter(({job}) => (!stateGroups[filter] || stateGroups[filter].includes(job.status)) &&
+      queued:['queued','waiting_for_gpus','waiting_for_four_runs'],complete:['complete','completed'],failed:['failed','stopped','paused']};
+    const visible = jobs.map((job,i)=>({job,i})).filter(({job}) => (owner==='all'||owner===(job.initiator||'unknown'))&&(!stateGroups[filter] || stateGroups[filter].includes(job.status)) &&
       (!search || [job.name,job.run,jobVersion(job),...jobTasks(job).map(task=>'task'+task),taskLabel(job),jobMethod(job),job.training_id,job.notes].join(' ').toLowerCase().includes(search)));
     el('train-count').textContent = (filtering ? visible.length + ' / ' : '') + jobs.length + ' 条';
     const versions = new Map();
@@ -623,7 +623,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
       return '<button type="button" class="train-job run-card' + (selected ? ' selected' : '') +
         '" aria-pressed="' + selected + '" data-job="' + i + '" title="' + esc(job.name || job.run) + '">' +
         '<div class="run-card-top"><strong>' + esc(methodLabel(jobMethod(job))) + ' · 第 ' + esc(job.train_number || 1) + ' 次训练</strong></div>' +
-        '<div class="subtle">' + stateBadge(job.status) + ' · GPU ' + esc(job.gpus) + '</div>' +
+        '<div class="subtle">' + stateBadge(job.status) + ' · GPU ' + esc(job.gpus) + ' · '+esc(({user:'用户',agent:'Agent'})[job.initiator]||'来源未记录')+'</div>' +
         (job.notes ? '<div class="train-job-note" title="' + esc(job.notes) + '">' + esc(job.notes) + '</div>' : '') +
         '<div class="progress-track"><span style="width:' + progress + '%"></span></div>' +
         '<div class="train-job-stats"><span>' + esc(job.step) + ' / ' + esc(job.max_steps ?? '?') + ' 步</span><span>Loss ' + fmt(job.last?.loss) + '</span></div></button>';
@@ -651,11 +651,13 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
   function updateJobActions() {
     const job = currentJob();
     const resume = job?.resume;
-    el('train-resume-open').hidden = !['complete','completed','stopped','failed'].includes(job?.status);
+    el('train-resume-open').hidden = !['complete','completed','stopped','paused','failed'].includes(job?.status);
     el('train-resume-open').disabled = jobActionBusy || !resume?.available;
     el('train-resume-open').title = resume?.reason || '恢复最新完整断点，继续当前训练记录';
     el('train-warm-start').hidden=jobVersion(job)!=='V_2_1'||detail?.config?.recipe!=='native_random_v2'||detail?.config?.preflight_only===true;
     el('train-warm-start').disabled=jobActionBusy||!el('train-saved-checkpoint').value||!['complete','completed','stopped','paused','failed'].includes(job?.status);
+    el('train-copy-config').hidden=detail?.config?.recipe!=='native_random_v2';
+    el('train-formal-from-preflight').hidden=!(detail?.config?.recipe==='native_random_v2'&&detail.config.custom_config&&detail.config.preflight_only&&detail.preflight?.passed&&job?.status==='completed');
     el('train-download-report').disabled=!detail?.analysis_report?.text;
     el('train-download-report').title=detail?.analysis_report?'已归档 step '+detail.analysis_report.step+' · '+detail.analysis_report.status:'尚未生成报告；终态归档服务完成后自动可用';
     const resumeKey = job?.run + '/' + job?.arm + '/' + resume?.step;
@@ -1199,6 +1201,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
     };
     el('train-job-search').oninput = renderJobs;
     el('train-job-filter').onchange = renderJobs;
+    el('train-job-owner').onchange=renderJobs;
     el('train-task-search').oninput = renderTaskChoices;
     el('train-task-ready').onchange = renderTaskChoices;
     el('train-checkpoint-choice').onchange = () => { updateCheckpointChoice(); invalidatePlan(); updateRecommendation(); };
@@ -1212,8 +1215,41 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
       const anchor=document.createElement('a');anchor.href=url;anchor.download=chosen.run+'__training_report.md';anchor.click();
       setTimeout(()=>URL.revokeObjectURL(url),1000);
     };
+    function fillNativeConfig(p) {
+      const fields={'train-steps':p.steps,'train-lr':p.learning_rate,'train-microbatch':p.microbatch,
+        'train-native-accum':p.accumulation,'train-native-scheduler':p.scheduler,'train-native-warmup':100*(p.warmup_ratio??.05),
+        'train-native-wd':p.weight_decay,'train-native-clip':p.max_grad_norm??1,'train-native-normalization':p.normalization,
+        'train-native-save':p.checkpoint_interval,'train-native-validation':p.validation_interval??1000};
+      for(const [id,v] of Object.entries(fields))if(v!=null)el(id).value=v;
+      const tuning=p.native_tuning||{tune_llm:false,tune_top_llm_layers:0,tune_visual:false,tune_projector:true,tune_diffusion_model:true,tune_vlln:true};
+      for(const [k,v] of Object.entries({llm:tuning.tune_llm,vision:tuning.tune_visual,dit:tuning.tune_diffusion_model,projector:tuning.tune_projector,vlln:tuning.tune_vlln}))el('train-native-'+k).checked=!!v;
+      el('train-native-top').value=tuning.tune_top_llm_layers||0;
+      el('train-fine-tuning').value='custom';
+    }
+    async function copyNative(formal) {
+      const p=detail?.config,job=currentJob();
+      if(!p||!job)return;
+      try{
+        await loadOptions();
+        if(!options.checkpoints.some(c=>c.path===p.checkpoint&&c.native_stage1))throw Error('原始初始化权重已不可用');
+        el('train-version').value='V_2_1';updateNativeMode();
+        el('train-checkpoint').value=p.checkpoint;renderCheckpointChoices();
+        selectTasks(d=>d.task===40);fillNativeConfig(p);
+        const id=job.run.match(/__test(\d+)__exp(\d+)__run(\d+)(?:__preflight(\d+))?/);
+        if(id){el('train-test-id').value=Number(id[1]);el('train-experiment-id').value=Number(id[2]);}
+        el('train-run-number').value=formal&&id?Number(id[3]):'';
+        el('train-native-attempt').value=formal&&id?Number(id[4]):1;
+        el('train-native-phase').value=formal?'formal':'preflight';
+        el('train-notes').value=p.notes||'';
+        for(const input of el('train-gpus').querySelectorAll('input'))input.checked=(p.gpus||[]).includes(Number(input.value));
+        selectView('new');showSetupStep(formal?3:0,true);invalidatePlan();updateBatch();
+        message(formal?'已复制预检配方；检查配置后提交正式训练，不能修改已通过的预检条件。':'已复制配方，请填写未使用的新run编号。');
+      }catch(error){reportError(error);}
+    }
+    el('train-copy-config').onclick=()=>void copyNative(false);
+    el('train-formal-from-preflight').onclick=()=>void copyNative(true);
     el('train-warm-start').onclick=async()=>{
-      const parent=el('train-saved-checkpoint').value,job=currentJob();
+      const parent=el('train-saved-checkpoint').value,job=currentJob(),p=detail?.config;
       if(!parent||!job)return;
       try {
         await loadOptions();
@@ -1221,11 +1257,13 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {recommend
         el('train-version').value='V_2_1';updateNativeMode();
         el('train-checkpoint').value=parent;renderCheckpointChoices();
         selectTasks(d=>d.task===40);
+        if(p)fillNativeConfig(p);
         const id=job.run.match(/__test(\d+)__exp(\d+)__run(\d+)/);
         if(id){el('train-test-id').value=Number(id[1]);el('train-experiment-id').value=Number(id[2]);}
         el('train-run-number').value='';
         el('train-native-phase').value='preflight';el('train-native-attempt').value='1';
         el('train-steps').value='6000';el('train-lr').value='0.00001';el('train-native-scheduler').value='constant';el('train-native-warmup').value='0';
+        for(const input of el('train-gpus').querySelectorAll('input'))input.checked=(p?.gpus||[]).includes(Number(input.value));
         el('train-notes').value='从 '+job.run+' checkpoint 继续训练（新优化器）';
         selectView('new');showSetupStep(0,true);invalidatePlan();updateBatch();
         message('已继承选定权重；请填写未使用的新run编号，核对资源和参数后预检。');

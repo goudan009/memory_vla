@@ -96,3 +96,25 @@ V2 本机短测接在现有 BenchmarkManager：`kind=v2_training_smoke`，`gpu` 
 - 「调整配置后继续训练」从已发布原生Stage1 checkpoint 发起**新 run**，训练步数为本次新增更新数；父步数另记。重置优化器与scheduler，继承原归一化（真实 processor 检查必须通过）。严格恢复仍保留原 run、预算和优化器状态。不得从旧V2_1顺序训练权重或B1K冠军权重走这个尚未验收的原生续训入口。
 - 终态自动归档生成每run的 `reports/training/runs/<device>/<run>/<arm>/training_report.md`，原始证据与不可变报告版本继续保留。训练详情可下载最近归档报告（显示归档步数，不把暂停报告当作实时结果）。后续评估归档自动补入同run报告。报告由程序生成；AI分析另存。
 - 本次改造需本地CPU回归和真实四卡预检，不以源码提交冒充GPU验收。历史训练源码快照、作业及报告不改写。
+
+
+### 本地验证与下载
+
+先在现有 checkout 核对 Git 工作区无未提交冲突并同步 main，按本机现有方式重启**工作台 HTTP 服务与归档定时器**，不终止现有训练/推理进程。建议先运行：
+
+~~~bash
+PYTHONPATH=scripts:train python -m pytest -q tests/test_stage1_native.py tests/test_v21_workbench.py
+python -m unittest discover -s tests -p test_training_archive.py
+node --check train/dashboard.js
+python -m compileall -q train/dashboard.py train/dashboard_remote.py train/v21_workbench.py scripts/stage1_native_train.py scripts/stage1_native_prepare.py scripts/training_archive.py scripts/training_archive_remote.py evaluation/scripts/view_results.py
+~~~
+
+随后先用自定义参数创建4步工程预检、从暂停的step2恢复到4。详情的「预检转正式训练」复制配方、原谱系和预检序号；仍须用户核对并提交。「复制训练配置」创建新run；「调整配置后继续训练」选择父权重、默认重置优化器与调度器，显示新增预算。没有真实证据的选项不自动启动。历史记录的发起人未记录时显示未记录；用户表单写 initiator=user，Agent 请求显式填写 initiator=agent。
+
+报告可直接下载Markdown；若旧run已经归档但缺少新收集字段，显式执行：
+
+~~~bash
+python scripts/training_archive.py --once --refresh-run <实际run_id>
+~~~
+
+该操作只读取终态证据并重建报告，不修改训练状态或原始输出。归档服务仍按原有定时机制发布；若Git发布开启，使用正常非强制推送。后续评估关联后再次生成报告版本。

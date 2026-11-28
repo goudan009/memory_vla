@@ -262,7 +262,7 @@ def prepare(request):
                'arm', 'steps', 'global_windows_per_step', 'microbatch', 'seed', 'learning_rate', 'share_existing', 'version',
                'method', 'method_description', 'validation_enabled', 'validation_percent', 'enqueue',
                'memory_length', 'memory_conditioning', 'memory_residual_readout', 'memory_cognitive_qk_norm', 'image_augmentation', 'fine_tuning_mode', 'history_sampling',
-               'validation_interval', 'disable_early_stopping', 'notes', 'lora_targets', 'lora_rank', 'lora_alpha',
+               'validation_interval', 'disable_early_stopping', 'notes', 'initiator', 'lora_targets', 'lora_rank', 'lora_alpha',
                'lora_dropout', 'llm_last_n_layers', 'gradient_checkpointing', 'weight_decay', 'max_grad_norm',
                'optimizer_eps', 'memory_cognitive_residual_projection', 'memory_cognitive_residual_scope', 'run_id', 'fsdp_accumulation',
                'experiment', 'fusion_variant', 'fusion_dit_layers', 'fusion_state_lambda', 'fusion_state_panel',
@@ -338,6 +338,8 @@ def prepare(request):
     if (request['arm']=='baseline' and method!='baseline') or (request['arm']=='memory_v1' and method not in ('memory',) and not method.startswith('ablation_')):
         raise ValueError('方法名称与实际模型类型不一致')
     description=request.get('method_description','')
+    initiator=request.get('initiator','unknown')
+    if initiator not in ('user','agent','unknown'):raise ValueError('initiator须为user/agent/unknown')
     notes=request.get('notes','')
     if not isinstance(notes,str) or len(notes)>2000:
         raise ValueError('训练备注须为不超过2000字的文本')
@@ -512,7 +514,7 @@ def prepare(request):
     existing = compute_pids(selected)
     if existing and not request.get('share_existing') and not request.get('enqueue'):
         raise ValueError('所选GPU有现有进程，请换卡，或显式勾选共卡；不会停止现有进程')
-    return dict(version=version, **identity, method=method, method_description=description, notes=notes.strip(), naming_schema=NAMING_SCHEMA,
+    return dict(version=version, **identity, method=method, method_description=description, notes=notes.strip(), initiator=initiator, naming_schema=NAMING_SCHEMA,
         device_id=_device.get('device_id','a100'), device_label=DEVICE_LABEL,
         run_name=run_id, task=task_label, tasks=tasks, task_name=name, arm=request['arm'],
         **({'run_id': run_id} if run_id else {}),
@@ -1297,6 +1299,7 @@ def jobs():
                     and not (root/('baseline' if arm == 'memory_v1' else 'memory_v1')).exists(),
                 resume=resume_info(root,arm),
                 notes=read_json(root/'config/web_launch.json',{}).get('notes',''),
+                initiator=read_json(root/'config/web_launch.json',{}).get('initiator','unknown'),
                 delete_block_reason='' if can_delete else '请先停止训练或取消排队，并等待独立验证结束。',
                 validation_enabled=read_json(root/'config/web_launch.json',{}).get('validation_enabled',True),
                 can_cancel=bool(queue and queue['cancellable'] and state.get('status') == 'queued'),

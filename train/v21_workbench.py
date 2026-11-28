@@ -319,7 +319,7 @@ class Backend:
                  'learning_rate','preflight_only','accept_preflight','enqueue',
                  'share_existing','notes','arm','video_backend','workers','custom_config',
                  'scheduler','warmup_ratio','weight_decay','max_grad_norm','normalization',
-                 'checkpoint_interval','validation_interval','native_tuning'}
+                 'checkpoint_interval','validation_interval','native_tuning','initiator'}
         if set(request)-allowed:
             raise ValueError('不支持的原生Stage1参数: '+','.join(sorted(set(request)-allowed)))
         if canonical_version(request.get('version'))!=VERSION or request.get('task')!=40 or request.get('stage')!='stage1':
@@ -343,6 +343,11 @@ class Backend:
             return Path(value)
         dataset,base,split,upstream=(path(k) for k in ('dataset','checkpoint','split','official_root'))
         fixed=native_options(request)
+        initiator=request.get('initiator','unknown')
+        if initiator not in ('user','agent','unknown'):
+            raise ValueError('initiator须为user/agent/unknown')
+        notes=request.get('notes','')
+        if not isinstance(notes,str) or len(notes)>2000:raise ValueError('训练备注须为不超过2000字的文本')
         parent=None
         if base.resolve()!=Path(self.r['BASE_CHECKPOINT']).resolve():
             if not fixed['custom_config']:
@@ -402,7 +407,7 @@ class Backend:
         if video not in ('torchcodec','decord','ffmpeg') or type(workers) is not int or workers!=2:
             raise ValueError('仅支持已核对的视频后端及固定2 workers')
         plan=dict(request,**identity,version=VERSION,task=40,stage='stage1',run_name=run,
-                  training_id=run,method='baseline',preflight_only=pre,enqueue=request.get('enqueue',False),
+                  training_id=run,method='baseline',initiator=initiator,notes=notes.strip(),preflight_only=pre,enqueue=request.get('enqueue',False),
                   share_existing=request.get('share_existing',False),existing_pids=occupied,
                   dataset=str(dataset.resolve()),checkpoint=str(base.resolve()),split=str(split.resolve()),
                   official_root=str(upstream.resolve()),video_backend=video,workers=workers,
@@ -543,7 +548,7 @@ class Backend:
         allowed=state.get('status') in TERMINAL and latest is not None and latest['step']<cap and (native or not launch['preflight_only'])
         return dict(available=allowed,reason='' if allowed else '需要已停止的正式作业与完整训练断点',
                     checkpoint=latest['path'] if latest else None,step=latest['step'] if latest else 0,
-                    source=launch['source'],gpus=launch['gpus'],default_steps=launch['steps'],min_steps=launch['steps'],
+                    source=launch['source'],gpus=launch['gpus'],seed=launch.get('seed'),default_steps=launch['steps'],min_steps=launch['steps'],
                     fixed_budget=True,validation_enabled=launch.get('validation_enabled',True),validation_gpu=None,checkpoint_interval=launch.get('checkpoint_interval',1000),
                     default_checkpoint_interval=launch.get('checkpoint_interval',1000),checkpoint_interval_editable=False)
 
@@ -571,7 +576,7 @@ class Backend:
                  arm=arm,method=launch['method'],training_id=root.name,train_number=launch['train_number'],
                  status=status,step=state.get('step',0),max_steps=launch.get('preflight_steps') or launch['steps'],gpus=','.join(map(str,launch['gpus'])),
                  output=str(root),source=launch['source'],source_digest=launch['source_manifest']['digest'],
-                 category=launch['category'],training_complete=status=='completed',validation={'status':'in_process' if not launch.get('recipe') else 'periodic_internal'},
+                 category=launch['category'],initiator=launch.get('initiator','unknown'),training_complete=status=='completed',validation={'status':'in_process' if not launch.get('recipe') else 'periodic_internal'},
                  can_delete=terminal,can_delete_files=terminal,can_stop=status in ('training','running','validating','submitted'),
                  can_cancel=status in ('queued','waiting_for_gpus'),resume=self.resume_info(root,launch,state),
                  checkpoint_interval=launch.get('checkpoint_interval',1000),notes=launch.get('notes',''),queue=queue or None,

@@ -154,6 +154,7 @@ def test_native_shard_cursor_resume():
 
 
 def test_custom_cursor():
+    from stage1_native_train import cursor
     assert cursor(12000,12000,4,4)==192000
     with pytest.raises(ValueError):
         cursor(12001,12000,4,4)

@@ -256,7 +256,7 @@
   <div class="section-head"><h2>训练记录</h2><span id="train-count" class="subtle">读取中…</span><button id="train-records-toggle" class="train-records-toggle" type="button" aria-expanded="false" aria-controls="train-records-content">展开记录</button></div>
   <div class="train-sidebar-actions"><button id="train-new" type="button" aria-pressed="true">＋ 新建训练</button></div>
   <div id="train-records-content" class="train-records-content">
-  <div class="train-record-filters"><input id="train-job-search" type="search" placeholder="任务、版本、备注…" aria-label="搜索训练记录或备注"><select id="train-job-filter" aria-label="训练状态筛选"><option value="all">全部状态</option><option value="active">运行中</option><option value="queued">排队中</option><option value="complete">已完成</option><option value="failed">异常/停止</option></select></div>
+  <div class="train-record-filters"><input id="train-job-search" type="search" placeholder="任务、版本、备注…" aria-label="搜索训练记录或备注"><select id="train-job-filter" aria-label="训练状态筛选"><option value="all">全部状态</option><option value="active">运行中</option><option value="queued">排队中</option><option value="complete">已完成</option><option value="failed">异常/停止</option></select><select id="train-job-owner" aria-label="发起人筛选"><option value="all">全部来源</option><option value="user">用户</option><option value="agent">Agent</option><option value="unknown">未记录</option></select></div>
   <div id="train-jobs" class="train-jobs"><div class="empty">读取 A100 记录中…</div></div>
   </div>
  </section>
@@ -435,7 +435,7 @@
    <p id="train-detail-notes" hidden></p>
    <div id="train-detail-loading" class="empty" role="status" hidden>正在读取训练详情…</div>
    <div id="train-monitor-body">
-   <div class="train-job-actions" aria-label="训练任务操作"><button id="train-stop-next" type="button" hidden>保存后停止</button><button id="train-resume-open" type="button" hidden>续跑训练</button><button id="train-cancel-top" type="button" hidden>取消排队</button><span id="train-action-hint" class="train-hint"></span><button id="train-warm-start" type="button" hidden>调整配置后继续训练</button><button id="train-download-report" type="button" disabled>下载训练报告</button><button id="train-delete" type="button" disabled>删除记录</button></div>
+   <div class="train-job-actions" aria-label="训练任务操作"><button id="train-stop-next" type="button" hidden>保存后停止</button><button id="train-resume-open" type="button" hidden>续跑训练</button><button id="train-cancel-top" type="button" hidden>取消排队</button><span id="train-action-hint" class="train-hint"></span><button id="train-warm-start" type="button" hidden>调整配置后继续训练</button><button id="train-copy-config" type="button" hidden>复制训练配置</button><button id="train-formal-from-preflight" type="button" hidden>预检转正式训练</button><button id="train-download-report" type="button" disabled>下载训练报告</button><button id="train-delete" type="button" disabled>删除记录</button></div>
    <form id="train-resume-panel" class="details" hidden>
     <h3>断点续训</h3><p id="train-resume-summary" class="train-info"></p>
     <div class="train-config-fields train-command-fields"><label>训练总步数<input id="train-resume-steps" type="number" min="1000" step="1000" required></label><label id="train-resume-checkpoint-field" hidden>检查点保存间隔（步）<input id="train-resume-checkpoint-interval" type="number" min="1000" step="1000" value="1000" required disabled></label><div class="train-actions"><button id="train-resume-submit" type="submit">确认续跑</button><button id="train-resume-close" type="button">收起</button></div></div>
