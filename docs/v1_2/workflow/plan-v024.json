@@ -1,0 +1,25 @@
+{
+  "plan_id": "v1_2_n17_b1k2026_transition_gate_v024",
+  "status": "in_progress",
+  "supersedes": "v1_2_n17_b1k2026_transition_gate_v023",
+  "change_reason": "Disabling FastFinder globally in job c3f412e1bde1 fixes Python package resolution but breaks Isaac extension namespaces (isaacsim.core missing). Retain the default Kit importer for its extensions and delegate only Numba/llvmlite submodules to standard parent-package resolution, before Kit starts. This addresses the demonstrated compiled-stack mixture without changing pinned upstream files or scientific settings.",
+  "scope": "One native official N1.7/B1K-2026 radio rollout, followed by conditional retirement of verified legacy runtime. Preserve history and shared libraries; no formal training or V2.2.",
+  "method_version": "V_1_2",
+  "protocol": "b1k2026_websocket",
+  "checkpoint": "/nvme3/checkpoints/memory_vla/official-n17-radio/turning_on_radio_GR00T-checkpoint-150000",
+  "checkpoint_sha256": "cd97a22ff74bd91838350e18fe94b48e1902d407f1256f5d48eb20befe277dc3",
+  "source_revisions": {"groot": "ace36d935b376fbf25cd56371e23877b95407c40", "behavior_1k": "a8247a8cc1633fe1ca0cc66aa07243d46c64f155"},
+  "experiment_identity": null,
+  "notes": "V1.2 / N1.7 / B1K2026: official radio, RTC off",
+  "budget": {"training_steps": 0, "environments": 1, "rollouts": 1},
+  "next_attempt": {"instance": 18, "gpu": 0, "policy_port": 8032, "workbench": "http://127.0.0.1:8767"},
+  "mainline": [
+    {"node": "importer_boundary", "depends_on": [], "parallel_branches": [], "acceptance": "Actual FastFinder regression resolves Numba/llvmlite under their loaded parent paths and retains original behavior for Isaac namespaces. During real startup verify matching runtime paths and first Numba array-copy JIT; persist diagnostic evidence."},
+    {"node": "preview_instance_18", "depends_on": ["importer_boundary"], "parallel_branches": [], "acceptance": "Verify live capacity/free port and 8767 preview with fixed checkpoint/source/protocol/note and one rollout/video."},
+    {"node": "official_rollout", "depends_on": ["preview_instance_18"], "parallel_branches": [], "acceptance": "Normal evaluator exit, native JSON, positive steps, boolean success, finite final Q-score and decodable video; model success recorded separately."},
+    {"node": "legacy_shutdown_gate", "depends_on": ["official_rollout"], "parallel_branches": [], "acceptance": "After native acceptance and dependency checks, stop only confirmed legacy runtime and dedicated supervisors. Retain historical resources, shared libraries, archive service and unrelated 8766."},
+    {"node": "archive", "depends_on": ["legacy_shutdown_gate"], "parallel_branches": [], "acceptance": "Publish actual job/results/video, service decisions and training-readiness limits to main. Formal training submissions remain zero."}
+  ],
+  "latest_failed_attempt": {"job_id": "c3f412e1bde1", "instance": 17, "native_episodes": 0, "videos": 0, "reason": "Global FastFinder disable loses Kit extension namespace resolution; isaacsim.core missing after SimulationApp startup."},
+  "migration_gate": {"on_fail": "Preserve legacy services and failed evidence; investigate.", "on_pass": "Retire only verified legacy runtime without active dependent jobs; preserve historical assets and shared library directories."}
+}
